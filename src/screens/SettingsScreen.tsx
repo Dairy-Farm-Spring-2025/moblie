@@ -2,11 +2,11 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Layout from '../components/layout/Layout';
 
-const Home: React.FC = () => {
+const SettingsScreen: React.FC = () => {
   return (
     <Layout>
       <View>
-        <Text>HomePage</Text>
+        <Text>SettingsScreen</Text>
       </View>
     </Layout>
   );
@@ -14,4 +14,4 @@ const Home: React.FC = () => {
 
 const styles = StyleSheet.create({});
 
-export default Home;
+export default SettingsScreen;

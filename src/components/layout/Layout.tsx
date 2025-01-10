@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { ReactNode } from 'react';
-import { StyleSheet, View, Text, SafeAreaView } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import Header from './Header';
 import Footer from './Footer';
+import GlobalStyles from '../../common/GlobalStyle';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface LayoutProps {
   children?: ReactNode;
@@ -10,7 +12,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <SafeAreaView>
+    <SafeAreaView style={GlobalStyles.droidSafeArea}>
       <Header />
       <View>{children}</View>
     </SafeAreaView>

@@ -2,11 +2,11 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Layout from '../components/layout/Layout';
 
-const About: React.FC = () => {
+const AboutScreen: React.FC = () => {
   return (
     <Layout>
       <View>
-        <Text>About</Text>
+        <Text>AboutScreen</Text>
       </View>
     </Layout>
   );
@@ -14,4 +14,4 @@ const About: React.FC = () => {
 
 const styles = StyleSheet.create({});
 
-export default About;
+export default AboutScreen;

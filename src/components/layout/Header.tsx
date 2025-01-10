@@ -46,7 +46,7 @@ const Header: React.FC = () => {
 
   const handleNavigation = (route: string) => {
     closeSider(); // Close the sider before navigating
-    navigation.navigate(route);
+    (navigation.navigate as any)(route);
   };
 
   return (
