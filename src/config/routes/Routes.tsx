@@ -9,12 +9,17 @@ import SettingsScreen from '@screens/SettingsScreen';
 import SignInScreen from '@screens/SignInScreen';
 import WelcomeScreen from '@screens/WelcomeScreen';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faHome, faInfoCircle, faGear } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faInfoCircle, faGear, faUser } from '@fortawesome/free-solid-svg-icons';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { setAuthState } from '@store/authSlice';
+import { AppDispatch, RootState } from '@core/store/store';
+import ProfileScreen from '@screens/ProfileScreen';
 
 type RootStackParamList = {
   Home: undefined;
   About: undefined;
-  Settings: undefined;
+  Profile: undefined;
   Login: undefined;
   Welcome: undefined;
 };
@@ -23,15 +28,29 @@ const Tab = createBottomTabNavigator<RootStackParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export const Routes: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const { isAuthenticated, role } = useSelector((state: RootState) => state.auth);
 
-  // useEffect(() => {
-  //   const checkAuth = async () => {
-  //     const token = await AsyncStorage.getItem('authToken');
-  //     setIsAuthenticated(!!token);
-  //   };
-  //   checkAuth();
-  // }, []);
+  const dispatch: AppDispatch = useDispatch();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = await AsyncStorage.getItem('authToken');
+      const role = await AsyncStorage.getItem('role');
+      const userId = await AsyncStorage.getItem('userId');
+      const fullName = await AsyncStorage.getItem('fullName');
+
+      dispatch(
+        setAuthState({
+          isAuthenticated: !!token,
+          role,
+          userId: userId ? parseInt(userId, 10) : null,
+          fullName,
+          token,
+        })
+      );
+    };
+    checkAuth();
+  }, [dispatch]);
 
   return (
     <NavigationContainer>
@@ -42,7 +61,7 @@ export const Routes: React.FC = () => {
             tabBarIcon: ({ color, size }) => {
               let icon = faHome;
               if (route.name === 'About') icon = faInfoCircle;
-              if (route.name === 'Settings') icon = faGear;
+              if (route.name === 'Profile') icon = faUser;
 
               return <FontAwesomeIcon icon={icon} size={size} color={color} />;
             },
@@ -52,7 +71,7 @@ export const Routes: React.FC = () => {
         >
           <Tab.Screen name='Home' component={HomeScreen} />
           <Tab.Screen name='About' component={AboutScreen} />
-          <Tab.Screen name='Settings' component={SettingsScreen} />
+          <Tab.Screen name='Profile' component={ProfileScreen} />
         </Tab.Navigator>
       ) : (
         <Stack.Navigator>

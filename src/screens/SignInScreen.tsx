@@ -1,7 +1,49 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Button } from 'react-native';
+import AccountServices from '../services/AccountServices';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
+import { useDispatch } from 'react-redux';
+import { login } from '@core/store/authSlice';
+import { AppDispatch } from '@core/store/store';
 
 const SignInScreen: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const dispatch: AppDispatch = useDispatch();
+
+  const handleSignIn = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please enter both email and password.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await AccountServices.login(email, password);
+      if (response && response.data) {
+        Alert.alert('Success', `Welcome, ${response.data?.fullName}`);
+        // Navigate to the main app or dashboard screen
+        const { accessToken, roleName, userId, fullName } = response.data;
+        dispatch(login({ role: roleName, userId, fullName, token: accessToken }));
+      } else {
+        Alert.alert('Error', 'Invalid email or password.');
+      }
+    } catch (error: any) {
+      Alert.alert('Error', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Dairy Farm Management</Text>
@@ -11,16 +53,24 @@ const SignInScreen: React.FC = () => {
         placeholder='Email'
         placeholderTextColor='#777'
         keyboardType='email-address'
+        value={email}
+        onChangeText={setEmail}
       />
       <TextInput
         style={styles.input}
         placeholder='Password'
         placeholderTextColor='#777'
         secureTextEntry
+        value={password}
+        onChangeText={setPassword}
       />
 
-      <TouchableOpacity style={styles.signInButton}>
-        <Text style={styles.signInButtonText}>Sign In</Text>
+      <TouchableOpacity style={styles.signInButton} onPress={handleSignIn} disabled={loading}>
+        {loading ? (
+          <ActivityIndicator color='#fff' />
+        ) : (
+          <Text style={styles.signInButtonText}>Sign In</Text>
+        )}
       </TouchableOpacity>
 
       <Text style={styles.orText}>OR</Text>
@@ -45,11 +95,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
-  },
-  logo: {
-    width: 100,
-    height: 100,
-    marginBottom: 20,
   },
   title: {
     fontSize: 24,

@@ -8,10 +8,11 @@
       "@components/*": ["src/components/*"],
       "@utils/*": ["src/utils/*"],
       "@config/*": ["./src/config/*"],
-      "@common": ["./src/common/*"],
-      "@core": ["./src/core/*"],
-      "@store": ["./src/core/store/*"],
-      "@services": ["./src/services/*"]
+      "@common/*": ["./src/common/*"],
+      "@types/*": ["./src/common/types/*"],
+      "@core/*": ["./src/core/*"],
+      "@store/*": ["./src/core/store/*"],
+      "@services/*": ["./src/services/*"]
     }
   }
 }

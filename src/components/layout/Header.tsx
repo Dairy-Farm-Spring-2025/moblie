@@ -77,8 +77,8 @@ const Header: React.FC = () => {
               <TouchableOpacity onPress={() => handleNavigation('About')}>
                 <Text style={styles.siderText}>About</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleNavigation('Settings')}>
-                <Text style={styles.siderText}>Settings</Text>
+              <TouchableOpacity onPress={() => handleNavigation('Profile')}>
+                <Text style={styles.siderText}>Profile</Text>
               </TouchableOpacity>
             </Animated.View>
           </View>
