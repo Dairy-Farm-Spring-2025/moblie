@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faHome, faUser, faCog } from '@fortawesome/free-solid-svg-icons';
+import { useSiderStore } from '@core/store/sliderStore/sliderStore';
 
 interface FooterProps {
   activeTab: string;
@@ -14,11 +15,19 @@ const Footer: React.FC<FooterProps> = ({ activeTab, onTabPress }) => {
     { name: 'About', icon: faUser },
     { name: 'Settings', icon: faCog },
   ];
+  const { isSiderVisible, toggleSider, closeSider } = useSiderStore();
+
+  const handleTabPress = (tabName: any) => {
+    onTabPress(tabName);
+    closeSider();
+
+    toggleSider();
+  };
 
   return (
     <View style={styles.container}>
       {tabs.map((tab) => (
-        <TouchableOpacity key={tab.name} style={styles.tab} onPress={() => onTabPress(tab.name)}>
+        <TouchableOpacity key={tab.name} style={styles.tab} onPress={handleTabPress}>
           <FontAwesomeIcon
             icon={tab.icon}
             size={24}

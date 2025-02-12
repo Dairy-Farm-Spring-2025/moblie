@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   Animated,
-  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -11,62 +10,40 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faBars, faBell } from '@fortawesome/free-solid-svg-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useSiderStore } from '@core/store/sliderStore/sliderStore';
 
 const Header: React.FC = () => {
-  const [isSiderVisible, setSiderVisible] = useState(false);
-  const [siderAnimation] = useState(new Animated.Value(-200)); // Slider starts off-screen
-  const navigation = useNavigation(); // Access the navigation object
+  const { isSiderVisible, toggleSider, closeSider } = useSiderStore();
+  const [siderAnimation] = useState(new Animated.Value(isSiderVisible ? 0 : -200)); // Animation
 
-  const toggleSider = () => {
-    if (isSiderVisible) {
-      // Close the sider
-      Animated.timing(siderAnimation, {
-        toValue: -200, // Hide the sider
-        duration: 300,
-        useNativeDriver: true,
-      }).start(() => setSiderVisible(false));
-    } else {
-      // Open the sider
-      setSiderVisible(true);
-      Animated.timing(siderAnimation, {
-        toValue: 0, // Bring the sider into view
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-    }
-  };
+  const navigation = useNavigation();
 
-  const closeSider = () => {
+  // Animate the sidebar when its state changes
+  React.useEffect(() => {
     Animated.timing(siderAnimation, {
-      toValue: -200, // Hide the sider
+      toValue: isSiderVisible ? 0 : -200,
       duration: 300,
       useNativeDriver: true,
-    }).start(() => setSiderVisible(false));
-  };
+    }).start();
+  }, [isSiderVisible]);
 
   const handleNavigation = (route: string) => {
-    closeSider(); // Close the sider before navigating
+    closeSider(); // Close before navigating
     (navigation.navigate as any)(route);
   };
 
   return (
     <>
       <View style={styles.header}>
-        {/* Left: Sider trigger */}
         <TouchableOpacity style={styles.siderTrigger} onPress={toggleSider}>
           <FontAwesomeIcon icon={faBars} size={24} color='#000' />
         </TouchableOpacity>
-
-        {/* Center: App Name */}
         <Text style={styles.headerTitle}>Dairy Farm Management</Text>
-
-        {/* Right: Notification Icon */}
         <TouchableOpacity style={styles.notificationIcon}>
           <FontAwesomeIcon icon={faBell} size={24} color='#000' />
         </TouchableOpacity>
       </View>
 
-      {/* Sider */}
       {isSiderVisible && (
         <TouchableWithoutFeedback onPress={toggleSider}>
           <View>
