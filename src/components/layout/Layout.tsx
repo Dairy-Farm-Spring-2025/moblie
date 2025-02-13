@@ -14,7 +14,9 @@ const Layout: React.FC<LayoutProps> = ({ children, isScrollable = true }) => {
     <SafeAreaView style={[GlobalStyles.droidSafeArea, styles.safeArea]}>
       <Header />
       {isScrollable ? (
-        <ScrollView contentContainerStyle={styles.container}>{children}</ScrollView>
+        <ScrollView contentContainerStyle={styles.container}>
+          {children}
+        </ScrollView>
       ) : (
         <View style={styles.container}>{children}</View>
       )}
@@ -25,10 +27,13 @@ const Layout: React.FC<LayoutProps> = ({ children, isScrollable = true }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    backgroundColor: '#ECECEC',
   },
   container: {
-    flexGrow: 1, // Allows the content to expand and scroll if needed
+    flexGrow: 1,
+    height: '100%',
     padding: 20,
+    backgroundColor: '#ECECEC',
   },
 });
 
