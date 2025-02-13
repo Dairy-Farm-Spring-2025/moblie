@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@core/store/store';
 import { Avatar, Text, Button, Divider, List, Badge } from 'react-native-paper';
-import Layout from '../components/layout/Layout';
+import Layout from '@components/layout/Layout';
 import { useDispatch } from 'react-redux';
 import { logout } from '@core/store/authSlice';
 

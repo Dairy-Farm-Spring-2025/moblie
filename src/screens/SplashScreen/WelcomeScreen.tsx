@@ -6,7 +6,7 @@ const WelcomeScreen: React.FC = () => {
   const navigation = useNavigation(); // Access the navigation object
   return (
     <View style={styles.container}>
-      <Text>Welcome</Text>
+      <Text>Welcome This is Splash Screen</Text>
       <Button
         title='Navigate'
         onPress={() => {

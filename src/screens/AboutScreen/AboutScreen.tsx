@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Layout from '../components/layout/Layout';
+import Layout from '@components/layout/Layout';
 
 const AboutScreen: React.FC = () => {
   return (

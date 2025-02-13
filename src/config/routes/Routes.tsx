@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import HomeScreen from '@screens/HomeScreen';
-import AboutScreen from '@screens/AboutScreen';
-import SettingsScreen from '@screens/SettingsScreen';
-import SignInScreen from '@screens/SignInScreen';
-import WelcomeScreen from '@screens/WelcomeScreen';
+import HomeScreen from '@screens/HomeScreen/HomeScreen';
+import AboutScreen from '@screens/AboutScreen/AboutScreen';
+import SignInScreen from '@screens/SignInScreen/SignInScreen';
+import WelcomeScreen from '@screens/SplashScreen/WelcomeScreen';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faHome, faInfoCircle, faGear, faUser } from '@fortawesome/free-solid-svg-icons';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
-import { setAuthState } from '@store/authSlice';
+import { faHome, faInfoCircle, faUser } from '@fortawesome/free-solid-svg-icons';
+import { useSelector, useDispatch } from 'react-redux';
+import { setAuthState } from '@core/store/authSlice';
 import { AppDispatch, RootState } from '@core/store/store';
-import ProfileScreen from '@screens/ProfileScreen';
+import ProfileScreen from '@screens/ProfileScreen/ProfileScreen';
+import { Alert } from 'react-native';
+import CowRoute from './CowRoute/CowRoute';
 
 type RootStackParamList = {
   Home: undefined;
@@ -29,7 +29,6 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export const Routes: React.FC = () => {
   const { isAuthenticated, role } = useSelector((state: RootState) => state.auth);
-
   const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
@@ -52,9 +51,14 @@ export const Routes: React.FC = () => {
     checkAuth();
   }, [dispatch]);
 
+  if (!isAuthenticated && role === 'Manager') {
+    Alert.alert('Error', 'You are not authorized to access this page.');
+    return null;
+  }
+
   return (
     <NavigationContainer>
-      {isAuthenticated ? (
+      {!isAuthenticated ? (
         <Tab.Navigator
           screenOptions={({ route }) => ({
             headerShown: false,
@@ -69,7 +73,7 @@ export const Routes: React.FC = () => {
             tabBarInactiveTintColor: 'gray',
           })}
         >
-          <Tab.Screen name='Home' component={HomeScreen} />
+          <Tab.Screen name='Home' component={CowRoute} />
           <Tab.Screen name='About' component={AboutScreen} />
           <Tab.Screen name='Profile' component={ProfileScreen} />
         </Tab.Navigator>

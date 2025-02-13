@@ -17,7 +17,6 @@ class AccountServices {
         password,
       });
 
-
       const { code, message, data } = response;
       console.log(code, message, data);
 
@@ -33,9 +32,8 @@ class AccountServices {
 
         return response;
       } else {
-        console.error('Login failed:', response.message);
         return null;
-      } 
+      }
     } catch (error: any) {
       if (error.response) {
         console.error('Error response:', error.response.data);

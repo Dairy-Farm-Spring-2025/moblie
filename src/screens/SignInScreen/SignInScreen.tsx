@@ -1,4 +1,4 @@
-import AccountServices from '../services/AccountServices';
+import AccountServices from '@services/AccountServices';
 import React, { useState } from 'react';
 import {
   View,
@@ -13,6 +13,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { login } from '@core/store/authSlice';
 import { AppDispatch } from '@core/store/store';
+import { validateEmail } from '@utils/validation';
 
 const SignInScreen: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -26,16 +27,26 @@ const SignInScreen: React.FC = () => {
       return;
     }
 
+    if (!validateEmail(email)) {
+      Alert.alert('Error', 'Invalid email format.');
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await AccountServices.login(email, password);
       if (response && response.data) {
         Alert.alert('Success', `Welcome, ${response.data?.fullName}`);
-        // Navigate to the main app or dashboard screen
         const { accessToken, roleName, userId, fullName } = response.data;
-        dispatch(login({ role: roleName, userId, fullName, token: accessToken }));
+        if (roleName.toLowerCase() !== 'manager') {
+          dispatch(login({ role: roleName, userId, fullName, token: accessToken }));
+        } else {
+          Alert.alert('Error', 'You are not authorized to access this page.');
+          return;
+        }
       } else {
         Alert.alert('Error', 'Invalid email or password.');
+        return;
       }
     } catch (error: any) {
       Alert.alert('Error', error.message);
