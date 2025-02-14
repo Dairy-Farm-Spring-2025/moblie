@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  SectionList,
-} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, SectionList } from 'react-native';
 import Layout from '@components/layout/Layout';
 import { useSelector } from 'react-redux';
 import { RootState } from '@core/store/store';
@@ -16,11 +10,13 @@ import {
   faDrumstickBite,
   faChartArea,
   faSliders,
+  faDolly,
 } from '@fortawesome/free-solid-svg-icons';
 
 type NavigationProp = {
   navigate: (screen: string) => void;
 };
+
 const HomeScreen: React.FC = () => {
   const { fullName } = useSelector((state: RootState) => state.auth);
   const navigation = useNavigation<NavigationProp>();
@@ -45,10 +41,10 @@ const HomeScreen: React.FC = () => {
       screen: 'PenManagementScreen',
     },
     {
-      id: 'chicken',
-      title: 'Chicken',
-      icon: faDrumstickBite,
-      screen: 'ChickenManagementScreen',
+      id: 'MilkBatch',
+      title: 'Milk Batch',
+      icon: faDolly,
+      screen: 'MilkBatchManagementScreen',
     },
   ];
 
@@ -72,18 +68,16 @@ const HomeScreen: React.FC = () => {
           style={styles.card}
           onPress={() => card.screen && navigation.navigate(card.screen)}
         >
-          <FontAwesomeIcon icon={card.icon} size={50} color="black" />
+          <FontAwesomeIcon icon={card.icon} size={50} color='black' />
           <Text style={styles.cardTitle}>{card.title}</Text>
         </TouchableOpacity>
       ))}
     </View>
   );
 
-  const renderSectionHeader = ({
-    section: { title },
-  }: {
-    section: { title: string };
-  }) => <Text style={styles.sectionHeader}>{title}</Text>;
+  const renderSectionHeader = ({ section: { title } }: { section: { title: string } }) => (
+    <Text style={styles.sectionHeader}>{title}</Text>
+  );
 
   return (
     <Layout isScrollable={false}>
