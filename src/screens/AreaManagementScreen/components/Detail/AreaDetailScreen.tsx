@@ -1,7 +1,7 @@
 import apiClient from '@config/axios/axios';
 import { Area } from '@model/Area/Area';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { formatAreaType } from '@utils/format';
+import { formatType } from '@utils/format';
 import React from 'react';
 import { Image, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
@@ -58,7 +58,7 @@ const AreaDetailScreen = () => {
         </Text>
         <Text style={styles.text}>
           📍 <Text style={styles.bold}>Area Type:</Text>{' '}
-          {formatAreaType(area.areaType)}
+          {formatType(area.areaType)}
         </Text>
         <View
           style={{
