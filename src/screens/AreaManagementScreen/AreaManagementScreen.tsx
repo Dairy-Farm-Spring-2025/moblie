@@ -1,71 +1,69 @@
+import SearchInput from '@components/Input/Search/SearchInput';
+import DividerUI from '@components/UI/DividerUI';
+import TextTitle from '@components/UI/TextTitle';
 import apiClient from '@config/axios/axios';
 import { Area } from '@model/Area/Area';
+import { useNavigation } from '@react-navigation/native';
+import { formatFilteredType, formatType } from '@utils/format';
 import React, { useState } from 'react';
-import { Ionicons } from '@expo/vector-icons'; // For the search icon
 import {
   FlatList,
   Image,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Divider, Text, Tooltip } from 'react-native-paper';
+import { Text, Tooltip } from 'react-native-paper';
 import { useQuery } from 'react-query';
-import { useNavigation } from '@react-navigation/native';
-import { formatAreaType } from '@utils/format';
-const fetchCows = async (): Promise<Area[]> => {
+const fetchAreas = async (): Promise<Area[]> => {
   const response = await apiClient.get('/areas'); // Replace with your endpoint
   return response.data;
 };
 const AreaManagementScreen = () => {
   const [searchText, setSearchText] = useState('');
+  const [selectedFilter, setSelectedFilter] = useState('name');
   const navigation = useNavigation();
   const {
     data: area,
     isLoading,
     isError,
     error,
-  } = useQuery<Area[]>('areas', fetchCows);
+  } = useQuery<Area[]>('areas', fetchAreas);
 
   const navigateToAreaDetail = (areaId: number) => {
     (navigation.navigate as any)('AreaDetail', { areaId });
   };
 
   const filteredArea = area?.filter((area) => {
-    return area?.name.toLowerCase().includes(searchText.toLowerCase());
+    if (selectedFilter === 'name') {
+      return area?.name.toLowerCase().includes(searchText.toLowerCase());
+    } else if (selectedFilter === 'type') {
+      const humanReadable = formatFilteredType(area?.areaType);
+      return humanReadable?.toLowerCase().includes(searchText.toLowerCase());
+    }
   });
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchFilterContainer}>
-        <TouchableOpacity
-          onPress={() => setSearchText('')}
-          style={styles.searchButton}
-        >
-          <Ionicons name="search" size={24} color="black" />
-        </TouchableOpacity>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search by name"
-          value={searchText}
-          onChangeText={setSearchText}
-        />
-      </View>
-      {searchText !== '' && (
-        <View style={styles.searchFilterContainer}>
-          <Text style={{ color: 'blue' }}>
-            {filteredArea?.length}{' '}
-            {(filteredArea?.length as number) > 1 ? 'results' : 'result'} found
-          </Text>
-        </View>
-      )}
+      <SearchInput
+        filteredData={filteredArea as Area[]}
+        onChangeText={setSearchText}
+        value={searchText}
+        typeFiltered={{
+          filteredType: ['name', 'type'],
+          setSelectedFiltered: setSelectedFilter,
+        }}
+      />
       {isLoading ? (
         <Text>Loading...</Text>
       ) : isError ? (
         <Text>{(error as Error).message}</Text>
       ) : (
         <FlatList
+          numColumns={2}
+          contentContainerStyle={{
+            paddingBottom: 10,
+          }}
           data={filteredArea}
           keyExtractor={(item: Area) => item.areaId.toString()}
           renderItem={({ item }) => (
@@ -85,6 +83,8 @@ const AreaManagementScreen = () => {
                     flexDirection: 'row',
                     gap: 15,
                     alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
                   }}
                 >
                   <Text
@@ -96,24 +96,20 @@ const AreaManagementScreen = () => {
                   </Text>
                   <Tooltip enterTouchDelay={200} title="Cow Type">
                     <Text style={styles.areaType}>
-                      {formatAreaType(item.areaType)}
+                      {formatType(item.areaType)}
                     </Text>
                   </Tooltip>
                 </View>
-                <Divider style={styles.divider} />
+                <DividerUI />
                 <View style={styles.cardContent}>
-                  <View style={styles.content}>
-                    <Text style={styles.title}>Dimension:</Text>
-                    <Text>
-                      {item.width}m x {item.length}m
-                    </Text>
-                  </View>
-                  <View style={styles.content}>
-                    <Text style={styles.title}>Pen Dimension:</Text>
-                    <Text>
-                      {item.penWidth}m x {item.penLength}m
-                    </Text>
-                  </View>
+                  <TextTitle
+                    content={`${item.width}m x ${item.length}m`}
+                    title="Dimension"
+                  />
+                  <TextTitle
+                    content={`${item.penWidth}m x ${item.penLength}m`}
+                    title="Pen Dimension"
+                  />
                 </View>
               </View>
             </TouchableOpacity>
@@ -131,14 +127,10 @@ const styles = StyleSheet.create({
     padding: 4,
     borderRadius: 5,
     color: 'white',
-  },
-  searchFilterContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 10,
+    fontSize: 10,
   },
   card: {
+    flex: 1,
     margin: 10,
     padding: 15,
     borderRadius: 10,
@@ -155,9 +147,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexWrap: 'wrap',
     flexDirection: 'row',
-  },
-  divider: {
-    marginVertical: 7,
+    gap: 10,
   },
   content: {
     flexDirection: 'column',
@@ -165,19 +155,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: 'bold',
-  },
-  searchInput: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    marginLeft: 10,
-    marginRight: 10,
-    borderRadius: 5,
-    paddingLeft: 10,
-    flex: 1,
-  },
-  searchButton: {
-    padding: 10,
   },
   cardWrapper: {
     width: '100%',

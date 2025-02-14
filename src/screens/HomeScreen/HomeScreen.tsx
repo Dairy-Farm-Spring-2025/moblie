@@ -15,13 +15,12 @@ import {
   faCow,
   faDrumstickBite,
   faChartArea,
-  faSpider,
+  faSliders,
 } from '@fortawesome/free-solid-svg-icons';
 
 type NavigationProp = {
   navigate: (screen: string) => void;
 };
-
 const HomeScreen: React.FC = () => {
   const { fullName } = useSelector((state: RootState) => state.auth);
   const navigation = useNavigation<NavigationProp>();
@@ -40,10 +39,10 @@ const HomeScreen: React.FC = () => {
       screen: 'AreaManagementScreen',
     },
     {
-      id: 'goat',
-      title: 'Goat',
-      icon: faSpider,
-      screen: 'GoatManagementScreen',
+      id: 'PenManagementScreen',
+      title: 'Pen',
+      icon: faSliders,
+      screen: 'PenManagementScreen',
     },
     {
       id: 'chicken',

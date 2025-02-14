@@ -6,6 +6,7 @@ import DetailCow from '@screens/CowManagementScreen/components/DetailCow/DetailC
 import CreateCow from '@screens/CowManagementScreen/components/CreateCow/CreateCow';
 import AreaManagementScreen from '@screens/AreaManagementScreen/AreaManagementScreen';
 import AreaDetailScreen from '@screens/AreaManagementScreen/components/Detail/AreaDetailScreen';
+import PenManagementScreen from '@screens/PenManagementScreen/PenManagementScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +29,10 @@ const CowRoute: React.FC = () => {
         component={AreaManagementScreen}
       />
       <Stack.Screen name="AreaDetail" component={AreaDetailScreen} />
+      <Stack.Screen
+        name="PenManagementScreen"
+        component={PenManagementScreen}
+      />
       {/* You can add more screens related to 'Cow' here in the future */}
     </Stack.Navigator>
   );
