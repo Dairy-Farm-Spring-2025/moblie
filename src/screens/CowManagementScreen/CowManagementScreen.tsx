@@ -1,22 +1,13 @@
 import React, { useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  TouchableOpacity,
-  Image,
-  TextInput,
-  Modal,
-  Button,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // For the search icon
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, Image } from 'react-native';
 import { SegmentedButtons, Tooltip } from 'react-native-paper';
 import { useQuery } from 'react-query'; // Import React Query hook
 import { useNavigation } from '@react-navigation/native';
 import apiClient from '@config/axios/axios';
 import { Cow } from '@model/Cow/Cow';
 import FloatingButton from '@components/FloatingButton/FloatingButton';
+import SearchInput from '@components/Input/Search/SearchInput'; // Custom SearchInput component
+import CardCow from '@components/CardCow/CardCow';
 
 // Fetch cows data from API
 const fetchCows = async (): Promise<Cow[]> => {
@@ -27,9 +18,7 @@ const fetchCows = async (): Promise<Cow[]> => {
 const CowManagementScreen: React.FC = () => {
   const [selectedSegment, setSelectedSegment] = useState('list');
   const [searchText, setSearchText] = useState('');
-  const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState<'name' | 'status' | 'type'>('name');
-  const [activeFilter, setActiveFilter] = useState<'name' | 'status' | 'type' | null>(null);
 
   // Use React Query's useQuery hook to fetch cows data
   const { data: cows, isLoading, isError, error } = useQuery<Cow[]>('cows', fetchCows);
@@ -54,8 +43,9 @@ const CowManagementScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      {/* Segmented Buttons */}
       <SegmentedButtons
-        style={{ margin: 10 }}
+        style={styles.segmentedButtons}
         value={selectedSegment}
         onValueChange={setSelectedSegment}
         buttons={[
@@ -68,142 +58,65 @@ const CowManagementScreen: React.FC = () => {
 
       {/* Search and Filter Bar */}
       <View style={styles.searchFilterContainer}>
-        <TouchableOpacity onPress={() => setIsFilterVisible(true)} style={styles.filterButton}>
-          <Ionicons name='filter' size={24} color='black' />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setSearchText('')} style={styles.searchButton}>
-          <Ionicons name='search' size={24} color='black' />
-        </TouchableOpacity>
-        <TextInput
-          style={styles.searchInput}
-          placeholder='Search by name'
-          value={searchText}
+        <SearchInput
+          filteredData={filteredCows as Cow[]}
           onChangeText={setSearchText}
+          value={searchText}
+          typeFiltered={{
+            filteredType: ['name', 'status', 'type'],
+            setSelectedFiltered: setSelectedFilter,
+          }}
         />
       </View>
 
-      {/* Filter Modal */}
-      <Modal visible={isFilterVisible} animationType='slide' transparent={true}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.filterModal}>
-            <Text style={styles.modalTitle}>Select Filter</Text>
-            <Button
-              title='Filter by Name'
-              onPress={() => {
-                setSelectedFilter('name');
-                setActiveFilter('name');
-                setIsFilterVisible(false);
-              }}
-              color={activeFilter === 'name' ? 'blue' : 'gray'}
-            />
-            <Button
-              title='Filter by Status'
-              onPress={() => {
-                setSelectedFilter('status');
-                setActiveFilter('status');
-                setIsFilterVisible(false);
-              }}
-              color={activeFilter === 'status' ? 'blue' : 'gray'}
-            />
-            <Button
-              title='Filter by Type'
-              onPress={() => {
-                setSelectedFilter('type');
-                setActiveFilter('type');
-                setIsFilterVisible(false);
-              }}
-              color={activeFilter === 'type' ? 'blue' : 'gray'}
-            />
-            <Button title='Close' onPress={() => setIsFilterVisible(false)} />
-          </View>
-        </View>
-      </Modal>
-
-      {/* Loading or Error State */}
+      {/* Cow List */}
       {isLoading ? (
-        <Text>Loading cows...</Text>
+        <Text>Loading...</Text>
       ) : isError ? (
-        <Text style={{ color: 'red' }}>{(error as Error).message}</Text>
+        <Text>{(error as Error).message}</Text>
       ) : (
         selectedSegment === 'list' && (
           <FlatList
+            numColumns={2}
             data={filteredCows}
             keyExtractor={(item) => item.cowId.toString()}
             renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.card}
-                onPress={() => navigateToCowDetails(item.cowId)}
-              >
-                <Image source={{ uri: 'https://picsum.photos/200/300' }} style={styles.cardImage} />
-                <View style={styles.cardContent}>
-                  <Text style={styles.cardTitle}>{item.name}</Text>
-                  <Tooltip enterTouchDelay={200} title='Cow Type'>
-                    <Text style={styles.cardType}>{item.cowType.name}</Text>
-                  </Tooltip>
-                  <Tooltip title='Origin - Date Of Birth'>
-                    <View
-                      style={{
-                        backgroundColor: '#333',
-                        padding: 4,
-                        borderRadius: 4,
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Text style={{ color: 'white' }}>{item.cowOrigin}-</Text>
-                      <Text style={{ color: 'white' }}>{item.dateOfBirth}</Text>
-                    </View>
-                  </Tooltip>
-                </View>
-              </TouchableOpacity>
+              <CardCow cow={item} onPress={() => navigateToCowDetails(item.cowId)} />
             )}
           />
         )
       )}
+
+      {/* Floating Action Button */}
       <FloatingButton onPress={() => (navigation.navigate as any)('CreateCowScreen')} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { paddingTop: 10, marginBottom: 120 },
-  searchFilterContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 10,
-  },
-  cardContent: {
-    width: '100%',
-    flexDirection: 'row',
-    gap: 10,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  searchInput: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    marginLeft: 10,
-    marginRight: 10,
-    borderRadius: 5,
-    paddingLeft: 10,
+  container: {
+    paddingTop: 10,
     flex: 1,
   },
-  searchButton: {
-    padding: 10,
+  segmentedButtons: {
+    margin: 10,
   },
-  filterButton: {
-    padding: 10,
+  searchFilterContainer: {
+    paddingHorizontal: 10,
+    marginBottom: 10,
   },
   card: {
     margin: 10,
-    padding: 15,
+    width: '45%', // For 2-column grid layout
+    padding: 10,
     borderRadius: 10,
     backgroundColor: '#f8f9fa',
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   cardImage: {
     width: '100%',
@@ -211,24 +124,34 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 10,
   },
-  cardType: { backgroundColor: 'green', padding: 4, borderRadius: 5, color: 'white' },
-  cardTitle: { fontSize: 16, fontWeight: '600' },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'center',
+  cardWrapper: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
+  cardHeader: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  filterModal: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    width: '80%',
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: '600',
   },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
+  cardType: {
+    backgroundColor: 'green',
+    padding: 4,
+    borderRadius: 5,
+    color: 'white',
+    fontSize: 10,
+  },
+  cardContent: {
+    flexDirection: 'column',
+    marginTop: 10,
+  },
+  cardDetails: {
+    fontSize: 12,
+    color: 'gray',
   },
 });
 

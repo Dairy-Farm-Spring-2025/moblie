@@ -33,7 +33,7 @@ const DetailCow: React.FC = () => {
   return (
     <ScrollView style={styles.container}>
       {/* Ảnh bò */}
-      <Image source={{ uri: 'https://picsum.photos/300/200' }} style={styles.image} />
+      <Image source={{ uri: 'https://picsum.photos/400/400' }} style={styles.image} />
 
       {/* Thông tin chi tiết */}
       <View style={styles.card}>

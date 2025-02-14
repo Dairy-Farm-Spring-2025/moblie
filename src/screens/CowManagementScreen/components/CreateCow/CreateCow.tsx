@@ -1,22 +1,36 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  Alert,
+  ScrollView,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import apiClient from '@config/axios/axios';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useQuery } from 'react-query';
+import { useQuery, useMutation } from 'react-query';
 import { CreateCowModel } from '@model/Request/CreateCow';
 import { CowType } from '@model/Cow/Cow';
 
-// Update fetchCowType to extract the data from the API response
 const fetchCowType = async (): Promise<CowType[]> => {
-  const response = await apiClient.get('/cow-types');
-  return response.data; // Assuming response.data contains the cow types
+  try {
+    const response = await apiClient.get('/cow-types');
+    return response.data;
+  } catch (error) {
+    throw new Error('Failed to load cow types');
+  }
 };
 
 const CreateCow: React.FC = () => {
-  const { data: cowTypes, isLoading, isError } = useQuery('cow-types', fetchCowType);
   const navigation = useNavigation();
+  const { data: cowTypes, isLoading, isError } = useQuery('cow-types', fetchCowType);
 
   const [cowData, setCowData] = useState<CreateCowModel>({
     cowStatus: 'milkingCow',
@@ -28,31 +42,26 @@ const CreateCow: React.FC = () => {
     description: '',
   });
 
-  const [openDateOfBirth, setOpenDateOfBirth] = useState(false);
-  const [openDateOfEnter, setOpenDateOfEnter] = useState(false);
-
-  const handleChange = (key: keyof CreateCowModel, value: any) => {
-    setCowData({ ...cowData, [key]: value });
-  };
-
-  const handleCreateCow = async () => {
-    if (!cowData.cowTypeId || !cowData.description) {
-      Alert.alert('Error', 'Please fill all fields');
-      return;
-    }
-
-    try {
-      await apiClient.post('/cows/create', cowData);
+  const mutation = useMutation(async () => await apiClient.post('/cows/create', cowData), {
+    onSuccess: () => {
       Alert.alert('Success', 'Cow created successfully');
       navigation.goBack();
-    } catch (error) {
+    },
+    onError: () => {
       Alert.alert('Error', 'Failed to create cow');
-    }
+    },
+  });
+
+  const handleChange = (key: keyof CreateCowModel, value: any) => {
+    setCowData((prev) => ({ ...prev, [key]: value }));
   };
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}
+    >
+      <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Create New Cow</Text>
 
         <Text style={styles.label}>Description</Text>
@@ -64,117 +73,121 @@ const CreateCow: React.FC = () => {
         />
 
         <Text style={styles.label}>Cow Type</Text>
-        <View style={styles.option}>
+        {isLoading ? (
+          <ActivityIndicator size='small' color='#0000ff' />
+        ) : isError ? (
+          <Text>Error loading cow types</Text>
+        ) : (
           <Picker
+            selectedValue={cowData.cowTypeId.toString()} // Ensure it's a string
             style={styles.input}
-            selectedValue={cowData.cowTypeId ? cowData.cowTypeId.toString() : '0'}
-            onValueChange={(itemValue) => handleChange('cowTypeId', parseInt(itemValue))}
+            onValueChange={(itemValue) => handleChange('cowTypeId', parseInt(itemValue, 10))} // Convert back to integer if necessary
           >
-            {isLoading ? (
-              <Picker.Item label='Loading...' value='0' />
-            ) : isError ? (
-              <Picker.Item label='Error loading cow types' value='0' />
-            ) : (
-              cowTypes?.map((type) => (
-                <Picker.Item
-                  key={type.cowTypeId}
-                  label={type.name}
-                  value={type.cowTypeId.toString()}
-                />
-              ))
-            )}
+            {cowTypes?.map((type) => (
+              <Picker.Item
+                key={type.cowTypeId}
+                label={type.name}
+                value={type.cowTypeId.toString()} // Convert to string
+              />
+            ))}
           </Picker>
-        </View>
+        )}
 
         <Text style={styles.label}>Cow Status</Text>
-        <View style={styles.option}>
-          <Picker
-            selectedValue={cowData.cowStatus}
-            style={styles.input}
-            onValueChange={(itemValue) => handleChange('cowStatus', itemValue)}
-          >
-            <Picker.Item label='Milking Cow' value='milkingCow' />
-            <Picker.Item label='Dry Cow' value='dryCow' />
-            <Picker.Item label='Pregnant Cow' value='pregnantCow' />
-            <Picker.Item label='Open Cow' value='openCow' />
-            <Picker.Item label='Calving Cow' value='calvingCow' />
-            <Picker.Item label='Sick Cow' value='sickCow' />
-            <Picker.Item label='Breeding Cow' value='breedingCow' />
-            <Picker.Item label='Quarantined Cow' value='quarantinedCow' />
-          </Picker>
-        </View>
+        <Picker
+          selectedValue={cowData.cowStatus}
+          style={styles.input}
+          onValueChange={(itemValue) => handleChange('cowStatus', itemValue)}
+        >
+          {[
+            'milkingCow',
+            'dryCow',
+            'pregnantCow',
+            'openCow',
+            'calvingCow',
+            'sickCow',
+            'breedingCow',
+            'quarantinedCow',
+          ].map((status) => (
+            <Picker.Item key={status} label={status.replace(/([A-Z])/g, ' $1')} value={status} />
+          ))}
+        </Picker>
 
         <Text style={styles.label}>Cow Origin</Text>
-        <View style={styles.option}>
-          <Picker
-            selectedValue={cowData.cowOrigin}
-            style={styles.input}
-            onValueChange={(itemValue) => handleChange('cowOrigin', itemValue)}
-          >
-            <Picker.Item label='European' value='european' />
-            <Picker.Item label='Indian' value='indian' />
-            <Picker.Item label='African' value='african' />
-            <Picker.Item label='American' value='american' />
-            <Picker.Item label='Australian' value='australian' />
-            <Picker.Item label='Exotic' value='exotic' />
-            <Picker.Item label='Indigenous' value='indigenous' />
-            <Picker.Item label='Crossbreed' value='crossbreed' />
-          </Picker>
-        </View>
+        <Picker
+          selectedValue={cowData.cowOrigin}
+          style={styles.input}
+          onValueChange={(itemValue) => handleChange('cowOrigin', itemValue)}
+        >
+          {[
+            'european',
+            'indian',
+            'african',
+            'american',
+            'australian',
+            'exotic',
+            'indigenous',
+            'crossbreed',
+          ].map((origin) => (
+            <Picker.Item
+              key={origin}
+              label={origin.charAt(0).toUpperCase() + origin.slice(1)}
+              value={origin}
+            />
+          ))}
+        </Picker>
 
         <Text style={styles.label}>Gender</Text>
-        <View style={styles.option}>
-          <Picker
-            selectedValue={cowData.gender}
-            style={styles.input}
-            onValueChange={(itemValue) => handleChange('gender', itemValue)}
-          >
-            <Picker.Item label='Female' value='female' />
-            <Picker.Item label='Male' value='male' />
-          </Picker>
-        </View>
+        <Picker
+          selectedValue={cowData.gender}
+          style={styles.input}
+          onValueChange={(itemValue) => handleChange('gender', itemValue)}
+        >
+          <Picker.Item label='Female' value='female' />
+          <Picker.Item label='Male' value='male' />
+        </Picker>
 
         <Text style={styles.label}>Date of Birth</Text>
-
         <DateTimePicker
           value={new Date(cowData.dateOfBirth)}
           mode='date'
           display='default'
-          onChange={(event, selectedDate) => {
-            setOpenDateOfBirth(false);
-            handleChange('dateOfBirth', selectedDate?.toISOString() || cowData.dateOfBirth);
-          }}
+          onChange={(event, selectedDate) =>
+            handleChange('dateOfBirth', selectedDate?.toISOString() || cowData.dateOfBirth)
+          }
         />
 
         <Text style={styles.label}>Date of Enter</Text>
-
         <DateTimePicker
           value={new Date(cowData.dateOfEnter)}
           mode='date'
           display='default'
-          onChange={(event, selectedDate) => {
-            setOpenDateOfEnter(false);
-            handleChange('dateOfEnter', selectedDate?.toISOString() || cowData.dateOfEnter);
-          }}
+          onChange={(event, selectedDate) =>
+            handleChange('dateOfEnter', selectedDate?.toISOString() || cowData.dateOfEnter)
+          }
         />
 
-        <Button title='Create Cow' onPress={handleCreateCow} />
-      </View>
-    </ScrollView>
+        <Button
+          title='Create Cow'
+          onPress={() => mutation.mutate()}
+          disabled={mutation.isLoading}
+        />
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, justifyContent: 'center' },
-  title: { fontSize: 20, fontWeight: 'bold', marginBottom: 10 },
-  label: { fontSize: 16, marginTop: 10 },
-  option: { justifyContent: 'center', alignItems: 'center', padding: 20 },
+  container: { padding: 20, justifyContent: 'center' },
+  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 10, textAlign: 'center' },
+  label: { fontSize: 16, marginTop: 10, fontWeight: '600' },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
     padding: 10,
     borderRadius: 5,
-    width: 300,
+    width: '100%',
+    marginTop: 5,
   },
 });
 
