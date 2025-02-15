@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { CameraType, CameraView, useCameraPermissions } from 'expo-camera';
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+
+type QrCodeScanCowProps = {
+  params: {
+    screens: string;
+  };
+};
 
 const QrCodeScanCow = () => {
   const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
   const navigation = useNavigation();
+  const route = useRoute<RouteProp<QrCodeScanCowProps>>();
 
   if (!permission) {
     return <View />;
@@ -28,7 +35,7 @@ const QrCodeScanCow = () => {
     if (cowIdMatch) {
       const extractedCowId = Number(cowIdMatch[1]);
       // Send the scanned cow ID back to the form screen
-      (navigation.navigate as any)('CreateMilkBatch', { cowId: extractedCowId });
+      (navigation.navigate as any)(route.params.screens, { cowId: extractedCowId });
     }
   };
 
