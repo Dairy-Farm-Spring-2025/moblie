@@ -107,7 +107,11 @@ const MilkBatchManagementScreen: React.FC = () => {
           keyExtractor={(milkBatch) => milkBatch.milkBatchId.toString()}
         />
       )}
-      <FloatingButton onPress={() => (navigation.navigate as any)('QrCodeScanCow')} />
+      <FloatingButton
+        onPress={() =>
+          (navigation.navigate as any)('QrCodeScanCow', { screens: 'CreateMilkBatch' })
+        }
+      />
     </View>
   );
 };
