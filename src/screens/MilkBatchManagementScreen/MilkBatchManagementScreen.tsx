@@ -100,17 +100,19 @@ const MilkBatchManagementScreen: React.FC = () => {
             <Text style={styles.refreshButtonText}>Refresh</Text>
           </TouchableOpacity>
         </View>
-      ) : (
+      ) : Array.isArray(milkBatchData) && milkBatchData.length > 0 ? (
         <FlatList
           data={milkBatchData}
           renderItem={renderMilkBatchItem}
           keyExtractor={(milkBatch) => milkBatch.milkBatchId.toString()}
         />
+      ) : (
+        <View style={styles.noMilkBatchesContainer}>
+          <Text>No milk batches found</Text>
+        </View>
       )}
       <FloatingButton
-        onPress={() =>
-          (navigation.navigate as any)('QrCodeScanCow', { screens: 'CreateMilkBatch' })
-        }
+        onPress={() => (navigation.navigate as any)('QrCodeScanCow', { screens: 'DetailFormMilk' })}
       />
     </View>
   );
@@ -121,6 +123,11 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     backgroundColor: '#f5f5f5',
+  },
+  noMilkBatchesContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
   },
   milkBatchCard: {
     backgroundColor: '#fff',

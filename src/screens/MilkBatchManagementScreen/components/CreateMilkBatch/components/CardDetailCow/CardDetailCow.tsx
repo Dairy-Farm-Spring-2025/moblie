@@ -7,11 +7,15 @@ import { Cow } from '@model/Cow/Cow';
 
 interface CardDetailCowProps {
   cow: Cow | undefined;
+  dailyMilk: {
+    volume: string | number;
+    cowId: number;
+  };
   onPress: () => void;
   width?: number;
 }
 
-const CardDetailCow: React.FC<CardDetailCowProps> = ({ cow, onPress, width }) => {
+const CardDetailCow: React.FC<CardDetailCowProps> = ({ cow, onPress, width, dailyMilk }) => {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
       <Image
@@ -26,6 +30,7 @@ const CardDetailCow: React.FC<CardDetailCowProps> = ({ cow, onPress, width }) =>
           </Tooltip>
         </View>
         <View style={styles.cardContent}>
+          <Text style={styles.cardTitle}>Daily Milk Volume: {dailyMilk?.volume}</Text>
           <Text style={styles.cardDetails}>Origin: {cow?.cowOrigin}</Text>
           <Text style={styles.cardDetails}>Born: {cow?.dateOfBirth}</Text>
         </View>
@@ -53,6 +58,7 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 10,
     marginBottom: 10,
+    objectFit: 'fill',
   },
   cardWrapper: {
     flexDirection: 'column',
