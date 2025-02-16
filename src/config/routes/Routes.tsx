@@ -58,7 +58,7 @@ export const Routes: React.FC = () => {
 
   return (
     <NavigationContainer>
-      {isAuthenticated ? (
+      {!isAuthenticated ? (
         <Tab.Navigator
           screenOptions={({ route }) => ({
             headerShown: false,

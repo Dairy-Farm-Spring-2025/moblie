@@ -35,7 +35,9 @@ const QrCodeScanCow = () => {
     if (cowIdMatch) {
       const extractedCowId = Number(cowIdMatch[1]);
       // Send the scanned cow ID back to the form screen
-      (navigation.navigate as any)(route.params.screens, { cowId: extractedCowId });
+      (navigation.navigate as any)(route.params.screens, {
+        cowId: extractedCowId,
+      });
     }
   };
 
