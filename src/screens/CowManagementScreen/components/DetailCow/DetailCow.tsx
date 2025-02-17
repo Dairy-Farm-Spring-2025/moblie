@@ -1,9 +1,18 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+  Dimensions,
+} from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { useQuery } from 'react-query';
 import apiClient from '@config/axios/axios';
 import { Cow } from '@model/Cow/Cow';
+import RenderHTML from 'react-native-render-html';
+import RenderHtmlComponent from '@components/RenderHTML/RenderHtmlComponent';
 
 type RootStackParamList = {
   CowDetails: { cowId: number };
@@ -20,7 +29,11 @@ const DetailCow: React.FC = () => {
   const route = useRoute<DetailCowRouteProp>();
   const { cowId } = route.params;
 
-  const { data: cow, isLoading, isError } = useQuery(['cow', cowId], () => fetchCowDetails(cowId));
+  const {
+    data: cow,
+    isLoading,
+    isError,
+  } = useQuery(['cow', cowId], () => fetchCowDetails(cowId));
 
   if (isLoading) {
     return <Text style={styles.loadingText}>Loading cow details...</Text>;
@@ -30,10 +43,15 @@ const DetailCow: React.FC = () => {
     return <Text style={styles.errorText}>Failed to load cow details</Text>;
   }
 
+  const screenWidth = Dimensions.get('window').width;
+
   return (
     <ScrollView style={styles.container}>
       {/* Ảnh bò */}
-      <Image source={{ uri: 'https://picsum.photos/400/400' }} style={styles.image} />
+      <Image
+        source={{ uri: 'https://picsum.photos/400/400' }}
+        style={styles.image}
+      />
 
       {/* Thông tin chi tiết */}
       <View style={styles.card}>
@@ -64,9 +82,16 @@ const DetailCow: React.FC = () => {
         <Text style={styles.text}>
           🛠 <Text style={styles.bold}>Type:</Text> {cow.cowType.name}
         </Text>
-        <Text style={styles.text}>
-          📖 <Text style={styles.bold}>Description:</Text> {cow.description}
-        </Text>
+        <View
+          style={{
+            flexDirection: 'column',
+          }}
+        >
+          <Text style={styles.text}>
+            📖 <Text style={styles.bold}>Description:</Text>
+          </Text>
+          <RenderHtmlComponent htmlContent={cow.description} />
+        </View>
       </View>
 
       {/* Thông tin loại bò */}
@@ -82,7 +107,8 @@ const DetailCow: React.FC = () => {
           🔹 <Text style={styles.bold}>Status:</Text> {cow.cowType.status}
         </Text>
         <Text style={styles.text}>
-          🔹 <Text style={styles.bold}>Description:</Text> {cow.cowType.description}
+          🔹 <Text style={styles.bold}>Description:</Text>{' '}
+          {cow.cowType.description}
         </Text>
         <Text style={styles.text}>
           📅 <Text style={styles.bold}>Created At:</Text>{' '}
@@ -98,10 +124,12 @@ const DetailCow: React.FC = () => {
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>📅 Timestamps</Text>
         <Text style={styles.text}>
-          🕒 <Text style={styles.bold}>Created At:</Text> {new Date(cow.createdAt).toLocaleString()}
+          🕒 <Text style={styles.bold}>Created At:</Text>{' '}
+          {new Date(cow.createdAt).toLocaleString()}
         </Text>
         <Text style={styles.text}>
-          🕒 <Text style={styles.bold}>Updated At:</Text> {new Date(cow.updatedAt).toLocaleString()}
+          🕒 <Text style={styles.bold}>Updated At:</Text>{' '}
+          {new Date(cow.updatedAt).toLocaleString()}
         </Text>
       </View>
     </ScrollView>

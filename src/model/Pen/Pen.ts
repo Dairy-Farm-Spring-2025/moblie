@@ -1,7 +1,7 @@
 import { Area } from '@model/Area/Area';
 
 export type Pen = {
-  penId: string;
+  penId: number;
   name: string;
   description: string;
   penType:
@@ -12,8 +12,6 @@ export type Pen = {
     | 'maternityPen'
     | 'isolationPen'
     | 'holdingPen';
-  length: number;
-  width: number;
   penStatus:
     | 'occupied'
     | 'empty'

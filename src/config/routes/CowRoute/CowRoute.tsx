@@ -12,61 +12,75 @@ import DetailMilkBatch from '@screens/MilkBatchManagementScreen/components/Detai
 import CreateMilkBatch from '@screens/MilkBatchManagementScreen/components/CreateMilkBatch/CreateMilkBatch';
 import QrCodeScanCow from '@screens/MilkBatchManagementScreen/components/CreateMilkBatch/components/QrCodeScanCow/QrCodeScanCow';
 import DetailFormMilk from '@screens/MilkBatchManagementScreen/components/CreateMilkBatch/components/DetailFormMilk/DetailFormMilk';
+import PenDetailScreen from '@screens/PenManagementScreen/components/Detail/PenDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
 const CowRoute: React.FC = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name='Home' component={HomeScreen} options={{ headerShown: false }} />
       <Stack.Screen
-        name='CowManagementScreen'
+        name="Home"
+        component={HomeScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="CowManagementScreen"
         component={CowManagementScreen}
         options={{ title: 'Cow Management' }}
       />
-      <Stack.Screen name='CowDetails' component={DetailCow} options={{ title: 'Cow Details' }} />
       <Stack.Screen
-        name='CreateCowScreen'
+        name="CowDetails"
+        component={DetailCow}
+        options={{ title: 'Cow Details' }}
+      />
+      <Stack.Screen
+        name="CreateCowScreen"
         component={CreateCow}
         options={{ title: 'Create Cow' }}
       />
       <Stack.Screen
-        name='AreaManagementScreen'
+        name="AreaManagementScreen"
         component={AreaManagementScreen}
         options={{ title: 'Area Management' }}
       />
       <Stack.Screen
-        name='AreaDetail'
+        name="AreaDetail"
         component={AreaDetailScreen}
         options={{ title: 'Area Details' }}
       />
       <Stack.Screen
-        name='PenManagementScreen'
+        name="PenManagementScreen"
         component={PenManagementScreen}
         options={{ title: 'Pen Management' }}
       />
       <Stack.Screen
-        name='MilkBatchManagementScreen'
+        name="PenDetailScreen"
+        component={PenDetailScreen}
+        options={{ title: 'Pen Details' }}
+      />
+      <Stack.Screen
+        name="MilkBatchManagementScreen"
         component={MilkBatchManagementScreen}
         options={{ title: 'Milk Batch Management' }}
       />
       <Stack.Screen
-        name='MilkBatchDetail'
+        name="MilkBatchDetail"
         component={DetailMilkBatch}
         options={{ title: 'Milk Batch Details' }}
       />
       <Stack.Screen
-        name='QrCodeScanCow'
+        name="QrCodeScanCow"
         component={QrCodeScanCow}
         options={{ title: 'Scan Cow' }}
       />
       <Stack.Screen
-        name='DetailFormMilk'
+        name="DetailFormMilk"
         component={DetailFormMilk}
         options={{ title: 'Daily Milk Form' }}
       />
       <Stack.Screen
-        name='CreateMilkBatch'
+        name="CreateMilkBatch"
         component={CreateMilkBatch}
         options={{ title: 'Create Milk Batch' }}
       />

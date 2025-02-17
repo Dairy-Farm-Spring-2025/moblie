@@ -4,14 +4,13 @@ import TagUI from '@components/UI/TagUI';
 import TextTitle from '@components/UI/TextTitle';
 import apiClient from '@config/axios/axios';
 import { Pen } from '@model/Pen/Pen';
+import { useNavigation } from '@react-navigation/native';
 import { formatFilteredType, formatType } from '@utils/format';
 import React, { useState } from 'react';
 import {
-  Dimensions,
   FlatList,
   Image,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -21,9 +20,11 @@ const fetchPens = async (): Promise<Pen[]> => {
   const response = await apiClient.get('/pens'); // Replace with your endpoint
   return response.data;
 };
+
 const PenManagementScreen = () => {
   const [searchText, setSearchText] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('name');
+  const navigation = useNavigation();
 
   const {
     data: pens,
@@ -50,6 +51,10 @@ const PenManagementScreen = () => {
     }
     return false;
   });
+
+  const handleNavigationToDetail = (penId: number) => {
+    (navigation.navigate as any)('PenDetailScreen', { penId });
+  };
 
   return (
     <View style={styles.container}>
@@ -81,7 +86,11 @@ const PenManagementScreen = () => {
           keyExtractor={(item: Pen) => item.penId.toString()}
           renderItem={({ item, index }) => {
             return (
-              <TouchableOpacity style={styles.card}>
+              <TouchableOpacity
+                key={index}
+                style={styles.card}
+                onPress={() => handleNavigationToDetail(item.penId)}
+              >
                 <Image
                   source={{
                     uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpK3Y1ipYNGi4zHyfKLSMX0586IhS2E5xAog&s',
@@ -132,11 +141,15 @@ const PenManagementScreen = () => {
 const styles = StyleSheet.create({
   container: { paddingTop: 10, marginBottom: 120, height: '100%' },
   card: {
-    flex: 1,
     margin: 10,
-    padding: 15,
+    width: '45%', // For 2-column grid layout
+    padding: 10,
     borderRadius: 10,
     backgroundColor: '#f8f9fa',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   cardImage: {
     width: '100%',

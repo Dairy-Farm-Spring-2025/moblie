@@ -130,11 +130,15 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   card: {
-    flex: 1,
     margin: 10,
-    padding: 15,
+    width: '45%', // For 2-column grid layout
+    padding: 10,
     borderRadius: 10,
     backgroundColor: '#f8f9fa',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   cardImage: {
     width: '100%',
