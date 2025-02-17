@@ -8,9 +8,10 @@ import { useDispatch } from 'react-redux';
 import { logout } from '@core/store/authSlice';
 
 const ProfileScreen: React.FC = () => {
-  const { isAuthenticated, role, userId, fullName } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated, roleName, userId, fullName } = useSelector(
+    (state: RootState) => state.auth
+  );
   const dispatch: AppDispatch = useDispatch();
-  console.log(fullName);
 
   return (
     <Layout>
@@ -21,14 +22,17 @@ const ProfileScreen: React.FC = () => {
             size={100}
             source={{ uri: 'https://via.placeholder.com/150' }} // Replace with actual image
           />
-          <Text variant='headlineMedium' style={styles.fullName}>
+          <Text variant="headlineMedium" style={styles.fullName}>
             {fullName}
           </Text>
-          <Text variant='bodyMedium' style={styles.role}>
-            {role || 'No Role'}
+          <Text variant="bodyMedium" style={styles.role}>
+            {roleName || 'No Role'}
           </Text>
           <Badge
-            style={[styles.statusBadge, { backgroundColor: isAuthenticated ? 'green' : 'red' }]}
+            style={[
+              styles.statusBadge,
+              { backgroundColor: isAuthenticated ? 'green' : 'red' },
+            ]}
           >
             {isAuthenticated ? 'Authenticated' : 'Not Authenticated'}
           </Badge>
@@ -39,14 +43,14 @@ const ProfileScreen: React.FC = () => {
         {/* User Info */}
         <List.Section>
           <List.Item
-            title='User ID'
+            title="User ID"
             description={userId || 'N/A'}
-            left={() => <List.Icon icon='identifier' />}
+            left={() => <List.Icon icon="identifier" />}
           />
           <List.Item
-            title='Role'
-            description={role || 'N/A'}
-            left={() => <List.Icon icon='account' />}
+            title="Role"
+            description={roleName || 'N/A'}
+            left={() => <List.Icon icon="account" />}
           />
         </List.Section>
 
@@ -54,16 +58,16 @@ const ProfileScreen: React.FC = () => {
 
         {/* Actions */}
         <View style={styles.actions}>
-          <Button mode='contained' style={styles.button}>
+          <Button mode="contained" style={styles.button}>
             Edit Profile
           </Button>
-          <Button mode='contained-tonal' style={styles.button}>
+          <Button mode="contained-tonal" style={styles.button}>
             Change Password
           </Button>
           <Button
             onPress={() => dispatch(logout())}
-            mode='outlined'
-            textColor='red'
+            mode="outlined"
+            textColor="red"
             style={styles.button}
           >
             Logout

@@ -1,17 +1,23 @@
-import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, SectionList } from 'react-native';
 import Layout from '@components/layout/Layout';
-import { useSelector } from 'react-redux';
 import { RootState } from '@core/store/store';
-import { useNavigation } from '@react-navigation/native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import {
-  faCow,
-  faDrumstickBite,
   faChartArea,
-  faSliders,
+  faCow,
   faDolly,
+  faNotesMedical,
+  faSliders,
 } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import {
+  SectionList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { useSelector } from 'react-redux';
 
 type NavigationProp = {
   navigate: (screen: string) => void;
@@ -46,6 +52,12 @@ const HomeScreen: React.FC = () => {
       icon: faDolly,
       screen: 'MilkBatchManagementScreen',
     },
+    {
+      id: 'HealthRecord',
+      title: 'Health Record',
+      icon: faNotesMedical,
+      screen: 'HealthRecordScreen',
+    },
   ];
 
   const sections = [{ title: 'Dairy Management', data: managementCards }];
@@ -68,16 +80,18 @@ const HomeScreen: React.FC = () => {
           style={styles.card}
           onPress={() => card.screen && navigation.navigate(card.screen)}
         >
-          <FontAwesomeIcon icon={card.icon} size={50} color='black' />
+          <FontAwesomeIcon icon={card.icon} size={50} color="black" />
           <Text style={styles.cardTitle}>{card.title}</Text>
         </TouchableOpacity>
       ))}
     </View>
   );
 
-  const renderSectionHeader = ({ section: { title } }: { section: { title: string } }) => (
-    <Text style={styles.sectionHeader}>{title}</Text>
-  );
+  const renderSectionHeader = ({
+    section: { title },
+  }: {
+    section: { title: string };
+  }) => <Text style={styles.sectionHeader}>{title}</Text>;
 
   return (
     <Layout isScrollable={false}>

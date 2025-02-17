@@ -37,9 +37,9 @@ const SignInScreen: React.FC = () => {
       const response = await AccountServices.login(email, password);
       if (response && response.data) {
         Alert.alert('Success', `Welcome, ${response.data?.fullName}`);
-        const { accessToken, roleName, userId, fullName } = response.data;
+        const { accessToken, roleName } = response.data;
         if (roleName.toLowerCase() !== 'manager') {
-          dispatch(login({ role: roleName, userId, fullName, token: accessToken }));
+          dispatch(login({ ...response.data, isAuthenticated: true }));
         } else {
           Alert.alert('Error', 'You are not authorized to access this page.');
           return;
@@ -61,24 +61,28 @@ const SignInScreen: React.FC = () => {
 
       <TextInput
         style={styles.input}
-        placeholder='Email'
-        placeholderTextColor='#777'
-        keyboardType='email-address'
+        placeholder="Email"
+        placeholderTextColor="#777"
+        keyboardType="email-address"
         value={email}
         onChangeText={setEmail}
       />
       <TextInput
         style={styles.input}
-        placeholder='Password'
-        placeholderTextColor='#777'
+        placeholder="Password"
+        placeholderTextColor="#777"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
       />
 
-      <TouchableOpacity style={styles.signInButton} onPress={handleSignIn} disabled={loading}>
+      <TouchableOpacity
+        style={styles.signInButton}
+        onPress={handleSignIn}
+        disabled={loading}
+      >
         {loading ? (
-          <ActivityIndicator color='#fff' />
+          <ActivityIndicator color="#fff" />
         ) : (
           <Text style={styles.signInButtonText}>Sign In</Text>
         )}

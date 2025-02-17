@@ -110,26 +110,31 @@ const SearchInput = ({
 
 const styles = StyleSheet.create({
   filterButton: {
-    padding: 10,
+    padding: 7,
+    backgroundColor: 'white',
+    borderRadius: 7,
   },
   searchFilterContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 10,
+    gap: 10,
   },
   searchInput: {
     height: 40,
     borderColor: '#ccc',
     borderWidth: 1,
-    marginLeft: 10,
     marginRight: 10,
     borderRadius: 5,
     paddingLeft: 10,
     flex: 1,
+    backgroundColor: 'white',
   },
   searchButton: {
-    padding: 10,
+    padding: 7,
+    backgroundColor: 'white',
+    borderRadius: 7,
   },
   modalOverlay: {
     flex: 1,
