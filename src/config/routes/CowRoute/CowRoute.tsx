@@ -13,6 +13,9 @@ import CreateMilkBatch from '@screens/MilkBatchManagementScreen/components/Creat
 import QrCodeScanCow from '@screens/MilkBatchManagementScreen/components/CreateMilkBatch/components/QrCodeScanCow/QrCodeScanCow';
 import DetailFormMilk from '@screens/MilkBatchManagementScreen/components/CreateMilkBatch/components/DetailFormMilk/DetailFormMilk';
 import PenDetailScreen from '@screens/PenManagementScreen/components/Detail/PenDetailScreen';
+import HealthRecordScreen from '@screens/HealthRecord/HealthRecordScreen';
+import QrScanCow from '@components/QrScanCow/QrScanCow';
+import CowHealthRecord from '@screens/HealthRecord/components/CowHealthRecord/CowHealthRecord';
 
 const Stack = createNativeStackNavigator();
 
@@ -83,6 +86,21 @@ const CowRoute: React.FC = () => {
         name="CreateMilkBatch"
         component={CreateMilkBatch}
         options={{ title: 'Create Milk Batch' }}
+      />
+      <Stack.Screen
+        name="HealthRecordScreen"
+        component={HealthRecordScreen}
+        options={{ title: 'Health Record' }}
+      />
+      <Stack.Screen
+        name="QrScanCow"
+        component={QrScanCow}
+        options={{ title: 'Scan Cow' }}
+      />
+      <Stack.Screen
+        name="CowHealthRecord"
+        component={CowHealthRecord}
+        options={{ title: 'Cow Health Record' }}
       />
 
       {/* You can add more screens related to 'Cow' here in the future */}

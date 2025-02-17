@@ -1,51 +1,58 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface AuthState {
+  accessToken: string;
+  refreshToken: string;
+  userId: number;
+  fullName: string;
+  roleName: string;
   isAuthenticated: boolean;
-  role: string | null; // User role (e.g., "admin", "user")
-  userId: number | null; // User ID
-  fullName: string | null; // User's full name
-  token: string | null; // Auth token
 }
 
 const initialState: AuthState = {
   isAuthenticated: false,
-  role: null,
-  userId: null,
-  fullName: null,
-  token: null,
+  roleName: '',
+  userId: 0,
+  fullName: '',
+  accessToken: '',
+  refreshToken: '',
 };
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    login(state, action: PayloadAction<{ role: string; userId: number; fullName: string; token: string }>) {
-      state.isAuthenticated = true;
-      state.role = action.payload.role;
-      state.userId = action.payload.userId;
-      state.fullName = action.payload.fullName;
-      state.token = action.payload.token;
-    },
-    logout(state) {
-      state.isAuthenticated = false;
-      state.role = null;
-      state.userId = null;
-      state.fullName = null;
-      state.token = null;
-    },
+    login: (state, action) => action.payload,
+    logout: () => initialState,
     setAuthState(
       state,
-      action: PayloadAction<{ isAuthenticated: boolean; role: string | null; userId: number | null; fullName: string | null; token: string | null }>
+      action: PayloadAction<{
+        isAuthenticated: boolean;
+        role: string | null;
+        userId: number | null;
+        fullName: string | null;
+        token: string | null;
+      }>
     ) {
-      state.isAuthenticated = action.payload.isAuthenticated;
-      state.role = action.payload.role;
-      state.userId = action.payload.userId;
-      state.fullName = action.payload.fullName;
-      state.token = action.payload.token;
+      // state.isAuthenticated = action.payload.isAuthenticated;
+      // state.role = action.payload.role;
+      // state.userId = action.payload.userId;
+      // state.fullName = action.payload.fullName;
+      // state.token = action.payload.token;
+    },
+    updateNewAccessToken: (state, action) => {
+      if (state) {
+        state.accessToken = action.payload;
+      } else {
+        return {
+          ...initialState,
+          accessToken: action.payload,
+        };
+      }
     },
   },
 });
 
-export const { login, logout, setAuthState } = authSlice.actions;
+export const { login, logout, setAuthState, updateNewAccessToken } =
+  authSlice.actions;
 export default authSlice.reducer;
