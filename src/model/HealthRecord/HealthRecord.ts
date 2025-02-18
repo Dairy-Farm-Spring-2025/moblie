@@ -1,4 +1,4 @@
-import { Cow } from '@model/Cow/Cow';
+import { Cow, Severity } from '@model/Cow/Cow';
 
 export type Period =
   | 'milkingCow'
@@ -23,8 +23,17 @@ export type HealthRecord = {
 
 export type HealthRecordForm = {
   status: 'good' | 'fair' | 'poor' | 'critical' | 'recovering';
-  weight: number;
-  size: number;
+  weight: number | any;
+  size: number | any;
   period: Period;
+  cowId: number;
+};
+
+export type IllnessPayload = {
+  symptoms: string;
+  severity: Severity;
+  startDate: string;
+  endDate: string;
+  prognosis: string;
   cowId: number;
 };
