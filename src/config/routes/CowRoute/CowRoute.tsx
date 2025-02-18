@@ -17,12 +17,14 @@ import HealthRecordScreen from '@screens/HealthRecord/HealthRecordScreen';
 import QrScanCow from '@components/QrScanCow/QrScanCow';
 import CowHealthRecord from '@screens/HealthRecord/components/CowHealthRecord/CowHealthRecord';
 import CowHealthInforScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/CowHealthInforScreen';
+import HealthRecordFormScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/HealthRecordFormScreen/HealthRecordFormScreen';
+import IllnessCowRecordScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/IllnessCowRecordScreen';
 
 const Stack = createNativeStackNavigator();
 
 const CowRoute: React.FC = () => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName="Home">
       <Stack.Screen
         name="Home"
         component={HomeScreen}
@@ -106,7 +108,17 @@ const CowRoute: React.FC = () => {
       <Stack.Screen
         name="CowHealthInforScreen"
         component={CowHealthInforScreen}
-        options={{ title: 'Cow Health Record' }}
+        options={{ title: 'Timeline Health Record' }}
+      />
+      <Stack.Screen
+        name="HealthRecordFormScreen"
+        component={HealthRecordFormScreen}
+        options={{ title: 'Health Record Form' }}
+      />
+      <Stack.Screen
+        name="IllnessCowRecordScreen"
+        component={IllnessCowRecordScreen}
+        options={{ title: 'Illness Cow Record' }}
       />
       {/* You can add more screens related to 'Cow' here in the future */}
     </Stack.Navigator>
