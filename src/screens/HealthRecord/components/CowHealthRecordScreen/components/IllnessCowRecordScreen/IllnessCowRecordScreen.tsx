@@ -1,21 +1,51 @@
-import { IllnessCow } from '@model/Cow/Cow';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { IllnessCow, IllnessDetail } from '@model/Cow/Cow';
+import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { SegmentedButtons, Text } from 'react-native-paper';
+import { ActivityIndicator, SegmentedButtons, Text } from 'react-native-paper';
 import IllnessCowRecordForm from './components/IllnessCowRecordForm.tsx/IllnessCowRecordForm';
+import IllnessDetailRecord from './components/IllnessDetail/IllnessDetail';
+import apiClient from '@config/axios/axios';
+import { useQuery } from 'react-query';
 type RootStackParamList = {
-  IllnessCowRecordScreen: { illness: IllnessCow };
+  IllnessCowRecordScreen: { illnessId: number };
 };
 
 type IllnessCowRecordScreenRouteProp = RouteProp<
   RootStackParamList,
   'IllnessCowRecordScreen'
 >;
+const fetchIllness = async (illnessId: number): Promise<IllnessCow> => {
+  const response = await apiClient.get(`/illness/${illnessId}`);
+  return response.data;
+};
 const IllnessCowRecordScreen = () => {
   const [selectedSegment, setSelectedSegment] = useState('illness-record');
   const route = useRoute<IllnessCowRecordScreenRouteProp>();
-  const { illness } = route.params;
+  const { illnessId } = route.params;
+  const {
+    data: illness,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery(['illness', illnessId], () => fetchIllness(illnessId));
+
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
+
+  if (isError || !illness) {
+    return (
+      <Text
+        style={{
+          color: 'red',
+        }}
+      >
+        Failed to load cow details
+      </Text>
+    );
+  }
+
   return (
     <View
       style={{
@@ -37,12 +67,13 @@ const IllnessCowRecordScreen = () => {
             padding: 10,
           }}
         >
-          <IllnessCowRecordForm illness={illness} />
+          <IllnessCowRecordForm illness={illness as IllnessCow} />
         </ScrollView>
       ) : (
-        <View>
-          <Text>tex11111t</Text>
-        </View>
+        <IllnessDetailRecord
+          illness={illness as IllnessCow}
+          refetch={refetch}
+        />
       )}
     </View>
   );

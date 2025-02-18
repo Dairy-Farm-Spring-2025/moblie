@@ -3,10 +3,10 @@ import { Dimensions, ScrollView } from 'react-native';
 import RenderHTML from 'react-native-render-html';
 
 interface RenderQuillHTMLProps {
-  htmlContent: string;
+  htmlContent?: string;
 }
 
-const RenderHtmlComponent = ({ htmlContent }: RenderQuillHTMLProps) => {
+const RenderHtmlComponent = ({ htmlContent = '' }: RenderQuillHTMLProps) => {
   const screenWidth = Dimensions.get('window').width;
 
   return (
