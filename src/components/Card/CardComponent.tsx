@@ -12,6 +12,7 @@ export const LeftContent = (props: any) => <Avatar.Icon {...props} />;
 
 interface CardComponentProps extends CardProps {
   children: React.ReactNode;
+  style?: any;
 }
 
 interface CardTitleProps {
@@ -29,8 +30,8 @@ interface CardContentCustomProps extends CardContentProps {
   children: React.ReactNode;
 }
 
-const CardComponent = ({ children }: CardComponentProps) => {
-  return <Card style={styles.card}>{children}</Card>;
+const CardComponent = ({ children, style }: CardComponentProps) => {
+  return <Card style={[styles.card, style]}>{children}</Card>;
 };
 
 const Title = ({ title, subTitle, leftContent, ...props }: CardTitleProps) => {
@@ -64,10 +65,10 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
+    shadowOffset: { width: 3, height: 4 },
+    shadowOpacity: 0.1,
     shadowRadius: 3,
-    elevation: 5,
+    elevation: 2,
   },
 });
 
