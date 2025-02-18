@@ -16,6 +16,7 @@ import apiClient from '@config/axios/axios';
 import { Cow } from '@model/Cow/Cow';
 import { Ionicons } from '@expo/vector-icons';
 import { useListCowMilkStore } from '@core/store/ListCowDailyMilk/useListCowMilkStore';
+import { formatCamelCase } from '@utils/format';
 
 type RootStackParamList = {
   DetailFormMilk: { cowId: number; volume: number };
@@ -73,7 +74,7 @@ const DetailFormMilk: React.FC = () => {
         <View style={styles.card}>
           <Text style={styles.title}>{cow.name}</Text>
           <Text style={styles.text}>
-            🐄 <Text style={styles.bold}>Status:</Text> {cow.cowStatus}
+            🐄 <Text style={styles.bold}>Status:</Text> {formatCamelCase(cow.cowStatus)}
           </Text>
           <Text style={styles.text}>
             📅 <Text style={styles.bold}>Date of Birth:</Text> {cow.dateOfBirth}
@@ -87,10 +88,10 @@ const DetailFormMilk: React.FC = () => {
             </Text>
           )}
           <Text style={styles.text}>
-            📍 <Text style={styles.bold}>Origin:</Text> {cow.cowOrigin}
+            📍 <Text style={styles.bold}>Origin:</Text> {formatCamelCase(cow.cowOrigin)}
           </Text>
           <Text style={styles.text}>
-            ⚧ <Text style={styles.bold}>Gender:</Text> {cow.gender}
+            ⚧ <Text style={styles.bold}>Gender:</Text> {formatCamelCase(cow.gender)}
           </Text>
           <Text style={styles.text}>
             🏡 <Text style={styles.bold}>In Pen:</Text> {cow.inPen ? 'Yes' : 'No'}
@@ -156,7 +157,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 10,
     position: 'absolute',
-    bottom: 0,
+    bottom: 35,
     left: 0,
     right: 0,
     borderTopWidth: 1,
