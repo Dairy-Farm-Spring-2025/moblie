@@ -4,6 +4,7 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { useQuery } from 'react-query';
 import apiClient from '@config/axios/axios';
 import { MilkBatch } from '@model/Milk/MilkBatch/MilkBatch';
+import { formatCamelCase } from '@utils/format';
 
 type RootStackParamList = {
   DetailMilkBatch: { milkBatchId: number };
@@ -59,7 +60,7 @@ const DetailMilkBatch: React.FC = () => {
         <View style={styles.card} key={dailyMilk.dailyMilkId}>
           <Text style={styles.sectionTitle}>Daily Milk #{dailyMilk.dailyMilkId}</Text>
           <Text style={styles.text}>
-            🕓 <Text style={styles.bold}>Shift:</Text> {dailyMilk.shift}
+            🕓 <Text style={styles.bold}>Shift:</Text> {formatCamelCase(dailyMilk.shift)}
           </Text>
           <Text style={styles.text}>
             📅 <Text style={styles.bold}>Milk Date:</Text>{' '}
@@ -78,7 +79,7 @@ const DetailMilkBatch: React.FC = () => {
             👩‍🔧 <Text style={styles.bold}>Name:</Text> {dailyMilk.worker.name}
           </Text>
           <Text style={styles.text}>
-            📞 <Text style={styles.bold}>Phone:</Text> {dailyMilk.worker.phoneNumber}
+            📞 <Text style={styles.bold}>Phone:</Text> {dailyMilk.worker.phoneNumber || 'N/A'}
           </Text>
           <Text style={styles.text}>
             📧 <Text style={styles.bold}>Email:</Text> {dailyMilk.worker.email}
@@ -96,7 +97,7 @@ const DetailMilkBatch: React.FC = () => {
             🐄 <Text style={styles.bold}>Name:</Text> {dailyMilk.cow.name}
           </Text>
           <Text style={styles.text}>
-            🐄 <Text style={styles.bold}>Status:</Text> {dailyMilk.cow.cowStatus}
+            🐄 <Text style={styles.bold}>Status:</Text> {formatCamelCase(dailyMilk.cow.cowStatus)}
           </Text>
           <Text style={styles.text}>
             📅 <Text style={styles.bold}>Date of Birth:</Text>{' '}
@@ -107,7 +108,7 @@ const DetailMilkBatch: React.FC = () => {
             {new Date(dailyMilk.cow.dateOfEnter).toLocaleDateString()}
           </Text>
           <Text style={styles.text}>
-            📍 <Text style={styles.bold}>Origin:</Text> {dailyMilk.cow.cowOrigin}
+            📍 <Text style={styles.bold}>Origin:</Text> {formatCamelCase(dailyMilk.cow.cowOrigin)}
           </Text>
         </View>
       ))}

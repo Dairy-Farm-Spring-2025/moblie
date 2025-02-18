@@ -7,6 +7,8 @@ import {
   TouchableWithoutFeedback,
   Alert,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { Text, TextInput, Card, Button } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
@@ -52,64 +54,69 @@ const CreateMilkBatch = () => {
     };
 
     console.log(data);
-
     mutation.mutate(data);
+    (navigation.navigate as any)('MilkBatchManagementScreen');
   };
 
   return (
-    <ScrollView>
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <View style={styles.container}>
-          {/* Cow Information Card */}
-          <View style={styles.detailCow}>
-            {listCowMilk.map((c, index) => (
-              <CardDetailCow
-                key={index}
-                dailyMilk={{ volume: c.dailyMilk?.volume || 0, cowId: c.cow?.cowId || 0 }}
-                cow={c.cow}
-                width={200}
-                onPress={() =>
-                  (navigation.navigate as any)('DetailFormMilk', {
-                    cowId: c.cow?.cowId,
-                    volume: c.dailyMilk?.volume || 0,
-                    screens: 'CreateMilkBatch',
-                  })
-                }
-              />
-            ))}
-          </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={{ flex: 1 }}
+    >
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+          <View style={styles.container}>
+            {/* Cow Information Card */}
+            <View style={styles.detailCow}>
+              {listCowMilk.map((c, index) => (
+                <CardDetailCow
+                  key={index}
+                  dailyMilk={{ volume: c.dailyMilk?.volume || 0, cowId: c.cow?.cowId || 0 }}
+                  cow={c.cow}
+                  width={200}
+                  onPress={() =>
+                    (navigation.navigate as any)('DetailFormMilk', {
+                      cowId: c.cow?.cowId,
+                      volume: c.dailyMilk?.volume || 0,
+                      screens: 'CreateMilkBatch',
+                    })
+                  }
+                />
+              ))}
+            </View>
 
-          {/* Milk Batch Form */}
-          <View style={styles.formContainer}>
-            <Text style={styles.cardTitle}>Shift:</Text>
-            <Picker selectedValue={shift} onValueChange={setShift}>
-              <Picker.Item label='Shift 1 (0h-6h)' value='shiftOne' />
-              <Picker.Item label='Shift 2 (6h-12h)' value='shiftTwo' />
-              <Picker.Item label='Shift 3 (12h-18h)' value='shiftThree' />
-              <Picker.Item label='Shift 4 (18h-24h)' value='shiftFour' />
-            </Picker>
-          </View>
+            {/* Milk Batch Form */}
+            <View style={styles.formContainer}>
+              <Text style={styles.cardTitle}>Shift:</Text>
+              <Picker numberOfLines={2} selectedValue={shift} onValueChange={setShift}>
+                <Picker.Item label='Shift 1 (0h-6h)' value='shiftOne' />
+                <Picker.Item label='Shift 2 (6h-12h)' value='shiftTwo' />
+                <Picker.Item label='Shift 3 (12h-18h)' value='shiftThree' />
+                <Picker.Item label='Shift 4 (18h-24h)' value='shiftFour' />
+              </Picker>
+            </View>
 
-          <FloatingButton
-            onPress={() =>
-              (navigation.navigate as any)('QrCodeScanCow', { screens: 'DetailFormMilk' })
-            }
-          />
+            <FloatingButton
+              onPress={() =>
+                (navigation.navigate as any)('QrCodeScanCow', { screens: 'DetailFormMilk' })
+              }
+            />
 
-          {/* Submit Button at Bottom */}
-          <View style={styles.buttonContainer}>
-            <Button
-              mode='contained'
-              onPress={handleSubmit}
-              loading={mutation.isLoading}
-              disabled={mutation.isLoading}
-            >
-              Submit
-            </Button>
+            {/* Submit Button at Bottom */}
+            <View style={styles.buttonContainer}>
+              <Button
+                mode='contained'
+                onPress={handleSubmit}
+                loading={mutation.isLoading}
+                disabled={mutation.isLoading}
+              >
+                Submit
+              </Button>
+            </View>
           </View>
-        </View>
-      </TouchableWithoutFeedback>
-    </ScrollView>
+        </TouchableWithoutFeedback>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -133,7 +140,11 @@ const styles = StyleSheet.create({
     flexGrow: 1, // Pushes content up, leaving space for the button at the bottom
   },
   buttonContainer: {
-    paddingBottom: 4, // Add some spacing for better appearance
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 16, // Add some spacing for better appearance
   },
 });
 

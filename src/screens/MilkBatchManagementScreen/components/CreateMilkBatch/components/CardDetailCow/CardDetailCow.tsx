@@ -4,6 +4,7 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Tooltip } from 'react-native-paper';
 import { Cow } from '@model/Cow/Cow';
+import { formatCamelCase } from '@utils/format';
 
 interface CardDetailCowProps {
   cow: Cow | undefined;
@@ -31,7 +32,7 @@ const CardDetailCow: React.FC<CardDetailCowProps> = ({ cow, onPress, width, dail
         </View>
         <View style={styles.cardContent}>
           <Text style={styles.cardTitle}>Daily Milk Volume: {dailyMilk?.volume}</Text>
-          <Text style={styles.cardDetails}>Origin: {cow?.cowOrigin}</Text>
+          <Text style={styles.cardDetails}>Origin: {formatCamelCase(cow?.cowOrigin || '')}</Text>
           <Text style={styles.cardDetails}>Born: {cow?.dateOfBirth}</Text>
         </View>
       </View>
