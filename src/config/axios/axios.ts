@@ -1,6 +1,7 @@
+import { logout, updateNewAccessToken } from '@core/store/authSlice';
 import { RootState, store } from '@core/store/store';
 import axios from 'axios';
-import { updateNewAccessToken } from '@core/store/authSlice';
+import { Alert } from 'react-native';
 
 const baseURL = 'http://34.124.196.11:8080/api/v1';
 // Create an Axios instance
@@ -13,7 +14,7 @@ const refreshToken = async (refreshToken: string) => {
   if (!refreshToken) {
     throw new Error('No refresh token available');
   }
-  const response = await axios.post(`${baseURL}users/refresh`, refreshToken, {
+  const response = await axios.post(`${baseURL}/users/refresh`, refreshToken, {
     headers: {
       'Content-Type': 'application/json',
     },
@@ -64,11 +65,10 @@ apiClient.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return apiClient(originalRequest);
       } catch (error: any) {
-        console.error('Error refreshing token:', error.message);
+        store.dispatch(logout());
+        Alert.alert('Warning', 'Expired Token');
         return Promise.reject(error);
       }
-    } else {
-      console.error('Network or server error:', error.message);
     }
     return Promise.reject(error);
   }
