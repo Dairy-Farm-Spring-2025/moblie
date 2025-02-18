@@ -19,6 +19,7 @@ import CowHealthRecord from '@screens/HealthRecord/components/CowHealthRecord/Co
 import CowHealthInforScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/CowHealthInforScreen';
 import HealthRecordFormScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/HealthRecordFormScreen/HealthRecordFormScreen';
 import IllnessCowRecordScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/IllnessCowRecordScreen';
+import IllnessDetailForm from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/components/IllnessDetail/components/IllnessDetailForm';
 
 const Stack = createNativeStackNavigator();
 
@@ -107,6 +108,11 @@ const CowRoute: React.FC = () => {
         name='IllnessCowRecordScreen'
         component={IllnessCowRecordScreen}
         options={{ title: 'Illness Cow Record' }}
+      />
+      <Stack.Screen
+        name="IllnessDetailForm"
+        component={IllnessDetailForm}
+        options={{ title: 'Illness Detail' }}
       />
       {/* You can add more screens related to 'Cow' here in the future */}
     </Stack.Navigator>

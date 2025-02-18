@@ -57,7 +57,7 @@ const CowHealthInforScreen = () => {
         <TouchableOpacity
           onPress={() =>
             (navigator as any).navigate('IllnessCowRecordScreen', {
-              illness: data,
+              illnessId: data.illnessId,
             })
           }
         >

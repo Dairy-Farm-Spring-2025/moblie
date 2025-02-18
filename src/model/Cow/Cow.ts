@@ -101,6 +101,7 @@ export type IllnessDetail = {
   description: string;
   status: StatusIllnessDetail;
   veterinarian: UserProfileData;
+  vaccine: any;
 };
 
 export type StatusIllnessDetail =
