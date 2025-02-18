@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: 'absolute',
-    bottom: 0,
+    bottom: 30,
     left: 0,
     right: 0,
     paddingHorizontal: 16, // Add some spacing for better appearance

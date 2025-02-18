@@ -3,6 +3,8 @@ import {
   faHome,
   faInfoCircle,
   faUser,
+  faListCheck,
+  faQrcode,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -12,25 +14,57 @@ import AboutScreen from '@screens/AboutScreen/AboutScreen';
 import ProfileScreen from '@screens/ProfileScreen/ProfileScreen';
 import SignInScreen from '@screens/SignInScreen/SignInScreen';
 import React from 'react';
-import { Alert } from 'react-native';
+import { Alert, Settings, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import CowRoute from './CowRoute/CowRoute';
+import SettingsScreen from '@screens/SettingsScreen/SettingsScreen';
+import TaskScreen from '@screens/TaskScreen/TaskScreen';
 
 type RootStackParamList = {
   Home: undefined;
   About: undefined;
   Profile: undefined;
   Login: undefined;
+  Task: undefined;
+  QRScan: undefined;
   Welcome: undefined;
 };
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
+const CustomTabBarButton = ({ children, onPress }: any) => {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={{
+        top: -20,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <View
+        style={{
+          width: 70,
+          height: 70,
+          borderRadius: 35,
+          backgroundColor: '#007BFF',
+          justifyContent: 'center', // Ensure content is centered
+          alignItems: 'center', // Ensure content is centered
+          shadowColor: '#000',
+          shadowOpacity: 0.25,
+          shadowOffset: { width: 0, height: 3 },
+          shadowRadius: 5,
+          elevation: 5,
+        }}
+      >
+        {children}
+      </View>
+    </TouchableOpacity>
+  );
+};
 
 export const Routes: React.FC = () => {
-  const { isAuthenticated, roleName } = useSelector(
-    (state: RootState) => state.auth
-  );
+  const { isAuthenticated, roleName } = useSelector((state: RootState) => state.auth);
   // useEffect(() => {
   //   if (isAuthenticated === false) {
   //     (navigation as any).navigate('Login');
@@ -48,24 +82,52 @@ export const Routes: React.FC = () => {
         <Tab.Navigator
           screenOptions={({ route }) => ({
             headerShown: false,
-            tabBarIcon: ({ color, size }) => {
+            tabBarStyle: {
+              backgroundColor: '#fff',
+              height: 65,
+              shadowColor: '#000',
+              shadowOpacity: 0.1,
+            },
+            tabBarIcon: ({ color, size, focused }) => {
               let icon = faHome;
               if (route.name === 'About') icon = faInfoCircle;
               if (route.name === 'Profile') icon = faUser;
+              if (route.name === 'Task') icon = faListCheck;
 
-              return <FontAwesomeIcon icon={icon} size={size} color={color} />;
+              return (
+                <FontAwesomeIcon icon={icon} size={size} color={focused ? '#007BFF' : color} />
+              );
             },
             tabBarActiveTintColor: '#007BFF',
             tabBarInactiveTintColor: 'gray',
           })}
         >
-          <Tab.Screen name="Home" component={CowRoute} />
-          <Tab.Screen name="About" component={AboutScreen} />
-          <Tab.Screen name="Profile" component={ProfileScreen} />
+          <Tab.Screen name='Home' component={CowRoute} />
+          <Tab.Screen name='Task' component={TaskScreen} />
+          <Tab.Screen
+            name='QRScan'
+            component={SettingsScreen}
+            options={{
+              tabBarLabel: '',
+              tabBarActiveTintColor: '#333',
+              tabBarInactiveTintColor: 'gray',
+              tabBarIcon: ({ color, size, focused }) => (
+                <FontAwesomeIcon
+                  style={{ marginTop: 10 }}
+                  icon={faQrcode}
+                  size={size + 8} // Làm icon lớn hơn một chút
+                  color={focused ? '#fff' : '#f8f8f8'}
+                />
+              ),
+              tabBarButton: (props) => <CustomTabBarButton {...props} />,
+            }}
+          />
+          <Tab.Screen name='About' component={AboutScreen} />
+          <Tab.Screen name='Profile' component={ProfileScreen} />
         </Tab.Navigator>
       ) : (
         <Stack.Navigator>
-          <Stack.Screen name="Login" component={SignInScreen} />
+          <Stack.Screen name='Login' component={SignInScreen} />
         </Stack.Navigator>
       )}
     </NavigationContainer>
