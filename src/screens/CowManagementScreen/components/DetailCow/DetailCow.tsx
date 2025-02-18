@@ -3,6 +3,7 @@ import RenderHtmlComponent from '@components/RenderHTML/RenderHtmlComponent';
 import apiClient from '@config/axios/axios';
 import { Cow } from '@model/Cow/Cow';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { formatCamelCase } from '@utils/format';
 import React from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useQuery } from 'react-query';
@@ -51,7 +52,7 @@ const DetailCow: React.FC = () => {
         <View style={styles.card}>
           <Text style={styles.title}>{cow.name}</Text>
           <Text style={styles.text}>
-            🐄 <Text style={styles.bold}>Status:</Text> {cow.cowStatus}
+            🐄 <Text style={styles.bold}>Status:</Text> {formatCamelCase(cow.cowStatus)}
           </Text>
           <Text style={styles.text}>
             📅 <Text style={styles.bold}>Date of Birth:</Text> {cow.dateOfBirth}
@@ -65,16 +66,16 @@ const DetailCow: React.FC = () => {
             </Text>
           )}
           <Text style={styles.text}>
-            📍 <Text style={styles.bold}>Origin:</Text> {cow.cowOrigin}
+            📍 <Text style={styles.bold}>Origin:</Text> {formatCamelCase(cow.cowOrigin)}
           </Text>
           <Text style={styles.text}>
-            ⚧ <Text style={styles.bold}>Gender:</Text> {cow.gender}
+            ⚧ <Text style={styles.bold}>Gender:</Text> {formatCamelCase(cow.gender)}
           </Text>
           <Text style={styles.text}>
             🏡 <Text style={styles.bold}>In Pen:</Text> {cow.inPen ? 'Yes' : 'No'}
           </Text>
           <Text style={styles.text}>
-            🛠 <Text style={styles.bold}>Type:</Text> {cow.cowType.name}
+            🛠 <Text style={styles.bold}>Type:</Text> {formatCamelCase(cow.cowType.name)}
           </Text>
           <View
             style={{
@@ -95,10 +96,10 @@ const DetailCow: React.FC = () => {
             🔹 <Text style={styles.bold}>Type ID:</Text> {cow.cowType.cowTypeId}
           </Text>
           <Text style={styles.text}>
-            🔹 <Text style={styles.bold}>Name:</Text> {cow.cowType.name}
+            🔹 <Text style={styles.bold}>Name:</Text> {formatCamelCase(cow.cowType.name)}
           </Text>
           <Text style={styles.text}>
-            🔹 <Text style={styles.bold}>Status:</Text> {cow.cowType.status}
+            🔹 <Text style={styles.bold}>Status:</Text> {formatCamelCase(cow.cowType.status)}
           </Text>
           <Text style={styles.text}>
             🔹 <Text style={styles.bold}>Description:</Text> {cow.cowType.description}
