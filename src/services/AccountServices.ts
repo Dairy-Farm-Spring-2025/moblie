@@ -20,7 +20,7 @@ class AccountServices {
       const { code, message, data } = response;
       console.log(code, message, data);
 
-      if (response.code === 200 && response.message === 'Success') {
+      if (response.code === 200 && response.message === 'Login successfully') {
         const { accessToken, refreshToken, userId, fullName, roleName } = response.data!;
 
         // Store tokens and user info in AsyncStorage
