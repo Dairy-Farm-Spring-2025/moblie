@@ -3,15 +3,9 @@ import RenderHtmlComponent from '@components/RenderHTML/RenderHtmlComponent';
 import apiClient from '@config/axios/axios';
 import { Cow } from '@model/Cow/Cow';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { formatCamelCase } from '@utils/format';
 import React from 'react';
-import {
-  Dimensions,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Dimensions, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useQuery } from 'react-query';
 
 type RootStackParamList = {
@@ -30,11 +24,7 @@ const DetailCow: React.FC = () => {
   const navigator = useNavigation();
   const { cowId } = route.params;
 
-  const {
-    data: cow,
-    isLoading,
-    isError,
-  } = useQuery(['cow', cowId], () => fetchCowDetails(cowId));
+  const { data: cow, isLoading, isError } = useQuery(['cow', cowId], () => fetchCowDetails(cowId));
 
   const handleNavigateHealthResponse = () => {
     (navigator as any).navigate('CowHealthInforScreen', {
@@ -56,16 +46,13 @@ const DetailCow: React.FC = () => {
     <View style={{ flex: 1 }}>
       <ScrollView style={styles.container}>
         {/* Ảnh bò */}
-        <Image
-          source={{ uri: 'https://picsum.photos/400/400' }}
-          style={styles.image}
-        />
+        <Image source={{ uri: 'https://picsum.photos/400/400' }} style={styles.image} />
 
         {/* Thông tin chi tiết */}
         <View style={styles.card}>
           <Text style={styles.title}>{cow.name}</Text>
           <Text style={styles.text}>
-            🐄 <Text style={styles.bold}>Status:</Text> {cow.cowStatus}
+            🐄 <Text style={styles.bold}>Status:</Text> {formatCamelCase(cow.cowStatus)}
           </Text>
           <Text style={styles.text}>
             📅 <Text style={styles.bold}>Date of Birth:</Text> {cow.dateOfBirth}
@@ -79,17 +66,16 @@ const DetailCow: React.FC = () => {
             </Text>
           )}
           <Text style={styles.text}>
-            📍 <Text style={styles.bold}>Origin:</Text> {cow.cowOrigin}
+            📍 <Text style={styles.bold}>Origin:</Text> {formatCamelCase(cow.cowOrigin)}
           </Text>
           <Text style={styles.text}>
-            ⚧ <Text style={styles.bold}>Gender:</Text> {cow.gender}
+            ⚧ <Text style={styles.bold}>Gender:</Text> {formatCamelCase(cow.gender)}
           </Text>
           <Text style={styles.text}>
-            🏡 <Text style={styles.bold}>In Pen:</Text>{' '}
-            {cow.inPen ? 'Yes' : 'No'}
+            🏡 <Text style={styles.bold}>In Pen:</Text> {cow.inPen ? 'Yes' : 'No'}
           </Text>
           <Text style={styles.text}>
-            🛠 <Text style={styles.bold}>Type:</Text> {cow.cowType.name}
+            🛠 <Text style={styles.bold}>Type:</Text> {formatCamelCase(cow.cowType.name)}
           </Text>
           <View
             style={{
@@ -110,14 +96,13 @@ const DetailCow: React.FC = () => {
             🔹 <Text style={styles.bold}>Type ID:</Text> {cow.cowType.cowTypeId}
           </Text>
           <Text style={styles.text}>
-            🔹 <Text style={styles.bold}>Name:</Text> {cow.cowType.name}
+            🔹 <Text style={styles.bold}>Name:</Text> {formatCamelCase(cow.cowType.name)}
           </Text>
           <Text style={styles.text}>
-            🔹 <Text style={styles.bold}>Status:</Text> {cow.cowType.status}
+            🔹 <Text style={styles.bold}>Status:</Text> {formatCamelCase(cow.cowType.status)}
           </Text>
           <Text style={styles.text}>
-            🔹 <Text style={styles.bold}>Description:</Text>{' '}
-            {cow.cowType.description}
+            🔹 <Text style={styles.bold}>Description:</Text> {cow.cowType.description}
           </Text>
           <Text style={styles.text}>
             📅 <Text style={styles.bold}>Created At:</Text>{' '}
