@@ -157,6 +157,8 @@ const HealthRecordScreen = () => {
         data={sortedHealthRecord}
         keyExtractor={(item: HealthRecord) => item.healthRecordId.toString()}
         renderItem={renderHealthRecordItem}
+        onEndReached={() => refetch()}
+        onEndReachedThreshold={0.5}
       />
       <FloatingButton
         onPress={() =>
