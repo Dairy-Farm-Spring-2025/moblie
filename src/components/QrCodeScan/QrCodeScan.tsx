@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { CameraType, CameraView, useCameraPermissions } from 'expo-camera';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused hook
 
 type QrCodeScanProps = {
   params: {
@@ -11,9 +12,20 @@ type QrCodeScanProps = {
 
 const QrCodeScan = () => {
   const [facing, setFacing] = useState<CameraType>('back');
+  const [isCameraActive, setIsCameraActive] = useState(false); // Set to false initially
   const [permission, requestPermission] = useCameraPermissions();
   const navigation = useNavigation();
+  const isFocused = useIsFocused(); // Hook to check if the screen is focused
+
   const route = useRoute<RouteProp<QrCodeScanProps>>();
+
+  useEffect(() => {
+    if (isFocused) {
+      setIsCameraActive(true); // Activate the camera when the screen is focused
+    } else {
+      setIsCameraActive(false); // Deactivate the camera when the screen is blurred
+    }
+  }, [isFocused]); // Re-run when the screen focus state changes
 
   if (!permission) {
     return <View />;
@@ -31,13 +43,13 @@ const QrCodeScan = () => {
   }
 
   const handleScanQRCode = (scannedData: string) => {
-    console.log('Scanned Data:', scannedData); // Debugging output
+    console.log('Scanned Data:', scannedData);
 
     if (scannedData.includes('/cow-management/')) {
       const cowIdMatch = scannedData.match(/\/cow-management\/(\d+)/);
       if (cowIdMatch) {
         const cowId = Number(cowIdMatch[1]);
-        (navigation.navigate as any)('CowDetailScreen', { cowId });
+        (navigation.navigate as any)('CowDetails', { cowId });
       }
     } else if (scannedData.includes('/health-management/')) {
       const healthIdMatch = scannedData.match(/\/health-management\/(\d+)/);
@@ -54,33 +66,35 @@ const QrCodeScan = () => {
     setFacing((current) => (current === 'back' ? 'front' : 'back'));
   }
 
+  function handleCancel() {
+    setIsCameraActive(false);
+    (navigation.navigate as any)('Home');
+  }
+
   return (
     <View style={styles.container}>
-      <CameraView
-        facing={facing}
-        style={styles.camera}
-        barcodeScannerSettings={{
-          barcodeTypes: ['qr'],
-        }}
-        onBarcodeScanned={({ data }) => handleScanQRCode(data)}
-      >
-        {/* Black overlay for the rest of the camera area */}
-        <View style={styles.overlay} />
+      {isCameraActive && (
+        <CameraView
+          facing={facing}
+          style={styles.camera}
+          barcodeScannerSettings={{
+            barcodeTypes: ['qr'],
+          }}
+          onBarcodeScanned={({ data }) => handleScanQRCode(data)}
+        >
+          <View style={styles.overlay} />
+          <View style={styles.scanWindow}>
+            <Text style={styles.scanText}>Scan within this area</Text>
+          </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
+              <Text style={styles.text}>Flip Camera</Text>
+            </TouchableOpacity>
+          </View>
+        </CameraView>
+      )}
 
-        {/* Scanning area window */}
-        <View style={styles.scanWindow}>
-          <Text style={styles.scanText}>Scan within this area</Text>
-        </View>
-
-        {/* The camera view will have the "Flip Camera" button at the bottom */}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-            <Text style={styles.text}>Flip Camera</Text>
-          </TouchableOpacity>
-        </View>
-      </CameraView>
-
-      <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
+      <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
         <Text style={styles.buttonText}>Cancel</Text>
       </TouchableOpacity>
     </View>
@@ -100,9 +114,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: 'absolute',
-    bottom: 100, // Align at the bottom of the screen
+    bottom: 100,
     left: '45%',
-    transform: [{ translateX: -75 }], // Center the button horizontally
+    transform: [{ translateX: -75 }],
   },
   button: {
     backgroundColor: '#007BFF',
@@ -132,7 +146,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     borderRadius: 5,
   },
-  // Styling the scanning window
   scanWindow: {
     position: 'absolute',
     top: '35%',
@@ -143,7 +156,7 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.5)', // Semi-transparent background
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
     borderRadius: 10,
   },
   scanText: {
@@ -151,14 +164,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
   },
-  // Black overlay for the rest of the camera area
   overlay: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)', // Semi-transparent black overlay
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
 });
 

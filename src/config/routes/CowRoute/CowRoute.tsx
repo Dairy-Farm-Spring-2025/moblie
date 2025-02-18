@@ -25,6 +25,7 @@ const Stack = createNativeStackNavigator();
 const CowRoute: React.FC = () => {
   return (
     <Stack.Navigator initialRouteName='Home'>
+      <Stack.Screen name='Home' component={HomeScreen} options={{ headerShown: false }} />
       <Stack.Screen
         name='CowManagementScreen'
         component={CowManagementScreen}

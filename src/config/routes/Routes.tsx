@@ -19,6 +19,8 @@ import { useSelector } from 'react-redux';
 import CowRoute from './CowRoute/CowRoute';
 import SettingsScreen from '@screens/SettingsScreen/SettingsScreen';
 import TaskScreen from '@screens/TaskScreen/TaskScreen';
+import QrCodeScan from '@components/QrCodeScan/QrCodeScan';
+import QrScanRoute from './QrScanRoute/QrScanRoute';
 
 type RootStackParamList = {
   Home: undefined;
@@ -106,7 +108,7 @@ export const Routes: React.FC = () => {
           <Tab.Screen name='Task' component={TaskScreen} />
           <Tab.Screen
             name='QRScan'
-            component={SettingsScreen}
+            component={QrScanRoute}
             options={{
               tabBarLabel: '',
               tabBarActiveTintColor: '#333',
