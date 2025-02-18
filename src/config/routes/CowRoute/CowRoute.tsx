@@ -16,6 +16,7 @@ import PenDetailScreen from '@screens/PenManagementScreen/components/Detail/PenD
 import HealthRecordScreen from '@screens/HealthRecord/HealthRecordScreen';
 import QrScanCow from '@components/QrScanCow/QrScanCow';
 import CowHealthRecord from '@screens/HealthRecord/components/CowHealthRecord/CowHealthRecord';
+import CowHealthInforScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/CowHealthInforScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -102,7 +103,11 @@ const CowRoute: React.FC = () => {
         component={CowHealthRecord}
         options={{ title: 'Cow Health Record' }}
       />
-
+      <Stack.Screen
+        name="CowHealthInforScreen"
+        component={CowHealthInforScreen}
+        options={{ title: 'Cow Health Record' }}
+      />
       {/* You can add more screens related to 'Cow' here in the future */}
     </Stack.Navigator>
   );
