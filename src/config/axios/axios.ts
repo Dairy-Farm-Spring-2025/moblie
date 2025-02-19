@@ -1,5 +1,6 @@
 import { logout, updateNewAccessToken } from '@core/store/authSlice';
 import { RootState, store } from '@core/store/store';
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { Alert } from 'react-native';
 
@@ -52,7 +53,12 @@ apiClient.interceptors.response.use(
   async (error) => {
     // Handle response errors
     const originalRequest = error.config;
-    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
       try {
         const state: RootState = store.getState();
         const user = state.auth;
@@ -63,6 +69,7 @@ apiClient.interceptors.response.use(
       } catch (error: any) {
         store.dispatch(logout());
         Alert.alert('Warning', 'Expired Token');
+        (useNavigation() as any).navigate('Login');
         return Promise.reject(error);
       }
     }

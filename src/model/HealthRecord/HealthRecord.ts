@@ -46,3 +46,14 @@ export type IllnessDetailPayload = {
   itemId: number;
   illnessId: number;
 };
+
+export type IllnessDetailPlan = {
+  fields: IllnessDetailPlanPayload[];
+};
+
+export type IllnessDetailPlanPayload = {
+  date: string;
+  description: string;
+  itemId: number | any;
+  illnessId: number;
+};

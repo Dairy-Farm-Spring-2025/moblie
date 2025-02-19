@@ -72,7 +72,6 @@ const styles = StyleSheet.create({
   error: {
     color: 'red',
     fontSize: 14,
-    marginTop: 5,
   },
 });
 
