@@ -1,18 +1,12 @@
 import CardComponent from '@components/Card/CardComponent';
+import { Ionicons } from '@expo/vector-icons';
 import { HealthResponse } from '@model/Cow/Cow';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import React from 'react';
-import {
-  Alert,
-  StyleSheet,
-  Touchable,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { Card, Text } from 'react-native-paper';
-import Timeline from 'react-native-timeline-flatlist';
-import { Ionicons } from '@expo/vector-icons';
 import { formatType } from '@utils/format';
+import React from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Text } from 'react-native-paper';
+import Timeline from 'react-native-timeline-flatlist';
 
 type RootStackParamList = {
   CowHealthInforScreen: { healthResponses: HealthResponse[] };

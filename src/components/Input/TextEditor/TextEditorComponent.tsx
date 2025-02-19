@@ -143,12 +143,7 @@ const TextEditorComponent: React.FC<TextEditorComponentProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 5,
+    marginBottom: 10,
   },
   required: {
     color: 'red',

@@ -29,11 +29,6 @@ type IllnessDetailFormRouteProp = RouteProp<
   'IllnessDetailForm'
 >;
 
-const fetchVeterinarians = async (): Promise<UserProfileData> => {
-  const response = await apiClient.get(`/users/veterinarians`);
-  return response.data;
-};
-
 const fetchVeterinariansProfile = async (
   id: string
 ): Promise<UserProfileData> => {
@@ -54,19 +49,13 @@ const fetchItemDetail = async (id: string): Promise<Item> => {
 const IllnessDetailForm = () => {
   const route = useRoute<IllnessDetailFormRouteProp>();
   const { illnessDetail, illnessId, refetch } = route.params;
-  const [idVet, setIdVet] = useState(illnessDetail.veterinarian.id.toString());
   const [idItem, setIdItem] = useState(illnessDetail.vaccine.itemId.toString());
   const [date, setDate] = useState(new Date(illnessDetail.date).toISOString());
-  const [optionVeterinarian, setOptionVeterinarian] = useState<any[]>([]);
   const [optionsItemVaccine, setOptionsItemVaccine] = useState<any[]>([]);
-  console.log(illnessDetail);
-  const { data: veterinarians } = useQuery<UserProfileData[]>(
-    'veterinarians',
-    fetchVeterinarians as any
-  );
+
   const { data: veterinarianProfile } = useQuery<UserProfileData>(
-    ['veterinarians', idVet],
-    () => fetchVeterinariansProfile(idVet)
+    ['veterinarians', illnessDetail.veterinarian.id],
+    () => fetchVeterinariansProfile(illnessDetail.veterinarian.id.toString())
   );
   const { data: itemDetail } = useQuery<Item>(['items', idItem], () =>
     fetchItemDetail(idItem)
@@ -81,20 +70,13 @@ const IllnessDetailForm = () => {
     defaultValues: {
       description: illnessDetail?.description,
       illnessId: illnessId,
-      itemId: illnessDetail?.vaccine?.itemId,
+      itemId: idItem,
       status: illnessDetail?.status,
       veterinarianId: illnessDetail?.veterinarian?.id,
     },
   });
 
   useEffect(() => {
-    if (veterinarians) {
-      const filteredVete = veterinarians.map((element: UserProfileData) => ({
-        value: element.id,
-        label: element.name,
-      }));
-      setOptionVeterinarian(filteredVete);
-    }
     if (items) {
       setOptionsItemVaccine(
         items
@@ -107,7 +89,7 @@ const IllnessDetailForm = () => {
           }))
       );
     }
-  }, [veterinarians]);
+  }, [items]);
 
   const handleStartDateChange = (_: any, selectedDate: any) => {
     setDate(selectedDate?.toISOString());
@@ -197,26 +179,11 @@ const IllnessDetailForm = () => {
               gap: 10,
             }}
           >
-            <FormItem
-              control={control}
-              label="Veterinarian"
-              name="veterinarianId"
-              render={({ field: { onChange, value } }) => (
-                <CustomPicker
-                  onValueChange={(value) => {
-                    onChange(value);
-                    setIdVet(value);
-                  }}
-                  selectedValue={value}
-                  options={optionVeterinarian}
-                />
-              )}
-            />
             {veterinarianProfile && (
               <CardComponent style={styles.card}>
                 <CardComponent.Title
                   title={veterinarianProfile.name}
-                  subTitle={veterinarianProfile.dob}
+                  subTitle={veterinarianProfile.roleId.name}
                   leftContent={() => (
                     <Avatar.Image
                       source={{

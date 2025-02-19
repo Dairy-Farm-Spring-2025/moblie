@@ -5,14 +5,16 @@ import { Ionicons } from '@expo/vector-icons';
 type FloatingButtonProps = {
   onPress: () => void;
   icon?: any;
+  style?: any;
 };
 
 const FloatingButton: React.FC<FloatingButtonProps> = ({
   onPress,
   icon = 'add',
+  style,
 }) => {
   return (
-    <TouchableOpacity style={styles.floatingButton} onPress={onPress}>
+    <TouchableOpacity style={[styles.floatingButton, style]} onPress={onPress}>
       <Ionicons name={icon ? icon : 'add'} size={32} color="white" />
     </TouchableOpacity>
   );

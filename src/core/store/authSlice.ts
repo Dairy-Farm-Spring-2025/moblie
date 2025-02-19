@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Alert } from 'react-native';
 
 interface AuthState {
   accessToken: string;
@@ -41,14 +42,9 @@ const authSlice = createSlice({
       // state.token = action.payload.token;
     },
     updateNewAccessToken: (state, action) => {
-      if (state) {
-        state.accessToken = action.payload;
-      } else {
-        return {
-          ...initialState,
-          accessToken: action.payload,
-        };
-      }
+      Alert.alert('Refresh check');
+      console.log(action.payload);
+      state.accessToken = action.payload;
     },
   },
 });

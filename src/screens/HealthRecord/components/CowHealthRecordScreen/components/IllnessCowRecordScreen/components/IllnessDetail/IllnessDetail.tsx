@@ -1,4 +1,5 @@
 import CardComponent from '@components/Card/CardComponent';
+import FloatingButton from '@components/FloatingButton/FloatingButton';
 import { IllnessCow, IllnessDetail } from '@model/Cow/Cow';
 import { useNavigation } from '@react-navigation/native';
 import { formatType } from '@utils/format';
@@ -69,6 +70,14 @@ const IllnessDetailRecord = ({ illness, refetch }: IllnessDetailProps) => {
               padding: 20,
             },
           } as any
+        }
+      />
+      <FloatingButton
+        onPress={() =>
+          (navigator as any).navigate('IllnessDetailPlanForm', {
+            illnessId: illness.illnessId,
+            refetch: refetch,
+          })
         }
       />
     </View>
