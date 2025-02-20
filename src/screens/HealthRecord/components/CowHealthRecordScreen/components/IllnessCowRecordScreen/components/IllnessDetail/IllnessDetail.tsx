@@ -1,12 +1,14 @@
 import CardComponent from '@components/Card/CardComponent';
 import FloatingButton from '@components/FloatingButton/FloatingButton';
+import apiClient from '@config/axios/axios';
 import { IllnessCow, IllnessDetail } from '@model/Cow/Cow';
 import { useNavigation } from '@react-navigation/native';
 import { formatType } from '@utils/format';
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { IconButton, Text } from 'react-native-paper';
 import Timeline from 'react-native-timeline-flatlist';
+import { useMutation } from 'react-query';
 
 interface IllnessDetailProps {
   illness: IllnessCow;
@@ -20,6 +22,32 @@ const IllnessDetailRecord = ({ illness, refetch }: IllnessDetailProps) => {
     title: element.status,
     data: element,
   }));
+
+  const { mutate } = useMutation(
+    async (id: number) => await apiClient.delete(`illness-detail/${id}`),
+    {
+      onSuccess: (response: any) => {
+        Alert.alert('Success', response.message);
+        refetch();
+      },
+      onError: (error: any) => {
+        Alert.alert('Error', error.response.data.message);
+      },
+    }
+  );
+
+  const deleteItemDetail = async (id: number) => {
+    Alert.alert('Are you sure to delete this item detail', '', [
+      {
+        text: 'Yes',
+        onPress: () => mutate(id),
+      },
+      {
+        text: 'No',
+      },
+    ]);
+  };
+
   const renderItem = (rowData: any) => {
     const { data } = rowData;
     return (
@@ -33,7 +61,20 @@ const IllnessDetailRecord = ({ illness, refetch }: IllnessDetailProps) => {
         }
       >
         <CardComponent style={styles.card}>
-          <CardComponent.Title title={formatType(rowData.title)} />
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}
+          >
+            <CardComponent.Title title={formatType(rowData.title)} />
+            <IconButton
+              icon={'delete-outline'}
+              size={20}
+              iconColor="red"
+              onPress={() => deleteItemDetail(data.illnessDetailId)}
+            />
+          </View>
           <CardComponent.Content>
             <View
               style={{
@@ -52,7 +93,10 @@ const IllnessDetailRecord = ({ illness, refetch }: IllnessDetailProps) => {
   return (
     <View style={{ flex: 1 }}>
       <Timeline
-        data={timelineData}
+        data={timelineData.sort(
+          (a: any, b: any) =>
+            new Date(b?.time)?.getTime() - new Date(a?.time)?.getTime()
+        )}
         renderDetail={renderItem}
         innerCircle="icon"
         circleSize={25}
