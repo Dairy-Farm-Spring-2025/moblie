@@ -20,7 +20,7 @@ const refreshToken = async (refreshToken: string) => {
       'Content-Type': 'application/json',
     },
   });
-  const { accessToken } = response.data;
+  const { accessToken } = response.data.data;
   return accessToken;
 };
 
@@ -53,11 +53,7 @@ apiClient.interceptors.response.use(
   async (error) => {
     // Handle response errors
     const originalRequest = error.config;
-    if (
-      error.response &&
-      error.response.status === 401 &&
-      !originalRequest._retry
-    ) {
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
         const state: RootState = store.getState();
