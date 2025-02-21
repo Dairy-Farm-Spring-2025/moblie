@@ -15,10 +15,30 @@ interface CardCowProps {
 const CardCow: React.FC<CardCowProps> = ({ cow, onPress, width }) => {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
-      <Image
-        source={{ uri: 'https://picsum.photos/200/300' }} // Replace with cow image
-        style={styles.cardImage}
-      />
+      <View style={styles.imageContainer}>
+        <Image
+          source={{ uri: 'https://picsum.photos/200/300' }} // Replace with cow image
+          style={styles.cardImage}
+        />
+        {cow?.inPen ? (
+          <View style={styles.overlay}>
+            <Text style={styles.overlayText}>{`${cow.penResponse.name}`}</Text>
+          </View>
+        ) : (
+          <View style={styles.overlay}>
+            <Text style={styles.overlayText}>{`Pen: No`}</Text>
+          </View>
+        )}
+        {cow?.inPen ? (
+          <View style={styles.overlayArea}>
+            <Text style={styles.overlayTextArea}>{`${cow.penResponse.area.name}`}</Text>
+          </View>
+        ) : (
+          <View style={styles.overlayArea}>
+            <Text style={styles.overlayTextArea}>{`Area: No`}</Text>
+          </View>
+        )}
+      </View>
       <View style={styles.cardWrapper}>
         <View style={styles.cardHeader}>
           <Text style={styles.cardTitle}>{cow?.name}</Text>
@@ -48,6 +68,36 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
+  },
+  imageContainer: {
+    position: 'relative',
+    width: '100%',
+  },
+  overlay: {
+    position: 'absolute',
+    bottom: 8,
+    right: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 5,
+  },
+  overlayText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  overlayArea: {
+    position: 'absolute',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 5,
+  },
+  overlayTextArea: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   cardImage: {
     width: '100%',
