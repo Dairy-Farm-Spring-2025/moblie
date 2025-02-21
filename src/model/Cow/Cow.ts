@@ -1,3 +1,4 @@
+import { Area } from '@model/Area/Area';
 import { HealthRecord } from '@model/HealthRecord/HealthRecord';
 
 // Enum for Cow Status
@@ -49,14 +50,28 @@ export interface Cow {
   dateOfBirth: string;
   dateOfEnter: string;
   dateOfOut: string | null;
+  weight: number;
+  size: number;
   description: string;
   cowOrigin: CowOrigin;
   gender: Gender;
+  inPen: boolean;
+  penResponse: PenResponse;
+  healthInfoResponses: HealthResponse[];
   cowType: CowType;
   createdAt: string;
   updatedAt: string;
-  inPen: boolean;
-  healthInfoResponses: HealthResponse[];
+}
+
+export interface PenResponse {
+  penId: number;
+  name: string;
+  description: string;
+  penType: string;
+  penStatus: string;
+  area: Area;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type HealthResponse = {
@@ -104,11 +119,6 @@ export type IllnessDetail = {
   vaccine: any;
 };
 
-export type StatusIllnessDetail =
-  | 'observed'
-  | 'treated'
-  | 'cured'
-  | 'ongoing'
-  | 'deceased';
+export type StatusIllnessDetail = 'observed' | 'treated' | 'cured' | 'ongoing' | 'deceased';
 
 export type Severity = 'mild' | 'moderate' | 'severe' | 'critical';

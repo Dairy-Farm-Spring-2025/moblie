@@ -18,7 +18,9 @@ const fetchCows = async (): Promise<Cow[]> => {
 const CowManagementScreen: React.FC = () => {
   const [selectedSegment, setSelectedSegment] = useState('list');
   const [searchText, setSearchText] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState<'name' | 'status' | 'type'>('name');
+  const [selectedFilter, setSelectedFilter] = useState<'name' | 'origin' | 'type' | 'pen' | 'area'>(
+    'name'
+  );
 
   // Use React Query's useQuery hook to fetch cows data
   const { data: cows, isLoading, isError, error } = useQuery<Cow[]>('cows', fetchCows);
@@ -29,10 +31,14 @@ const CowManagementScreen: React.FC = () => {
   const filteredCows = cows?.filter((cow) => {
     if (selectedFilter === 'name') {
       return cow.name?.toLowerCase().includes(searchText.toLowerCase());
-    } else if (selectedFilter === 'status') {
-      return cow.cowStatus?.toLowerCase().includes(searchText.toLowerCase());
+    } else if (selectedFilter === 'origin') {
+      return cow.cowOrigin?.toLowerCase().includes(searchText.toLowerCase());
     } else if (selectedFilter === 'type') {
       return cow.cowType?.name.toLowerCase().includes(searchText.toLowerCase());
+    } else if (selectedFilter === 'pen') {
+      return cow.penResponse?.name.toLowerCase().includes(searchText.toLowerCase());
+    } else if (selectedFilter === 'area') {
+      return cow.penResponse?.area.name.toLowerCase().includes(searchText.toLowerCase());
     }
     return false;
   });
@@ -63,7 +69,7 @@ const CowManagementScreen: React.FC = () => {
           onChangeText={setSearchText}
           value={searchText}
           typeFiltered={{
-            filteredType: ['name', 'status', 'type'],
+            filteredType: ['name', 'origin', 'type', 'pen', 'area'],
             setSelectedFiltered: setSelectedFilter,
           }}
         />

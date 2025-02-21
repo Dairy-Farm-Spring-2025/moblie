@@ -89,6 +89,63 @@ const DetailCow: React.FC = () => {
           </View>
         </View>
 
+        {/* Thông tin chuồng bò */}
+        {cow.inPen && (
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>🐮 Pen Info</Text>
+            <Text style={styles.text}>
+              🔹 <Text style={styles.bold}>ID:</Text> {cow.penResponse.penId}
+            </Text>
+            <Text style={styles.text}>
+              🔹 <Text style={styles.bold}>Name:</Text> {formatCamelCase(cow.penResponse.name)}
+            </Text>
+            <Text style={styles.text}>
+              🔹 <Text style={styles.bold}>Status:</Text>{' '}
+              {formatCamelCase(cow.penResponse.penStatus)}
+            </Text>
+            <Text style={styles.text}>
+              🔹 <Text style={styles.bold}>Description:</Text> {cow.penResponse.description}
+            </Text>
+            <Text style={styles.text}>
+              📅 <Text style={styles.bold}>Created At:</Text>{' '}
+              {new Date(cow.penResponse.createdAt).toLocaleString()}
+            </Text>
+            <Text style={styles.text}>
+              📅 <Text style={styles.bold}>Updated At:</Text>{' '}
+              {new Date(cow.penResponse.updatedAt).toLocaleString()}
+            </Text>
+          </View>
+        )}
+
+        {/* Thông tin chuồng bò */}
+        {cow.inPen && (
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>🐮 Area Info</Text>
+            <Text style={styles.text}>
+              🔹 <Text style={styles.bold}>ID:</Text> {cow.penResponse.area.areaId}
+            </Text>
+            <Text style={styles.text}>
+              🔹 <Text style={styles.bold}>Name:</Text> {formatCamelCase(cow.penResponse.area.name)}
+            </Text>
+            <Text style={styles.text}>
+              🔹 <Text style={styles.bold}>Description:</Text>{' '}
+              {formatCamelCase(cow.penResponse.area.description)}
+            </Text>
+            <Text style={styles.text}>
+              🔹 <Text style={styles.bold}>Area Type:</Text>{' '}
+              {formatCamelCase(cow.penResponse.area.areaType)}
+            </Text>
+            <Text style={styles.text}>
+              📅 <Text style={styles.bold}>Created At:</Text>{' '}
+              {new Date(cow.penResponse.area.createdAt).toLocaleString()}
+            </Text>
+            <Text style={styles.text}>
+              📅 <Text style={styles.bold}>Updated At:</Text>{' '}
+              {new Date(cow.penResponse.area.updatedAt).toLocaleString()}
+            </Text>
+          </View>
+        )}
+
         {/* Thông tin loại bò */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>🐮 Cow Type Details</Text>
