@@ -49,7 +49,7 @@ const fetchItemDetail = async (id: string): Promise<Item> => {
 const IllnessDetailForm = () => {
   const route = useRoute<IllnessDetailFormRouteProp>();
   const { illnessDetail, illnessId, refetch } = route.params;
-  const [idItem, setIdItem] = useState(illnessDetail.vaccine.itemId.toString());
+  const [idItem, setIdItem] = useState(illnessDetail.vaccine.itemId);
   const [date, setDate] = useState(new Date(illnessDetail.date).toISOString());
   const [optionsItemVaccine, setOptionsItemVaccine] = useState<any[]>([]);
 
@@ -81,7 +81,8 @@ const IllnessDetailForm = () => {
       setOptionsItemVaccine(
         items
           .filter(
-            (element: Item) => element?.categoryEntity?.name === 'Vaccine'
+            (element: Item) =>
+              element?.categoryEntity?.name?.toLocaleLowerCase() === 'vaccine'
           )
           .map((element) => ({
             value: element.itemId,
@@ -89,7 +90,7 @@ const IllnessDetailForm = () => {
           }))
       );
     }
-  }, [items]);
+  }, []);
 
   const handleStartDateChange = (_: any, selectedDate: any) => {
     setDate(selectedDate?.toISOString());
