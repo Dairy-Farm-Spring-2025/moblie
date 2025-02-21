@@ -11,16 +11,14 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AboutScreen from '@screens/AboutScreen/AboutScreen';
-import ProfileScreen from '@screens/ProfileScreen/ProfileScreen';
 import SignInScreen from '@screens/SignInScreen/SignInScreen';
 import React from 'react';
-import { Alert, Settings, TouchableOpacity, View } from 'react-native';
+import { Alert, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import CowRoute from './CowRoute/CowRoute';
-import SettingsScreen from '@screens/SettingsScreen/SettingsScreen';
 import TaskScreen from '@screens/TaskScreen/TaskScreen';
-import QrCodeScan from '@components/QrCodeScan/QrCodeScan';
 import QrScanRoute from './QrScanRoute/QrScanRoute';
+import ProfileManagementRoute from './ProfileManagementRoute/ProfileManagementRoute';
 
 type RootStackParamList = {
   Home: undefined;
@@ -125,7 +123,7 @@ export const Routes: React.FC = () => {
             }}
           />
           <Tab.Screen name='About' component={AboutScreen} />
-          <Tab.Screen name='Profile' component={ProfileScreen} />
+          <Tab.Screen name='Profile' component={ProfileManagementRoute} />
         </Tab.Navigator>
       ) : (
         <Stack.Navigator>
