@@ -14,7 +14,9 @@ import { useSiderStore } from '@core/store/sliderStore/sliderStore';
 
 const Header: React.FC = () => {
   const { isSiderVisible, toggleSider, closeSider } = useSiderStore();
-  const [siderAnimation] = useState(new Animated.Value(isSiderVisible ? 0 : -200)); // Animation
+  const [siderAnimation] = useState(
+    new Animated.Value(isSiderVisible ? 0 : -200)
+  ); // Animation
 
   const navigation = useNavigation();
 
@@ -36,18 +38,23 @@ const Header: React.FC = () => {
     <>
       <View style={styles.header}>
         <TouchableOpacity style={styles.siderTrigger} onPress={toggleSider}>
-          <FontAwesomeIcon icon={faBars} size={24} color='#000' />
+          <FontAwesomeIcon icon={faBars} size={24} color="#000" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Dairy Farm Management</Text>
         <TouchableOpacity style={styles.notificationIcon}>
-          <FontAwesomeIcon icon={faBell} size={24} color='#000' />
+          <FontAwesomeIcon icon={faBell} size={24} color="#000" />
         </TouchableOpacity>
       </View>
 
       {isSiderVisible && (
         <TouchableWithoutFeedback onPress={toggleSider}>
           <View>
-            <Animated.View style={[styles.sider, { transform: [{ translateX: siderAnimation }] }]}>
+            <Animated.View
+              style={[
+                styles.sider,
+                { transform: [{ translateX: siderAnimation }] },
+              ]}
+            >
               <TouchableOpacity onPress={() => handleNavigation('Home')}>
                 <Text style={styles.siderText}>Home</Text>
               </TouchableOpacity>
@@ -71,9 +78,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 10,
-    backgroundColor: '#f8f9fa',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    backgroundColor: 'white',
   },
   siderTrigger: {
     padding: 5,

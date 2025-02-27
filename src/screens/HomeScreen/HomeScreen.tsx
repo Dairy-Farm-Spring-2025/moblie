@@ -1,4 +1,7 @@
+import { COLORS } from '@common/GlobalStyle';
 import Layout from '@components/layout/Layout';
+import DividerUI from '@components/UI/DividerUI';
+import apiClient from '@config/axios/axios';
 import { RootState } from '@core/store/store';
 import {
   faChartArea,
@@ -8,6 +11,7 @@ import {
   faSliders,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { User } from '@model/User/User';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import {
@@ -17,14 +21,31 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { ActivityIndicator, Avatar } from 'react-native-paper';
+import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
 type NavigationProp = {
   navigate: (screen: string) => void;
 };
 
+const fetchProfile = async (): Promise<User> => {
+  try {
+    const response = await apiClient.get('/users/profile');
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error?.message || 'An error occurred while fetching the data'
+    );
+  }
+};
+
 const HomeScreen: React.FC = () => {
-  const { fullName } = useSelector((state: RootState) => state.auth);
+  const user = useSelector((state: RootState) => state.auth);
+  const { data: profileData, isLoading } = useQuery<User>(
+    'users/profile',
+    fetchProfile
+  );
   const navigation = useNavigation<NavigationProp>();
 
   const managementCards = [
@@ -80,7 +101,7 @@ const HomeScreen: React.FC = () => {
           style={styles.card}
           onPress={() => card.screen && navigation.navigate(card.screen)}
         >
-          <FontAwesomeIcon icon={card.icon} size={50} color="black" />
+          <FontAwesomeIcon icon={card.icon} size={50} color={COLORS.primary} />
           <Text style={styles.cardTitle}>{card.title}</Text>
         </TouchableOpacity>
       ))}
@@ -93,9 +114,32 @@ const HomeScreen: React.FC = () => {
     section: { title: string };
   }) => <Text style={styles.sectionHeader}>{title}</Text>;
 
+  if (isLoading) return <ActivityIndicator />;
+
   return (
     <Layout isScrollable={false}>
-      <Text style={styles.welcomeText}>Welcome, {fullName}</Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          paddingHorizontal: 16,
+          marginBottom: 10,
+        }}
+      >
+        <View style={styles.welcomeContainer}>
+          <Text>Welcome, </Text>
+          <Text style={styles.welcomeText}>
+            <Text style={{ color: COLORS.primary }}>{profileData?.name}</Text>
+          </Text>
+        </View>
+        <Avatar.Image
+          size={40}
+          source={{
+            uri: `http://34.124.196.11:8080/uploads/users/${profileData?.profilePhoto}`,
+          }}
+        />
+      </View>
+      <DividerUI />
       <SectionList
         sections={sections.map((section) => ({
           ...section,
@@ -112,11 +156,13 @@ const HomeScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  welcomeContainer: {
+    flexDirection: 'column',
+    gap: 5,
+  },
   welcomeText: {
     fontSize: 20,
     fontWeight: 'bold',
-    textAlign: 'center',
-    marginVertical: 20,
   },
   sectionList: {
     paddingHorizontal: 16,
@@ -127,7 +173,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginVertical: 8,
     textAlign: 'center',
-    backgroundColor: 'white',
+    backgroundColor: 'green',
+    color: 'white',
     padding: 10,
     borderRadius: 10,
     marginBottom: 15,
@@ -161,6 +208,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     textAlign: 'center',
+    color: COLORS.primary,
   },
 });
 

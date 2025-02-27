@@ -27,13 +27,13 @@ const Layout: React.FC<LayoutProps> = ({ children, isScrollable = true }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#ECECEC',
+    backgroundColor: '#fff',
   },
   container: {
     flexGrow: 1,
     height: '100%',
     padding: 20,
-    backgroundColor: '#ECECEC',
+    backgroundColor: '#fff',
   },
 });
 
