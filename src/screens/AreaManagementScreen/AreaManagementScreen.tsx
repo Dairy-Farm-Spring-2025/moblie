@@ -1,3 +1,4 @@
+import ContainerComponent from '@components/Container/ContainerComponent';
 import SearchInput from '@components/Input/Search/SearchInput';
 import DividerUI from '@components/UI/DividerUI';
 import TextTitle from '@components/UI/TextTitle';
@@ -13,8 +14,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons'; // or 'react-native-vector-icons/Ionicons'
 import { Text, Tooltip } from 'react-native-paper';
 import { useQuery } from 'react-query';
+import { getIconByAreaType } from '@utils/icon/areaIcon';
 const fetchAreas = async (): Promise<Area[]> => {
   const response = await apiClient.get('/areas'); // Replace with your endpoint
   return response.data;
@@ -44,7 +47,7 @@ const AreaManagementScreen = () => {
   });
 
   return (
-    <View style={styles.container}>
+    <ContainerComponent>
       <SearchInput
         filteredData={filteredArea as Area[]}
         onChangeText={setSearchText}
@@ -60,7 +63,6 @@ const AreaManagementScreen = () => {
         <Text>{(error as Error).message}</Text>
       ) : (
         <FlatList
-          numColumns={2}
           contentContainerStyle={{
             paddingBottom: 10,
           }}
@@ -71,12 +73,6 @@ const AreaManagementScreen = () => {
               style={styles.card}
               onPress={() => navigateToAreaDetail(item.areaId)}
             >
-              <Image
-                source={{
-                  uri: 'https://cdn.britannica.com/62/60562-050-2A18D89A/much-Russia-parts-climate-zone-Europe-Midwest.jpg',
-                }}
-                style={styles.cardImage}
-              />
               <View style={styles.cardWrapper}>
                 <View
                   style={{
@@ -94,11 +90,24 @@ const AreaManagementScreen = () => {
                   >
                     {item.name}
                   </Text>
-                  <Tooltip enterTouchDelay={200} title="Cow Type">
-                    <Text style={styles.areaType}>
-                      {formatType(item.areaType)}
-                    </Text>
-                  </Tooltip>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      gap: 5,
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Ionicons
+                      name={getIconByAreaType(item?.areaType)?.name as any}
+                      color={getIconByAreaType(item?.areaType)?.color}
+                      size={20}
+                    />
+                    <Tooltip enterTouchDelay={200} title="Cow Type">
+                      <Text style={styles.areaType}>
+                        {formatType(item.areaType)}
+                      </Text>
+                    </Tooltip>
+                  </View>
                 </View>
                 <DividerUI />
                 <View style={styles.cardContent}>
@@ -116,12 +125,11 @@ const AreaManagementScreen = () => {
           )}
         />
       )}
-    </View>
+    </ContainerComponent>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { paddingTop: 10, marginBottom: 120, height: '100%' },
   areaType: {
     backgroundColor: 'green',
     padding: 4,
@@ -131,7 +139,6 @@ const styles = StyleSheet.create({
   },
   card: {
     margin: 10,
-    width: '45%', // For 2-column grid layout
     padding: 10,
     borderRadius: 10,
     backgroundColor: '#f8f9fa',

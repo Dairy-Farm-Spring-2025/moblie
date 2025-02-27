@@ -9,3 +9,9 @@ export default StyleSheet.create({
     paddingTop: Platform.OS === 'android' ? 5 : 0,
   } as const,
 });
+
+export const COLORS = {
+  primary: '#166534',
+  secondary: '#E07A5F',
+  backgroundLayout: '#FFF'
+};

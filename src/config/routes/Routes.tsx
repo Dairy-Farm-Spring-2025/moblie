@@ -19,6 +19,7 @@ import CowRoute from './CowRoute/CowRoute';
 import TaskScreen from '@screens/TaskScreen/TaskScreen';
 import QrScanRoute from './QrScanRoute/QrScanRoute';
 import ProfileManagementRoute from './ProfileManagementRoute/ProfileManagementRoute';
+import { COLORS } from '@common/GlobalStyle';
 
 type RootStackParamList = {
   Home: undefined;
@@ -47,7 +48,7 @@ const CustomTabBarButton = ({ children, onPress }: any) => {
           width: 70,
           height: 70,
           borderRadius: 35,
-          backgroundColor: '#007BFF',
+          backgroundColor: COLORS.primary,
           justifyContent: 'center', // Ensure content is centered
           alignItems: 'center', // Ensure content is centered
           shadowColor: '#000',
@@ -64,7 +65,9 @@ const CustomTabBarButton = ({ children, onPress }: any) => {
 };
 
 export const Routes: React.FC = () => {
-  const { isAuthenticated, roleName } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated, roleName } = useSelector(
+    (state: RootState) => state.auth
+  );
   // useEffect(() => {
   //   if (isAuthenticated === false) {
   //     (navigation as any).navigate('Login');
@@ -95,17 +98,21 @@ export const Routes: React.FC = () => {
               if (route.name === 'Task') icon = faListCheck;
 
               return (
-                <FontAwesomeIcon icon={icon} size={size} color={focused ? '#007BFF' : color} />
+                <FontAwesomeIcon
+                  icon={icon}
+                  size={size}
+                  color={focused ? COLORS.primary : color}
+                />
               );
             },
-            tabBarActiveTintColor: '#007BFF',
+            tabBarActiveTintColor: COLORS.primary,
             tabBarInactiveTintColor: 'gray',
           })}
         >
-          <Tab.Screen name='Home' component={CowRoute} />
-          <Tab.Screen name='Task' component={TaskScreen} />
+          <Tab.Screen name="Home" component={CowRoute} />
+          <Tab.Screen name="Task" component={TaskScreen} />
           <Tab.Screen
-            name='QRScan'
+            name="QRScan"
             component={QrScanRoute}
             options={{
               tabBarLabel: '',
@@ -122,12 +129,12 @@ export const Routes: React.FC = () => {
               tabBarButton: (props) => <CustomTabBarButton {...props} />,
             }}
           />
-          <Tab.Screen name='About' component={AboutScreen} />
-          <Tab.Screen name='Profile' component={ProfileManagementRoute} />
+          <Tab.Screen name="About" component={AboutScreen} />
+          <Tab.Screen name="Profile" component={ProfileManagementRoute} />
         </Tab.Navigator>
       ) : (
         <Stack.Navigator>
-          <Stack.Screen name='Login' component={SignInScreen} />
+          <Stack.Screen name="Login" component={SignInScreen} />
         </Stack.Navigator>
       )}
     </NavigationContainer>
