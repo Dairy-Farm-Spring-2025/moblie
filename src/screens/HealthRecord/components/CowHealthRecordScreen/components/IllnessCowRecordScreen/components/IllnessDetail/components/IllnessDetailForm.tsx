@@ -12,8 +12,8 @@ import { OPTIONS_ILLNESS_DETAIL_STATUS } from '@services/data/healthStatus';
 import { getAvatar } from '@utils/getImage';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Alert, Button, ScrollView, StyleSheet, View } from 'react-native';
-import { Avatar, Text } from 'react-native-paper';
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+import { Avatar, Button, Text } from 'react-native-paper';
 import { useMutation, useQuery } from 'react-query';
 
 type RootStackParamList = {
@@ -24,14 +24,9 @@ type RootStackParamList = {
   };
 };
 
-type IllnessDetailFormRouteProp = RouteProp<
-  RootStackParamList,
-  'IllnessDetailForm'
->;
+type IllnessDetailFormRouteProp = RouteProp<RootStackParamList, 'IllnessDetailForm'>;
 
-const fetchVeterinariansProfile = async (
-  id: string
-): Promise<UserProfileData> => {
+const fetchVeterinariansProfile = async (id: string): Promise<UserProfileData> => {
   const response = await apiClient.get(`/users/${id}`);
   return response.data;
 };
@@ -57,9 +52,7 @@ const IllnessDetailForm = () => {
     ['veterinarians', illnessDetail.veterinarian.id],
     () => fetchVeterinariansProfile(illnessDetail.veterinarian.id.toString())
   );
-  const { data: itemDetail } = useQuery<Item>(['items', idItem], () =>
-    fetchItemDetail(idItem)
-  );
+  const { data: itemDetail } = useQuery<Item>(['items', idItem], () => fetchItemDetail(idItem));
   const { data: items } = useQuery<Item[]>('items', fetchItem as any);
 
   const {
@@ -81,8 +74,7 @@ const IllnessDetailForm = () => {
       setOptionsItemVaccine(
         items
           .filter(
-            (element: Item) =>
-              element?.categoryEntity?.name?.toLocaleLowerCase() === 'vaccine'
+            (element: Item) => element?.categoryEntity?.name?.toLocaleLowerCase() === 'vaccine'
           )
           .map((element) => ({
             value: element.itemId,
@@ -98,10 +90,7 @@ const IllnessDetailForm = () => {
 
   const { mutate } = useMutation(
     async (data: IllnessDetailPayload) =>
-      await apiClient.put(
-        `illness-detail/${illnessDetail.illnessDetailId}`,
-        data
-      ),
+      await apiClient.put(`illness-detail/${illnessDetail.illnessDetailId}`, data),
     {
       onSuccess: (response: any) => {
         Alert.alert('Success', response.message);
@@ -130,10 +119,8 @@ const IllnessDetailForm = () => {
       <CardComponent>
         <CardComponent.Title
           title={'Illness Detail'}
-          subTitle="You can edit information"
-          leftContent={(props: any) => (
-            <LeftContent {...props} icon="cards-heart" />
-          )}
+          subTitle='You can edit information'
+          leftContent={(props: any) => <LeftContent {...props} icon='cards-heart' />}
         />
         <CardComponent.Content>
           <View
@@ -146,14 +133,14 @@ const IllnessDetailForm = () => {
             <View style={{ width: '48%' }}>
               <FormItem
                 control={control}
-                label="Date"
-                name="date"
+                label='Date'
+                name='date'
                 render={({ field: {} }) => (
                   <DateTimePicker
                     value={new Date(date)}
-                    mode="date"
+                    mode='date'
                     is24Hour={true}
-                    display="default"
+                    display='default'
                     onChange={handleStartDateChange}
                   />
                 )}
@@ -162,8 +149,8 @@ const IllnessDetailForm = () => {
             <View style={{ width: '48%' }}>
               <FormItem
                 control={control}
-                label="Status"
-                name="status"
+                label='Status'
+                name='status'
                 render={({ field: { onChange, value } }) => (
                   <CustomPicker
                     onValueChange={onChange}
@@ -198,8 +185,8 @@ const IllnessDetailForm = () => {
             )}
             <FormItem
               control={control}
-              label="Item"
-              name="itemId"
+              label='Item'
+              name='itemId'
               render={({ field: { onChange, value } }) => (
                 <CustomPicker
                   onValueChange={(value) => {
@@ -220,17 +207,15 @@ const IllnessDetailForm = () => {
                 <CardComponent.Content>
                   <View style={styles.cardItem}>
                     <Text>Status: {itemDetail?.status}</Text>
-                    <Text>
-                      Warehouse: {itemDetail?.warehouseLocationEntity?.name}
-                    </Text>
+                    <Text>Warehouse: {itemDetail?.warehouseLocationEntity?.name}</Text>
                   </View>
                 </CardComponent.Content>
               </CardComponent>
             )}
             <FormItem
               control={control}
-              label="Description"
-              name="description"
+              label='Description'
+              name='description'
               rules={{
                 required: 'Must not be empty',
               }}
@@ -242,7 +227,9 @@ const IllnessDetailForm = () => {
                 />
               )}
             />
-            <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+            <Button mode='contained' onPress={handleSubmit(onSubmit)}>
+              Submit
+            </Button>
           </View>
         </CardComponent.Content>
       </CardComponent>
