@@ -18,6 +18,8 @@ import { useNavigation } from '@react-navigation/native';
 import { useMutation, useQuery } from 'react-query';
 import apiClient from '@config/axios/axios';
 import { User } from '@model/User/User';
+import { getAvatar } from '@utils/getImage';
+import { convertToDDMMYYYY } from '@utils/format';
 
 const fetchProfile = async (): Promise<User> => {
   try {
@@ -116,7 +118,7 @@ const ProfileScreen: React.FC = () => {
                 <Avatar.Image
                   size={150}
                   source={{
-                    uri: `http://34.124.196.11:8080/uploads/users/${profileData.profilePhoto}`,
+                    uri: `${getAvatar(profileData.profilePhoto)}`,
                   }}
                 />
               ) : (
@@ -168,13 +170,8 @@ const ProfileScreen: React.FC = () => {
             />
             <List.Item
               title='Date of Birth'
-              description={profileData?.dob || 'N/A'}
+              description={profileData?.dob ? convertToDDMMYYYY(profileData.dob) : 'N/A'}
               left={() => <List.Icon icon='calendar' />}
-            />
-            <List.Item
-              title='Status'
-              description={profileData?.status || 'N/A'}
-              left={() => <List.Icon icon='account-check' />}
             />
           </List.Section>
 

@@ -11,7 +11,17 @@ export default StyleSheet.create({
 });
 
 export const COLORS = {
-  primary: '#166534',
-  secondary: '#E07A5F',
-  backgroundLayout: '#FFF'
+  primary: '#166534', // Dark Green (default, can be for Veterinarians)
+  secondary: '#E07A5F', // Coral (can be repurposed or kept as secondary)
+  backgroundLayout: '#FFF', // White
+  veterinarian: {
+    primary: '#166534', // Dark Green for Veterinarians (reuse existing primary)
+    inactive: '#757575', // Inactive tab icons: Gray (#757575).
+    accent: '#2a802f', // Light Green for backgrounds or highlights
+  },
+  worker: {
+    primary: '#0288D1', // Medium Blue for Workers
+    inactive: '#757575', // Inactive tab icons: Gray (#757575).
+    accent: '#BBDEFB', // Light Blue for backgrounds or highlights
+  },
 };
