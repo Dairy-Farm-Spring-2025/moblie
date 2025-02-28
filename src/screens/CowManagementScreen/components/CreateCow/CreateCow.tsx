@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TextInput,
-  Button,
   StyleSheet,
   Alert,
   ScrollView,
@@ -18,6 +17,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { useQuery, useMutation } from 'react-query';
 import { CreateCowModel } from '@model/Request/CreateCow';
 import { CowType } from '@model/Cow/Cow';
+import { Button } from 'react-native-paper';
 
 const fetchCowType = async (): Promise<CowType[]> => {
   try {
@@ -168,10 +168,13 @@ const CreateCow: React.FC = () => {
         />
 
         <Button
-          title='Create Cow'
+          style={{ marginVertical: 10 }}
+          mode='contained'
           onPress={() => mutation.mutate()}
           disabled={mutation.isLoading}
-        />
+        >
+          Create
+        </Button>
       </ScrollView>
     </KeyboardAvoidingView>
   );

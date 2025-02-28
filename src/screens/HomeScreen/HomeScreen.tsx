@@ -13,15 +13,10 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { User } from '@model/User/User';
 import { useNavigation } from '@react-navigation/native';
+import { getAvatar } from '@utils/getImage';
 import React from 'react';
-import {
-  SectionList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { ActivityIndicator, Avatar } from 'react-native-paper';
+import { SectionList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Avatar, Badge } from 'react-native-paper';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
@@ -34,18 +29,13 @@ const fetchProfile = async (): Promise<User> => {
     const response = await apiClient.get('/users/profile');
     return response.data;
   } catch (error: any) {
-    throw new Error(
-      error?.message || 'An error occurred while fetching the data'
-    );
+    throw new Error(error?.message || 'An error occurred while fetching the data');
   }
 };
 
 const HomeScreen: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth);
-  const { data: profileData, isLoading } = useQuery<User>(
-    'users/profile',
-    fetchProfile
-  );
+  const { data: profileData, isLoading } = useQuery<User>('users/profile', fetchProfile);
   const navigation = useNavigation<NavigationProp>();
 
   const managementCards = [
@@ -83,6 +73,12 @@ const HomeScreen: React.FC = () => {
 
   const sections = [{ title: 'Dairy Management', data: managementCards }];
 
+  // Determine role and colors
+  const isVeterinarian = profileData?.roleId?.name?.toLowerCase() === 'veterinarians';
+  const roleColors = isVeterinarian ? COLORS.veterinarian : COLORS.worker;
+  const primaryColor = roleColors.primary;
+  const backgroundColor = roleColors.accent;
+
   // Helper function to split data into rows of 2 items each
   const formatDataIntoRows = (data: any[]) => {
     const rows = [];
@@ -95,49 +91,45 @@ const HomeScreen: React.FC = () => {
   // Render a row (2 items per row)
   const renderItem = ({ item }: { item: any[] }) => (
     <View style={styles.row}>
-      {item.map((card, index) => (
+      {item.map((card) => (
         <TouchableOpacity
           key={card.id}
-          style={styles.card}
+          style={[styles.card, { backgroundColor }]}
           onPress={() => card.screen && navigation.navigate(card.screen)}
         >
-          <FontAwesomeIcon icon={card.icon} size={50} color={COLORS.primary} />
-          <Text style={styles.cardTitle}>{card.title}</Text>
+          <FontAwesomeIcon icon={card.icon} size={50} color={'#fff'} />
+          <Text style={[styles.cardTitle, { color: '#fff' }]}>{card.title}</Text>
         </TouchableOpacity>
       ))}
     </View>
   );
 
-  const renderSectionHeader = ({
-    section: { title },
-  }: {
-    section: { title: string };
-  }) => <Text style={styles.sectionHeader}>{title}</Text>;
+  const renderSectionHeader = ({ section: { title } }: { section: { title: string } }) => (
+    <Text style={[styles.sectionHeader, { backgroundColor: primaryColor }]}>{title}</Text>
+  );
 
   if (isLoading) return <ActivityIndicator />;
 
   return (
     <Layout isScrollable={false}>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          paddingHorizontal: 16,
-          marginBottom: 10,
-        }}
-      >
+      <View style={styles.headerContainer}>
         <View style={styles.welcomeContainer}>
           <Text>Welcome, </Text>
           <Text style={styles.welcomeText}>
-            <Text style={{ color: COLORS.primary }}>{profileData?.name}</Text>
+            <Text style={{ color: primaryColor }}>{profileData?.name}</Text>
           </Text>
         </View>
-        <Avatar.Image
-          size={40}
-          source={{
-            uri: `http://34.124.196.11:8080/uploads/users/${profileData?.profilePhoto}`,
-          }}
-        />
+        <View style={styles.avatarContainer}>
+          <Avatar.Image
+            size={60}
+            source={{
+              uri: `${getAvatar(profileData?.profilePhoto || '')}`,
+            }}
+          />
+          <Badge style={[styles.roleBadge, { backgroundColor: primaryColor }]} size={20}>
+            {isVeterinarian ? 'Vet' : 'Worker'}
+          </Badge>
+        </View>
       </View>
       <DividerUI />
       <SectionList
@@ -156,12 +148,29 @@ const HomeScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    marginBottom: 10,
+    alignItems: 'center',
+  },
   welcomeContainer: {
     flexDirection: 'column',
     gap: 5,
   },
   welcomeText: {
     fontSize: 20,
+    fontWeight: 'bold',
+  },
+  avatarContainer: {
+    position: 'relative',
+  },
+  roleBadge: {
+    position: 'absolute',
+    bottom: -5,
+    right: -5,
+    color: '#FFFFFF',
     fontWeight: 'bold',
   },
   sectionList: {
@@ -173,7 +182,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginVertical: 8,
     textAlign: 'center',
-    backgroundColor: 'green',
     color: 'white',
     padding: 10,
     borderRadius: 10,
@@ -191,10 +199,9 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   card: {
-    width: '50%',
+    width: '48%',
     padding: 20,
     borderRadius: 10,
-    backgroundColor: '#f8f9fa',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
@@ -208,7 +215,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     textAlign: 'center',
-    color: COLORS.primary,
   },
 });
 

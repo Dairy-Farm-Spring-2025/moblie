@@ -1,9 +1,19 @@
 import apiClient from '@config/axios/axios';
+import { User } from '@model/User/User';
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
-import { TextInput, Button, Text, HelperText } from 'react-native-paper';
-import { useMutation } from 'react-query';
+import { TextInput, Button, Text, HelperText, Avatar, Divider } from 'react-native-paper';
+import { useMutation, useQuery } from 'react-query';
+
+const fetchProfile = async (): Promise<User> => {
+  try {
+    const response = await apiClient.get('/users/profile');
+    return response.data;
+  } catch (error) {
+    throw new Error(error?.message || 'An error occurred while fetching the data');
+  }
+};
 
 const ChangePasswordScreen = () => {
   const [oldPassword, setOldPassword] = useState('');
@@ -14,6 +24,13 @@ const ChangePasswordScreen = () => {
   const [secureTextConfirm, setSecureTextConfirm] = useState(true);
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation(); // Access the navigation object
+
+  const {
+    data: profileData,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery<User>('users/profile', fetchProfile);
 
   const mutation = useMutation(
     async (data: any) => await apiClient.put('/users/changepassword', data),
@@ -56,7 +73,29 @@ const ChangePasswordScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Change Password</Text>
+      <View style={styles.header}>
+        <View style={styles.avatarContainer}>
+          {profileData?.profilePhoto ? (
+            <Avatar.Image
+              size={150}
+              source={{
+                uri: `http://34.124.196.11:8080/uploads/users/${profileData.profilePhoto}`,
+              }}
+            />
+          ) : (
+            <Avatar.Icon size={150} icon='account' />
+          )}
+          <Avatar.Icon size={40} icon='camera' style={styles.cameraIcon} />
+        </View>
+        <Text variant='headlineMedium' style={styles.fullName}>
+          {profileData?.name || 'N/A'}
+        </Text>
+        <Text variant='bodyMedium' style={styles.role}>
+          {profileData?.roleId?.name || 'No Role'}
+        </Text>
+      </View>
+      <Divider style={{ marginVertical: 10 }} />
+      <Text style={styles.title}>Change Your Password</Text>
 
       <TextInput
         label='Old Password'
@@ -133,6 +172,27 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: 'center',
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  avatarContainer: {
+    position: 'relative',
+  },
+  cameraIcon: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  fullName: {
+    fontSize: 24,
+    marginTop: 10,
+    fontWeight: 'bold',
+  },
+  role: {
+    color: '#666',
   },
   title: {
     fontSize: 24,
