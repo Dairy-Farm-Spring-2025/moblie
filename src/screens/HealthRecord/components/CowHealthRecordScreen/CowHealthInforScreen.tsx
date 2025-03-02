@@ -1,4 +1,5 @@
 import CardComponent from '@components/Card/CardComponent';
+import TitleNameCows from '@components/TitleNameCows/TitleNameCows';
 import { Ionicons } from '@expo/vector-icons';
 import { HealthResponse } from '@model/Cow/Cow';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
@@ -9,17 +10,14 @@ import { Text } from 'react-native-paper';
 import Timeline from 'react-native-timeline-flatlist';
 
 type RootStackParamList = {
-  CowHealthInforScreen: { healthResponses: HealthResponse[] };
+  CowHealthInforScreen: { healthResponses: HealthResponse[]; cowName: string };
 };
 
-type CowHealthInforScreenRouteProp = RouteProp<
-  RootStackParamList,
-  'CowHealthInforScreen'
->;
+type CowHealthInforScreenRouteProp = RouteProp<RootStackParamList, 'CowHealthInforScreen'>;
 
 const CowHealthInforScreen = () => {
   const route = useRoute<CowHealthInforScreenRouteProp>();
-  const { healthResponses } = route.params;
+  const { healthResponses, cowName } = route.params;
   const navigator = useNavigation();
   const timelineData = healthResponses.map((response) => ({
     time: response?.date,
@@ -30,8 +28,7 @@ const CowHealthInforScreen = () => {
         name={
           response?.type === 'HEALTH_RECORD'
             ? 'heart'
-            : response?.type === 'ILLNESS' &&
-              response.health.severity === 'mild'
+            : response?.type === 'ILLNESS' && response.health.severity === 'mild'
             ? 'happy'
             : response.health.severity === 'moderate'
             ? 'thumbs-up'
@@ -56,10 +53,7 @@ const CowHealthInforScreen = () => {
           }
         >
           <CardComponent style={styles.card}>
-            <CardComponent.Title
-              title={rowData.title}
-              subTitle={formatType(data?.severity)}
-            />
+            <CardComponent.Title title={rowData.title} subTitle={formatType(data?.severity)} />
             <CardComponent.Content>
               <Text style={styles.text}>✍️ {data?.userEntity.name}</Text>
             </CardComponent.Content>
@@ -78,10 +72,7 @@ const CowHealthInforScreen = () => {
           }
         >
           <CardComponent style={styles.card}>
-            <CardComponent.Title
-              title={rowData.title}
-              subTitle={formatType(data?.status)}
-            />
+            <CardComponent.Title title={rowData.title} subTitle={formatType(data?.status)} />
             <CardComponent.Content>
               <Text style={styles.text}>📏 Weight: {data?.weight}(kg)</Text>
               <Text style={styles.text}>📏 Size: {data?.size}(m)</Text>
@@ -95,18 +86,19 @@ const CowHealthInforScreen = () => {
   };
   return (
     <View style={{ flex: 1 }}>
+      <TitleNameCows title='Timeline Health Record - ' cowName={cowName} />
       <Timeline
         data={timelineData}
         renderDetail={renderDetail} // Use custom card renderer
-        innerCircle="icon"
+        innerCircle='icon'
         circleSize={25}
         timeContainerStyle={{ minWidth: 72, marginTop: 5 }}
         timeStyle={{
           color: 'grey',
           fontStyle: 'italic',
         }}
-        circleColor="green"
-        lineColor="#C0C0C0"
+        circleColor='green'
+        lineColor='#C0C0C0'
         lineWidth={1}
         options={
           {
@@ -121,6 +113,17 @@ const CowHealthInforScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  cowContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f2f2f2',
+    padding: 10,
+    borderRadius: 5,
+    margin: 10,
+    borderColor: '#ccc',
+    borderWidth: 1,
+  },
   title: {
     fontSize: 18,
     fontWeight: 'bold',

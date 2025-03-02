@@ -7,6 +7,13 @@ import { formatCamelCase } from '@utils/format';
 import React from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useQuery } from 'react-query';
+import { LogBox } from 'react-native';
+import TitleNameCows from '@components/TitleNameCows/TitleNameCows';
+LogBox.ignoreLogs([
+  'TRenderEngineProvider: Support for defaultProps will be removed',
+  'MemoizedTNodeRenderer: Support for defaultProps will be removed',
+  'TNodeChildrenRenderer: Support for defaultProps will be removed',
+]);
 
 type RootStackParamList = {
   CowDetails: { cowId: number };
@@ -29,6 +36,7 @@ const DetailCow: React.FC = () => {
   const handleNavigateHealthResponse = () => {
     (navigator as any).navigate('CowHealthInforScreen', {
       healthResponses: cow?.healthInfoResponses,
+      cowName: cow?.name,
     });
   };
 
@@ -44,6 +52,7 @@ const DetailCow: React.FC = () => {
 
   return (
     <View style={{ flex: 1 }}>
+      <TitleNameCows title='Cow Details -' cowName={cow.name} />
       <ScrollView style={styles.container}>
         {/* Ảnh bò */}
         <Image source={{ uri: 'https://picsum.photos/400/400' }} style={styles.image} />
