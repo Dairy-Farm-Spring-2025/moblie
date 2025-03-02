@@ -7,14 +7,12 @@ import IllnessCowRecordForm from './components/IllnessCowRecordForm.tsx/IllnessC
 import IllnessDetailRecord from './components/IllnessDetail/IllnessDetail';
 import apiClient from '@config/axios/axios';
 import { useQuery } from 'react-query';
+import TitleNameCows from '@components/TitleNameCows/TitleNameCows';
 type RootStackParamList = {
   IllnessCowRecordScreen: { illnessId: number };
 };
 
-type IllnessCowRecordScreenRouteProp = RouteProp<
-  RootStackParamList,
-  'IllnessCowRecordScreen'
->;
+type IllnessCowRecordScreenRouteProp = RouteProp<RootStackParamList, 'IllnessCowRecordScreen'>;
 const fetchIllness = async (illnessId: number): Promise<IllnessCow> => {
   const response = await apiClient.get(`/illness/${illnessId}`);
   return response.data;
@@ -52,6 +50,7 @@ const IllnessCowRecordScreen = () => {
         flex: 1,
       }}
     >
+      <TitleNameCows title='Illness Record - ' cowName={illness.cowEntity.name} />
       <SegmentedButtons
         style={styles.segmentedButtons}
         value={selectedSegment}
@@ -70,10 +69,7 @@ const IllnessCowRecordScreen = () => {
           <IllnessCowRecordForm illness={illness as IllnessCow} />
         </ScrollView>
       ) : (
-        <IllnessDetailRecord
-          illness={illness as IllnessCow}
-          refetch={refetch}
-        />
+        <IllnessDetailRecord illness={illness as IllnessCow} refetch={refetch} />
       )}
     </View>
   );

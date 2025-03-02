@@ -69,6 +69,12 @@ const HomeScreen: React.FC = () => {
       icon: faNotesMedical,
       screen: 'HealthRecordScreen',
     },
+    {
+      id: 'FarmLayoutScreen',
+      title: 'Farm Layout',
+      icon: faChartArea,
+      screen: 'FarmLayout',
+    },
   ];
 
   const sections = [{ title: 'Dairy Management', data: managementCards }];

@@ -1,10 +1,8 @@
-// CardCow.tsx
-
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Tooltip } from 'react-native-paper';
 import { Cow } from '@model/Cow/Cow';
-import { formatCamelCase } from '@utils/format';
+import { convertToDDMMYYYY, formatCamelCase } from '@utils/format';
 
 interface CardCowProps {
   cow: Cow | undefined;
@@ -13,6 +11,15 @@ interface CardCowProps {
 }
 
 const CardCow: React.FC<CardCowProps> = ({ cow, onPress, width }) => {
+  // If cow is undefined, return a fallback UI
+  if (!cow) {
+    return (
+      <TouchableOpacity style={styles.card} onPress={onPress}>
+        <Text style={styles.cardTitle}>No Cow Data</Text>
+      </TouchableOpacity>
+    );
+  }
+
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
       <View style={styles.imageContainer}>
@@ -20,35 +27,35 @@ const CardCow: React.FC<CardCowProps> = ({ cow, onPress, width }) => {
           source={{ uri: 'https://picsum.photos/200/300' }} // Replace with cow image
           style={styles.cardImage}
         />
-        {cow?.inPen ? (
+        {cow.inPen ? (
           <View style={styles.overlay}>
-            <Text style={styles.overlayText}>{`${cow.penResponse.name}`}</Text>
+            <Text style={styles.overlayText}>{cow.penResponse?.name || 'N/A'}</Text>
           </View>
         ) : (
           <View style={styles.overlay}>
-            <Text style={styles.overlayText}>{`Pen: No`}</Text>
+            <Text style={styles.overlayText}>Pen: No</Text>
           </View>
         )}
-        {cow?.inPen ? (
+        {cow.inPen ? (
           <View style={styles.overlayArea}>
-            <Text style={styles.overlayTextArea}>{`${cow.penResponse.area.name}`}</Text>
+            <Text style={styles.overlayTextArea}>{cow.penResponse?.area?.name || 'N/A'}</Text>
           </View>
         ) : (
           <View style={styles.overlayArea}>
-            <Text style={styles.overlayTextArea}>{`Area: No`}</Text>
+            <Text style={styles.overlayTextArea}>Area: No</Text>
           </View>
         )}
       </View>
       <View style={styles.cardWrapper}>
         <View style={styles.cardHeader}>
-          <Text style={styles.cardTitle}>{cow?.name}</Text>
+          <Text style={styles.cardTitle}>{cow.name || 'Unnamed'}</Text>
           <Tooltip title='Cow Type'>
-            <Text style={styles.cardType}>{cow?.cowType.name}</Text>
+            <Text style={styles.cardType}>{cow.cowType?.name || 'N/A'}</Text>
           </Tooltip>
         </View>
         <View style={styles.cardContent}>
-          <Text style={styles.cardDetails}>Origin: {formatCamelCase(cow?.cowOrigin || '')}</Text>
-          <Text style={styles.cardDetails}>Born: {cow?.dateOfBirth}</Text>
+          <Text style={styles.cardDetails}>Origin: {formatCamelCase(cow.cowOrigin || '')}</Text>
+          <Text style={styles.cardDetails}>Born: {convertToDDMMYYYY(cow.dateOfBirth || '')}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -75,7 +82,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     position: 'absolute',
-    bottom: 8,
+    bottom: 10,
     right: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     paddingHorizontal: 8,
