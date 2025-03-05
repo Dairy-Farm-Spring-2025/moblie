@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -20,6 +20,9 @@ import apiClient from '@config/axios/axios';
 import { User } from '@model/User/User';
 import { getAvatar } from '@utils/getImage';
 import { convertToDDMMYYYY } from '@utils/format';
+import { useTranslation } from 'react-i18next';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faFlag } from '@fortawesome/free-solid-svg-icons';
 
 const fetchProfile = async (): Promise<User> => {
   try {
@@ -31,6 +34,7 @@ const fetchProfile = async (): Promise<User> => {
 };
 
 const ProfileScreen: React.FC = () => {
+  const { t, i18n } = useTranslation(); // Add i18n to change language
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   const dispatch: AppDispatch = useDispatch();
   const navigation = useNavigation();
@@ -53,12 +57,24 @@ const ProfileScreen: React.FC = () => {
     {
       onSuccess: () => {
         refetch();
-        Alert.alert('Success', 'Profile updated successfully');
+        Alert.alert(t('profile.update_success'), t('profile.update_success'));
       },
       onError: (error: any) =>
-        Alert.alert('Error', error.response?.data?.message || 'Failed to update profile'),
+        Alert.alert(
+          t('profile.update_error'),
+          error.response?.data?.message || t('profile.update_error')
+        ),
     }
   );
+
+  const requestCameraPermission = async (): Promise<boolean> => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert(t('permission_denied'), t('camera_permission_required'));
+      return false;
+    }
+    return true;
+  };
 
   const pickImage = async (): Promise<void> => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -86,12 +102,46 @@ const ProfileScreen: React.FC = () => {
     }
   };
 
+  const takePicture = async (): Promise<void> => {
+    const hasPermission = await requestCameraPermission();
+    if (!hasPermission) return;
+
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const capturedImage = result.assets[0].uri;
+      setImage(capturedImage);
+      setModalVisible(false);
+
+      const uriParts = capturedImage.split('.');
+      const fileType = uriParts[uriParts.length - 1];
+
+      const formData = new FormData();
+      formData.append('imageAvatar', {
+        uri: capturedImage,
+        name: `avatar.${fileType}`,
+        type: `image/${fileType}`,
+      } as any);
+
+      mutation.mutate(formData);
+    }
+  };
+
+  // Function to change language
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+  };
+
   if (isLoading) {
     return (
       <Layout>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size='large' color='#6200ee' />
-          <Text>Loading profile...</Text>
+          <Text>{t('loading')}</Text>
         </View>
       </Layout>
     );
@@ -101,7 +151,7 @@ const ProfileScreen: React.FC = () => {
     return (
       <Layout>
         <View style={styles.loadingContainer}>
-          <Text>Error loading profile. Please try again.</Text>
+          <Text>{t('error')}</Text>
         </View>
       </Layout>
     );
@@ -130,13 +180,44 @@ const ProfileScreen: React.FC = () => {
               {profileData?.name || 'N/A'}
             </Text>
             <Text variant='bodyMedium' style={styles.role}>
-              {profileData?.roleId?.name || 'No Role'}
+              {profileData?.roleId?.name || t('no_role')}
             </Text>
             <Badge
               style={[styles.statusBadge, { backgroundColor: isAuthenticated ? 'green' : 'red' }]}
             >
-              {isAuthenticated ? 'Authenticated' : 'Not Authenticated'}
+              {isAuthenticated ? t('authenticated') : t('not_authenticated')}
             </Badge>
+            {/* Language Selection Buttons */}
+            <View style={styles.languageContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.languageButton,
+                  { borderColor: i18n.language === 'en' ? '#6200ee' : '#ccc' },
+                ]}
+                onPress={() => changeLanguage('en')}
+              >
+                <FontAwesomeIcon
+                  icon={faFlag}
+                  size={24}
+                  color={i18n.language === 'en' ? '#6200ee' : '#666'}
+                />
+                <Text style={styles.languageText}>EN</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.languageButton,
+                  { borderColor: i18n.language === 'vi' ? '#6200ee' : '#ccc' },
+                ]}
+                onPress={() => changeLanguage('vi')}
+              >
+                <FontAwesomeIcon
+                  icon={faFlag}
+                  size={24}
+                  color={i18n.language === 'vi' ? '#6200ee' : '#666'}
+                />
+                <Text style={styles.languageText}>VI</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           <Divider style={styles.divider} />
@@ -144,32 +225,32 @@ const ProfileScreen: React.FC = () => {
           {/* User Info */}
           <List.Section>
             <List.Item
-              title='User ID'
+              title={t('profile.user_id')}
               description={profileData?.id || 'N/A'}
               left={() => <List.Icon icon='identifier' />}
             />
             <List.Item
-              title='Phone Number'
+              title={t('profile.phone_number')}
               description={profileData?.phoneNumber || 'N/A'}
               left={() => <List.Icon icon='phone' />}
             />
             <List.Item
-              title='Email'
+              title={t('profile.email')}
               description={profileData?.email || 'N/A'}
               left={() => <List.Icon icon='email' />}
             />
             <List.Item
-              title='Gender'
+              title={t('profile.gender')}
               description={profileData?.gender || 'N/A'}
               left={() => <List.Icon icon='gender-male-female' />}
             />
             <List.Item
-              title='Address'
+              title={t('profile.address')}
               description={profileData?.address || 'N/A'}
               left={() => <List.Icon icon='home' />}
             />
             <List.Item
-              title='Date of Birth'
+              title={t('profile.date_of_birth')}
               description={profileData?.dob ? convertToDDMMYYYY(profileData.dob) : 'N/A'}
               left={() => <List.Icon icon='calendar' />}
             />
@@ -184,14 +265,14 @@ const ProfileScreen: React.FC = () => {
               style={styles.button}
               onPress={() => (navigation.navigate as any)('UpdateInfo')}
             >
-              Edit Profile
+              {t('profile.edit_profile')}
             </Button>
             <Button
               mode='contained-tonal'
               onPress={() => (navigation.navigate as any)('ChangePassword')}
               style={styles.button}
             >
-              Change Password
+              {t('profile.change_password')}
             </Button>
             <Button
               onPress={() => dispatch(logout())}
@@ -199,7 +280,7 @@ const ProfileScreen: React.FC = () => {
               textColor='red'
               style={styles.button}
             >
-              Logout
+              {t('profile.logout')}
             </Button>
           </View>
         </View>
@@ -208,11 +289,14 @@ const ProfileScreen: React.FC = () => {
         <Modal visible={modalVisible} transparent animationType='slide'>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
+              <Button mode='contained' onPress={takePicture} style={styles.modalButton}>
+                {t('profile.take_picture')}
+              </Button>
               <Button mode='contained' onPress={pickImage} style={styles.modalButton}>
-                Choose from Gallery
+                {t('profile.choose_gallery')}
               </Button>
               <Button mode='text' onPress={() => setModalVisible(false)} style={styles.modalButton}>
-                Cancel
+                {t('profile.cancel')}
               </Button>
             </View>
           </View>
@@ -281,6 +365,24 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  languageContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  languageButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 5,
+    marginHorizontal: 10,
+    borderWidth: 2,
+    borderRadius: 5,
+  },
+  languageText: {
+    marginLeft: 5,
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

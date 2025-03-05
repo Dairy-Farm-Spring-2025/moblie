@@ -1,0 +1,51 @@
+{
+  "welcome": "Chào mừng đến với ứng dụng",
+  "goodbye": "Tạm biệt",
+  "profile": {
+    "title": "Hồ sơ",
+    "user_id": "ID Người dùng",
+    "phone_number": "Số điện thoại",
+    "email": "Email",
+    "gender": "Giới tính",
+    "address": "Địa chỉ",
+    "date_of_birth": "Ngày sinh",
+    "edit_profile": "Chỉnh sửa hồ sơ",
+    "change_password": "Đổi mật khẩu",
+    "logout": "Đăng xuất",
+    "update_success": "Cập nhật hồ sơ thành công",
+    "update_error": "Không thể cập nhật hồ sơ",
+    "take_picture": "Chụp ảnh",
+    "choose_gallery": "Chọn từ thư viện",
+    "cancel": "Hủy"
+  },
+  "greeting": "Xin chào, {{name}}!",
+  "loading": "Đang tải...",
+  "error": "Đã xảy ra lỗi",
+  "home": {
+    "welcome": "Chào mừng, ",
+    "cow": "Bò",
+    "area": "Khu vực",
+    "pen": "Chuồng",
+    "milk_batch": "Lô sữa",
+    "health_record": "Hồ sơ sức khỏe",
+    "farm_layout": "Bố trí trang trại",
+    "dairy_management": "Quản lý chăn nuôi bò sữa",
+    "vet": "Bác sĩ thú y",
+    "worker": "Công nhân"
+  },
+  "cow_management": {
+    "cows": "Bò",
+    "create": "Tạo",
+    "health": "Sức khỏe",
+    "report": "Báo cáo"
+  },
+  "card_cow": {
+    "no_cow_data": "Không có dữ liệu bò",
+    "pen_no": "Chuồng: Không",
+    "area_no": "Khu vực: Không",
+    "unnamed": "Không có tên",
+    "cow_type": "Loại bò",
+    "origin": "Nguồn gốc",
+    "born": "Ngày sinh"
+  }
+}

@@ -8,6 +8,7 @@ import { Cow } from '@model/Cow/Cow';
 import FloatingButton from '@components/FloatingButton/FloatingButton';
 import SearchInput from '@components/Input/Search/SearchInput'; // Custom SearchInput component
 import CardCow from '@components/CardCow/CardCow';
+import { useTranslation } from 'react-i18next';
 
 // Fetch cows data from API
 const fetchCows = async (): Promise<Cow[]> => {
@@ -16,6 +17,7 @@ const fetchCows = async (): Promise<Cow[]> => {
 };
 
 const CowManagementScreen: React.FC = () => {
+  const { t } = useTranslation();
   const [selectedSegment, setSelectedSegment] = useState('list');
   const [searchText, setSearchText] = useState('');
   const [selectedFilter, setSelectedFilter] = useState<'name' | 'origin' | 'type' | 'pen' | 'area'>(
@@ -55,10 +57,10 @@ const CowManagementScreen: React.FC = () => {
         value={selectedSegment}
         onValueChange={setSelectedSegment}
         buttons={[
-          { value: 'list', label: 'Cows', icon: 'cow' },
-          { value: 'create', label: 'Create', icon: 'plus' },
-          { value: 'health', label: 'Health', icon: 'heart' },
-          { value: 'report', label: 'Report', icon: 'chart-bar' },
+          { value: 'list', label: t('cow_management.cows'), icon: 'cow' },
+          { value: 'create', label: t('cow_management.create'), icon: 'plus' },
+          { value: 'health', label: t('cow_management.health'), icon: 'heart' },
+          { value: 'report', label: t('cow_management.report'), icon: 'chart-bar' },
         ]}
       />
 

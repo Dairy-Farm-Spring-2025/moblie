@@ -19,6 +19,7 @@ import { SectionList, StyleSheet, Text, TouchableOpacity, View } from 'react-nat
 import { ActivityIndicator, Avatar, Badge } from 'react-native-paper';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 type NavigationProp = {
   navigate: (screen: string) => void;
@@ -34,58 +35,52 @@ const fetchProfile = async (): Promise<User> => {
 };
 
 const HomeScreen: React.FC = () => {
+  const { t } = useTranslation();
   const user = useSelector((state: RootState) => state.auth);
   const { data: profileData, isLoading } = useQuery<User>('users/profile', fetchProfile);
   const navigation = useNavigation<NavigationProp>();
 
   const managementCards = [
-    {
-      id: 'CowManagementScreen',
-      title: 'Cow',
-      icon: faCow,
-      screen: 'CowManagementScreen',
-    },
+    { id: 'CowManagementScreen', title: t('home.cow'), icon: faCow, screen: 'CowManagementScreen' },
     {
       id: 'AreaManagementScreen',
-      title: 'Area',
+      title: t('home.area'),
       icon: faChartArea,
       screen: 'AreaManagementScreen',
     },
     {
       id: 'PenManagementScreen',
-      title: 'Pen',
+      title: t('home.pen'),
       icon: faSliders,
       screen: 'PenManagementScreen',
     },
     {
       id: 'MilkBatch',
-      title: 'Milk Batch',
+      title: t('home.milk_batch'),
       icon: faDolly,
       screen: 'MilkBatchManagementScreen',
     },
     {
       id: 'HealthRecord',
-      title: 'Health Record',
+      title: t('home.health_record'),
       icon: faNotesMedical,
       screen: 'HealthRecordScreen',
     },
     {
       id: 'FarmLayoutScreen',
-      title: 'Farm Layout',
+      title: t('home.farm_layout'),
       icon: faChartArea,
       screen: 'FarmLayout',
     },
   ];
 
-  const sections = [{ title: 'Dairy Management', data: managementCards }];
+  const sections = [{ title: t('home.dairy_management'), data: managementCards }];
 
-  // Determine role and colors
   const isVeterinarian = profileData?.roleId?.name?.toLowerCase() === 'veterinarians';
   const roleColors = isVeterinarian ? COLORS.veterinarian : COLORS.worker;
   const primaryColor = roleColors.primary;
   const backgroundColor = roleColors.accent;
 
-  // Helper function to split data into rows of 2 items each
   const formatDataIntoRows = (data: any[]) => {
     const rows = [];
     for (let i = 0; i < data.length; i += 2) {
@@ -94,7 +89,6 @@ const HomeScreen: React.FC = () => {
     return rows;
   };
 
-  // Render a row (2 items per row)
   const renderItem = ({ item }: { item: any[] }) => (
     <View style={styles.row}>
       {item.map((card) => (
@@ -114,13 +108,22 @@ const HomeScreen: React.FC = () => {
     <Text style={[styles.sectionHeader, { backgroundColor: primaryColor }]}>{title}</Text>
   );
 
-  if (isLoading) return <ActivityIndicator />;
+  if (isLoading) {
+    return (
+      <Layout>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator />
+          <Text>{t('loading')}</Text> {/* Add translated loading text */}
+        </View>
+      </Layout>
+    );
+  }
 
   return (
     <Layout isScrollable={false}>
       <View style={styles.headerContainer}>
         <View style={styles.welcomeContainer}>
-          <Text>Welcome, </Text>
+          <Text>{t('home.welcome')}</Text>
           <Text style={styles.welcomeText}>
             <Text style={{ color: primaryColor }}>{profileData?.name}</Text>
           </Text>
@@ -128,12 +131,10 @@ const HomeScreen: React.FC = () => {
         <View style={styles.avatarContainer}>
           <Avatar.Image
             size={60}
-            source={{
-              uri: `${getAvatar(profileData?.profilePhoto || '')}`,
-            }}
+            source={{ uri: `${getAvatar(profileData?.profilePhoto || '')}` }}
           />
           <Badge style={[styles.roleBadge, { backgroundColor: primaryColor }]} size={20}>
-            {isVeterinarian ? 'Vet' : 'Worker'}
+            {isVeterinarian ? t('home.vet') : t('home.worker')}
           </Badge>
         </View>
       </View>

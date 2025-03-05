@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Tooltip } from 'react-native-paper';
 import { Cow } from '@model/Cow/Cow';
 import { convertToDDMMYYYY, formatCamelCase } from '@utils/format';
+import { useTranslation } from 'react-i18next';
 
 interface CardCowProps {
   cow: Cow | undefined;
@@ -11,11 +12,12 @@ interface CardCowProps {
 }
 
 const CardCow: React.FC<CardCowProps> = ({ cow, onPress, width }) => {
-  // If cow is undefined, return a fallback UI
+  const { t } = useTranslation();
+
   if (!cow) {
     return (
       <TouchableOpacity style={styles.card} onPress={onPress}>
-        <Text style={styles.cardTitle}>No Cow Data</Text>
+        <Text style={styles.cardTitle}>{t('card_cow.no_cow_data')}</Text>
       </TouchableOpacity>
     );
   }
@@ -27,35 +29,39 @@ const CardCow: React.FC<CardCowProps> = ({ cow, onPress, width }) => {
           source={{ uri: 'https://picsum.photos/200/300' }} // Replace with cow image
           style={styles.cardImage}
         />
-        {cow.inPen ? (
+        {cow.penResponse ? (
           <View style={styles.overlay}>
             <Text style={styles.overlayText}>{cow.penResponse?.name || 'N/A'}</Text>
           </View>
         ) : (
           <View style={styles.overlay}>
-            <Text style={styles.overlayText}>Pen: No</Text>
+            <Text style={styles.overlayText}>{t('card_cow.pen_no')}</Text>
           </View>
         )}
-        {cow.inPen ? (
+        {cow.penResponse ? (
           <View style={styles.overlayArea}>
             <Text style={styles.overlayTextArea}>{cow.penResponse?.area?.name || 'N/A'}</Text>
           </View>
         ) : (
           <View style={styles.overlayArea}>
-            <Text style={styles.overlayTextArea}>Area: No</Text>
+            <Text style={styles.overlayTextArea}>{t('card_cow.area_no')}</Text>
           </View>
         )}
       </View>
       <View style={styles.cardWrapper}>
         <View style={styles.cardHeader}>
-          <Text style={styles.cardTitle}>{cow.name || 'Unnamed'}</Text>
-          <Tooltip title='Cow Type'>
+          <Text style={styles.cardTitle}>{cow.name || t('card_cow.unnamed')}</Text>
+          <Tooltip title={t('card_cow.cow_type')}>
             <Text style={styles.cardType}>{cow.cowType?.name || 'N/A'}</Text>
           </Tooltip>
         </View>
         <View style={styles.cardContent}>
-          <Text style={styles.cardDetails}>Origin: {formatCamelCase(cow.cowOrigin || '')}</Text>
-          <Text style={styles.cardDetails}>Born: {convertToDDMMYYYY(cow.dateOfBirth || '')}</Text>
+          <Text style={styles.cardDetails}>
+            {t('card_cow.origin')}: {formatCamelCase(cow.cowOrigin || '')}
+          </Text>
+          <Text style={styles.cardDetails}>
+            {t('card_cow.born')}: {convertToDDMMYYYY(cow.dateOfBirth || '')}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -65,7 +71,7 @@ const CardCow: React.FC<CardCowProps> = ({ cow, onPress, width }) => {
 const styles = StyleSheet.create({
   card: {
     margin: 10,
-    width: '45%', // For 2-column grid layout
+    width: '45%',
     padding: 10,
     borderRadius: 10,
     backgroundColor: '#f8f9fa',
