@@ -20,3 +20,11 @@ export const filteredMineral = (detailData: FeedMealDetails[]) =>
     (element: FeedMealDetails) =>
       element?.itemEntity?.categoryEntity?.name === 'Khoáng chất'
   );
+
+export const calculateTotalQuantity = (array: any[]) => {
+  const total = array?.reduce(
+    (total, item) => total + (item?.quantity || 0),
+    0
+  );
+  return total ? total?.toFixed(2) : 0;
+};

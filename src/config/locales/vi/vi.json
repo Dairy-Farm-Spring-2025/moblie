@@ -54,10 +54,14 @@
     "cow_type": "Loại bò",
     "quantity": "Số lượng",
     "shift": "Ca",
-    "hay": "Cỏ khổ",
+    "hay": "Cỏ khô",
     "refined": "Tinh",
     "silage": "Ủ chua",
     "mineral": "Khoáng chất",
-    "food_nutrition": "Thành phần dinh dưỡng"
+    "food_nutrition": "Thành phần dinh dưỡng",
+    "title_detail": "Chi tiết bữa ăn",
+    "feedmeal_detail": "Chi tiết thành phần bữa ăn",
+    "name": "Tên",
+    "storage": "Nhà kho"
   }
 }
