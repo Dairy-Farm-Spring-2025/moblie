@@ -39,18 +39,26 @@ const SearchInput = ({
     ...typeFiltered.filteredType.filter((type) => type !== 'name'),
   ];
   const [isFilterVisible, setIsFilterVisible] = useState(false);
-  const [activeFilter, setActiveFilter] = useState<string>(filteredTypeWithDefault[0]);
+  const [activeFilter, setActiveFilter] = useState<string>(
+    filteredTypeWithDefault[0]
+  );
 
   return (
-    <View>
+    <View style={styles.searchView}>
       <View style={styles.searchFilterContainer}>
         {typeFiltered !== undefined && (
-          <TouchableOpacity onPress={() => setIsFilterVisible(true)} style={styles.filterButton}>
-            <Ionicons name='filter' size={24} color='black' />
+          <TouchableOpacity
+            onPress={() => setIsFilterVisible(true)}
+            style={styles.filterButton}
+          >
+            <Ionicons name="filter" size={24} color="black" />
           </TouchableOpacity>
         )}
-        <TouchableOpacity onPress={() => onChangeText('')} style={styles.searchButton}>
-          <Ionicons name='search' size={24} color='black' />
+        <TouchableOpacity
+          onPress={() => onChangeText('')}
+          style={styles.searchButton}
+        >
+          <Ionicons name="search" size={24} color="black" />
         </TouchableOpacity>
         <TextInput
           style={styles.searchInput}
@@ -63,30 +71,36 @@ const SearchInput = ({
       {value !== '' && (
         <View style={styles.searchFilterContainer}>
           <Text style={{ color: 'blue' }}>
-            {filteredData?.length} {(filteredData?.length as number) > 1 ? 'results' : 'result'}{' '}
-            found
+            {filteredData?.length}{' '}
+            {(filteredData?.length as number) > 1 ? 'results' : 'result'} found
           </Text>
         </View>
       )}
       {typeFiltered !== undefined && (
-        <Modal visible={isFilterVisible} animationType='slide' transparent={true}>
+        <Modal
+          visible={isFilterVisible}
+          animationType="slide"
+          transparent={true}
+        >
           <View style={styles.modalOverlay}>
             <View style={styles.filterModal}>
               <Text style={styles.modalTitle}>Select Filter</Text>
               <DividerUI />
-              {typeFiltered?.filteredType.map((element: string, index: number) => (
-                <Button
-                  key={index}
-                  title={`Filter by ${element}`}
-                  onPress={() => {
-                    typeFiltered.setSelectedFiltered(element);
-                    setActiveFilter(element);
-                    setIsFilterVisible(false);
-                  }}
-                  color={activeFilter === element ? 'blue' : 'gray'}
-                />
-              ))}
-              <Button title='Close' onPress={() => setIsFilterVisible(false)} />
+              {typeFiltered?.filteredType.map(
+                (element: string, index: number) => (
+                  <Button
+                    key={index}
+                    title={`Filter by ${element}`}
+                    onPress={() => {
+                      typeFiltered.setSelectedFiltered(element);
+                      setActiveFilter(element);
+                      setIsFilterVisible(false);
+                    }}
+                    color={activeFilter === element ? 'blue' : 'gray'}
+                  />
+                )
+              )}
+              <Button title="Close" onPress={() => setIsFilterVisible(false)} />
             </View>
           </View>
         </Modal>
@@ -141,6 +155,18 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
+  },
+  searchView: {
+    backgroundColor: 'green',
+    shadowColor: 'black',
+    paddingVertical: 10,
+    borderEndEndRadius: 10,
+    borderEndStartRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 3.84,
+    elevation: 5,
+    marginBottom: 20,
   },
 });
 

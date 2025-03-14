@@ -47,5 +47,17 @@
     "cow_type": "Cow Type",
     "origin": "Origin",
     "born": "Born"
+  },
+  "feed": {
+    "title": "Feed",
+    "cow_status": "Cow status",
+    "cow_type": "Cow type",
+    "quantity": "Quantity",
+    "shift": "Shift",
+    "hay": "Hay",
+    "refined": "Refined",
+    "silage": "Silage",
+    "mineral": "Mineral",
+    "food_nutrition": "Food nutrition"
   }
 }
