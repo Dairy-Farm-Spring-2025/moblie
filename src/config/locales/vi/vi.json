@@ -47,5 +47,17 @@
     "cow_type": "Loại bò",
     "origin": "Nguồn gốc",
     "born": "Ngày sinh"
+  },
+  "feed": {
+    "title": "Bữa ăn",
+    "cow_status": "Trạng thái bò",
+    "cow_type": "Loại bò",
+    "quantity": "Số lượng",
+    "shift": "Ca",
+    "hay": "Cỏ khổ",
+    "refined": "Tinh",
+    "silage": "Ủ chua",
+    "mineral": "Khoáng chất",
+    "food_nutrition": "Thành phần dinh dưỡng"
   }
 }

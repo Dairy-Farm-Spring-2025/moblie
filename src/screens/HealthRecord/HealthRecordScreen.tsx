@@ -142,17 +142,15 @@ const HealthRecordScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchView}>
-        <SearchInput
-          filteredData={filteredHealthRecord as HealthRecord[]}
-          onChangeText={setSearchText}
-          value={searchText}
-          typeFiltered={{
-            filteredType: ['name'],
-            setSelectedFiltered: setSelectedFilter,
-          }}
-        />
-      </View>
+      <SearchInput
+        filteredData={filteredHealthRecord as HealthRecord[]}
+        onChangeText={setSearchText}
+        value={searchText}
+        typeFiltered={{
+          filteredType: ['name'],
+          setSelectedFiltered: setSelectedFilter,
+        }}
+      />
       <FlatList
         data={sortedHealthRecord}
         keyExtractor={(item: HealthRecord) => item.healthRecordId.toString()}
@@ -174,18 +172,6 @@ const HealthRecordScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  searchView: {
-    backgroundColor: 'green',
-    shadowColor: 'black',
-    paddingVertical: 10,
-    borderEndEndRadius: 10,
-    borderEndStartRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 3.84,
-    elevation: 5,
-    marginBottom: 20,
   },
   card: {
     margin: 10,

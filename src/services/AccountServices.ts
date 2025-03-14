@@ -12,16 +12,24 @@ class AccountServices {
 
   async login(email: string, password: string): Promise<LoginResponse | null> {
     try {
-      const response: LoginResponse = await this.apiClient.post('/users/signin', {
-        email,
-        password,
-      });
+      const response: LoginResponse = await this.apiClient.post(
+        '/users/signin',
+        {
+          email,
+          password,
+        }
+      );
 
       const { code, message, data } = response;
       console.log(code, message, data);
 
-      if (response.code === 200 && response.message === 'Login successfully') {
-        const { accessToken, refreshToken, userId, fullName, roleName } = response.data!;
+      if (
+        response.code === 200 &&
+        (response.message === 'Login successfully' ||
+          response.message === 'Đăng nhập thành công')
+      ) {
+        const { accessToken, refreshToken, userId, fullName, roleName } =
+          response.data!;
 
         // Store tokens and user info in AsyncStorage
         await AsyncStorage.setItem('accessToken', accessToken);
