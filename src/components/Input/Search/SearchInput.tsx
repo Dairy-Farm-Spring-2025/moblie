@@ -70,7 +70,7 @@ const SearchInput = ({
       </View>
       {value !== '' && (
         <View style={styles.searchFilterContainer}>
-          <Text style={{ color: 'blue' }}>
+          <Text style={{ color: 'white' }}>
             {filteredData?.length}{' '}
             {(filteredData?.length as number) > 1 ? 'results' : 'result'} found
           </Text>

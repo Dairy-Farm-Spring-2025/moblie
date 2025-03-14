@@ -8,12 +8,14 @@ import { Alert, FlatList } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
 import { useQuery } from 'react-query';
 import CardFeed from './components/CardFeed/CardFeed';
+import { useNavigation } from '@react-navigation/native';
 const fetchFeed = async (): Promise<FeedMeals[]> => {
   const response = await apiClient.get('/feedmeals'); // Replace with your endpoint
   return response.data;
 };
 const FeedManagementScreen = () => {
   const [searchText, setSearchText] = useState('');
+  const navigation = useNavigation();
   const [selectedFilter, setSelectedFilter] = useState('name');
   const {
     data: feed,
@@ -21,11 +23,17 @@ const FeedManagementScreen = () => {
     isError,
     error,
   } = useQuery<FeedMeals[]>('feedmeals', fetchFeed);
+
   const filteredFeed = feed?.filter((feed) => {
     if (selectedFilter === 'name') {
       return feed?.name.toLowerCase().includes(searchText.toLowerCase());
     }
   });
+
+  const navigateToFoodDetail = (feedId: number) => {
+    (navigation.navigate as any)('FeedDetailScreen', { feedId });
+  };
+
   useEffect(() => {
     if (isError) {
       Alert.alert('Error', (error as Error)?.message);
@@ -52,7 +60,12 @@ const FeedManagementScreen = () => {
         }}
         data={filteredFeed}
         keyExtractor={(item: FeedMeals) => item.feedMealId.toString()}
-        renderItem={({ item }) => <CardFeed item={item} />}
+        renderItem={({ item }) => (
+          <CardFeed
+            item={item}
+            navigation={() => navigateToFoodDetail(item.feedMealId)}
+          />
+        )}
       />
     </ContainerComponent>
   );

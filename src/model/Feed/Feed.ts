@@ -14,7 +14,7 @@ export type FeedMeals = {
   description: string;
   cowTypeEntity: CowType;
   cowStatus: CowStatus;
-  shift: 'morningShift';
+  shift: 'morningShift' | 'nightShift';
   feedMealDetails: FeedMealDetails[];
 };
 
