@@ -13,6 +13,7 @@ import apiClient from '@config/axios/axios';
 import SearchInput from '@components/Input/Search/SearchInput';
 import Layout from '@components/layout/Layout';
 import { Ionicons } from '@expo/vector-icons'; // Assuming Expo for icons
+import { RefreshControl } from 'react-native-gesture-handler';
 
 interface Task {
   taskId: number;
@@ -168,8 +169,21 @@ const TaskScreen: React.FC = () => {
   const [selectedDayIndex, setSelectedDayIndex] = useState(0); // For segmented buttons
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [refreshing, setRefreshing] = useState(false); // New state for refresh control
 
-  const { data: tasks, isLoading, isError, error } = useQuery<Task[]>('tasks', fetchTasks);
+  const { data: tasks, isLoading, isError, error, refetch } = useQuery<Task[]>('tasks', fetchTasks);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      console.log('Refetching data...');
+      await refetch();
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   // Apply search filter
   const filteredTasks = tasks?.filter((task) => {
@@ -307,7 +321,9 @@ const TaskScreen: React.FC = () => {
         ) : isError ? (
           <Text>{(error as Error).message}</Text>
         ) : (
-          <ScrollView>
+          <ScrollView
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          >
             {/* Shift Rows for Selected Day */}
             {shifts.map((shift) => (
               <View key={shift} style={styles.row}>

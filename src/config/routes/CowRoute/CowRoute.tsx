@@ -22,6 +22,7 @@ import IllnessCowRecordScreen from '@screens/HealthRecord/components/CowHealthRe
 import IllnessDetailForm from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/components/IllnessDetail/components/IllnessDetailForm';
 import IllnessDetailPlanForm from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/components/IllnessDetail/components/IllnessDetailPlanForm';
 import FarmLayoutScreen from '@components/FarmLayout/FarmLayout';
+import IllnessReportForm from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/components/IllnessReportForm/IllnessReportForm';
 
 const Stack = createNativeStackNavigator();
 
@@ -116,6 +117,11 @@ const CowRoute: React.FC = () => {
         name='IllnessDetailForm'
         component={IllnessDetailForm}
         options={{ title: 'Illness Detail' }}
+      />
+      <Stack.Screen
+        name='IllnessReportForm'
+        component={IllnessReportForm}
+        options={{ title: 'Illness Report' }}
       />
       <Stack.Screen
         name='IllnessDetailPlanForm'

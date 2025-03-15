@@ -15,8 +15,8 @@ import { User } from '@model/User/User';
 import { useNavigation } from '@react-navigation/native';
 import { getAvatar } from '@utils/getImage';
 import React from 'react';
-import { SectionList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { ActivityIndicator, Avatar, Badge } from 'react-native-paper';
+import { SectionList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Avatar, Badge, Text } from 'react-native-paper';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -113,7 +113,7 @@ const HomeScreen: React.FC = () => {
       <Layout>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator />
-          <Text>{t('loading')}</Text> {/* Add translated loading text */}
+          <Text>{t('loading')}</Text>
         </View>
       </Layout>
     );
@@ -123,9 +123,9 @@ const HomeScreen: React.FC = () => {
     <Layout isScrollable={false}>
       <View style={styles.headerContainer}>
         <View style={styles.welcomeContainer}>
-          <Text>{t('home.welcome')}</Text>
-          <Text style={styles.welcomeText}>
-            <Text style={{ color: primaryColor }}>{profileData?.name}</Text>
+          <Text style={styles.welcomeText}>{t('home.welcome')}</Text>
+          <Text style={[styles.welcomeText, { color: primaryColor }]}>
+            {profileData?.name || ''}
           </Text>
         </View>
         <View style={styles.avatarContainer}>
