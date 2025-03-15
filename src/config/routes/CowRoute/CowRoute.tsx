@@ -23,6 +23,9 @@ import IllnessDetailForm from '@screens/HealthRecord/components/CowHealthRecordS
 import IllnessDetailPlanForm from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/components/IllnessDetail/components/IllnessDetailPlanForm';
 import FarmLayoutScreen from '@components/FarmLayout/FarmLayout';
 import IllnessReportForm from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/components/IllnessReportForm/IllnessReportForm';
+import { t } from 'i18next';
+import FeedManagementScreen from '@screens/FeedManagementScreen/FeedManagementScreen';
+import FeedDetailScreen from '@screens/FeedManagementScreen/components/DetailFeed/FeedDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -124,9 +127,24 @@ const CowRoute: React.FC = () => {
         options={{ title: 'Illness Report' }}
       />
       <Stack.Screen
+        name='IllnessReportForm'
+        component={IllnessReportForm}
+        options={{ title: 'Illness Report' }}
+      />
+      <Stack.Screen
         name='IllnessDetailPlanForm'
         component={IllnessDetailPlanForm}
         options={{ title: 'Illness Detail Plan' }}
+      />
+      <Stack.Screen
+        name='FeedManagementScreen'
+        component={FeedManagementScreen}
+        options={{ title: t('feed.title') }}
+      />
+      <Stack.Screen
+        name='FeedDetailScreen'
+        component={FeedDetailScreen}
+        options={{ title: t('feed.title_detail') }}
       />
       {/* You can add more screens related to 'Cow' here in the future */}
     </Stack.Navigator>

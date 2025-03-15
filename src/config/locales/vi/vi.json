@@ -81,5 +81,21 @@
     "timestamps": "Thời gian",
     "yes": "Có",
     "no": "Không"
+  },
+  "feed": {
+    "title": "Bữa ăn",
+    "cow_status": "Trạng thái bò",
+    "cow_type": "Loại bò",
+    "quantity": "Số lượng",
+    "shift": "Ca",
+    "hay": "Cỏ khô",
+    "refined": "Tinh",
+    "silage": "Ủ chua",
+    "mineral": "Khoáng chất",
+    "food_nutrition": "Thành phần dinh dưỡng",
+    "title_detail": "Chi tiết bữa ăn",
+    "feedmeal_detail": "Chi tiết thành phần bữa ăn",
+    "name": "Tên",
+    "storage": "Nhà kho"
   }
 }

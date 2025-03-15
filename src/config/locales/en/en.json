@@ -79,5 +79,21 @@
     "typeStatus": "Status",
     "typeDescription": "Description",
     "timestamps": "Timestamps"
+  },
+  "feed": {
+    "title": "Feed",
+    "cow_status": "Cow status",
+    "cow_type": "Cow type",
+    "quantity": "Quantity",
+    "shift": "Shift",
+    "hay": "Hay",
+    "refined": "Refined",
+    "silage": "Silage",
+    "mineral": "Mineral",
+    "food_nutrition": "Food nutrition",
+    "title_detail": "Feed Detail",
+    "feedmeal_detail": "Feed meal detail",
+    "name": "Name",
+    "storage": "Storage"
   }
 }

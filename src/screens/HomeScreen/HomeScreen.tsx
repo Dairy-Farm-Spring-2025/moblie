@@ -41,7 +41,12 @@ const HomeScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
 
   const managementCards = [
-    { id: 'CowManagementScreen', title: t('home.cow'), icon: faCow, screen: 'CowManagementScreen' },
+    {
+      id: 'CowManagementScreen',
+      title: t('home.cow'),
+      icon: faCow,
+      screen: 'CowManagementScreen',
+    },
     {
       id: 'AreaManagementScreen',
       title: t('home.area'),
@@ -71,6 +76,12 @@ const HomeScreen: React.FC = () => {
       title: t('home.farm_layout'),
       icon: faChartArea,
       screen: 'FarmLayout',
+    },
+    {
+      id: 'FeedManagementScreen',
+      title: t('feed.title'),
+      icon: faChartArea,
+      screen: 'FeedManagementScreen',
     },
   ];
 
