@@ -13,7 +13,7 @@ import {
 import { Button, Text, ActivityIndicator } from 'react-native-paper';
 import { useMutation } from 'react-query';
 import apiClient from '@config/axios/axios';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import TitleNameCows from '@components/TitleNameCows/TitleNameCows';
 import { Cow } from '@model/Cow/Cow';
 
@@ -25,6 +25,7 @@ type IllnessReportFormRouteProp = RouteProp<RootStackParamList, 'IllnessReportFo
 
 const IllnessReportForm = () => {
   const route = useRoute<IllnessReportFormRouteProp>();
+  const navigation = useNavigation();
   const { cow: Cow } = route.params;
   const [symptoms, setSymptoms] = useState<string>('');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -56,12 +57,13 @@ const IllnessReportForm = () => {
       {
         onSuccess: (data) => {
           console.log('Report submitted successfully:', data);
-          setSuccessMessage('Report submitted successfully');
+          setSuccessMessage('Report submitted successfully, redirecting...');
           setSymptoms('');
           Keyboard.dismiss();
           setTimeout(() => {
             setSuccessMessage('');
-          }, 3000);
+            navigation.goBack(); // Navigate back to the previous screen
+          }, 1000); // Delay navigation by 1 second to show success message
         },
         onError: (error: any) => {
           console.error('Error submitting report:', error);
@@ -97,21 +99,23 @@ const IllnessReportForm = () => {
             onChangeText={setSymptoms}
           />
           {errors.symptoms && <Text style={styles.errorText}> {errors.symptoms} </Text>}
-          <Text style={styles.inputLabel}>Cow ID: {Cow.cowId}</Text>
-          {mutation.isLoading ? (
-            <ActivityIndicator size='large' color='#007AFF' />
-          ) : (
-            <Button
-              mode='contained'
-              onPress={handleSubmit}
-              disabled={mutation.isLoading}
-              style={styles.submitButton}
-            >
-              Submit Report
-            </Button>
-          )}
+          <Button
+            mode='contained'
+            onPress={handleSubmit}
+            disabled={mutation.isLoading}
+            style={styles.submitButton}
+          >
+            Submit Report
+          </Button>
         </ScrollView>
       </TouchableWithoutFeedback>
+
+      {/* Loading Overlay */}
+      {mutation.isLoading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size='large' color='#007AFF' />
+        </View>
+      )}
     </KeyboardAvoidingView>
   );
 };
@@ -158,6 +162,13 @@ const styles = StyleSheet.create({
   submitButton: {
     marginTop: 20,
     backgroundColor: '#007AFF',
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject, // Cover the entire screen
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent gray overlay
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000, // Ensure it stays on top
   },
 });
 
