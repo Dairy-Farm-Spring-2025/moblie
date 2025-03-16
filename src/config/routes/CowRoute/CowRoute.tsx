@@ -22,6 +22,7 @@ import IllnessCowRecordScreen from '@screens/HealthRecord/components/CowHealthRe
 import IllnessDetailForm from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/components/IllnessDetail/components/IllnessDetailForm';
 import IllnessDetailPlanForm from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/components/IllnessDetail/components/IllnessDetailPlanForm';
 import FarmLayoutScreen from '@components/FarmLayout/FarmLayout';
+import IllnessReportForm from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/components/IllnessReportForm/IllnessReportForm';
 import { t } from 'i18next';
 import FeedManagementScreen from '@screens/FeedManagementScreen/FeedManagementScreen';
 import FeedDetailScreen from '@screens/FeedManagementScreen/components/DetailFeed/FeedDetailScreen';
@@ -30,120 +31,108 @@ const Stack = createNativeStackNavigator();
 
 const CowRoute: React.FC = () => {
   return (
-    <Stack.Navigator initialRouteName="Home">
+    <Stack.Navigator initialRouteName='Home'>
+      <Stack.Screen name='Home' component={HomeScreen} options={{ headerShown: false }} />
+      <Stack.Screen name='FarmLayout' component={FarmLayoutScreen} />
       <Stack.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen name="FarmLayout" component={FarmLayoutScreen} />
-      <Stack.Screen
-        name="CowManagementScreen"
+        name='CowManagementScreen'
         component={CowManagementScreen}
         options={{ title: 'Cow Management' }}
       />
+      <Stack.Screen name='CowDetails' component={DetailCow} options={{ title: 'Cow Details' }} />
       <Stack.Screen
-        name="CowDetails"
-        component={DetailCow}
-        options={{ title: 'Cow Details' }}
-      />
-      <Stack.Screen
-        name="CreateCowScreen"
+        name='CreateCowScreen'
         component={CreateCow}
         options={{ title: 'Create Cow' }}
       />
       <Stack.Screen
-        name="AreaManagementScreen"
+        name='AreaManagementScreen'
         component={AreaManagementScreen}
         options={{ title: 'Area Management' }}
       />
       <Stack.Screen
-        name="AreaDetail"
+        name='AreaDetail'
         component={AreaDetailScreen}
         options={{ title: 'Area Details' }}
       />
       <Stack.Screen
-        name="PenManagementScreen"
+        name='PenManagementScreen'
         component={PenManagementScreen}
         options={{ title: 'Pen Management' }}
       />
       <Stack.Screen
-        name="PenDetailScreen"
+        name='PenDetailScreen'
         component={PenDetailScreen}
         options={{ title: 'Pen Details' }}
       />
       <Stack.Screen
-        name="MilkBatchManagementScreen"
+        name='MilkBatchManagementScreen'
         component={MilkBatchManagementScreen}
         options={{ title: 'Milk Batch Management' }}
       />
       <Stack.Screen
-        name="MilkBatchDetail"
+        name='MilkBatchDetail'
         component={DetailMilkBatch}
         options={{ title: 'Milk Batch Details' }}
       />
       <Stack.Screen
-        name="QrCodeScanCow"
+        name='QrCodeScanCow'
         component={QrCodeScanCow}
         options={{ title: 'Scan Cow' }}
       />
       <Stack.Screen
-        name="DetailFormMilk"
+        name='DetailFormMilk'
         component={DetailFormMilk}
         options={{ title: 'Daily Milk Form' }}
       />
       <Stack.Screen
-        name="CreateMilkBatch"
+        name='CreateMilkBatch'
         component={CreateMilkBatch}
         options={{ title: 'Create Milk Batch' }}
       />
       <Stack.Screen
-        name="HealthRecordScreen"
+        name='HealthRecordScreen'
         component={HealthRecordScreen}
         options={{ title: 'Health Record' }}
       />
+      <Stack.Screen name='QrScanCow' component={QrScanCow} options={{ title: 'Scan Cow' }} />
       <Stack.Screen
-        name="QrScanCow"
-        component={QrScanCow}
-        options={{ title: 'Scan Cow' }}
-      />
-      <Stack.Screen
-        name="CowHealthRecord"
+        name='CowHealthRecord'
         component={CowHealthRecord}
         options={{ title: 'Cow Health Record' }}
       />
       <Stack.Screen
-        name="CowHealthInforScreen"
+        name='CowHealthInforScreen'
         component={CowHealthInforScreen}
         options={{ title: 'Timeline Health Record' }}
       />
       <Stack.Screen
-        name="HealthRecordFormScreen"
+        name='HealthRecordFormScreen'
         component={HealthRecordFormScreen}
         options={{ title: 'Health Record Form' }}
       />
       <Stack.Screen
-        name="IllnessCowRecordScreen"
+        name='IllnessCowRecordScreen'
         component={IllnessCowRecordScreen}
         options={{ title: 'Illness Cow Record' }}
       />
       <Stack.Screen
-        name="IllnessDetailForm"
+        name='IllnessDetailForm'
         component={IllnessDetailForm}
         options={{ title: 'Illness Detail' }}
       />
       <Stack.Screen
-        name="IllnessDetailPlanForm"
+        name='IllnessDetailPlanForm'
         component={IllnessDetailPlanForm}
         options={{ title: 'Illness Detail Plan' }}
       />
       <Stack.Screen
-        name="FeedManagementScreen"
+        name='FeedManagementScreen'
         component={FeedManagementScreen}
         options={{ title: t('feed.title') }}
       />
       <Stack.Screen
-        name="FeedDetailScreen"
+        name='FeedDetailScreen'
         component={FeedDetailScreen}
         options={{ title: t('feed.title_detail') }}
       />

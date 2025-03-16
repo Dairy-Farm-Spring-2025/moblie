@@ -4,6 +4,7 @@ import { TextInput, Button, Text, Avatar, RadioButton } from 'react-native-paper
 import { useMutation } from 'react-query';
 import apiClient from '@config/axios/axios';
 import Dropdown from '@components/Dropdown/Dropdown';
+import TitleNameCows from '@components/TitleNameCows/TitleNameCows';
 
 interface FormDataType {
   name: string;
@@ -58,39 +59,42 @@ const ProfileUpdateScreen: React.FC = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <TextInput label='Name' value={name} onChangeText={setName} style={styles.input} />
-      <TextInput
-        label='Phone Number'
-        value={phoneNumber}
-        onChangeText={setPhoneNumber}
-        keyboardType='phone-pad'
-        style={styles.input}
-      />
-      <TextInput label='Address' value={address} onChangeText={setAddress} style={styles.input} />
-      <TextInput
-        label='Date of Birth'
-        value={dob}
-        onChangeText={setDob}
-        placeholder='YYYY-MM-DD'
-        style={styles.input}
-      />
+    <ScrollView>
+      <TitleNameCows title='Update Your Profile' cowName='' />
+      <View style={styles.container}>
+        <TextInput label='Name' value={name} onChangeText={setName} style={styles.input} />
+        <TextInput
+          label='Phone Number'
+          value={phoneNumber}
+          onChangeText={setPhoneNumber}
+          keyboardType='phone-pad'
+          style={styles.input}
+        />
+        <TextInput label='Address' value={address} onChangeText={setAddress} style={styles.input} />
+        <TextInput
+          label='Date of Birth'
+          value={dob}
+          onChangeText={setDob}
+          placeholder='YYYY-MM-DD'
+          style={styles.input}
+        />
 
-      <Dropdown
-        data={genderOptions}
-        onChange={(item) => setGender(item.value)}
-        placeholder='Select Gender'
-      />
+        <Dropdown
+          data={genderOptions}
+          onChange={(item) => setGender(item.value)}
+          placeholder='Select Gender'
+        />
 
-      <Button
-        mode='contained'
-        onPress={handleUpdateProfile}
-        style={styles.button}
-        loading={mutation.isLoading}
-        disabled={mutation.isLoading}
-      >
-        Update Profile
-      </Button>
+        <Button
+          mode='contained'
+          onPress={handleUpdateProfile}
+          style={styles.button}
+          loading={mutation.isLoading}
+          disabled={mutation.isLoading}
+        >
+          Update Profile
+        </Button>
+      </View>
     </ScrollView>
   );
 };
@@ -98,6 +102,7 @@ const ProfileUpdateScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
+    marginTop: 140,
     padding: 20,
     justifyContent: 'center',
   },

@@ -260,13 +260,13 @@ const ProfileScreen: React.FC = () => {
 
           {/* Actions */}
           <View style={styles.actions}>
-            <Button
+            {/* <Button
               mode='contained'
               style={styles.button}
               onPress={() => (navigation.navigate as any)('UpdateInfo')}
             >
               {t('profile.edit_profile')}
-            </Button>
+            </Button> */}
             <Button
               mode='contained-tonal'
               onPress={() => (navigation.navigate as any)('ChangePassword')}

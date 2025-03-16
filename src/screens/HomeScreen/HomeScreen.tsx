@@ -15,14 +15,8 @@ import { User } from '@model/User/User';
 import { useNavigation } from '@react-navigation/native';
 import { getAvatar } from '@utils/getImage';
 import React from 'react';
-import {
-  SectionList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { ActivityIndicator, Avatar, Badge } from 'react-native-paper';
+import { SectionList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Avatar, Badge, Text } from 'react-native-paper';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -36,19 +30,14 @@ const fetchProfile = async (): Promise<User> => {
     const response = await apiClient.get('/users/profile');
     return response.data;
   } catch (error: any) {
-    throw new Error(
-      error?.message || 'An error occurred while fetching the data'
-    );
+    throw new Error(error?.message || 'An error occurred while fetching the data');
   }
 };
 
 const HomeScreen: React.FC = () => {
   const { t } = useTranslation();
   const user = useSelector((state: RootState) => state.auth);
-  const { data: profileData, isLoading } = useQuery<User>(
-    'users/profile',
-    fetchProfile
-  );
+  const { data: profileData, isLoading } = useQuery<User>('users/profile', fetchProfile);
   const navigation = useNavigation<NavigationProp>();
 
   const managementCards = [
@@ -96,12 +85,9 @@ const HomeScreen: React.FC = () => {
     },
   ];
 
-  const sections = [
-    { title: t('home.dairy_management'), data: managementCards },
-  ];
+  const sections = [{ title: t('home.dairy_management'), data: managementCards }];
 
-  const isVeterinarian =
-    profileData?.roleId?.name?.toLowerCase() === 'veterinarians';
+  const isVeterinarian = profileData?.roleId?.name?.toLowerCase() === 'veterinarians';
   const roleColors = isVeterinarian ? COLORS.veterinarian : COLORS.worker;
   const primaryColor = roleColors.primary;
   const backgroundColor = roleColors.accent;
@@ -123,32 +109,22 @@ const HomeScreen: React.FC = () => {
           onPress={() => card.screen && navigation.navigate(card.screen)}
         >
           <FontAwesomeIcon icon={card.icon} size={50} color={'#fff'} />
-          <Text style={[styles.cardTitle, { color: '#fff' }]}>
-            {card.title}
-          </Text>
+          <Text style={[styles.cardTitle, { color: '#fff' }]}>{card.title}</Text>
         </TouchableOpacity>
       ))}
     </View>
   );
 
-  const renderSectionHeader = ({
-    section: { title },
-  }: {
-    section: { title: string };
-  }) => (
-    <Text style={[styles.sectionHeader, { backgroundColor: primaryColor }]}>
-      {title}
-    </Text>
+  const renderSectionHeader = ({ section: { title } }: { section: { title: string } }) => (
+    <Text style={[styles.sectionHeader, { backgroundColor: primaryColor }]}>{title}</Text>
   );
 
   if (isLoading) {
     return (
       <Layout>
-        <View
-          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-        >
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator />
-          <Text>{t('loading')}</Text> {/* Add translated loading text */}
+          <Text>{t('loading')}</Text>
         </View>
       </Layout>
     );
@@ -158,9 +134,9 @@ const HomeScreen: React.FC = () => {
     <Layout isScrollable={false}>
       <View style={styles.headerContainer}>
         <View style={styles.welcomeContainer}>
-          <Text>{t('home.welcome')}</Text>
-          <Text style={styles.welcomeText}>
-            <Text style={{ color: primaryColor }}>{profileData?.name}</Text>
+          <Text style={styles.welcomeText}>{t('home.welcome')}</Text>
+          <Text style={[styles.welcomeText, { color: primaryColor }]}>
+            {profileData?.name || ''}
           </Text>
         </View>
         <View style={styles.avatarContainer}>
@@ -168,10 +144,7 @@ const HomeScreen: React.FC = () => {
             size={60}
             source={{ uri: `${getAvatar(profileData?.profilePhoto || '')}` }}
           />
-          <Badge
-            style={[styles.roleBadge, { backgroundColor: primaryColor }]}
-            size={20}
-          >
+          <Badge style={[styles.roleBadge, { backgroundColor: primaryColor }]} size={20}>
             {isVeterinarian ? t('home.vet') : t('home.worker')}
           </Badge>
         </View>

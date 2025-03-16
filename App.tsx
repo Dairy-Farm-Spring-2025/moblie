@@ -7,6 +7,7 @@ import { PaperProvider } from 'react-native-paper';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import i18next from '@config/locales/i18next';
+import 'intl-pluralrules';
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {

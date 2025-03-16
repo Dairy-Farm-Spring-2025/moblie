@@ -1,5 +1,5 @@
-import { IllnessCow, IllnessDetail } from '@model/Cow/Cow';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { Cow, IllnessCow, IllnessDetail } from '@model/Cow/Cow';
+import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, SegmentedButtons, Text } from 'react-native-paper';
@@ -8,6 +8,8 @@ import IllnessDetailRecord from './components/IllnessDetail/IllnessDetail';
 import apiClient from '@config/axios/axios';
 import { useQuery } from 'react-query';
 import TitleNameCows from '@components/TitleNameCows/TitleNameCows';
+import FloatingButton from '@components/FloatingButton/FloatingButton';
+import IllnessReportForm from './components/IllnessReportForm/IllnessReportForm';
 type RootStackParamList = {
   IllnessCowRecordScreen: { illnessId: number };
 };
@@ -21,12 +23,19 @@ const IllnessCowRecordScreen = () => {
   const [selectedSegment, setSelectedSegment] = useState('illness-record');
   const route = useRoute<IllnessCowRecordScreenRouteProp>();
   const { illnessId } = route.params;
+
   const {
     data: illness,
     isLoading,
     isError,
     refetch,
   } = useQuery(['illness', illnessId], () => fetchIllness(illnessId));
+
+  const navigation = useNavigation();
+
+  const handlePress = (cow: Cow) => {
+    (navigation as any).navigate('IllnessReportForm', { cow });
+  };
 
   if (isLoading) {
     return <ActivityIndicator />;
@@ -71,6 +80,11 @@ const IllnessCowRecordScreen = () => {
       ) : (
         <IllnessDetailRecord illness={illness as IllnessCow} refetch={refetch} />
       )}
+      <FloatingButton
+        onPress={() => {
+          handlePress(illness.cowEntity);
+        }}
+      />
     </View>
   );
 };
