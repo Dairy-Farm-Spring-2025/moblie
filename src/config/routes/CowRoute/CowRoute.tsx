@@ -122,16 +122,6 @@ const CowRoute: React.FC = () => {
         options={{ title: 'Illness Detail' }}
       />
       <Stack.Screen
-        name='IllnessReportForm'
-        component={IllnessReportForm}
-        options={{ title: 'Illness Report' }}
-      />
-      <Stack.Screen
-        name='IllnessReportForm'
-        component={IllnessReportForm}
-        options={{ title: 'Illness Report' }}
-      />
-      <Stack.Screen
         name='IllnessDetailPlanForm'
         component={IllnessDetailPlanForm}
         options={{ title: 'Illness Detail Plan' }}

@@ -14,12 +14,40 @@ import { useDispatch } from 'react-redux';
 import { login } from '@core/store/authSlice';
 import { AppDispatch } from '@core/store/store';
 import { validateEmail } from '@utils/validation';
+import { FontAwesome } from '@expo/vector-icons';
 
 const SignInScreen: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const dispatch: AppDispatch = useDispatch();
+
+  // Real-time email validation
+  const handleEmailChange = (text: string) => {
+    setEmail(text);
+    if (!text) {
+      setEmailError('Email is required');
+    } else if (!validateEmail(text)) {
+      setEmailError('Invalid email format');
+    } else {
+      setEmailError('');
+    }
+  };
+
+  // Real-time password validation
+  const handlePasswordChange = (text: string) => {
+    setPassword(text);
+    if (!text) {
+      setPasswordError('Password is required');
+    } else if (text.length < 6) {
+      setPasswordError('Password must be at least 6 characters long');
+    } else {
+      setPasswordError('');
+    }
+  };
 
   const handleSignIn = async () => {
     if (!email || !password) {
@@ -29,6 +57,11 @@ const SignInScreen: React.FC = () => {
 
     if (!validateEmail(email)) {
       Alert.alert('Error', 'Invalid email format.');
+      return;
+    }
+
+    if (password.length < 6) {
+      Alert.alert('Error', 'Password must be at least 6 characters long.');
       return;
     }
 
@@ -59,30 +92,38 @@ const SignInScreen: React.FC = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Dairy Farm Management</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor="#777"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        placeholderTextColor="#777"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={[styles.input, emailError ? styles.inputError : null]}
+          placeholder='Email'
+          placeholderTextColor='#777'
+          keyboardType='email-address'
+          value={email}
+          onChangeText={handleEmailChange}
+        />
+        {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
+      </View>
 
-      <TouchableOpacity
-        style={styles.signInButton}
-        onPress={handleSignIn}
-        disabled={loading}
-      >
+      <View style={styles.inputContainer}>
+        <View style={[styles.passwordContainer, passwordError ? styles.inputError : null]}>
+          <TextInput
+            style={styles.passwordInput}
+            placeholder='Password'
+            placeholderTextColor='#777'
+            secureTextEntry={!showPassword}
+            value={password}
+            onChangeText={handlePasswordChange}
+          />
+          <TouchableOpacity style={styles.eyeIcon} onPress={() => setShowPassword(!showPassword)}>
+            <FontAwesome name={showPassword ? 'eye-slash' : 'eye'} size={24} color='#777' />
+          </TouchableOpacity>
+        </View>
+        {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
+      </View>
+
+      <TouchableOpacity style={styles.signInButton} onPress={handleSignIn} disabled={loading}>
         {loading ? (
-          <ActivityIndicator color="#fff" />
+          <ActivityIndicator color='#fff' />
         ) : (
           <Text style={styles.signInButtonText}>Sign In</Text>
         )}
@@ -117,6 +158,10 @@ const styles = StyleSheet.create({
     color: '#4CAF50',
     marginBottom: 20,
   },
+  inputContainer: {
+    width: '100%',
+    marginBottom: 15,
+  },
   input: {
     width: '100%',
     height: 50,
@@ -124,9 +169,36 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 15,
     fontSize: 16,
-    marginBottom: 15,
     borderWidth: 1,
     borderColor: '#ddd',
+  },
+  passwordContainer: {
+    width: '100%',
+    height: 50,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  passwordInput: {
+    flex: 1,
+    height: '100%',
+    paddingHorizontal: 15,
+    fontSize: 16,
+  },
+  eyeIcon: {
+    padding: 10,
+  },
+  inputError: {
+    borderColor: '#ff0000',
+  },
+  errorText: {
+    color: '#ff0000',
+    fontSize: 12,
+    marginTop: 5,
+    marginLeft: 5,
   },
   signInButton: {
     width: '100%',
