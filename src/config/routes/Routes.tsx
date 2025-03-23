@@ -20,6 +20,7 @@ import TaskScreen from '@screens/TaskScreen/TaskScreen';
 import QrScanRoute from './QrScanRoute/QrScanRoute';
 import ProfileManagementRoute from './ProfileManagementRoute/ProfileManagementRoute';
 import { COLORS } from '@common/GlobalStyle';
+import TaskManagementRoute from './TaskManagementRoute/TaskManagementRoute';
 
 type RootStackParamList = {
   Home: undefined;
@@ -107,7 +108,7 @@ export const Routes: React.FC = () => {
           })}
         >
           <Tab.Screen name='Home' component={CowRoute} />
-          <Tab.Screen name='Task' component={TaskScreen} />
+          <Tab.Screen name='Task' component={TaskManagementRoute} />
           <Tab.Screen
             name='QRScan'
             component={QrScanRoute}
