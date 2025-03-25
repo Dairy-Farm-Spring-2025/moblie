@@ -16,7 +16,6 @@ type RootStackParamList = {
 
 type TaskDetailRouteProp = RouteProp<RootStackParamList, 'TaskDetail'>;
 
-// Define error type for API response
 interface ApiError {
   response?: {
     data: {
@@ -41,6 +40,11 @@ const TaskDetailContent: React.FC<{
   const hasReportForDate = task.reportTask && task.reportTask.date === selectedDate;
   // Check if task status is completed
   const isCompleted = task.status.toLowerCase() === 'completed';
+  // Check if current date is within task duration
+  const currentDate = new Date(); // Get current date
+  const fromDate = new Date(task.fromDate);
+  const toDate = new Date(task.toDate);
+  const isWithinCurrentDateRange = currentDate >= fromDate && currentDate <= toDate;
 
   const getPriorityColor = (priority: string) => {
     switch (priority.toLowerCase()) {
@@ -182,8 +186,8 @@ const TaskDetailContent: React.FC<{
           <Text style={styles.backButtonText}>Back to Tasks</Text>
         </TouchableOpacity>
 
-        {/* Conditionally render Check-in button if not completed and no report */}
-        {!isCompleted && !hasReportForDate && (
+        {/* Conditionally render Check-in button if not completed, no report, and current date is within range */}
+        {!isCompleted && !hasReportForDate && isWithinCurrentDateRange && (
           <TouchableOpacity
             style={[styles.checkInButton, isCheckingIn && styles.checkInButtonDisabled]}
             onPress={onCheckIn}
@@ -210,7 +214,6 @@ const TaskDetail: React.FC = () => {
     (taskId: string | number) => apiClient.post(`/reportTask/joinTask/${taskId}`),
     {
       onSuccess: (response) => {
-        // Assuming response.data.message exists based on your API
         Alert.alert('Success', response.data?.message || 'Task checked in successfully!');
         queryClient.invalidateQueries('tasks');
       },
@@ -366,7 +369,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   centeredButtonContainer: {
-    justifyContent: 'center', // Center the "Back to Tasks" button when "Check-in" is hidden
+    justifyContent: 'center',
   },
   checkInButton: {
     flexDirection: 'row',

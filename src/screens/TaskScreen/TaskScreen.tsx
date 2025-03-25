@@ -53,7 +53,7 @@ interface Task {
 
 const getWeekDates = (currentDate: Date) => {
   const today = new Date(currentDate);
-  const dayOfWeek = today.getDay();
+  const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
 
   const monday = new Date(today);
   monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
@@ -154,13 +154,17 @@ const TaskScreen: React.FC = () => {
     'description' | 'status' | 'area' | 'taskType' | 'assigner' | 'assignee' | 'priority' | 'shift'
   >('description');
   const [currentMonday, setCurrentMonday] = useState(() => {
-    const today = new Date('2025-03-23');
-    const dayOfWeek = today.getDay();
+    const today = new Date(); // Use current date (e.g., March 25, 2025)
+    const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
     const monday = new Date(today);
     monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
     return monday;
   });
-  const [selectedDayIndex, setSelectedDayIndex] = useState(0);
+  const [selectedDayIndex, setSelectedDayIndex] = useState(() => {
+    const today = new Date(); // Use current date
+    const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+    return dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Adjust for Monday-based week (Sunday = 6, Monday = 0, etc.)
+  });
   const [refreshing, setRefreshing] = useState(false);
 
   const weekDates = getWeekDates(currentMonday);
@@ -243,7 +247,6 @@ const TaskScreen: React.FC = () => {
 
   const monthYear = currentMonday.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
-  // In TaskScreen
   const handleTaskPress = (task: Task) => {
     (navigation.navigate as any)('TaskDetail', {
       task,
@@ -492,7 +495,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   taskContainer: {
-    paddingVertical: 5, // Removed minHeight to allow natural growth
+    paddingVertical: 5,
   },
   taskCard: {
     backgroundColor: '#f8f9fa',

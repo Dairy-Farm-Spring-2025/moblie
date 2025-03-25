@@ -163,7 +163,7 @@ const ReportTaskDetailContent: React.FC<{
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name='arrow-back' size={24} color='#fff' />
           <Text style={styles.backButtonText}>Back to Reports</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> 
         {showReportButton && (
           <TouchableOpacity style={styles.reportButton} onPress={handleNavigateReportTask}>
             <Ionicons name='document-text-outline' size={24} color='#fff' />
