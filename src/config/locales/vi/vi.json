@@ -59,6 +59,8 @@
     "origin": "Nguồn gốc",
     "gender": "Giới tính",
     "inPen": "Trong chuồng",
+    "inPenYes": "Có",
+    "inPenNo": "Không",
     "type": "Loại",
     "description": "Mô tả",
     "penInfo": "Thông tin chuồng",
