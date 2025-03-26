@@ -20,6 +20,8 @@ export type Task = {
   shift: string;
   completionNotes: string | null;
   reportTask: ReportTaskData | null;
+  illness: any | null;
+  vaccineInjection: any | null;
 };
 
 export type ReportTaskData = {

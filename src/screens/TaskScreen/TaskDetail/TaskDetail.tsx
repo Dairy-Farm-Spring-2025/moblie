@@ -35,6 +35,7 @@ const TaskDetailContent: React.FC<{
   const navigation = useNavigation();
 
   const handleToggleExpand = () => setIsExpanded(!isExpanded);
+  console.log('task', task.reportTask);
 
   // Check if a report exists for the selected date
   const hasReportForDate = task.reportTask && task.reportTask.date === selectedDate;

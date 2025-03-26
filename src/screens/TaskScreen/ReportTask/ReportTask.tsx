@@ -23,7 +23,6 @@ interface ReportTaskProps {
 
 const fetchReportTasks = async (taskId: string | number): Promise<ReportTaskData[]> => {
   const response = await apiClient.get(`/reportTask/task/${taskId}`);
-  console.log('Fetched report tasks:', response.data[0].reportImages);
   return response.data;
 };
 

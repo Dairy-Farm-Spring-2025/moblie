@@ -14,42 +14,7 @@ import SearchInput from '@components/Input/Search/SearchInput';
 import Layout from '@components/layout/Layout';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-
-interface Task {
-  taskId: number;
-  description: string;
-  status: string;
-  fromDate: string;
-  toDate: string;
-  areaName: string;
-  taskTypeId: {
-    taskTypeId: number;
-    name: string;
-    roleId: {
-      id: number;
-      name: string;
-    };
-    description: string;
-  };
-  assignerName: string;
-  assigneeName: string;
-  priority: string;
-  shift: string;
-  completionNotes: string | null;
-  reportTask: {
-    reportTaskId: number;
-    description: string | null;
-    status: string;
-    startTime: string;
-    endTime: string | null;
-    date: string;
-    comment: string | null;
-    reviewer_id: any;
-    reportImages: any[];
-  } | null;
-  illness: any | null;
-  vaccineInjection: any | null;
-}
+import { Task } from '@model/Task/Task';
 
 const getWeekDates = (currentDate: Date) => {
   const today = new Date(currentDate);
@@ -78,16 +43,32 @@ const fetchTasksByDateRange = async ({
   };
 
   const response = await apiClient.post('/tasks/myTasks/by-date-range', requestBody);
-  const tasksByDate = response.data;
+  console.log('response', response.data);
+  const tasksByDate = response.data || {};
 
   const allTasks: Task[] = [];
   Object.entries(tasksByDate).forEach(([_, tasks]: [string, any]) => {
-    if (Array.isArray(tasks) && tasks) {
+    if (Array.isArray(tasks) && tasks.length > 0) {
       allTasks.push(...tasks);
     }
   });
+  console.log('allTasks', allTasks);
 
-  return allTasks;
+  const taskMap = new Map<number, Task>();
+  allTasks.forEach((task) => {
+    if (!taskMap.has(task.taskId)) {
+      taskMap.set(task.taskId, task);
+    } else {
+      const existingTask = taskMap.get(task.taskId)!;
+      if (!existingTask.reportTask && task.reportTask) {
+        existingTask.reportTask = task.reportTask;
+      }
+    }
+  });
+
+  const uniqueTasks = Array.from(taskMap.values());
+  console.log('uniqueTasks', uniqueTasks);
+  return uniqueTasks;
 };
 
 const getTasksForCell = (tasks: Task[], date: Date, shift: string) => {
@@ -100,12 +81,18 @@ const getTasksForCell = (tasks: Task[], date: Date, shift: string) => {
     const toDate = task.toDate ? new Date(task.toDate) : fromDate;
     toDate.setHours(23, 59, 59, 999);
 
-    const normalizedTaskShift = task.shift.toLowerCase().includes('day') ? 'Day' : 'Night';
-    return (
-      cellDate >= fromDate &&
-      cellDate <= toDate &&
-      normalizedTaskShift.toLowerCase() === shift.toLowerCase()
+    const isDayShift = task.shift.toLowerCase().includes('day');
+    const normalizedTaskShift = isDayShift ? 'Day' : 'Night';
+    const isShiftMatch = normalizedTaskShift === shift;
+    const isDateMatch = cellDate >= fromDate && cellDate <= toDate;
+
+    console.log(
+      `Task ID: ${task.taskId}, Date: ${cellDate.toISOString()}, Shift: ${shift}, Task Shift: ${
+        task.shift
+      }, Normalized Shift: ${normalizedTaskShift}, Shift Match: ${isShiftMatch}, Date Match: ${isDateMatch}`
     );
+
+    return isDateMatch && isShiftMatch;
   });
 };
 
@@ -136,16 +123,44 @@ const checkUnreportedTasks = (tasks: Task[], currentDate: Date) => {
     return today >= fromDate && today <= toDate;
   });
 
-  const unreportedTasks = todayTasks.filter((task) => !task.reportTask);
+  const unreportedTasks = todayTasks.filter((task) => {
+    if (!task.reportTask) {
+      return true;
+    }
+    const reportDate = new Date(task.reportTask.date);
+    reportDate.setHours(0, 0, 0, 0);
+    return reportDate.getTime() !== today.getTime();
+  });
+
   return unreportedTasks.length > 0 ? unreportedTasks : null;
 };
 
-const NewTaskCard = ({ task, onPress }: { task: Task; onPress: () => void }) => (
-  <TouchableOpacity style={styles.taskCard} onPress={onPress}>
-    <Text style={styles.taskCardTitle}>{task.taskTypeId.name}</Text>
-    <Text style={styles.taskCardText}>Priority: {task.priority}</Text>
-  </TouchableOpacity>
-);
+const NewTaskCard = ({
+  task,
+  onPress,
+  selectedDate,
+}: {
+  task: Task;
+  onPress: () => void;
+  selectedDate: Date;
+}) => {
+  const selectedDateNormalized = new Date(selectedDate);
+  selectedDateNormalized.setHours(0, 0, 0, 0);
+
+  const hasReportForSelectedDate =
+    task.reportTask &&
+    new Date(task.reportTask.date).setHours(0, 0, 0, 0) === selectedDateNormalized.getTime();
+
+  return (
+    <TouchableOpacity style={styles.taskCard} onPress={onPress}>
+      <Text style={styles.taskCardTitle}>{task.taskTypeId.name}</Text>
+      <Text style={styles.taskCardText}>Priority: {task.priority}</Text>
+      <Text style={styles.reportStatusText}>
+        Report: {hasReportForSelectedDate ? 'Submitted' : 'Not Submitted'}
+      </Text>
+    </TouchableOpacity>
+  );
+};
 
 const TaskScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -154,16 +169,16 @@ const TaskScreen: React.FC = () => {
     'description' | 'status' | 'area' | 'taskType' | 'assigner' | 'assignee' | 'priority' | 'shift'
   >('description');
   const [currentMonday, setCurrentMonday] = useState(() => {
-    const today = new Date(); // Use current date (e.g., March 25, 2025)
-    const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+    const today = new Date();
+    const dayOfWeek = today.getDay();
     const monday = new Date(today);
     monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
     return monday;
   });
   const [selectedDayIndex, setSelectedDayIndex] = useState(() => {
-    const today = new Date(); // Use current date
-    const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-    return dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Adjust for Monday-based week (Sunday = 6, Monday = 0, etc.)
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    return dayOfWeek === 0 ? 6 : dayOfWeek - 1;
   });
   const [refreshing, setRefreshing] = useState(false);
 
@@ -228,6 +243,7 @@ const TaskScreen: React.FC = () => {
           return false;
       }
     }) || [];
+  console.log('filteredTasks', filteredTasks);
 
   const shifts = ['Day', 'Night'];
 
@@ -248,6 +264,7 @@ const TaskScreen: React.FC = () => {
   const monthYear = currentMonday.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
   const handleTaskPress = (task: Task) => {
+    console.log('Task pressed:', task);
     (navigation.navigate as any)('TaskDetail', {
       task,
       selectedDate: weekDates[selectedDayIndex].toISOString().split('T')[0],
@@ -366,6 +383,7 @@ const TaskScreen: React.FC = () => {
                               }-${index}`}
                               task={task}
                               onPress={() => handleTaskPress(task)}
+                              selectedDate={weekDates[selectedDayIndex]}
                             />
                           ))
                         ) : (
@@ -516,6 +534,12 @@ const styles = StyleSheet.create({
   taskCardText: {
     fontSize: 12,
     marginBottom: 3,
+    color: '#333',
+  },
+  reportStatusText: {
+    fontSize: 12,
+    marginBottom: 3,
+    color: '#666',
   },
   noTasksText: {
     fontSize: 12,
