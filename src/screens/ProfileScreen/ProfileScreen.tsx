@@ -21,8 +21,7 @@ import { User } from '@model/User/User';
 import { getAvatar } from '@utils/getImage';
 import { convertToDDMMYYYY } from '@utils/format';
 import { useTranslation } from 'react-i18next';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faFlag } from '@fortawesome/free-solid-svg-icons';
+import { Ionicons } from '@expo/vector-icons'; // Import Ionicons from @expo/vector-icons
 
 const fetchProfile = async (): Promise<User> => {
   try {
@@ -196,8 +195,8 @@ const ProfileScreen: React.FC = () => {
                 ]}
                 onPress={() => changeLanguage('en')}
               >
-                <FontAwesomeIcon
-                  icon={faFlag}
+                <Ionicons
+                  name='flag-outline'
                   size={24}
                   color={i18n.language === 'en' ? '#6200ee' : '#666'}
                 />
@@ -210,8 +209,8 @@ const ProfileScreen: React.FC = () => {
                 ]}
                 onPress={() => changeLanguage('vi')}
               >
-                <FontAwesomeIcon
-                  icon={faFlag}
+                <Ionicons
+                  name='flag-outline'
                   size={24}
                   color={i18n.language === 'vi' ? '#6200ee' : '#666'}
                 />

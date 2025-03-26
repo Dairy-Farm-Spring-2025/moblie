@@ -14,8 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Button, Text } from 'react-native-paper';
 import { convertToDDMMYYYY } from '@utils/format';
 import RenderHtmlComponent from '@components/RenderHTML/RenderHtmlComponent';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { Ionicons } from '@expo/vector-icons'; // Import Ionicons from @expo/vector-icons
 
 interface IllnessCowRecordFormProps {
   illness: IllnessCow;
@@ -99,7 +98,8 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
                 <Text style={styles.value}>{formattedStartDate}</Text>
               </View>
               <View>
-                <FontAwesomeIcon icon={faArrowRight} size={20} />
+                <Ionicons name='arrow-forward' size={20} color='#000' />{' '}
+                {/* Replaced faArrowRight with arrow-forward */}
               </View>
               <View>
                 <Text style={styles.label}>End Date:</Text>

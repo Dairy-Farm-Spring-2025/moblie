@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "16294498738",
+    "project_id": "dfms-268e0",
+    "storage_bucket": "dfms-268e0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:16294498738:android:bd03c9f3a8c924e50d14ab",
+        "android_client_info": {
+          "package_name": "com.yusers.DairyFarmMobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyMRSK7Xf65Bde6f1OPb_qxKaWPWj1FzE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

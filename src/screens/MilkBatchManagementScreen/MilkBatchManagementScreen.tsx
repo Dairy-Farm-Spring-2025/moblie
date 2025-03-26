@@ -12,8 +12,7 @@ import {
   Alert,
 } from 'react-native';
 import { useQuery } from 'react-query';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faSync } from '@fortawesome/free-solid-svg-icons';
+import { Ionicons } from '@expo/vector-icons'; // Import Ionicons from @expo/vector-icons
 import { format } from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
 import FloatingButton from '@components/FloatingButton/FloatingButton';
@@ -96,7 +95,7 @@ const MilkBatchManagementScreen: React.FC = () => {
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>Error loading data: {error?.message}</Text>
           <TouchableOpacity style={styles.refreshButton} onPress={handleRefresh}>
-            <FontAwesomeIcon icon={faSync} size={20} color='white' />
+            <Ionicons name='refresh' size={20} color='white' /> {/* Replaced faSync with refresh */}
             <Text style={styles.refreshButtonText}>Refresh</Text>
           </TouchableOpacity>
         </View>

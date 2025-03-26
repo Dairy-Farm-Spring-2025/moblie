@@ -13,13 +13,20 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yusers.DairyFarmMobile",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO"],
+      "package": "com.yusers.DairyFarmMobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -32,7 +39,13 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
           "recordAudioAndroid": true
         }
-      ]
-    ]
+      ],
+      "expo-barcode-scanner"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "568baeb2-6e92-4c36-927e-a8e28389bb1f"
+      }
+    }
   }
 }
