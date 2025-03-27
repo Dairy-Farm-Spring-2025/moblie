@@ -21,7 +21,8 @@ import { User } from '@model/User/User';
 import { getAvatar } from '@utils/getImage';
 import { convertToDDMMYYYY } from '@utils/format';
 import { useTranslation } from 'react-i18next';
-import { Ionicons } from '@expo/vector-icons'; // Import Ionicons from @expo/vector-icons
+import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 
 const fetchProfile = async (): Promise<User> => {
   try {
@@ -33,7 +34,7 @@ const fetchProfile = async (): Promise<User> => {
 };
 
 const ProfileScreen: React.FC = () => {
-  const { t, i18n } = useTranslation(); // Add i18n to change language
+  const { t, i18n } = useTranslation();
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   const dispatch: AppDispatch = useDispatch();
   const navigation = useNavigation();
@@ -130,9 +131,15 @@ const ProfileScreen: React.FC = () => {
     }
   };
 
-  // Function to change language
-  const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
+  // Function to change language and save to AsyncStorage
+  const changeLanguage = async (lng: string) => {
+    try {
+      await AsyncStorage.setItem('language', lng); // Save the selected language to AsyncStorage
+      i18n.changeLanguage(lng); // Update the language in i18next
+    } catch (error) {
+      console.error('Error saving language to AsyncStorage:', error);
+      Alert.alert(t('error'), t('language_change_error'));
+    }
   };
 
   if (isLoading) {
@@ -259,13 +266,6 @@ const ProfileScreen: React.FC = () => {
 
           {/* Actions */}
           <View style={styles.actions}>
-            {/* <Button
-              mode='contained'
-              style={styles.button}
-              onPress={() => (navigation.navigate as any)('UpdateInfo')}
-            >
-              {t('profile.edit_profile')}
-            </Button> */}
             <Button
               mode='contained-tonal'
               onPress={() => (navigation.navigate as any)('ChangePassword')}
