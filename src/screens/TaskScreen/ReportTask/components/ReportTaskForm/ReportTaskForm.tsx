@@ -98,7 +98,7 @@ const ReportTaskForm: React.FC = () => {
       },
       onError: (error: any) => {
         console.error('Failed to create report task:', error.response?.data || error.message);
-        Alert.alert('Error', `Failed to report task: ${error.message || 'Unknown error'}`);
+        Alert.alert('Error', `Failed to report task: ${error}`);
       },
     }
   );

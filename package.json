@@ -54,6 +54,7 @@
     "react-native-screens": "~4.4.0",
     "react-native-svg": "15.8.0",
     "react-native-timeline-flatlist": "^0.8.0",
+    "react-native-webview": "^13.13.5",
     "react-query": "^3.39.3",
     "react-redux": "^9.2.0",
     "redux-persist": "^6.0.0",
