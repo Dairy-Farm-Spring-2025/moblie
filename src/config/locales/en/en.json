@@ -59,6 +59,8 @@
     "origin": "Origin",
     "gender": "Gender",
     "inPen": "In Pen",
+    "inPenYes": "Yes",
+    "inPenNo": "No",
     "type": "Type",
     "description": "Description",
     "penInfo": "Pen Info",

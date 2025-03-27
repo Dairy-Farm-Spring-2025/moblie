@@ -3,20 +3,15 @@ import Layout from '@components/layout/Layout';
 import DividerUI from '@components/UI/DividerUI';
 import apiClient from '@config/axios/axios';
 import { RootState } from '@core/store/store';
-import {
-  faChartArea,
-  faCow,
-  faDolly,
-  faNotesMedical,
-  faSliders,
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { AntDesign, Feather, Ionicons, MaterialIcons } from '@expo/vector-icons'; // Import Ionicons from @expo/vector-icons
 import { User } from '@model/User/User';
 import { useNavigation } from '@react-navigation/native';
 import { getAvatar } from '@utils/getImage';
 import React from 'react';
 import { SectionList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ActivityIndicator, Avatar, Badge, Text } from 'react-native-paper';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -44,43 +39,43 @@ const HomeScreen: React.FC = () => {
     {
       id: 'CowManagementScreen',
       title: t('home.cow'),
-      icon: faCow,
+      icon: <MaterialCommunityIcons name='cow' size={32} color='#fff' />,
       screen: 'CowManagementScreen',
     },
     {
       id: 'AreaManagementScreen',
       title: t('home.area'),
-      icon: faChartArea,
+      icon: <FontAwesome5 name='chart-area' size={30} color='#fff' />,
       screen: 'AreaManagementScreen',
     },
     {
       id: 'PenManagementScreen',
       title: t('home.pen'),
-      icon: faSliders,
+      icon: <MaterialIcons name='warehouse' size={30} color='#fff' />, // Replaced faSliders with sliders
       screen: 'PenManagementScreen',
     },
     {
       id: 'MilkBatch',
       title: t('home.milk_batch'),
-      icon: faDolly,
+      icon: <AntDesign name='barschart' size={30} color='#fff' />, // Replaced faDolly with cart-outline
       screen: 'MilkBatchManagementScreen',
     },
     {
       id: 'HealthRecord',
       title: t('home.health_record'),
-      icon: faNotesMedical,
+      icon: <Ionicons name='medkit' size={30} color='#fff' />, // Replaced faNotesMedical with medkit-outline
       screen: 'HealthRecordScreen',
     },
     {
       id: 'FarmLayoutScreen',
       title: t('home.farm_layout'),
-      icon: faChartArea,
+      icon: <Feather name='map' size={30} color='#fff' />, // Replaced faChartArea with map-outline
       screen: 'FarmLayout',
     },
     {
       id: 'FeedManagementScreen',
       title: t('feed.title'),
-      icon: faChartArea,
+      icon: <MaterialCommunityIcons name='food-variant' size={30} color='#fff' />, // Replaced faChartArea with map-outline
       screen: 'FeedManagementScreen',
     },
   ];
@@ -108,7 +103,7 @@ const HomeScreen: React.FC = () => {
           style={[styles.card, { backgroundColor }]}
           onPress={() => card.screen && navigation.navigate(card.screen)}
         >
-          <FontAwesomeIcon icon={card.icon} size={50} color={'#fff'} />
+          {card.icon}
           <Text style={[styles.cardTitle, { color: '#fff' }]}>{card.title}</Text>
         </TouchableOpacity>
       ))}

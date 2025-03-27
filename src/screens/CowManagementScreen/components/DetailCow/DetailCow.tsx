@@ -36,6 +36,8 @@ const DetailCow: React.FC = () => {
 
   const { data: cow, isLoading, isError } = useQuery(['cow', cowId], () => fetchCowDetails(cowId));
 
+  console.log(cow?.inPen);
+
   const handleNavigateHealthResponse = () => {
     (navigator as any).navigate('CowHealthInforScreen', {
       healthResponses: cow?.healthInfoResponses,
@@ -88,7 +90,7 @@ const DetailCow: React.FC = () => {
           </Text>
           <Text style={styles.text}>
             🏡 <Text style={styles.bold}>{t('cowDetails.inPen')}:</Text>{' '}
-            {cow.inPen ? t('cowDetails.yes') : t('cowDetails.no')}
+            {cow.inPen ? t('cowDetails.inPenYes') : t('cowDetails.inPenNo')}
           </Text>
           <Text style={styles.text}>
             🛠 <Text style={styles.bold}>{t('cowDetails.type')}:</Text>{' '}

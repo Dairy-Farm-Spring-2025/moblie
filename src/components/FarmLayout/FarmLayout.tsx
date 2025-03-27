@@ -4,9 +4,7 @@ import { Text, Badge } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { useQuery } from 'react-query';
 import { COLORS } from '@common/GlobalStyle';
-import { Ionicons } from '@expo/vector-icons';
-import { faCow, faEllipsis, faWarning } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { Ionicons } from '@expo/vector-icons'; // Already imported
 import apiClient from '@config/axios/axios';
 import { useSelector } from 'react-redux';
 import { RootState } from '@core/store/store';
@@ -223,13 +221,13 @@ const FarmLayoutScreen = () => {
                                 }}
                               >
                                 <Text style={styles.penText}>{pen.name}</Text>
-                                <FontAwesomeIcon
-                                  icon={
+                                <Ionicons
+                                  name={
                                     pen.penStatus === 'occupied'
-                                      ? faCow
+                                      ? 'cow'
                                       : pen.penStatus === 'underMaintenance'
-                                      ? faWarning
-                                      : faEllipsis
+                                      ? 'warning-outline'
+                                      : 'ellipsis-horizontal'
                                   }
                                   size={16}
                                   color={
@@ -278,13 +276,13 @@ const FarmLayoutScreen = () => {
                                 }}
                               >
                                 <Text style={styles.penText}>{pen.name}</Text>
-                                <FontAwesomeIcon
-                                  icon={
+                                <Ionicons
+                                  name={
                                     pen.penStatus === 'occupied'
-                                      ? faCow
+                                      ? 'cow'
                                       : pen.penStatus === 'underMaintenance'
-                                      ? faWarning
-                                      : faEllipsis
+                                      ? 'warning-outline'
+                                      : 'ellipsis-horizontal'
                                   }
                                   size={16}
                                   color={

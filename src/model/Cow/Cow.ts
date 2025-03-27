@@ -40,6 +40,7 @@ export interface CowType {
   status: string;
   createdAt: string;
   updatedAt: string;
+  maxWeight?: number;
 }
 
 // Cow Model

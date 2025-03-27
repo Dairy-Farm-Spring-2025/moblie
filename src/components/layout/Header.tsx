@@ -7,16 +7,13 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faBars, faBell } from '@fortawesome/free-solid-svg-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useSiderStore } from '@core/store/sliderStore/sliderStore';
 
 const Header: React.FC = () => {
   const { isSiderVisible, toggleSider, closeSider } = useSiderStore();
-  const [siderAnimation] = useState(
-    new Animated.Value(isSiderVisible ? 0 : -200)
-  ); // Animation
+  const [siderAnimation] = useState(new Animated.Value(isSiderVisible ? 0 : -200)); // Animation
 
   const navigation = useNavigation();
 
@@ -38,34 +35,27 @@ const Header: React.FC = () => {
     <>
       <View style={styles.header}>
         <TouchableOpacity style={styles.siderTrigger} onPress={toggleSider}>
-          <FontAwesomeIcon icon={faBars} size={24} color="#000" />
+          <Ionicons name='menu' size={24} color='#000' />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Dairy Farm Management</Text>
         <TouchableOpacity style={styles.notificationIcon}>
-          <FontAwesomeIcon icon={faBell} size={24} color="#000" />
+          <Ionicons name='notifications' size={24} color='#000' />
         </TouchableOpacity>
       </View>
 
       {isSiderVisible && (
         <TouchableWithoutFeedback onPress={toggleSider}>
-          <View>
-            <Animated.View
-              style={[
-                styles.sider,
-                { transform: [{ translateX: siderAnimation }] },
-              ]}
-            >
-              <TouchableOpacity onPress={() => handleNavigation('Home')}>
-                <Text style={styles.siderText}>Home</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleNavigation('About')}>
-                <Text style={styles.siderText}>About</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleNavigation('Profile')}>
-                <Text style={styles.siderText}>Profile</Text>
-              </TouchableOpacity>
-            </Animated.View>
-          </View>
+          <Animated.View style={[styles.sider, { transform: [{ translateX: siderAnimation }] }]}>
+            <TouchableOpacity onPress={() => handleNavigation('Home')}>
+              <Text style={styles.siderText}>Home</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleNavigation('About')}>
+              <Text style={styles.siderText}>About</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleNavigation('Profile')}>
+              <Text style={styles.siderText}>Profile</Text>
+            </TouchableOpacity>
+          </Animated.View>
         </TouchableWithoutFeedback>
       )}
     </>

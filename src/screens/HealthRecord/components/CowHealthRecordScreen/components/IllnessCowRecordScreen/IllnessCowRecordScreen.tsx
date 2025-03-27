@@ -3,7 +3,7 @@ import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navig
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, SegmentedButtons, Text } from 'react-native-paper';
-import IllnessCowRecordForm from './components/IllnessCowRecordForm.tsx/IllnessCowRecordForm';
+import IllnessCowRecordForm from './components/IllnessCowRecordForm/IllnessCowRecordForm';
 import IllnessDetailRecord from './components/IllnessDetail/IllnessDetail';
 import apiClient from '@config/axios/axios';
 import { useQuery } from 'react-query';

@@ -78,7 +78,7 @@ const CowRoute: React.FC = () => {
       <Stack.Screen
         name='QrCodeScanCow'
         component={QrCodeScanCow}
-        options={{ title: 'Scan Cow' }}
+        options={{ title: 'Scan Cow for Milk Batch' }}
       />
       <Stack.Screen
         name='DetailFormMilk'
@@ -95,7 +95,11 @@ const CowRoute: React.FC = () => {
         component={HealthRecordScreen}
         options={{ title: 'Health Record' }}
       />
-      <Stack.Screen name='QrScanCow' component={QrScanCow} options={{ title: 'Scan Cow' }} />
+      <Stack.Screen
+        name='GeneralQrScanCow' // Renamed to avoid confusion with QrCodeScanCow
+        component={QrScanCow}
+        options={{ title: 'General Scan Cow' }}
+      />
       <Stack.Screen
         name='CowHealthRecord'
         component={CowHealthRecord}
@@ -136,7 +140,6 @@ const CowRoute: React.FC = () => {
         component={FeedDetailScreen}
         options={{ title: t('feed.title_detail') }}
       />
-      {/* You can add more screens related to 'Cow' here in the future */}
     </Stack.Navigator>
   );
 };
