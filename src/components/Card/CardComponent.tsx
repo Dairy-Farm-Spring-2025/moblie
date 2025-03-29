@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImageProps, StyleSheet } from 'react-native';
+import { ImageProps, StyleProp, StyleSheet, ViewStyle } from 'react-native';
 import {
   Avatar,
   Card,
@@ -12,7 +12,7 @@ export const LeftContent = (props: any) => <Avatar.Icon {...props} />;
 
 interface CardComponentProps extends CardProps {
   children: React.ReactNode;
-  style?: any;
+  style?: StyleProp<ViewStyle>;
 }
 
 interface CardTitleProps {

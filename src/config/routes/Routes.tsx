@@ -5,7 +5,7 @@ import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AboutScreen from '@screens/AboutScreen/AboutScreen';
 import SignInScreen from '@screens/SignInScreen/SignInScreen';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import CowRoute from './CowRoute/CowRoute';
@@ -15,10 +15,14 @@ import ProfileManagementRoute from './ProfileManagementRoute/ProfileManagementRo
 import { COLORS } from '@common/GlobalStyle';
 import TaskManagementRoute from './TaskManagementRoute/TaskManagementRoute';
 import { useNotifications } from '@services/Notification/Notification';
+import NotificationScreen from '@screens/NotificationScreen/NotificationScreen';
+import apiClient from '@config/axios/axios';
+import { Notification } from '@model/Notification/Notification';
+import { useQuery } from 'react-query';
 
 type RootStackParamList = {
   Home: undefined;
-  About: undefined;
+  Notification: undefined;
   Profile: undefined;
   Login: undefined;
   Task: undefined;
@@ -28,6 +32,17 @@ type RootStackParamList = {
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
+
+const fetchNotification = async (): Promise<Notification[]> => {
+  try {
+    const response = await apiClient.get('/notifications/myNotification');
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error?.message || 'An error occurred while fetching the data'
+    );
+  }
+};
 
 const CustomTabBarButton = ({ children, onPress, roleColors }: any) => {
   return (
@@ -62,8 +77,14 @@ const CustomTabBarButton = ({ children, onPress, roleColors }: any) => {
 
 // Wrapper component to handle notifications
 const NavigationWrapper = () => {
+  const { data: myNotificationData } = useQuery<Notification[]>(
+    'notifications/myNotification',
+    fetchNotification
+  );
   const navigation = useNavigation();
-  const { isAuthenticated, roleName } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated, roleName } = useSelector(
+    (state: RootState) => state.auth
+  );
 
   // Initialize notifications using the custom hook
   useNotifications({ navigation });
@@ -80,6 +101,7 @@ const NavigationWrapper = () => {
   return isAuthenticated ? (
     <Tab.Navigator
       screenOptions={({ route }) => ({
+        lazy: false,
         headerShown: false,
         tabBarStyle: {
           backgroundColor: COLORS.backgroundLayout,
@@ -89,7 +111,7 @@ const NavigationWrapper = () => {
         },
         tabBarIcon: ({ size, focused }) => {
           let iconName = 'home';
-          if (route.name === 'About') iconName = 'information-circle';
+          if (route.name === 'Notification') iconName = 'notifications';
           if (route.name === 'Profile') iconName = 'person';
           if (route.name === 'Task') iconName = 'checkbox';
 
@@ -101,14 +123,15 @@ const NavigationWrapper = () => {
             />
           );
         },
+        unmountOnBlur: true,
         tabBarActiveTintColor: roleColors.primary,
         tabBarInactiveTintColor: roleColors.inactive,
       })}
     >
-      <Tab.Screen name='Home' component={CowRoute} />
-      <Tab.Screen name='Task' component={TaskManagementRoute} />
+      <Tab.Screen name="Home" component={CowRoute} key={'Home'} />
+      <Tab.Screen name="Task" component={TaskManagementRoute} key={'Task'} />
       <Tab.Screen
-        name='QRScan'
+        name="QRScan"
         component={QrScanRoute}
         options={{
           tabBarLabel: '',
@@ -117,20 +140,46 @@ const NavigationWrapper = () => {
           tabBarIcon: ({ size, focused }) => (
             <Ionicons
               style={{ marginTop: 1 }}
-              name='qr-code'
+              name="qr-code"
               size={size + 4}
               color={focused ? '#fff' : '#f8f8f8'}
             />
           ),
-          tabBarButton: (props) => <CustomTabBarButton {...props} roleColors={roleColors} />,
+          tabBarButton: (props) => (
+            <CustomTabBarButton {...props} roleColors={roleColors} />
+          ),
         }}
       />
-      <Tab.Screen name='About' component={AboutScreen} />
-      <Tab.Screen name='Profile' component={ProfileManagementRoute} />
+      <Tab.Screen
+        name="Notification"
+        key={'Notification'}
+        component={NotificationScreen}
+        options={{
+          tabBarBadge:
+            myNotificationData &&
+            myNotificationData?.filter((element) => element.read === false)
+              ?.length > 0
+              ? myNotificationData?.filter((element) => element.read === false)
+                  ?.length
+              : undefined,
+          tabBarBadgeStyle: {
+            backgroundColor: 'red',
+            color: 'white',
+            width: 'auto',
+            height: 17,
+            fontSize: 12,
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        key={'Profile'}
+        component={ProfileManagementRoute}
+      />
     </Tab.Navigator>
   ) : (
     <Stack.Navigator>
-      <Stack.Screen name='Login' component={SignInScreen} />
+      <Stack.Screen name="Login" component={SignInScreen} />
     </Stack.Navigator>
   );
 };
