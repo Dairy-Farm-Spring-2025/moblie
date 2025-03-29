@@ -99,5 +99,10 @@
     "feedmeal_detail": "Chi tiết thành phần bữa ăn",
     "name": "Tên",
     "storage": "Nhà kho"
-  }
+  },
+  "Task": "Công việc",
+  "Milking": "Vắt sữa",
+  "Feeding": "Cho ăn",
+  "Heathcare": "Chăm sóc sức khỏe",
+  "Other": "Khác"
 }
