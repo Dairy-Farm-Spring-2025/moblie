@@ -77,13 +77,11 @@ const PenManagementScreen = () => {
         </View>
       ) : (
         <FlatList
-          numColumns={2}
-          contentContainerStyle={{
-            paddingBottom: 10,
-            gap: 5,
-          }}
           data={filteredPen}
           keyExtractor={(item: Pen) => item.penId.toString()}
+          contentContainerStyle={{
+            paddingHorizontal: 10,
+          }}
           renderItem={({ item, index }) => {
             return (
               <TouchableOpacity
@@ -91,12 +89,6 @@ const PenManagementScreen = () => {
                 style={styles.card}
                 onPress={() => handleNavigationToDetail(item.penId)}
               >
-                <Image
-                  source={{
-                    uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpK3Y1ipYNGi4zHyfKLSMX0586IhS2E5xAog&s',
-                  }}
-                  style={styles.cardImage}
-                />
                 <View>
                   <View style={styles.cardTitle}>
                     <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
@@ -112,11 +104,6 @@ const PenManagementScreen = () => {
                     }}
                   >
                     <View style={styles.cardContent}>
-                      <Tooltip title="Pen Type">
-                        <TagUI backgroundColor="blue" fontSize={10}>
-                          {formatType(item.penType)}
-                        </TagUI>
-                      </Tooltip>
                       <Tooltip title="Pen Status">
                         <TagUI backgroundColor="orange" fontSize={10}>
                           {formatType(item.penStatus)}
@@ -141,10 +128,10 @@ const PenManagementScreen = () => {
 const styles = StyleSheet.create({
   container: { paddingTop: 10, marginBottom: 120, height: '100%' },
   card: {
-    margin: 10,
-    width: '45%', // For 2-column grid layout
+    marginBottom: 10,
     padding: 10,
     borderRadius: 10,
+    width: '100%',
     backgroundColor: '#f8f9fa',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },

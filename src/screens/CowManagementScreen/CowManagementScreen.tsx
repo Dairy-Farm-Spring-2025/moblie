@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, Image } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
 import { SegmentedButtons, Tooltip } from 'react-native-paper';
 import { useQuery } from 'react-query'; // Import React Query hook
 import { useNavigation } from '@react-navigation/native';
@@ -20,12 +27,17 @@ const CowManagementScreen: React.FC = () => {
   const { t } = useTranslation();
   const [selectedSegment, setSelectedSegment] = useState('list');
   const [searchText, setSearchText] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState<'name' | 'origin' | 'type' | 'pen' | 'area'>(
-    'name'
-  );
+  const [selectedFilter, setSelectedFilter] = useState<
+    'name' | 'origin' | 'type' | 'pen' | 'area'
+  >('name');
 
   // Use React Query's useQuery hook to fetch cows data
-  const { data: cows, isLoading, isError, error } = useQuery<Cow[]>('cows', fetchCows);
+  const {
+    data: cows,
+    isLoading,
+    isError,
+    error,
+  } = useQuery<Cow[]>('cows', fetchCows);
 
   const navigation = useNavigation();
 
@@ -38,9 +50,13 @@ const CowManagementScreen: React.FC = () => {
     } else if (selectedFilter === 'type') {
       return cow.cowType?.name.toLowerCase().includes(searchText.toLowerCase());
     } else if (selectedFilter === 'pen') {
-      return cow.penResponse?.name.toLowerCase().includes(searchText.toLowerCase());
+      return cow.penResponse?.name
+        .toLowerCase()
+        .includes(searchText.toLowerCase());
     } else if (selectedFilter === 'area') {
-      return cow.penResponse?.area.name.toLowerCase().includes(searchText.toLowerCase());
+      return cow.penResponse?.area.name
+        .toLowerCase()
+        .includes(searchText.toLowerCase());
     }
     return false;
   });
@@ -60,7 +76,11 @@ const CowManagementScreen: React.FC = () => {
           { value: 'list', label: t('cow_management.cows'), icon: 'cow' },
           { value: 'create', label: t('cow_management.create'), icon: 'plus' },
           { value: 'health', label: t('cow_management.health'), icon: 'heart' },
-          { value: 'report', label: t('cow_management.report'), icon: 'chart-bar' },
+          {
+            value: 'report',
+            label: t('cow_management.report'),
+            icon: 'chart-bar',
+          },
         ]}
       />
 
@@ -85,81 +105,38 @@ const CowManagementScreen: React.FC = () => {
       ) : (
         selectedSegment === 'list' && (
           <FlatList
-            numColumns={2}
             data={filteredCows}
             keyExtractor={(item) => item.cowId.toString()}
+            contentContainerStyle={{
+              paddingHorizontal: 10,
+            }}
             renderItem={({ item }) => (
-              <CardCow cow={item} onPress={() => navigateToCowDetails(item.cowId)} />
+              <CardCow
+                cow={item}
+                onPress={() => navigateToCowDetails(item.cowId)}
+              />
             )}
           />
         )
       )}
 
       {/* Floating Action Button */}
-      <FloatingButton onPress={() => (navigation.navigate as any)('CreateCowScreen')} />
+      <FloatingButton
+        onPress={() => (navigation.navigate as any)('CreateCowScreen')}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 10,
     flex: 1,
   },
   segmentedButtons: {
     margin: 10,
   },
   searchFilterContainer: {
-    paddingHorizontal: 10,
     marginBottom: 10,
-  },
-  card: {
-    margin: 10,
-    width: '45%', // For 2-column grid layout
-    padding: 10,
-    borderRadius: 10,
-    backgroundColor: '#f8f9fa',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-  },
-  cardImage: {
-    width: '100%',
-    height: 150,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  cardWrapper: {
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  },
-  cardHeader: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  cardType: {
-    backgroundColor: 'green',
-    padding: 4,
-    borderRadius: 5,
-    color: 'white',
-    fontSize: 10,
-  },
-  cardContent: {
-    flexDirection: 'column',
-    marginTop: 10,
-  },
-  cardDetails: {
-    fontSize: 12,
-    color: 'gray',
   },
 });
 
