@@ -120,6 +120,11 @@ export type IllnessDetail = {
   vaccine: any;
 };
 
-export type StatusIllnessDetail = 'observed' | 'treated' | 'cured' | 'ongoing' | 'deceased';
+export type StatusIllnessDetail =
+  | 'observed'
+  | 'treated'
+  | 'cured'
+  | 'ongoing'
+  | 'deceased';
 
 export type Severity = 'mild' | 'moderate' | 'severe' | 'critical';

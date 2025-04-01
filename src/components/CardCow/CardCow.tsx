@@ -1,9 +1,12 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Tooltip } from 'react-native-paper';
-import { Cow } from '@model/Cow/Cow';
+import { Cow, Gender } from '@model/Cow/Cow';
 import { convertToDDMMYYYY, formatCamelCase } from '@utils/format';
 import { useTranslation } from 'react-i18next';
+import { Ionicons } from '@expo/vector-icons';
+import TextRenderHorizontal from '@components/UI/TextRenderHorizontal';
+import DividerUI from '@components/UI/DividerUI';
 
 interface CardCowProps {
   cow: Cow | undefined;
@@ -24,44 +27,52 @@ const CardCow: React.FC<CardCowProps> = ({ cow, onPress, width }) => {
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
-      <View style={styles.imageContainer}>
-        <Image
-          source={{ uri: 'https://picsum.photos/200/300' }} // Replace with cow image
-          style={styles.cardImage}
-        />
-        {cow.penResponse ? (
-          <View style={styles.overlay}>
-            <Text style={styles.overlayText}>{cow.penResponse?.name || 'N/A'}</Text>
-          </View>
-        ) : (
-          <View style={styles.overlay}>
-            <Text style={styles.overlayText}>{t('card_cow.pen_no')}</Text>
-          </View>
-        )}
-        {cow.penResponse ? (
-          <View style={styles.overlayArea}>
-            <Text style={styles.overlayTextArea}>{cow.penResponse?.area?.name || 'N/A'}</Text>
-          </View>
-        ) : (
-          <View style={styles.overlayArea}>
-            <Text style={styles.overlayTextArea}>{t('card_cow.area_no')}</Text>
-          </View>
-        )}
-      </View>
       <View style={styles.cardWrapper}>
         <View style={styles.cardHeader}>
-          <Text style={styles.cardTitle}>{cow.name || t('card_cow.unnamed')}</Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 5,
+            }}
+          >
+            <Text style={styles.cardTitle}>
+              {cow.name || t('card_cow.unnamed')}
+            </Text>
+            {cow.gender === Gender.MALE ? (
+              <Ionicons name="male" size={15} color="blue" />
+            ) : (
+              <Ionicons name="female" color="red" size={15} />
+            )}
+          </View>
           <Tooltip title={t('card_cow.cow_type')}>
             <Text style={styles.cardType}>{cow.cowType?.name || 'N/A'}</Text>
           </Tooltip>
         </View>
+        <DividerUI />
         <View style={styles.cardContent}>
-          <Text style={styles.cardDetails}>
-            {t('card_cow.origin')}: {formatCamelCase(cow.cowOrigin || '')}
-          </Text>
-          <Text style={styles.cardDetails}>
-            {t('card_cow.born')}: {convertToDDMMYYYY(cow.dateOfBirth || '')}
-          </Text>
+          <TextRenderHorizontal
+            title={t('card_cow.pen', { defaultValue: 'Pen' })}
+            content={
+              cow?.penResponse ? formatCamelCase(cow?.penResponse?.name) : 'N/A'
+            }
+          />
+          <TextRenderHorizontal
+            title={t('card_cow.origin', { defaultValue: 'Origin' })}
+            content={t(formatCamelCase(cow.cowOrigin || 'N/A'))}
+          />
+          <TextRenderHorizontal
+            title={t('card_cow.born', { defaultValue: 'Day of birth' })}
+            content={convertToDDMMYYYY(cow.dateOfBirth || 'N/A')}
+          />
+          <TextRenderHorizontal
+            title={t('card_cow.dayOfEnter', { defaultValue: 'Day of enter' })}
+            content={convertToDDMMYYYY(cow.dateOfEnter || 'N/A')}
+          />
+          <TextRenderHorizontal
+            title={t('card_cow.status', { defaultValue: 'Status' })}
+            content={t(cow.cowStatus ? formatCamelCase(cow.cowStatus) : 'N/A')}
+          />
         </View>
       </View>
     </TouchableOpacity>
@@ -70,8 +81,8 @@ const CardCow: React.FC<CardCowProps> = ({ cow, onPress, width }) => {
 
 const styles = StyleSheet.create({
   card: {
-    margin: 10,
-    width: '45%',
+    marginBottom: 10,
+    width: '100%',
     padding: 10,
     borderRadius: 10,
     backgroundColor: '#f8f9fa',
@@ -85,32 +96,6 @@ const styles = StyleSheet.create({
   imageContainer: {
     position: 'relative',
     width: '100%',
-  },
-  overlay: {
-    position: 'absolute',
-    bottom: 10,
-    right: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 5,
-  },
-  overlayText: {
-    color: 'white',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  overlayArea: {
-    position: 'absolute',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 5,
-  },
-  overlayTextArea: {
-    color: 'white',
-    fontSize: 12,
-    fontWeight: 'bold',
   },
   cardImage: {
     width: '100%',

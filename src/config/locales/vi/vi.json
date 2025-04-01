@@ -46,7 +46,11 @@
     "unnamed": "Không có tên",
     "cow_type": "Loại bò",
     "origin": "Nguồn gốc",
-    "born": "Ngày sinh"
+    "born": "Ngày sinh",
+    "pen": "Chuồng",
+    "area": "Khu vực",
+    "dayOfEnter": "Ngày nhập",
+    "status": "Trạng thái "
   },
   "cowDetails": {
     "title": "Chi tiết bò -",
@@ -104,5 +108,37 @@
   "Milking": "Vắt sữa",
   "Feeding": "Cho ăn",
   "Heathcare": "Chăm sóc sức khỏe",
-  "Other": "Khác"
+  "Other": "Khác",
+  "Milking Cow": "Bò đang vắt sữa",
+  "Dry Cow": "Bò khô sữa",
+  "Pregnant Cow": "Bò mang thai",
+  "Open Cow": "Bò chưa mang thai",
+  "Calving Cow": "Bò sắp đẻ",
+  "Sick Cow": "Bò bị bệnh",
+  "Breeding Cow": "Bò đang phối giống",
+  "Quarantined Cow": "Bò cách ly",
+  "Culling": "Bò loại thải",
+  "European": "Châu âu",
+  "Indian": "Ấn độ",
+  "African": "Châu phi",
+  "American": "Mỹ",
+  "Australian": "Úc",
+  "Exotic": "Ngoại quốc",
+  "Indigenous": "Nội địa",
+  "Crossbreed": "Lai giống",
+  "Pending": "Đang xử lý",
+  "Approved": "Được chấp nhận",
+  "Exported": "Đã xuất",
+  "Cancel": "Hủy",
+  "Reject": "Từ chối",
+  "export_item": {
+    "title": "Hàng hóa xuất",
+    "quantity": "Số lượng",
+    "expiredDate": "Ngày hết hạn",
+    "item": "Hàng hóa",
+    "importDate": "Ngày nhập",
+    "task": "Công việc",
+    "cancel": "Hủy hàng",
+    "export": "Xuất hàng"
+  }
 }
