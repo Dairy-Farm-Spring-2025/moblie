@@ -3,8 +3,9 @@ import { useState } from 'react';
 import { Image, StyleSheet } from 'react-native';
 import { Alert, Modal, Platform, TouchableOpacity, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { Text, TextInput } from 'react-native-paper';
+import { Divider, Text, TextInput } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
+import { getReportImage } from '@utils/getImage';
 
 const ReportTaskUpdateContent: React.FC<{
   report: ReportTaskData;
@@ -13,7 +14,7 @@ const ReportTaskUpdateContent: React.FC<{
 }> = ({ report, onUpdate, isUpdating }) => {
   const [formData, setFormData] = useState<{ description: string; taskFile: string | null }>({
     description: report.description || '',
-    taskFile: null,
+    taskFile: report.reportImages?.[0].url || null,
   });
   const [imageModalVisible, setImageModalVisible] = useState(false);
 
@@ -91,13 +92,17 @@ const ReportTaskUpdateContent: React.FC<{
           <Text style={styles.textLabel}>Image:</Text>
         </View>
         <View style={styles.imageUpdateContainer}>
+          {formData.taskFile && (
+            <Image
+              source={{ uri: getReportImage(formData.taskFile) }}
+              style={styles.imagePreviewItem}
+            />
+          )}
+          <Divider style={{ margin: 10 }} />
           <TouchableOpacity style={styles.uploadButton} onPress={() => setImageModalVisible(true)}>
             <Ionicons name='camera-outline' size={24} color='#fff' />
             <Text style={styles.uploadButtonText}>Add Image</Text>
           </TouchableOpacity>
-          {formData.taskFile && (
-            <Image source={{ uri: formData.taskFile }} style={styles.imagePreviewItem} />
-          )}
         </View>
       </View>
 

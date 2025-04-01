@@ -7,7 +7,7 @@ export type Task = {
   status: string;
   fromDate: string;
   toDate: string; // Allow null
-  areaName: string; // Match API
+  areaId: Area; // Match API
   taskTypeId: {
     taskTypeId: number;
     name: string;

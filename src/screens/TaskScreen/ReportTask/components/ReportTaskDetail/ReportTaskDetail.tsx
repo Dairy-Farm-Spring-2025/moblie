@@ -1,14 +1,22 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, Alert } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  Alert,
+  RefreshControl,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { SegmentedButtons } from 'react-native-paper';
 import ReportTaskUpdateContent from '../ReportTaskUpdate/ReportTaskUpdate';
 import apiClient from '@config/axios/axios';
 import { ReportTaskData } from '@model/Task/Task';
 import { getReportImage } from '@utils/getImage';
-import RenderHtmlComponent from '@components/RenderHTML/RenderHtmlComponent';
 import RenderHTML from 'react-native-render-html';
 
 type RootStackParamList = {
@@ -18,13 +26,19 @@ type RootStackParamList = {
 
 type ReportTaskDetailRouteProp = RouteProp<RootStackParamList, 'ReportTaskDetail'>;
 
+const fetchReportTask = async (reportId: number): Promise<ReportTaskData> => {
+  const response = await apiClient.get(`/reportTask/${reportId}`);
+  console.log('Fetched report:', response.data);
+  return response.data;
+};
+
 const ReportTaskDetailContent: React.FC<{
   report?: ReportTaskData;
   onUpdate: (description: string, taskFile: string | null) => void;
   isUpdating: boolean;
 }> = ({ report, onUpdate, isUpdating }) => {
   const navigation = useNavigation<any>();
-  console.log('Report:', report?.reportImages);
+  console.log('Report Images:', report?.reportImages);
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -102,22 +116,20 @@ const ReportTaskDetailContent: React.FC<{
         </View>
       </View>
 
-      {/* Description */}
       <View style={styles.infoRow}>
         <Ionicons name='document-text-outline' size={20} color='#595959' style={styles.icon} />
         <Text style={styles.textLabel}>Description:</Text>
       </View>
       <View style={styles.contentContainer}>
-        <RenderHTML source={{ html: report?.description || '<p>None</p>' }} />
+        <RenderHTML source={{ html: report?.description || '<p>N/A</p>' }} />
       </View>
 
-      {/* Comment */}
       <View style={styles.infoRow}>
         <Ionicons name='chatbubble-outline' size={20} color='#595959' style={styles.icon} />
         <Text style={styles.textLabel}>Comment:</Text>
       </View>
       <View style={styles.contentContainer}>
-        <RenderHTML source={{ html: report.comment || '<p>None</p>' }} />
+        <RenderHTML source={{ html: report.comment || '<p>N/A</p>' }} />
       </View>
 
       <View style={styles.infoRow}>
@@ -138,7 +150,6 @@ const ReportTaskDetailContent: React.FC<{
         </View>
       </View>
 
-      {/* Images */}
       <View style={styles.infoRow}>
         <Ionicons name='image-outline' size={20} color='#595959' style={styles.icon} />
         <Text style={styles.textLabel}>Images:</Text>
@@ -160,10 +171,6 @@ const ReportTaskDetailContent: React.FC<{
       </View>
 
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Ionicons name='arrow-back' size={24} color='#fff' />
-          <Text style={styles.backButtonText}>Back to Reports</Text>
-        </TouchableOpacity> 
         {showReportButton && (
           <TouchableOpacity style={styles.reportButton} onPress={handleNavigateReportTask}>
             <Ionicons name='document-text-outline' size={24} color='#fff' />
@@ -179,10 +186,11 @@ const ReportTaskDetail: React.FC = () => {
   const route = useRoute<ReportTaskDetailRouteProp>();
   const navigation = useNavigation<any>();
   const [selectedSegment, setSelectedSegment] = useState<string>('detail');
+  const [refreshing, setRefreshing] = useState(false);
   const queryClient = useQueryClient();
 
-  const report = route.params?.report;
-  if (!report) {
+  const initialReport = route.params?.report;
+  if (!initialReport) {
     return (
       <View style={styles.container}>
         <Text>Loading...</Text>
@@ -190,21 +198,32 @@ const ReportTaskDetail: React.FC = () => {
     );
   }
 
-  const currentDate = new Date();
-  const reportDate = new Date(report.date);
+  const { data: report, refetch } = useQuery(
+    ['reportTask', initialReport.reportTaskId],
+    () => fetchReportTask(initialReport.reportTaskId),
+    {
+      initialData: initialReport, // Use route param as initial data
+      staleTime: 0, // Force refresh on pull
+      cacheTime: 5 * 60 * 1000, // 5 minutes cache
+    }
+  );
+
+  const currentDate = new Date().toLocaleDateString();
+  const reportDate = new Date(report!.date).toLocaleDateString();
   const isExpired = currentDate > reportDate;
 
   const updateReportMutation = useMutation(
     (data: FormData) => {
       console.log('Sending update request with FormData:');
-      console.log(`URL: /reportTask/update/${report.reportTaskId}`);
-      return apiClient.put(`/reportTask/update/${report.reportTaskId}`, data);
+      console.log(`URL: /reportTask/update/${report!.reportTaskId}`);
+      return apiClient.put(`/reportTask/update/${report!.reportTaskId}`, data);
     },
     {
       onSuccess: (response) => {
         console.log('Update successful:', response.data);
         Alert.alert('Success', 'Report updated successfully!');
         queryClient.invalidateQueries('reportTasks');
+        queryClient.invalidateQueries(['reportTask', initialReport.reportTaskId]);
         navigation.goBack();
       },
       onError: (error: any) => {
@@ -234,6 +253,19 @@ const ReportTaskDetail: React.FC = () => {
     updateReportMutation.mutate(formDataToSend);
   };
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refetch();
+      console.log('Refreshed report:', report);
+    } catch (err) {
+      console.error('Refresh failed:', err);
+      Alert.alert('Error', 'Failed to refresh report data.');
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <SegmentedButtons
@@ -250,7 +282,18 @@ const ReportTaskDetail: React.FC = () => {
           },
         ]}
       />
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor='#007bff'
+            title='Refreshing report...'
+            titleColor='#007bff'
+          />
+        }
+      >
         {selectedSegment === 'detail' ? (
           <ReportTaskDetailContent
             report={report}
@@ -259,7 +302,7 @@ const ReportTaskDetail: React.FC = () => {
           />
         ) : (
           <ReportTaskUpdateContent
-            report={report}
+            report={report!}
             onUpdate={handleUpdate}
             isUpdating={updateReportMutation.isLoading}
           />
@@ -271,17 +314,17 @@ const ReportTaskDetail: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1, // Ensure container takes full height
     backgroundColor: '#f0f2f5',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   segmentedButtons: {
     margin: 10,
   },
   scrollContent: {
+    flexGrow: 1, // Ensure content grows to fill ScrollView
     padding: 10,
     alignItems: 'center',
+    minHeight: 400, // Minimum height to ensure scrollability
   },
   card: {
     width: '100%',
@@ -383,28 +426,13 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     marginTop: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
     width: '100%',
-    marginBottom: 20,
-  },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#007bff',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 25,
-  },
-  backButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-    marginLeft: 8,
+    marginBottom: 40,
   },
   reportButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#52c41a',
     paddingVertical: 12,
     paddingHorizontal: 20,
