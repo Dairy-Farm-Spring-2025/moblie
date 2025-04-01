@@ -97,5 +97,8 @@
     "feedmeal_detail": "Feed meal detail",
     "name": "Name",
     "storage": "Storage"
+  },
+  "export_item": {
+    "title": "Export Item"
   }
 }
