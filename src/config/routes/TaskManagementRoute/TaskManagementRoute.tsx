@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ReportTaskDetail from '@screens/TaskScreen/ReportTask/components/ReportTaskDetail/ReportTaskDetail';
 import ReportTaskForm from '@screens/TaskScreen/ReportTask/components/ReportTaskForm/ReportTaskForm';
 import ReportTaskScreen from '@screens/TaskScreen/ReportTask/ReportTask';
+import Materials from '@screens/TaskScreen/TaskDetail/components/Materials';
 import TaskDetail from '@screens/TaskScreen/TaskDetail/TaskDetail';
 import TaskScreen from '@screens/TaskScreen/TaskScreen';
 
@@ -26,6 +27,7 @@ const TaskManagementRoute: React.FC = () => {
         component={ReportTaskDetail}
         options={{ title: 'Report Task' }}
       />
+      <Stack.Screen name='Materials' component={Materials} options={{ title: 'Materials' }} />
     </Stack.Navigator>
   );
 };

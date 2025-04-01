@@ -49,6 +49,7 @@ const QrCodeScan = () => {
       const cowIdMatch = scannedData.match(/\/cow-management\/(\d+)/);
       if (cowIdMatch) {
         const cowId = Number(cowIdMatch[1]);
+        console.log('Scanned Cow ID:', cowId);
         (navigation.navigate as any)('CowDetails', { cowId });
       }
     } else if (scannedData.includes('/health-management/')) {

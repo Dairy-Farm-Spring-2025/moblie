@@ -6,7 +6,7 @@ import { Task } from '@model/Task/Task';
 import RenderHtmlComponent from '@components/RenderHTML/RenderHtmlComponent';
 import apiClient from '@config/axios/axios';
 import { useMutation, useQueryClient } from 'react-query';
-import { SegmentedButtons } from 'react-native-paper';
+import { Button, SegmentedButtons } from 'react-native-paper';
 import { Alert } from 'react-native';
 import ReportTask from '@screens/TaskScreen/ReportTask/ReportTask';
 import { formatCamelCase } from '@utils/format';
@@ -76,6 +76,19 @@ const TaskDetailContent: React.FC<{
     }
   };
 
+  // const getTaskType = (status: string) => {
+  //   switch (status.toLowerCase()) {
+  //     case 'Cho ăn':
+  //       return '#52c41a'; // Green
+  //     case 'in progress':
+  //       return '#1890ff'; // Blue
+  //     case 'pending':
+  //       return '#ffa940'; // Orange
+  //     default:
+  //       return '#8c8c8c'; // Grey
+  //   }
+  // };
+
   const getShiftColor = (shift: string) => {
     switch (shift.toLowerCase()) {
       case 'day':
@@ -104,6 +117,9 @@ const TaskDetailContent: React.FC<{
 
   const priorityColor = getPriorityColor(task.priority);
   const textColor = '#333'; // Fixed for white card background
+
+  const handleViewMaterials = () =>
+    (navigation.navigate as any)('Materials', { areaId: task.areaId.areaId });
 
   return (
     <View style={[styles.card, { borderLeftColor: priorityColor }]}>
@@ -247,6 +263,23 @@ const TaskDetailContent: React.FC<{
         )}
       </View>
 
+      {task.taskTypeId.name.toLowerCase() === 'cho ăn' && (
+        <View style={styles.infoRow}>
+          <View style={styles.labelContainer}>
+            <Ionicons
+              name='document-text-outline'
+              size={20}
+              color={textColor}
+              style={styles.icon}
+            />
+            <Text style={[styles.textLabel, { color: textColor }]}>View Materials:</Text>
+          </View>
+          <TouchableOpacity onPress={handleViewMaterials} disabled={isCheckingIn}>
+            <Text style={styles.materials}>View</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
       <View style={[styles.buttonsContainer, isCompleted && styles.centeredButtonContainer]}>
         {!isCompleted && !hasReportForDate && isWithinCurrentDateRange && (
           <TouchableOpacity
@@ -298,7 +331,7 @@ const TaskDetail: React.FC = () => {
         value={selectedSegment}
         onValueChange={setSelectedSegment}
         buttons={[
-          { value: 'detail', label: 'Task Detail', icon: 'information-circle-outline' },
+          { value: 'detail', label: 'Task Detail', icon: 'file-document' },
           { value: 'report', label: 'Report Task', icon: 'chart-bar' },
         ]}
       />
@@ -447,6 +480,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginLeft: 8,
+  },
+  materials: {
+    textDecorationLine: 'underline',
   },
 });
 
