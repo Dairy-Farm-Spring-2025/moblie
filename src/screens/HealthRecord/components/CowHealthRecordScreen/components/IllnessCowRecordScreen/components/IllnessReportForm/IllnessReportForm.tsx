@@ -21,7 +21,10 @@ type RootStackParamList = {
   IllnessReportForm: { cow: Cow };
 };
 
-type IllnessReportFormRouteProp = RouteProp<RootStackParamList, 'IllnessReportForm'>;
+type IllnessReportFormRouteProp = RouteProp<
+  RootStackParamList,
+  'IllnessReportForm'
+>;
 
 const IllnessReportForm = () => {
   const route = useRoute<IllnessReportFormRouteProp>();
@@ -79,28 +82,34 @@ const IllnessReportForm = () => {
       style={styles.container}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
-      <TitleNameCows title='Illness Record - ' cowName={Cow.name.toString()} />
+      <TitleNameCows title="Illness Record - " cowName={Cow.name.toString()} />
 
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          <Text variant='headlineMedium' style={styles.title}>
+          <Text variant="headlineMedium" style={styles.title}>
             Report Illness
           </Text>
-          {successMessage && <Text style={styles.successText}> {successMessage} </Text>}
-          {errors.serverError && <Text style={styles.errorText}> {errors.serverError} </Text>}
+          {successMessage && (
+            <Text style={styles.successText}> {successMessage} </Text>
+          )}
+          {errors.serverError && (
+            <Text style={styles.errorText}> {errors.serverError} </Text>
+          )}
           <Text style={styles.inputLabel}>Symptoms</Text>
           <TextInput
             style={[styles.textInput, styles.multilineTextInput]}
             multiline
-            placeholder='Describe the symptoms in detail...'
+            placeholder="Describe the symptoms in detail..."
             value={symptoms}
             numberOfLines={5}
-            textAlignVertical='top'
+            textAlignVertical="top"
             onChangeText={setSymptoms}
           />
-          {errors.symptoms && <Text style={styles.errorText}> {errors.symptoms} </Text>}
+          {errors.symptoms && (
+            <Text style={styles.errorText}> {errors.symptoms} </Text>
+          )}
           <Button
-            mode='contained'
+            mode="contained"
             onPress={handleSubmit}
             disabled={mutation.isLoading}
             style={styles.submitButton}
@@ -113,7 +122,7 @@ const IllnessReportForm = () => {
       {/* Loading Overlay */}
       {mutation.isLoading && (
         <View style={styles.loadingOverlay}>
-          <ActivityIndicator size='large' color='#007AFF' />
+          <ActivityIndicator size="large" color="#007AFF" />
         </View>
       )}
     </KeyboardAvoidingView>

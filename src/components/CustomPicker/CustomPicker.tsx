@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet, Button } from 'react-native';
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Button,
+} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
 export interface Option {
@@ -38,7 +45,9 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
           setModalVisible(true);
         }}
       >
-        <Text style={[styles.buttonText, !selectedOption && styles.placeholderText]}>
+        <Text
+          style={[styles.buttonText, !selectedOption && styles.placeholderText]}
+        >
           {selectedOption ? selectedOption.label : title}
         </Text>
       </TouchableOpacity>
@@ -46,7 +55,7 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
       <Modal
         visible={modalVisible}
         transparent
-        animationType='slide'
+        animationType="slide"
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalContainer}>
@@ -56,19 +65,23 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
               onValueChange={(value) => setTempValue(value)} // Handle picker value change
             >
               {options.map((opt) => (
-                <Picker.Item key={opt.value} label={opt.label} value={opt.value} />
+                <Picker.Item
+                  key={opt.value}
+                  label={opt.label}
+                  value={opt.value}
+                />
               ))}
             </Picker>
 
             <View style={styles.modalButtons}>
               <Button
-                title='Confirm'
+                title="Confirm"
                 onPress={() => {
                   onValueChange(tempValue); // Pass the selected value to the parent
                   setModalVisible(false);
                 }}
               />
-              <Button title='Cancel' onPress={() => setModalVisible(false)} />
+              <Button title="Cancel" onPress={() => setModalVisible(false)} />
             </View>
           </View>
         </View>
