@@ -1,5 +1,6 @@
 import { Area } from '@model/Area/Area';
 import { HealthRecord } from '@model/HealthRecord/HealthRecord';
+import { Item } from '@model/Item/Item';
 
 // Enum for Cow Status
 export enum CowStatus {
@@ -77,10 +78,48 @@ export interface PenResponse {
 
 export type HealthResponse = {
   date: string;
-  health: HealthRecord & IllnessCow;
+  health: HealthRecord & IllnessCow & InjectionCow;
   id: number;
-  type: 'HEALTH_RECORD' | 'ILLNESS';
+  type: 'HEALTH_RECORD' | 'ILLNESS' | 'INJECTIONS';
 };
+
+export type InjectionStatus =
+  | 'pending'
+  | 'inProgress'
+  | 'completed'
+  | 'canceled';
+
+export type InjectionCow = {
+  administeredBy: string | null;
+  cowEntity: Cow;
+  description: string;
+  id: number;
+  injectionDate: string;
+  status: InjectionStatus;
+  vaccineCycleDetail: VaccineCycleDetail;
+};
+
+export interface VaccineCycleDetail {
+  description: string;
+  dosage: number;
+  dosageUnit: string;
+  firstInjectionMonth: number;
+  injectionSite:
+    | 'leftArm'
+    | 'rightArm'
+    | 'leftThigh'
+    | 'rightThigh'
+    | 'buttock'
+    | 'abdomen'
+    | 'other';
+  itemEntity: Item;
+  name: string;
+  numberPeriodic: number;
+  unitPeriodic: 'days' | 'weeks' | 'months' | 'years';
+  vaccineCycleDetailId: number;
+  vaccineIngredients: string;
+  vaccineType: 'hormone' | 'vaccine';
+}
 
 export type IllnessCow = {
   illnessId: number;
@@ -118,6 +157,15 @@ export type IllnessDetail = {
   status: StatusIllnessDetail;
   veterinarian: UserProfileData;
   vaccine: any;
+  dosage: number;
+  injectionSite:
+    | 'leftArm'
+    | 'rightArm'
+    | 'leftThigh'
+    | 'rightThigh'
+    | 'buttock'
+    | 'abdomen'
+    | 'other';
 };
 
 export type StatusIllnessDetail =

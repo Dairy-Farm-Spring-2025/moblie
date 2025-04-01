@@ -1,9 +1,10 @@
 import CardComponent from '@components/Card/CardComponent';
 import TitleNameCows from '@components/TitleNameCows/TitleNameCows';
+import TextRenderHorizontal from '@components/UI/TextRenderHorizontal';
 import { Ionicons } from '@expo/vector-icons';
-import { HealthResponse } from '@model/Cow/Cow';
+import { HealthResponse, IllnessCow } from '@model/Cow/Cow';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { formatType } from '@utils/format';
+import { convertToDDMMYYYY, formatType } from '@utils/format';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Text } from 'react-native-paper';
@@ -13,34 +14,47 @@ type RootStackParamList = {
   CowHealthInforScreen: { healthResponses: HealthResponse[]; cowName: string };
 };
 
-type CowHealthInforScreenRouteProp = RouteProp<RootStackParamList, 'CowHealthInforScreen'>;
+type CowHealthInforScreenRouteProp = RouteProp<
+  RootStackParamList,
+  'CowHealthInforScreen'
+>;
 
 const CowHealthInforScreen = () => {
   const route = useRoute<CowHealthInforScreenRouteProp>();
   const { healthResponses, cowName } = route.params;
   const navigator = useNavigation();
-  const timelineData = healthResponses.map((response) => ({
-    time: response?.date,
-    title: response.type === 'HEALTH_RECORD' ? 'Health Record' : 'Illness',
-    data: response.health,
-    icon: (
-      <Ionicons
-        name={
-          response?.type === 'HEALTH_RECORD'
-            ? 'heart'
-            : response?.type === 'ILLNESS' && response.health.severity === 'mild'
+  const timelineData = [...healthResponses] // Clone the array
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) // Sort in descending order
+    .map((response) => {
+      let iconName: string = 'accessibility';
+      if (response.type === 'HEALTH_RECORD') {
+        iconName = 'heart';
+      } else if (response.type === 'ILLNESS') {
+        const severity = (response.health as IllnessCow).severity;
+        iconName =
+          severity === 'mild'
             ? 'happy'
-            : response.health.severity === 'moderate'
+            : severity === 'moderate'
             ? 'thumbs-up'
-            : response.health.severity === 'severe'
+            : severity === 'severe'
             ? 'sad'
-            : 'skull'
-        }
-        color={'#fff'}
-        size={15}
-      />
-    ),
-  }));
+            : severity === 'critical'
+            ? 'skull'
+            : 'accessibility';
+      }
+      return {
+        time: convertToDDMMYYYY(response.date),
+        title:
+          response.type === 'HEALTH_RECORD'
+            ? 'Health Record'
+            : response.type === 'ILLNESS'
+            ? 'Illness'
+            : 'Injections',
+        data: response.health,
+        icon: <Ionicons name={iconName as any} color={'#fff'} size={15} />,
+      };
+    });
+
   const renderDetail = (rowData: any) => {
     const { data } = rowData;
     const CardIllness = () => {
@@ -53,9 +67,15 @@ const CowHealthInforScreen = () => {
           }
         >
           <CardComponent style={styles.card}>
-            <CardComponent.Title title={rowData.title} subTitle={formatType(data?.severity)} />
+            <CardComponent.Title
+              title={rowData.title}
+              subTitle={data?.severity ? formatType(data?.severity) : 'N/A'}
+            />
             <CardComponent.Content>
-              <Text style={styles.text}>✍️ {data?.userEntity.name}</Text>
+              <TextRenderHorizontal
+                title="User"
+                content={data?.userEntity?.name ?? 'Unknown'}
+              />
             </CardComponent.Content>
           </CardComponent>
         </TouchableOpacity>
@@ -72,33 +92,75 @@ const CowHealthInforScreen = () => {
           }
         >
           <CardComponent style={styles.card}>
-            <CardComponent.Title title={rowData.title} subTitle={formatType(data?.status)} />
+            <CardComponent.Title
+              title={rowData.title}
+              subTitle={formatType(data?.status)}
+            />
             <CardComponent.Content>
-              <Text style={styles.text}>📏 Weight: {data?.weight}(kg)</Text>
-              <Text style={styles.text}>📏 Size: {data?.size}(m)</Text>
+              <TextRenderHorizontal title="Size" content={`${data?.size}(m)`} />
             </CardComponent.Content>
           </CardComponent>
         </TouchableOpacity>
       );
     };
 
-    return rowData.title === 'Illness' ? <CardIllness /> : <CardHealthRecord />;
+    const CardInjections = () => {
+      return (
+        <TouchableOpacity
+          onPress={() =>
+            (navigator as any).navigate('InjectionScreen', {
+              vaccineInjectionId: data.id,
+            })
+          }
+        >
+          <CardComponent style={styles.card}>
+            <CardComponent.Title
+              title={rowData.title}
+              subTitle={data?.status ? formatType(data?.status) : 'N/A'}
+            />
+            <CardComponent.Content>
+              <TextRenderHorizontal
+                title="Administered By"
+                content={
+                  typeof data?.administeredBy === 'string'
+                    ? data?.administeredBy
+                    : 'N/A'
+                }
+              />
+              <TextRenderHorizontal
+                styleTextContent={{ flexWrap: 'wrap', flexShrink: 1 }}
+                title="Description"
+                content={data?.description ? data?.description : 'N/A'}
+              />
+            </CardComponent.Content>
+          </CardComponent>
+        </TouchableOpacity>
+      );
+    };
+
+    return rowData.title === 'Illness' ? (
+      <CardIllness />
+    ) : rowData.title === 'Health Record' ? (
+      <CardHealthRecord />
+    ) : (
+      <CardInjections />
+    );
   };
   return (
     <View style={{ flex: 1 }}>
-      <TitleNameCows title='Timeline Health Record - ' cowName={cowName} />
+      <TitleNameCows title="Timeline Health Record - " cowName={cowName} />
       <Timeline
         data={timelineData}
         renderDetail={renderDetail} // Use custom card renderer
-        innerCircle='icon'
+        innerCircle="icon"
         circleSize={25}
         timeContainerStyle={{ minWidth: 72, marginTop: 5 }}
         timeStyle={{
           color: 'grey',
           fontStyle: 'italic',
         }}
-        circleColor='green'
-        lineColor='#C0C0C0'
+        circleColor="green"
+        lineColor="#C0C0C0"
         lineWidth={1}
         options={
           {

@@ -45,6 +45,15 @@ export type IllnessDetailPayload = {
   veterinarianId: number;
   itemId: number;
   illnessId: number;
+  dosage: string;
+  injectionSite:
+    | 'leftArm'
+    | 'rightArm'
+    | 'leftThigh'
+    | 'rightThigh'
+    | 'buttock'
+    | 'abdomen'
+    | 'other';
 };
 
 export type IllnessDetailPlan = {
