@@ -35,7 +35,6 @@ const HealthRecordFormScreen = () => {
   } = useForm<HealthRecordForm>({
     defaultValues: {
       status: healthRecord.status,
-      weight: healthRecord.weight.toString() || 0,
       size: healthRecord.size.toString() || 0,
       period: healthRecord.period,
       cowId: healthRecord.cowEntity.cowId,
@@ -88,47 +87,7 @@ const HealthRecordFormScreen = () => {
             >
               <View
                 style={{
-                  width: '50%',
-                }}
-              >
-                <FormItem
-                  name="weight"
-                  control={control}
-                  label="Weight (kilogram)"
-                  rules={{
-                    required: {
-                      message: 'Required',
-                    },
-                    pattern: {
-                      value: /^[0-9]*$/,
-                      message: 'Only numbers are allowed',
-                    },
-                    min: {
-                      value: 1,
-                      message: 'Weight must be greater than 0',
-                    },
-                  }}
-                  error={errors?.weight?.message}
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInputComponent.Number
-                      error={errors.size ? errors.size.message : ''}
-                      placeholder="Enter your weight"
-                      maxLength={3}
-                      onBlur={onBlur}
-                      onChangeText={(text) => {
-                        const numericValue = text.replace(/[^0-9]/g, '');
-                        onChange(numericValue);
-                      }}
-                      value={value}
-                      returnKeyType="done" // Adds "Done" on the keyboard
-                      onSubmitEditing={Keyboard.dismiss}
-                    />
-                  )}
-                />
-              </View>
-              <View
-                style={{
-                  width: '50%',
+                  width: '100%',
                 }}
               >
                 <FormItem

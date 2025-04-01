@@ -131,6 +131,26 @@
   "Exported": "Đã xuất",
   "Cancel": "Hủy",
   "Reject": "Từ chối",
+  "In Progress": "Đang tiến hành",
+  "Completed": "Hoàn thành",
+  "Canceled": "Đã hủy",
+  "days": "ngày",
+  "weeks": "tuần",
+  "months": "tháng",
+  "years": "năm",
+  "Hormone": "Hóc-môn",
+  "Vaccine": "Vắc-xin",
+  "Left Arm": "Cánh tay trái",
+  "Right Arm": "Cánh tay phải",
+  "Left Thigh": "Đùi trái",
+  "Right Thigh": "Đùi phải",
+  "Buttock": "Mông",
+  "Abdomen": "Bụng",
+  "Available": "Có sẵn",
+  "Out of Stock": "Hết hàng",
+  "Damaged": "Hư hỏng",
+  "Expired": "Hết hạn",
+  "Reserved": "Đã đặt trước",
   "export_item": {
     "title": "Hàng hóa xuất",
     "quantity": "Số lượng",
@@ -140,5 +160,24 @@
     "task": "Công việc",
     "cancel": "Hủy hàng",
     "export": "Xuất hàng"
+  },
+  "illness_detail": {
+    "veterinarians": "Thú y",
+    "item": "Vật phẩm"
+  },
+  "illness": {
+    "title": "Bệnh"
+  },
+  "injections": {
+    "title": "Tiêm phòng",
+    "vaccineCycleDetail": "Chu kỳ vắc-xin chi tiết",
+    "dosage": "Liều lượng",
+    "firstInjectionMonth": "Tháng tiêm mũi đầu tiên",
+    "numberPeriodic": "Số chu kỳ",
+    "vaccineIngredients": "Thành phần vắc-xin",
+    "vaccineType": "Kiểu vắc-xin",
+    "injectionSite": "Điểm tiêm",
+    "vaccineItem": "Vắc-xin",
+    "quantity": "Trữ lượng"
   }
 }

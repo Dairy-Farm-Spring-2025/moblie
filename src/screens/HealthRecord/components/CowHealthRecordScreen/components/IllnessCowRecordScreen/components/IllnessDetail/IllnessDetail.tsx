@@ -1,9 +1,11 @@
 import CardComponent from '@components/Card/CardComponent';
 import FloatingButton from '@components/FloatingButton/FloatingButton';
+import TextRenderHorizontal from '@components/UI/TextRenderHorizontal';
 import apiClient from '@config/axios/axios';
 import { IllnessCow, IllnessDetail } from '@model/Cow/Cow';
 import { useNavigation } from '@react-navigation/native';
 import { formatType } from '@utils/format';
+import { t } from 'i18next';
 import React from 'react';
 import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { IconButton, Text } from 'react-native-paper';
@@ -50,6 +52,7 @@ const IllnessDetailRecord = ({ illness, refetch }: IllnessDetailProps) => {
 
   const renderItem = (rowData: any) => {
     const { data } = rowData;
+    console.log(data);
     return (
       <TouchableOpacity
         onPress={() =>
@@ -65,9 +68,12 @@ const IllnessDetailRecord = ({ illness, refetch }: IllnessDetailProps) => {
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
+              alignItems: 'center',
             }}
           >
-            <CardComponent.Title title={formatType(rowData.title)} />
+            <Text style={{ fontWeight: '600', fontSize: 16 }}>
+              {formatType(rowData.title)}
+            </Text>
             <IconButton
               icon={'delete-outline'}
               size={20}
@@ -82,8 +88,18 @@ const IllnessDetailRecord = ({ illness, refetch }: IllnessDetailProps) => {
                 gap: 10,
               }}
             >
-              <Text>🧑‍⚕️ Veterinarian: {data.veterinarian.name}</Text>
-              <Text>💉 Vaccine: {data.vaccine.name}</Text>
+              <TextRenderHorizontal
+                title={t('illness_detail.veterinarians', {
+                  defaultValue: 'Veterinarian',
+                })}
+                content={data?.veterinarian ? data?.veterinarian?.name : 'N/A'}
+              />
+              <TextRenderHorizontal
+                title={t('illness_detail.item', {
+                  defaultValue: 'Item',
+                })}
+                content={data?.vaccine ? data?.vaccine?.name : 'N/A'}
+              />
             </View>
           </CardComponent.Content>
         </CardComponent>

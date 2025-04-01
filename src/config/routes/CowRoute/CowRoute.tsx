@@ -27,6 +27,7 @@ import { t } from 'i18next';
 import FeedManagementScreen from '@screens/FeedManagementScreen/FeedManagementScreen';
 import FeedDetailScreen from '@screens/FeedManagementScreen/components/DetailFeed/FeedDetailScreen';
 import MyExportItemScreen from '@screens/MyExportItemScreen/MyExportItemScreen';
+import InjectionScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/InjectionScreen/InjectionScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -153,6 +154,24 @@ const CowRoute: React.FC = () => {
         name="MyExportItemScreen"
         component={MyExportItemScreen}
         options={{ title: t('export_item.title') }}
+      />
+      <Stack.Screen
+        name="IllnessReportForm"
+        component={IllnessReportForm}
+        options={{
+          title: t('illness.title', {
+            defaultValue: 'Illness',
+          }),
+        }}
+      />
+      <Stack.Screen
+        name="InjectionScreen"
+        component={InjectionScreen}
+        options={{
+          title: t('injections.title', {
+            defaultValue: 'Injection',
+          }),
+        }}
       />
     </Stack.Navigator>
   );

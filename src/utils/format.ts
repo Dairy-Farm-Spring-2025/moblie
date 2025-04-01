@@ -13,8 +13,8 @@ export const formatFilteredType = (type: string) =>
 
 export const formatCamelCase = (str: string): string => {
   return str
-    .replace(/([a-z])([A-Z])/g, '$1 $2') // Insert space before uppercase letters
-    .replace(/^./, (match) => match.toUpperCase()); // Capitalize the first letter
+    ?.replace(/([a-z])([A-Z])/g, '$1 $2') // Insert space before uppercase letters
+    ?.replace(/^./, (match) => match.toUpperCase()); // Capitalize the first letter
 };
 
 export const convertToDDMMYYYY = (dateString: string): string => {
