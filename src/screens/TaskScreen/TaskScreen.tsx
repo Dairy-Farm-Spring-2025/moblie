@@ -12,17 +12,17 @@ import { useQuery, UseQueryResult } from 'react-query';
 import apiClient from '@config/axios/axios';
 import SearchInput from '@components/Input/Search/SearchInput';
 import Layout from '@components/layout/Layout';
+import LoadingScreen from '@components/LoadingScreen/LoadingScreen';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { Task } from '@model/Task/Task';
+import { formatCamelCase } from '@utils/format';
 
 const getWeekDates = (currentDate: Date) => {
   const today = new Date(currentDate);
-  const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-
+  const dayOfWeek = today.getDay();
   const monday = new Date(today);
   monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
-
   return Array.from({ length: 7 }, (_, i) => {
     const date = new Date(monday);
     date.setDate(monday.getDate() + i);
@@ -41,19 +41,15 @@ const fetchTasksByDateRange = async ({
     fromDate: fromDate.toISOString().split('T')[0],
     toDate: toDate.toISOString().split('T')[0],
   };
-
-  const response = await apiClient.post('/tasks/myTasks/by-date-range', requestBody);
+  const response = await apiClient.post('/tasks/myTasks/by-date-range/mb', requestBody);
   console.log('response', response.data);
   const tasksByDate = response.data || {};
-
   const allTasks: Task[] = [];
   Object.entries(tasksByDate).forEach(([_, tasks]: [string, any]) => {
     if (Array.isArray(tasks) && tasks.length > 0) {
       allTasks.push(...tasks);
     }
   });
-  console.log('allTasks', allTasks);
-
   const taskMap = new Map<number, Task>();
   allTasks.forEach((task) => {
     if (!taskMap.has(task.taskId)) {
@@ -65,33 +61,21 @@ const fetchTasksByDateRange = async ({
       }
     }
   });
-
-  const uniqueTasks = Array.from(taskMap.values());
-  console.log('uniqueTasks', uniqueTasks);
-  return uniqueTasks;
+  return Array.from(taskMap.values());
 };
 
 const getTasksForCell = (tasks: Task[], date: Date, shift: string) => {
   const cellDate = new Date(date);
   cellDate.setHours(0, 0, 0, 0);
-
   return tasks.filter((task) => {
     const fromDate = new Date(task.fromDate);
     fromDate.setHours(0, 0, 0, 0);
     const toDate = task.toDate ? new Date(task.toDate) : fromDate;
     toDate.setHours(23, 59, 59, 999);
-
     const isDayShift = task.shift.toLowerCase().includes('day');
     const normalizedTaskShift = isDayShift ? 'Day' : 'Night';
     const isShiftMatch = normalizedTaskShift === shift;
     const isDateMatch = cellDate >= fromDate && cellDate <= toDate;
-
-    console.log(
-      `Task ID: ${task.taskId}, Date: ${cellDate.toISOString()}, Shift: ${shift}, Task Shift: ${
-        task.shift
-      }, Normalized Shift: ${normalizedTaskShift}, Shift Match: ${isShiftMatch}, Date Match: ${isDateMatch}`
-    );
-
     return isDateMatch && isShiftMatch;
   });
 };
@@ -99,40 +83,13 @@ const getTasksForCell = (tasks: Task[], date: Date, shift: string) => {
 const getTasksForDay = (tasks: Task[], date: Date) => {
   const cellDate = new Date(date);
   cellDate.setHours(0, 0, 0, 0);
-
   return tasks.filter((task) => {
     const fromDate = new Date(task.fromDate);
     fromDate.setHours(0, 0, 0, 0);
     const toDate = task.toDate ? new Date(task.toDate) : fromDate;
     toDate.setHours(23, 59, 59, 999);
-
     return cellDate >= fromDate && cellDate <= toDate;
   }).length;
-};
-
-const checkUnreportedTasks = (tasks: Task[], currentDate: Date) => {
-  const today = new Date(currentDate);
-  today.setHours(0, 0, 0, 0);
-
-  const todayTasks = tasks.filter((task) => {
-    const fromDate = new Date(task.fromDate);
-    fromDate.setHours(0, 0, 0, 0);
-    const toDate = task.toDate ? new Date(task.toDate) : fromDate;
-    toDate.setHours(23, 59, 59, 999);
-
-    return today >= fromDate && today <= toDate;
-  });
-
-  const unreportedTasks = todayTasks.filter((task) => {
-    if (!task.reportTask) {
-      return true;
-    }
-    const reportDate = new Date(task.reportTask.date);
-    reportDate.setHours(0, 0, 0, 0);
-    return reportDate.getTime() !== today.getTime();
-  });
-
-  return unreportedTasks.length > 0 ? unreportedTasks : null;
 };
 
 const NewTaskCard = ({
@@ -146,18 +103,61 @@ const NewTaskCard = ({
 }) => {
   const selectedDateNormalized = new Date(selectedDate);
   selectedDateNormalized.setHours(0, 0, 0, 0);
-
   const hasReportForSelectedDate =
     task.reportTask &&
     new Date(task.reportTask.date).setHours(0, 0, 0, 0) === selectedDateNormalized.getTime();
 
+  // Determine priority color
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'critical':
+        return '#d9363e'; // Dark Red
+      case 'high':
+        return '#ff4d4f'; // Red
+      case 'medium':
+        return '#ffa940'; // Orange
+      case 'low':
+        return '#52c41a'; // Green
+      default:
+        return '#f8f9fa'; // Light Grey
+    }
+  };
+
+  const priorityColor = getPriorityColor(task.priority);
+  const isLightBackground = priorityColor === '#f8f9fa' || priorityColor === '#52c41a';
+  const textColor = isLightBackground ? '#333' : '#fff';
+
   return (
-    <TouchableOpacity style={styles.taskCard} onPress={onPress}>
-      <Text style={styles.taskCardTitle}>{task.taskTypeId.name}</Text>
-      <Text style={styles.taskCardText}>Priority: {task.priority}</Text>
-      <Text style={styles.reportStatusText}>
-        Report: {hasReportForSelectedDate ? 'Submitted' : 'Not Submitted'}
+    <TouchableOpacity
+      style={[
+        styles.taskCard,
+        {
+          backgroundColor: priorityColor,
+          borderLeftColor: priorityColor === '#f8f9fa' ? '#8c8c8c' : priorityColor,
+        },
+      ]}
+      onPress={onPress}
+    >
+      <View style={styles.taskHeader}>
+        <Text style={[styles.taskCardTitle, { color: textColor }]}>{task.taskTypeId.name}</Text>
+        <View style={[styles.priorityBadge, { borderColor: textColor }]}>
+          <Text style={[styles.priorityBadgeText, { color: textColor }]}>{task.priority}</Text>
+        </View>
+      </View>
+      <Text style={[styles.taskCardText, { color: textColor }]}>
+        Shift: {formatCamelCase(task.shift)}
       </Text>
+      <View style={styles.reportStatusContainer}>
+        <Ionicons
+          name={hasReportForSelectedDate ? 'checkmark-circle' : 'alert-circle'}
+          size={16}
+          color={hasReportForSelectedDate ? (isLightBackground ? '#52c41a' : '#fff') : '#ffd700'}
+          style={styles.reportStatusIcon}
+        />
+        <Text style={[styles.reportStatusText, { color: textColor }]}>
+          {hasReportForSelectedDate ? 'Submitted' : 'Not Submitted'}
+        </Text>
+      </View>
     </TouchableOpacity>
   );
 };
@@ -201,23 +201,15 @@ const TaskScreen: React.FC = () => {
     }
   );
 
-  useEffect(() => {
-    if (tasks) {
-      const unreported = checkUnreportedTasks(tasks, new Date());
-      if (unreported) {
-        Alert.alert(
-          'Reminder',
-          `You have ${unreported.length} task(s) today without a report. Please submit your reports.`,
-          [{ text: 'OK', onPress: () => console.log('Reminder acknowledged') }]
-        );
-      }
-    }
-  }, [tasks]);
-
   const onRefresh = async () => {
     setRefreshing(true);
-    await refetch();
-    setRefreshing(false);
+    try {
+      await refetch();
+    } catch (err) {
+      console.error('Refresh failed:', err);
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   const filteredTasks =
@@ -228,7 +220,7 @@ const TaskScreen: React.FC = () => {
         case 'status':
           return task.status.toLowerCase().includes(searchText.toLowerCase());
         case 'area':
-          return task.areaName.toLowerCase().includes(searchText.toLowerCase());
+          return task.areaId.name.toLowerCase().includes(searchText.toLowerCase());
         case 'taskType':
           return task.taskTypeId.name.toLowerCase().includes(searchText.toLowerCase());
         case 'assigner':
@@ -243,7 +235,6 @@ const TaskScreen: React.FC = () => {
           return false;
       }
     }) || [];
-  console.log('filteredTasks', filteredTasks);
 
   const shifts = ['Day', 'Night'];
 
@@ -271,89 +262,90 @@ const TaskScreen: React.FC = () => {
     });
   };
 
+  if (isLoading && !tasks) {
+    return <LoadingScreen message='Fetching tasks...' fullScreen={true} color='#007bff' />;
+  }
+
   return (
-    <Layout isScrollable={true}>
-      <ScrollView>
-        <View style={styles.container}>
-          <View style={styles.searchFilterContainer}>
-            <SearchInput
-              filteredData={filteredTasks}
-              onChangeText={setSearchText}
-              value={searchText}
-              typeFiltered={{
-                filteredType: [
-                  'description',
-                  'status',
-                  'area',
-                  'taskType',
-                  'assigner',
-                  'assignee',
-                  'priority',
-                  'shift',
-                ],
-                setSelectedFiltered: setSelectedFilter,
-              }}
-            />
-          </View>
-
-          <View style={styles.navigationContainer}>
-            <TouchableOpacity onPress={goToPreviousWeek} style={styles.navButton}>
-              <Ionicons name='chevron-back' size={24} color='#007bff' />
-            </TouchableOpacity>
-            <Text style={styles.headerText}>{monthYear}</Text>
-            <TouchableOpacity onPress={goToNextWeek} style={styles.navButton}>
-              <Ionicons name='chevron-forward' size={24} color='#007bff' />
-            </TouchableOpacity>
-          </View>
-
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.segmentContainer}
-            contentContainerStyle={styles.segmentContentContainer}
-          >
-            {weekDates.map((date, index) => {
-              const taskCount = filteredTasks ? getTasksForDay(filteredTasks, date) : 0;
-              return (
-                <TouchableOpacity
-                  key={index}
-                  style={[
-                    styles.segmentButton,
-                    selectedDayIndex === index && styles.segmentButtonSelected,
-                  ]}
-                  onPress={() => setSelectedDayIndex(index)}
-                >
-                  <View style={styles.segmentButtonContent}>
-                    <Text
-                      style={[
-                        styles.segmentText,
-                        selectedDayIndex === index && styles.segmentTextSelected,
-                      ]}
-                      numberOfLines={1}
-                    >
-                      {date.toLocaleDateString('en-US', { weekday: 'short' })}
-                    </Text>
-                    <Text
-                      style={[
-                        styles.segmentDateText,
-                        selectedDayIndex === index && styles.segmentTextSelected,
-                      ]}
-                    >
-                      {date.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit' })}
-                    </Text>
-                    {taskCount > 0 && (
-                      <View style={styles.badge}>
-                        <Text style={styles.badgeText}>{taskCount > 99 ? '99+' : taskCount}</Text>
-                      </View>
-                    )}
-                  </View>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
-
+    <Layout isScrollable={true} onRefresh={onRefresh}>
+      <View style={styles.container}>
+        <View style={styles.searchFilterContainer}>
+          <SearchInput
+            filteredData={filteredTasks}
+            onChangeText={setSearchText}
+            value={searchText}
+            typeFiltered={{
+              filteredType: [
+                'description',
+                'status',
+                'area',
+                'taskType',
+                'assigner',
+                'assignee',
+                'priority',
+                'shift',
+              ],
+              setSelectedFiltered: setSelectedFilter,
+            }}
+          />
+        </View>
+        <View style={styles.navigationContainer}>
+          <TouchableOpacity onPress={goToPreviousWeek} style={styles.navButton}>
+            <Ionicons name='chevron-back' size={24} color='#007bff' />
+          </TouchableOpacity>
+          <Text style={styles.headerText}>{monthYear}</Text>
+          <TouchableOpacity onPress={goToNextWeek} style={styles.navButton}>
+            <Ionicons name='chevron-forward' size={24} color='#007bff' />
+          </TouchableOpacity>
+        </View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.segmentContainer}
+          contentContainerStyle={styles.segmentContentContainer}
+        >
+          {weekDates.map((date, index) => {
+            const taskCount = filteredTasks ? getTasksForDay(filteredTasks, date) : 0;
+            return (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.segmentButton,
+                  selectedDayIndex === index && styles.segmentButtonSelected,
+                ]}
+                onPress={() => setSelectedDayIndex(index)}
+              >
+                <View style={styles.segmentButtonContent}>
+                  <Text
+                    style={[
+                      styles.segmentText,
+                      selectedDayIndex === index && styles.segmentTextSelected,
+                    ]}
+                    numberOfLines={1}
+                  >
+                    {date.toLocaleDateString('en-US', { weekday: 'short' })}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.segmentDateText,
+                      selectedDayIndex === index && styles.segmentTextSelected,
+                    ]}
+                  >
+                    {date.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit' })}
+                  </Text>
+                  {taskCount > 0 && (
+                    <View style={styles.badge}>
+                      <Text style={styles.badgeText}>{taskCount > 99 ? '99+' : taskCount}</Text>
+                    </View>
+                  )}
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+        <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
           {isLoading ? (
-            <Text>Loading...</Text>
+            <LoadingScreen message='Loading tasks...' />
           ) : isError ? (
             <Text style={styles.errorText}>
               {error
@@ -361,65 +353,50 @@ const TaskScreen: React.FC = () => {
                 : 'Error: Unknown'}
             </Text>
           ) : (
-            <View>
+            <View style={styles.tableContainer}>
               {shifts.map((shift) => (
-                <View key={shift} style={styles.row}>
-                  <View style={styles.shiftLabel}>
+                <View key={shift} style={styles.shiftSection}>
+                  <View style={styles.shiftHeader}>
                     <Text style={styles.shiftText}>{shift}</Text>
                   </View>
-                  <View style={styles.dayColumn}>
-                    <View style={styles.taskContainer}>
-                      {(() => {
-                        const tasksForCell = getTasksForCell(
-                          filteredTasks,
-                          weekDates[selectedDayIndex],
-                          shift
-                        );
-                        return tasksForCell.length > 0 ? (
-                          tasksForCell.map((task, index) => (
-                            <NewTaskCard
-                              key={`${task.taskId}-${
-                                weekDates[selectedDayIndex].toISOString().split('T')[0]
-                              }-${index}`}
-                              task={task}
-                              onPress={() => handleTaskPress(task)}
-                              selectedDate={weekDates[selectedDayIndex]}
-                            />
-                          ))
-                        ) : (
-                          <Text style={styles.noTasksText}>No tasks</Text>
-                        );
-                      })()}
-                    </View>
+                  <View style={styles.taskContainer}>
+                    {(() => {
+                      const tasksForCell = getTasksForCell(
+                        filteredTasks,
+                        weekDates[selectedDayIndex],
+                        shift
+                      );
+                      return tasksForCell.length > 0 ? (
+                        tasksForCell.map((task, index) => (
+                          <NewTaskCard
+                            key={`${task.taskId}-${
+                              weekDates[selectedDayIndex].toISOString().split('T')[0]
+                            }-${index}`}
+                            task={task}
+                            onPress={() => handleTaskPress(task)}
+                            selectedDate={weekDates[selectedDayIndex]}
+                          />
+                        ))
+                      ) : (
+                        <Text style={styles.noTasksText}>No tasks</Text>
+                      );
+                    })()}
                   </View>
                 </View>
               ))}
-              <TouchableOpacity
-                style={styles.refreshButton}
-                onPress={onRefresh}
-                disabled={refreshing}
-              >
-                <Ionicons
-                  name={refreshing ? 'refresh-circle' : 'refresh'}
-                  size={24}
-                  color={refreshing ? '#888' : '#007bff'}
-                />
-              </TouchableOpacity>
             </View>
           )}
-        </View>
-      </ScrollView>
+          <View style={{ height: 300 }} />
+        </ScrollView>
+      </View>
     </Layout>
   );
 };
 
 const { width } = Dimensions.get('window');
-const shiftLabelWidth = 60;
-const dayColumnWidth = width - shiftLabelWidth;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     paddingTop: 10,
   },
   searchFilterContainer: {
@@ -440,13 +417,14 @@ const styles = StyleSheet.create({
   },
   segmentContainer: {
     marginBottom: 10,
+    paddingBottom: 14,
   },
   segmentContentContainer: {
-    paddingHorizontal: 5,
+    paddingHorizontal: 2,
   },
   segmentButton: {
     width: 80,
-    paddingVertical: 8,
+    height: 50,
     paddingHorizontal: 10,
     marginRight: 8,
     borderRadius: 20,
@@ -491,65 +469,79 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  row: {
-    flexDirection: 'row',
+  tableContainer: {
+    marginTop: 0,
+  },
+  shiftSection: {
+    width: '100%',
     borderBottomWidth: 1,
     borderColor: '#ccc',
   },
-  shiftLabel: {
-    width: shiftLabelWidth,
-    padding: 5,
-    justifyContent: 'center',
+  shiftHeader: {
+    padding: 10,
+    backgroundColor: '#f0f0f0',
     alignItems: 'center',
-    borderRightWidth: 1,
-    borderColor: '#ccc',
   },
   shiftText: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  dayColumn: {
-    width: dayColumnWidth,
-    padding: 5,
+    fontSize: 16,
+    fontWeight: '600',
   },
   taskContainer: {
-    paddingVertical: 5,
+    padding: 10,
   },
   taskCard: {
-    backgroundColor: '#f8f9fa',
-    padding: 10,
-    borderRadius: 8,
-    marginBottom: 10,
+    padding: 15,
+    borderRadius: 12,
+    marginBottom: 12,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 4,
+    borderLeftWidth: 4,
+  },
+  taskHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   taskCardTitle: {
-    fontSize: 14,
+    fontSize: 16,
+    fontWeight: '700',
+    flexShrink: 1,
+  },
+  priorityBadge: {
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingVertical: 2,
+    paddingHorizontal: 8,
+  },
+  priorityBadgeText: {
+    fontSize: 10,
     fontWeight: '600',
-    marginBottom: 5,
+    textTransform: 'uppercase',
   },
   taskCardText: {
     fontSize: 12,
-    marginBottom: 3,
-    color: '#333',
+    marginBottom: 6,
+    fontWeight: '500',
+  },
+  reportStatusContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  reportStatusIcon: {
+    marginRight: 6,
   },
   reportStatusText: {
     fontSize: 12,
-    marginBottom: 3,
-    color: '#666',
+    fontWeight: '500',
   },
   noTasksText: {
     fontSize: 12,
     color: '#888',
     textAlign: 'center',
-  },
-  refreshButton: {
-    alignSelf: 'center',
-    marginTop: 10,
-    padding: 10,
   },
   errorText: {
     fontSize: 14,

@@ -1,12 +1,5 @@
 import React, { useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, Image } from 'react-native';
 import { SegmentedButtons, Tooltip } from 'react-native-paper';
 import { useQuery } from 'react-query'; // Import React Query hook
 import { useNavigation } from '@react-navigation/native';
@@ -27,17 +20,12 @@ const CowManagementScreen: React.FC = () => {
   const { t } = useTranslation();
   const [selectedSegment, setSelectedSegment] = useState('list');
   const [searchText, setSearchText] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState<
-    'name' | 'origin' | 'type' | 'pen' | 'area'
-  >('name');
+  const [selectedFilter, setSelectedFilter] = useState<'name' | 'origin' | 'type' | 'pen' | 'area'>(
+    'name'
+  );
 
   // Use React Query's useQuery hook to fetch cows data
-  const {
-    data: cows,
-    isLoading,
-    isError,
-    error,
-  } = useQuery<Cow[]>('cows', fetchCows);
+  const { data: cows, isLoading, isError, error } = useQuery<Cow[]>('cows', fetchCows);
 
   const navigation = useNavigation();
 
@@ -50,13 +38,9 @@ const CowManagementScreen: React.FC = () => {
     } else if (selectedFilter === 'type') {
       return cow.cowType?.name.toLowerCase().includes(searchText.toLowerCase());
     } else if (selectedFilter === 'pen') {
-      return cow.penResponse?.name
-        .toLowerCase()
-        .includes(searchText.toLowerCase());
+      return cow.penResponse?.name.toLowerCase().includes(searchText.toLowerCase());
     } else if (selectedFilter === 'area') {
-      return cow.penResponse?.area.name
-        .toLowerCase()
-        .includes(searchText.toLowerCase());
+      return cow.penResponse?.area.name.toLowerCase().includes(searchText.toLowerCase());
     }
     return false;
   });
@@ -111,19 +95,14 @@ const CowManagementScreen: React.FC = () => {
               paddingHorizontal: 10,
             }}
             renderItem={({ item }) => (
-              <CardCow
-                cow={item}
-                onPress={() => navigateToCowDetails(item.cowId)}
-              />
+              <CardCow cow={item} onPress={() => navigateToCowDetails(item.cowId)} />
             )}
           />
         )
       )}
 
       {/* Floating Action Button */}
-      <FloatingButton
-        onPress={() => (navigation.navigate as any)('CreateCowScreen')}
-      />
+      <FloatingButton onPress={() => (navigation.navigate as any)('CreateCowScreen')} />
     </View>
   );
 };

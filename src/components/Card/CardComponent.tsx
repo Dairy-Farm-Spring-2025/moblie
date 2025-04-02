@@ -1,14 +1,24 @@
+import { COLORS } from '@common/GlobalStyle';
+import { RootState } from '@core/store/store';
 import React from 'react';
 import { ImageProps, StyleProp, StyleSheet, ViewStyle } from 'react-native';
-import {
-  Avatar,
-  Card,
-  CardContentProps,
-  CardProps,
-  Text,
-} from 'react-native-paper';
+import { Avatar, Card, CardContentProps, CardProps, Text } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 
-export const LeftContent = (props: any) => <Avatar.Icon {...props} />;
+export const LeftContent = (props: any) => {
+  const { roleName } = useSelector((state: RootState) => state.auth);
+  const getColorByrole = () => {
+    switch (roleName) {
+      case 'veterinarians':
+        return COLORS.veterinarian.primary;
+      case 'workers':
+        return COLORS.worker.primary;
+      default:
+        return COLORS.worker.primary;
+    }
+  };
+  return <Avatar.Icon style={{ backgroundColor: getColorByrole() }} {...props} />;
+};
 
 interface CardComponentProps extends CardProps {
   children: React.ReactNode;
