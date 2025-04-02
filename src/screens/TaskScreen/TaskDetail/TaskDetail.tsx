@@ -126,7 +126,7 @@ const TaskDetailContent: React.FC<{
     switch (screenType) {
       case 'illness':
         (navigation.navigate as any)('IllnessCowRecordScreen', {
-          illnessId: task.material.illness,
+          illnessId: task.material.illness?.illnessId,
         });
         break;
       case 'illnessDetail':
