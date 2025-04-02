@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import TextRenderHorizontal from '@components/UI/TextRenderHorizontal';
 import DividerUI from '@components/UI/DividerUI';
+import useRoleColor from '@utils/hooks/hooks';
 
 interface CardCowProps {
   cow: Cow | undefined;
@@ -36,26 +37,24 @@ const CardCow: React.FC<CardCowProps> = ({ cow, onPress, width }) => {
               gap: 5,
             }}
           >
-            <Text style={styles.cardTitle}>
-              {cow.name || t('card_cow.unnamed')}
-            </Text>
+            <Text style={styles.cardTitle}>{cow.name || t('card_cow.unnamed')}</Text>
             {cow.gender === Gender.MALE ? (
-              <Ionicons name="male" size={15} color="blue" />
+              <Ionicons name='male' size={15} color='blue' />
             ) : (
-              <Ionicons name="female" color="red" size={15} />
+              <Ionicons name='female' color='red' size={15} />
             )}
           </View>
           <Tooltip title={t('card_cow.cow_type')}>
-            <Text style={styles.cardType}>{cow.cowType?.name || 'N/A'}</Text>
+            <Text style={[styles.cardType, { backgroundColor: useRoleColor() }]}>
+              {cow.cowType?.name || 'N/A'}
+            </Text>
           </Tooltip>
         </View>
         <DividerUI />
         <View style={styles.cardContent}>
           <TextRenderHorizontal
             title={t('card_cow.pen', { defaultValue: 'Pen' })}
-            content={
-              cow?.penResponse ? formatCamelCase(cow?.penResponse?.name) : 'N/A'
-            }
+            content={cow?.penResponse ? formatCamelCase(cow?.penResponse?.name) : 'N/A'}
           />
           <TextRenderHorizontal
             title={t('card_cow.origin', { defaultValue: 'Origin' })}
@@ -118,7 +117,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   cardType: {
-    backgroundColor: 'green',
     padding: 4,
     borderRadius: 5,
     color: 'white',

@@ -15,6 +15,9 @@ import { Button, Text } from 'react-native-paper';
 import { convertToDDMMYYYY } from '@utils/format';
 import RenderHtmlComponent from '@components/RenderHTML/RenderHtmlComponent';
 import { Ionicons } from '@expo/vector-icons'; // Import Ionicons from @expo/vector-icons
+import { useSelector } from 'react-redux';
+import { RootState } from '@core/store/store';
+import { COLORS } from '@common/GlobalStyle';
 
 interface IllnessCowRecordFormProps {
   illness: IllnessCow;
@@ -23,12 +26,20 @@ interface IllnessCowRecordFormProps {
 const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
   const navigation = useNavigation();
   const [isEditing, setIsEditing] = useState(false); // Toggle for edit mode
-  const [startDate, setStartDate] = useState(
-    new Date(illness.startDate)?.toISOString()
-  );
-  const [endDate, setEndDate] = useState(
-    new Date(illness.endDate)?.toISOString()
-  );
+  const [startDate, setStartDate] = useState(new Date(illness.startDate)?.toISOString());
+  const [endDate, setEndDate] = useState(new Date(illness.endDate)?.toISOString());
+
+  const { roleName } = useSelector((state: RootState) => state.auth);
+  const getColorByrole = () => {
+    switch (roleName) {
+      case 'veterinarians':
+        return COLORS.veterinarian.primary;
+      case 'workers':
+        return COLORS.worker.primary;
+      default:
+        return COLORS.worker.primary;
+    }
+  };
 
   const {
     control,
@@ -44,8 +55,7 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
   });
 
   const { mutate } = useMutation(
-    async (data: IllnessPayload) =>
-      await apiClient.put(`illness/${illness.illnessId}`, data),
+    async (data: IllnessPayload) => await apiClient.put(`illness/${illness.illnessId}`, data),
     {
       onSuccess: (response: any) => {
         console.log(response);
@@ -78,9 +88,7 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
     mutate(payload);
   };
 
-  const formattedStartDate = convertToDDMMYYYY(
-    new Date(startDate).toISOString().split('T')[0]
-  );
+  const formattedStartDate = convertToDDMMYYYY(new Date(startDate).toISOString().split('T')[0]);
   const formattedEndDate = endDate
     ? convertToDDMMYYYY(new Date(endDate).toISOString().split('T')[0])
     : 'N/A';
@@ -89,12 +97,8 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
     <CardComponent style={styles.container}>
       <CardComponent.Title
         title={'Illness Record'}
-        subTitle={
-          isEditing ? 'Edit the illness details' : 'View illness details'
-        }
-        leftContent={(props: any) => (
-          <LeftContent {...props} icon="cards-heart" />
-        )}
+        subTitle={isEditing ? 'Edit the illness details' : 'View illness details'}
+        leftContent={(props: any) => <LeftContent {...props} icon='cards-heart' />}
       />
       <CardComponent.Content>
         {!isEditing ? (
@@ -109,7 +113,7 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
                 <Text style={styles.value}>{formattedStartDate}</Text>
               </View>
               <View>
-                <Ionicons name="arrow-forward" size={20} color="#000" />
+                <Ionicons name='arrow-forward' size={20} color='#000' />
                 {/* Replaced faArrowRight with arrow-forward */}
               </View>
               <View>
@@ -128,8 +132,8 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
               <RenderHtmlComponent htmlContent={illness.symptoms} />
             </View>
             <Button
-              mode="contained"
-              style={styles.editButton}
+              mode='contained'
+              style={[styles.editButton, { backgroundColor: `${getColorByrole()}` }]}
               onPress={() => setIsEditing(true)}
             >
               Edit
@@ -140,8 +144,8 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
           <>
             <FormItem
               control={control}
-              label="Severity"
-              name="severity"
+              label='Severity'
+              name='severity'
               render={({ field: { onChange, onBlur, value } }) => (
                 <CustomPicker
                   onValueChange={onChange}
@@ -160,14 +164,14 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
               <View style={{ width: '48%' }}>
                 <FormItem
                   control={control}
-                  label="Start Date"
-                  name="startDate"
+                  label='Start Date'
+                  name='startDate'
                   render={() => (
                     <DateTimePicker
                       value={new Date(startDate)}
-                      mode="date"
+                      mode='date'
                       is24Hour={true}
-                      display="default"
+                      display='default'
                       onChange={handleStartDateChange}
                     />
                   )}
@@ -177,14 +181,14 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
               <View style={{ width: '48%' }}>
                 <FormItem
                   control={control}
-                  label="End Date"
-                  name="endDate"
+                  label='End Date'
+                  name='endDate'
                   render={() => (
                     <DateTimePicker
                       value={endDate ? new Date(endDate) : new Date()}
-                      mode="date"
+                      mode='date'
                       is24Hour={true}
-                      display="default"
+                      display='default'
                       onChange={handleEndDateChange}
                       minimumDate={new Date(startDate)}
                     />
@@ -195,8 +199,8 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
 
             <FormItem
               control={control}
-              label="Prognosis"
-              name="prognosis"
+              label='Prognosis'
+              name='prognosis'
               rules={{ required: 'Must not be empty' }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextEditorComponent
@@ -209,8 +213,8 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
 
             <FormItem
               control={control}
-              label="Symptoms"
-              name="symptoms"
+              label='Symptoms'
+              name='symptoms'
               rules={{ required: 'Must not be empty' }}
               render={({ field: { onChange, value } }) => (
                 <TextEditorComponent
@@ -222,15 +226,11 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
             />
 
             <View style={styles.buttonContainer}>
-              <Button
-                mode="contained"
-                style={styles.submitButton}
-                onPress={handleSubmit(onSubmit)}
-              >
+              <Button mode='contained' style={styles.submitButton} onPress={handleSubmit(onSubmit)}>
                 Save
               </Button>
               <Button
-                mode="outlined"
+                mode='outlined'
                 style={styles.cancelButton}
                 onPress={() => setIsEditing(false)}
               >

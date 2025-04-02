@@ -21,13 +21,11 @@ type RootStackParamList = {
   InjectionScreen: { vaccineInjectionId: number };
 };
 
-type InjectionScreenRouteProp = RouteProp<
-  RootStackParamList,
-  'InjectionScreen'
->;
+type InjectionScreenRouteProp = RouteProp<RootStackParamList, 'InjectionScreen'>;
 
 const fetchVaccineInjections = async (id: number): Promise<InjectionCow> => {
   const response = await apiClient.get(`/vaccine-injections/${id}`);
+  console.log('vaccineInjections', response.data);
   return response.data;
 };
 
@@ -49,8 +47,7 @@ const InjectionScreen = () => {
   } = useQuery(['vaccine-injections', vaccineInjectionId], () =>
     fetchVaccineInjections(vaccineInjectionId)
   );
-  const getStatusDarkColor = (status: InjectionStatus) =>
-    statusColors[status] || '#374151'; // Default Dark Gray
+  const getStatusDarkColor = (status: InjectionStatus) => statusColors[status] || '#374151'; // Default Dark Gray
   if (isError) {
     <Text>{(error as any)?.message}</Text>;
   }
@@ -66,18 +63,10 @@ const InjectionScreen = () => {
       >
         <View style={styles.containerTitle}>
           <Text style={styles.title}>
-            {injections?.injectionDate
-              ? convertToDDMMYYYY(injections?.injectionDate)
-              : 'N/A'}
+            {injections?.injectionDate ? convertToDDMMYYYY(injections?.injectionDate) : 'N/A'}
           </Text>
-          <TagUI
-            backgroundColor={getStatusDarkColor(
-              injections?.status as InjectionStatus
-            )}
-          >
-            {injections?.status
-              ? t(formatCamelCase(injections?.status))
-              : 'N/A'}
+          <TagUI backgroundColor={getStatusDarkColor(injections?.status as InjectionStatus)}>
+            {injections?.status ? t(formatCamelCase(injections?.status)) : 'N/A'}
           </TagUI>
         </View>
         <Text style={styles.description}>{injections?.description}</Text>
@@ -136,11 +125,7 @@ const InjectionScreen = () => {
                 })}
                 content={
                   injections?.vaccineCycleDetail.vaccineType
-                    ? t(
-                        formatCamelCase(
-                          injections?.vaccineCycleDetail.vaccineType
-                        )
-                      )
+                    ? t(formatCamelCase(injections?.vaccineCycleDetail.vaccineType))
                     : 'N/A'
                 }
               />
@@ -150,11 +135,7 @@ const InjectionScreen = () => {
                 })}
                 content={
                   injections?.vaccineCycleDetail.injectionSite
-                    ? t(
-                        formatCamelCase(
-                          injections?.vaccineCycleDetail.injectionSite
-                        )
-                      )
+                    ? t(formatCamelCase(injections?.vaccineCycleDetail.injectionSite))
                     : 'N/A'
                 }
               />
@@ -190,24 +171,17 @@ const InjectionScreen = () => {
                 </Text>
                 <TagUI
                   backgroundColor={getStatusItemDarkColor(
-                    injections?.vaccineCycleDetail?.itemEntity
-                      ?.status as StatusItem
+                    injections?.vaccineCycleDetail?.itemEntity?.status as StatusItem
                   )}
                 >
                   {injections?.vaccineCycleDetail?.itemEntity
-                    ? t(
-                        formatCamelCase(
-                          injections?.vaccineCycleDetail?.itemEntity?.status
-                        )
-                      )
+                    ? t(formatCamelCase(injections?.vaccineCycleDetail?.itemEntity?.status))
                     : 'N/A'}
                 </TagUI>
               </View>
               <TextRenderHorizontal
                 title={t('injections.category', { defaultValue: 'Category' })}
-                content={
-                  injections?.vaccineCycleDetail.itemEntity.categoryEntity.name
-                }
+                content={injections?.vaccineCycleDetail.itemEntity.categoryEntity.name}
               />
               <TextRenderHorizontal
                 title={t('injections.quantity', { defaultValue: 'Quantity' })}

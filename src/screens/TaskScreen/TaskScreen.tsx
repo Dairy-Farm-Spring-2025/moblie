@@ -41,7 +41,7 @@ const fetchTasksByDateRange = async ({
     fromDate: fromDate.toISOString().split('T')[0],
     toDate: toDate.toISOString().split('T')[0],
   };
-  const response = await apiClient.post('/tasks/myTasks/by-date-range', requestBody);
+  const response = await apiClient.post('/tasks/myTasks/by-date-range/mb', requestBody);
   console.log('response', response.data);
   const tasksByDate = response.data || {};
   const allTasks: Task[] = [];

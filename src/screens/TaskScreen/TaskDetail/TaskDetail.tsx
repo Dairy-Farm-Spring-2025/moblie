@@ -36,7 +36,7 @@ const TaskDetailContent: React.FC<{
   const navigation = useNavigation();
 
   const handleToggleExpand = () => setIsExpanded(!isExpanded);
-  console.log('task', task.reportTask);
+  console.log('task', task.material.vaccineInjection?.id);
 
   // Check if a report exists for the selected date
   const hasReportForDate = task.reportTask && task.reportTask.date === selectedDate;
@@ -120,6 +120,29 @@ const TaskDetailContent: React.FC<{
 
   const handleViewMaterials = () =>
     (navigation.navigate as any)('Materials', { areaId: task.areaId.areaId });
+
+  // Navigation handler
+  const handleNavigateScreen = (screenType: string) => {
+    switch (screenType) {
+      case 'illness':
+        (navigation.navigate as any)('IllnessCowRecordScreen', {
+          illnessId: task.material.illness,
+        });
+        break;
+      case 'illnessDetail':
+        (navigation.navigate as any)('IllnessDetailForm', {
+          illnessDetail: task.material.illnessDetail,
+        });
+        break;
+      case 'vaccineInjection':
+        (navigation.navigate as any)('InjectionScreen', {
+          vaccineInjectionId: task.material.vaccineInjection?.id,
+        });
+        break;
+      default:
+        console.log('Unknown screen type');
+    }
+  };
 
   return (
     <View style={[styles.card, { borderLeftColor: priorityColor }]}>
@@ -277,6 +300,48 @@ const TaskDetailContent: React.FC<{
           <TouchableOpacity onPress={handleViewMaterials} disabled={isCheckingIn}>
             <Text style={styles.materials}>View</Text>
           </TouchableOpacity>
+        </View>
+      )}
+      {(task.material.illness || task.material.illnessDetail || task.material.vaccineInjection) && (
+        <View style={styles.infoRow}>
+          <View style={styles.labelContainer}>
+            <Ionicons
+              name='document-text-outline'
+              size={20}
+              color={textColor}
+              style={styles.icon}
+            />
+            <Text style={[styles.textLabel, { color: textColor }]}>View Materials:</Text>
+          </View>
+          {/* Illness Link */}
+          {task.material.illness && (
+            <TouchableOpacity
+              onPress={() => handleNavigateScreen('illness')}
+              disabled={isCheckingIn}
+            >
+              <Text style={styles.materials}>View Illness</Text>
+            </TouchableOpacity>
+          )}
+
+          {/* IllnessDetail Link */}
+          {task.material.illnessDetail && (
+            <TouchableOpacity
+              onPress={() => handleNavigateScreen('illnessDetail')}
+              disabled={isCheckingIn}
+            >
+              <Text style={styles.materials}>View Illness Detail</Text>
+            </TouchableOpacity>
+          )}
+
+          {/* VaccineInjection Link */}
+          {task.material.vaccineInjection && (
+            <TouchableOpacity
+              onPress={() => handleNavigateScreen('vaccineInjection')}
+              disabled={isCheckingIn}
+            >
+              <Text style={styles.materials}>View Vaccine Injection</Text>
+            </TouchableOpacity>
+          )}
         </View>
       )}
 

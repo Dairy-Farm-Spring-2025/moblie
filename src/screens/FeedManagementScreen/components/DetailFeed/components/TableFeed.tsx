@@ -30,16 +30,12 @@ const TableFeed = ({ items, feed }: TableFeedProps) => {
       <TableComponent>
         <TableComponent.Header>
           <TableComponent.Title>{t('feed.name')}</TableComponent.Title>
-          <TableComponent.Title numeric>
-            {t('feed.quantity')}
-          </TableComponent.Title>
-          <TableComponent.Title style={styles.marginCell}>
-            {t('feed.storage')}
-          </TableComponent.Title>
+          <TableComponent.Title numeric>{t('feed.quantity')}</TableComponent.Title>
+          <TableComponent.Title style={styles.marginCell}>{t('feed.storage')}</TableComponent.Title>
         </TableComponent.Header>
 
         {items.slice(from, to).map((element: FeedMealDetails) => (
-          <TableComponent.Row key={element.feedMealDetailId}>
+          <TableComponent.Row key={element.itemEntity.itemId}>
             <TableComponent.Cell>{element.itemEntity.name}</TableComponent.Cell>
             <TableComponent.Cell numeric>
               {element.itemEntity.quantity} ({element.itemEntity.unit})
@@ -50,11 +46,7 @@ const TableFeed = ({ items, feed }: TableFeedProps) => {
           </TableComponent.Row>
         ))}
 
-        <TableComponent.Pagination
-          items={items}
-          page={pages}
-          numberOfItemsPerPage={itemPage}
-        />
+        <TableComponent.Pagination items={items} page={pages} numberOfItemsPerPage={itemPage} />
       </TableComponent>
       <Text>
         {t('feed.quantity')}: {calculateTotalQuantity(items)} (kg)

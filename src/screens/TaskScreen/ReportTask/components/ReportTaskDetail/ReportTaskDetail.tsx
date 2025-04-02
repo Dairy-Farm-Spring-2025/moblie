@@ -273,7 +273,7 @@ const ReportTaskDetail: React.FC = () => {
         value={selectedSegment}
         onValueChange={setSelectedSegment}
         buttons={[
-          { value: 'detail', label: 'Report Detail', icon: 'information-circle-outline' },
+          { value: 'detail', label: 'Report Detail', icon: 'file-document' },
           {
             value: 'update',
             label: 'Update Report',

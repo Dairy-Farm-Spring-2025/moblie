@@ -1,10 +1,14 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import IllnessDetailForm from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/components/IllnessDetail/components/IllnessDetailForm';
+import IllnessCowRecordScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/IllnessCowRecordScreen';
+import InjectionScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/InjectionScreen/InjectionScreen';
 import ReportTaskDetail from '@screens/TaskScreen/ReportTask/components/ReportTaskDetail/ReportTaskDetail';
 import ReportTaskForm from '@screens/TaskScreen/ReportTask/components/ReportTaskForm/ReportTaskForm';
 import ReportTaskScreen from '@screens/TaskScreen/ReportTask/ReportTask';
 import Materials from '@screens/TaskScreen/TaskDetail/components/Materials';
 import TaskDetail from '@screens/TaskScreen/TaskDetail/TaskDetail';
 import TaskScreen from '@screens/TaskScreen/TaskScreen';
+import { t } from 'i18next';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,6 +30,25 @@ const TaskManagementRoute: React.FC = () => {
         name='ReportTaskDetail'
         component={ReportTaskDetail}
         options={{ title: 'Report Task' }}
+      />
+      <Stack.Screen
+        name='InjectionScreen'
+        component={InjectionScreen}
+        options={{
+          title: t('injections.title', {
+            defaultValue: 'Injection',
+          }),
+        }}
+      />
+      <Stack.Screen
+        name='IllnessDetailForm'
+        component={IllnessDetailForm}
+        options={{ title: 'Edit Illness Detail' }}
+      />
+      <Stack.Screen
+        name='IllnessCowRecordScreen'
+        component={IllnessCowRecordScreen}
+        options={{ title: 'Illness Cow Record' }}
       />
       <Stack.Screen name='Materials' component={Materials} options={{ title: 'Materials' }} />
     </Stack.Navigator>

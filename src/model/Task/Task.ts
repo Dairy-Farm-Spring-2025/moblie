@@ -1,4 +1,5 @@
 import { Area } from '@model/Area/Area';
+import { IllnessCow, IllnessDetail, InjectionCow, VaccineCycleDetail } from '@model/Cow/Cow';
 import { User } from '@model/User/User';
 
 export type Task = {
@@ -20,8 +21,11 @@ export type Task = {
   shift: string;
   completionNotes: string | null;
   reportTask: ReportTaskData | null;
-  illness: any | null;
-  vaccineInjection: any | null;
+  material: {
+    illnessDetail: IllnessDetail | null;
+    vaccineInjection: InjectionCow | null;
+    illness: IllnessCow | null;
+  };
 };
 
 export type ReportTaskData = {

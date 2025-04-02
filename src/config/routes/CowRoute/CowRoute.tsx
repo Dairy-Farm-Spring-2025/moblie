@@ -148,7 +148,7 @@ const CowRoute: React.FC = () => {
         options={{ title: t('export_item.title') }}
       />
       <Stack.Screen
-        name="IllnessReportForm"
+        name='IllnessReportForm'
         component={IllnessReportForm}
         options={{
           title: t('illness.title', {
@@ -157,7 +157,7 @@ const CowRoute: React.FC = () => {
         }}
       />
       <Stack.Screen
-        name="InjectionScreen"
+        name='InjectionScreen'
         component={InjectionScreen}
         options={{
           title: t('injections.title', {
