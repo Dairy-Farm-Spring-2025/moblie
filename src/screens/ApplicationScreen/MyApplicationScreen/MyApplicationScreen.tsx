@@ -1,0 +1,85 @@
+import ContainerComponent from '@components/Container/ContainerComponent';
+import EmptyUI from '@components/UI/EmptyUI';
+import apiClient from '@config/axios/axios';
+import { Application } from '@model/Application/Application';
+import React from 'react';
+import { Alert, StyleSheet, View } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
+import { ActivityIndicator, Text } from 'react-native-paper';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import CardApplication from './components/CardApplication';
+import { t } from 'i18next';
+
+const fetchMyRequestApplication = async (): Promise<Application[]> => {
+  const response = await apiClient.get(`/application/my-request`);
+  return response.data;
+};
+
+const MyApplicationScreen = () => {
+  const queryClient = useQueryClient();
+  const {
+    data: application,
+    isLoading,
+    isError,
+    error,
+  } = useQuery('application/my-request', () => fetchMyRequestApplication());
+
+  const { mutate } = useMutation(
+    async ({ id, data }: { id: number; data: any }) =>
+      await apiClient.put(`application/cancel-request/${id}`, data),
+    {
+      onSuccess: (response: any) => {
+        Alert.alert(t('Success'), response.message);
+        queryClient.invalidateQueries('application/my-request');
+      },
+      onError: (error: any) => {
+        Alert.alert(t('Error'), error.response.data.message);
+      },
+    }
+  );
+  const onCancel = async (id: number) => {
+    const payload = {
+      approvalStatus: 'cancel',
+      commentApprove: '',
+    };
+    mutate({ id, data: payload });
+  };
+  return (
+    <ContainerComponent>
+      {isLoading ? (
+        <ActivityIndicator />
+      ) : isError ? (
+        <Text
+          style={{
+            color: 'red',
+          }}
+        >
+          {(error as any).message}
+        </Text>
+      ) : (
+        <FlatList
+          contentContainerStyle={{
+            paddingBottom: 10,
+            padding: 10,
+          }}
+          keyExtractor={(item: Application) => item.applicationId.toString()}
+          data={application}
+          renderItem={({ item }) => (
+            <CardApplication
+              items={item}
+              onCancelApplication={() => onCancel(item.applicationId)}
+            />
+          )}
+        />
+      )}
+    </ContainerComponent>
+  );
+};
+
+const styles = StyleSheet.create({
+  list: {
+    padding: 20,
+  },
+});
+
+export default MyApplicationScreen;

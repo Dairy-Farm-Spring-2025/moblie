@@ -21,6 +21,8 @@ import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
+const SIZE_ICON = 40;
+
 type NavigationProp = {
   navigate: (screen: string) => void;
 };
@@ -49,44 +51,48 @@ const HomeScreen: React.FC = () => {
     {
       id: 'CowManagementScreen',
       title: t('home.cow'),
-      icon: <MaterialCommunityIcons name="cow" size={32} color="#fff" />,
+      icon: <MaterialCommunityIcons name="cow" size={SIZE_ICON} color="#000" />,
       screen: 'CowManagementScreen',
     },
     {
       id: 'AreaManagementScreen',
       title: t('home.area'),
-      icon: <FontAwesome5 name="chart-area" size={30} color="#fff" />,
+      icon: <FontAwesome5 name="chart-area" size={SIZE_ICON} color="#000" />,
       screen: 'AreaManagementScreen',
     },
     {
       id: 'PenManagementScreen',
       title: t('home.pen'),
-      icon: <MaterialIcons name="warehouse" size={30} color="#fff" />, // Replaced faSliders with sliders
+      icon: <MaterialIcons name="warehouse" size={SIZE_ICON} color="#000" />, // Replaced faSliders with sliders
       screen: 'PenManagementScreen',
     },
     {
       id: 'MilkBatch',
       title: t('home.milk_batch'),
-      icon: <AntDesign name="barschart" size={30} color="#fff" />, // Replaced faDolly with cart-outline
+      icon: <AntDesign name="barschart" size={SIZE_ICON} color="#000" />, // Replaced faDolly with cart-outline
       screen: 'MilkBatchManagementScreen',
     },
     {
       id: 'HealthRecord',
       title: t('home.health_record'),
-      icon: <Ionicons name="medkit" size={30} color="#fff" />, // Replaced faNotesMedical with medkit-outline
+      icon: <Ionicons name="medkit" size={SIZE_ICON} color="#000" />, // Replaced faNotesMedical with medkit-outline
       screen: 'HealthRecordScreen',
     },
     {
       id: 'FarmLayoutScreen',
       title: t('home.farm_layout'),
-      icon: <Feather name="map" size={30} color="#fff" />, // Replaced faChartArea with map-outline
+      icon: <Feather name="map" size={SIZE_ICON} color="#000" />, // Replaced faChartArea with map-outline
       screen: 'FarmLayout',
     },
     {
       id: 'FeedManagementScreen',
       title: t('feed.title'),
       icon: (
-        <MaterialCommunityIcons name="food-variant" size={30} color="#fff" />
+        <MaterialCommunityIcons
+          name="food-variant"
+          size={SIZE_ICON}
+          color="#000"
+        />
       ), // Replaced faChartArea with map-outline
       screen: 'FeedManagementScreen',
     },
@@ -94,14 +100,53 @@ const HomeScreen: React.FC = () => {
       id: 'MyExportItemScreen',
       title: t('export_item.title'),
       icon: (
-        <MaterialCommunityIcons name="open-in-app" size={30} color="#fff" />
+        <MaterialCommunityIcons
+          name="open-in-app"
+          size={SIZE_ICON}
+          color="#000"
+        />
       ), // Replaced faChartArea with map-outline
       screen: 'MyExportItemScreen',
     },
   ];
 
+  const applicationCards = [
+    {
+      id: 'ViewApplicationScreen',
+      title: t('application.titleView', {
+        defaultValue: 'View my application',
+      }),
+      icon: (
+        <MaterialCommunityIcons
+          name="application-outline"
+          size={SIZE_ICON}
+          color="#000"
+        />
+      ),
+      screen: 'ViewApplicationScreen',
+    },
+    {
+      id: 'CreateApplicationScreen',
+      title: t('application.titleCreate', {
+        defaultValue: 'Create application',
+      }),
+      icon: (
+        <MaterialCommunityIcons
+          name="plus-box-outline"
+          size={SIZE_ICON}
+          color="#000"
+        />
+      ),
+      screen: 'CreateApplicationScreen',
+    },
+  ];
+
   const sections = [
     { title: t('home.dairy_management'), data: managementCards },
+    {
+      title: t('application.title', { defaultValue: 'Application management' }),
+      data: applicationCards,
+    },
   ];
 
   const isVeterinarian =
@@ -123,11 +168,18 @@ const HomeScreen: React.FC = () => {
       {item.map((card) => (
         <TouchableOpacity
           key={card.id}
-          style={[styles.card, { backgroundColor }]}
+          style={[
+            styles.card,
+            {
+              borderWidth: 2,
+              borderColor: backgroundColor,
+              backgroundColor: `${backgroundColor}45`, // Adding opacity to the background
+            },
+          ]}
           onPress={() => card.screen && navigation.navigate(card.screen)}
         >
           {card.icon}
-          <Text style={[styles.cardTitle, { color: '#fff' }]}>
+          <Text style={[styles.cardTitle, { color: '#000' }]}>
             {card.title}
           </Text>
         </TouchableOpacity>
@@ -219,7 +271,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: -5,
     right: -5,
-    color: '#FFFFFF',
+    color: '#000FFF',
     fontWeight: 'bold',
   },
   sectionList: {
