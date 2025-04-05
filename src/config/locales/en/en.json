@@ -100,5 +100,8 @@
   },
   "export_item": {
     "title": "Export Item"
+  },
+  "validateForm": {
+    "required": "Required field"
   }
 }
