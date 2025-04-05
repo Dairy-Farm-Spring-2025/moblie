@@ -1,7 +1,9 @@
+import { COLORS } from '@common/GlobalStyle';
 import CardComponent from '@components/Card/CardComponent';
 import DividerUI from '@components/UI/DividerUI';
 import TagUI from '@components/UI/TagUI';
 import TextTitle from '@components/UI/TextTitle';
+import { RootState } from '@core/store/store';
 import { FeedMeals } from '@model/Feed/Feed';
 import { useNavigation } from '@react-navigation/native';
 import {
@@ -12,10 +14,12 @@ import {
   filteredSilage,
 } from '@utils/filter/filterFood';
 import { formatCamelCase } from '@utils/format';
+import useRoleColor from '@utils/hooks/hooks';
 import { t } from 'i18next';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Text, Tooltip } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 
 interface CardFeedProps {
   item: FeedMeals;
@@ -33,14 +37,16 @@ const CardFeed = ({ item, navigation }: CardFeedProps) => {
         <View style={styles.titleContainer}>
           <View style={styles.title}>
             <Text>{item.name}</Text>
-            <Tooltip enterTouchDelay={100} title={t('feed.cow_type')}>
-              <TagUI>{item.cowTypeEntity.name}</TagUI>
-            </Tooltip>
-            <Tooltip enterTouchDelay={100} title={t('feed.cow_status')}>
-              <TagUI>
-                {formatCamelCase(item.cowStatus ? item.cowStatus : 'N/A')}
-              </TagUI>
-            </Tooltip>
+            <View style={styles.tagContainer}>
+              <Tooltip enterTouchDelay={100} title={t('feed.cow_type')}>
+                <TagUI backgroundColor={useRoleColor()}>{item.cowTypeEntity.name}</TagUI>
+              </Tooltip>
+              <Tooltip enterTouchDelay={100} title={t('feed.cow_status')}>
+                <TagUI backgroundColor={useRoleColor()}>
+                  {formatCamelCase(item.cowStatus ? item.cowStatus : 'N/A')}
+                </TagUI>
+              </Tooltip>
+            </View>
           </View>
         </View>
         <DividerUI />
@@ -49,16 +55,13 @@ const CardFeed = ({ item, navigation }: CardFeedProps) => {
             style={{
               fontSize: 15,
               fontWeight: '500',
-              color: 'green',
+              color: useRoleColor(),
             }}
           >
             {t('feed.food_nutrition')}:
           </Text>
           <View style={styles.content}>
-            <TextTitle
-              title={t('feed.hay')}
-              content={`${calculateTotalQuantity(filterHay)} kg`}
-            />
+            <TextTitle title={t('feed.hay')} content={`${calculateTotalQuantity(filterHay)} kg`} />
             <TextTitle
               title={t('feed.refined')}
               content={`${calculateTotalQuantity(filterRefined)} kg`}
@@ -97,8 +100,6 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   title: {
-    flexDirection: 'row',
-    alignItems: 'center',
     gap: 10,
   },
   titleContainer: {
@@ -113,6 +114,10 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexDirection: 'column',
     gap: 10,
+  },
+  tagContainer: {
+    flexDirection: 'row',
+    gap: 5,
   },
 });
 

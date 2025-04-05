@@ -7,13 +7,7 @@ import { Area } from '@model/Area/Area';
 import { useNavigation } from '@react-navigation/native';
 import { formatFilteredType, formatType } from '@utils/format';
 import React, { useState } from 'react';
-import {
-  FlatList,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // or 'react-native-vector-icons/Ionicons'
 import { Text, Tooltip } from 'react-native-paper';
 import { useQuery } from 'react-query';
@@ -26,12 +20,7 @@ const AreaManagementScreen = () => {
   const [searchText, setSearchText] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('name');
   const navigation = useNavigation();
-  const {
-    data: area,
-    isLoading,
-    isError,
-    error,
-  } = useQuery<Area[]>('areas', fetchAreas);
+  const { data: area, isLoading, isError, error } = useQuery<Area[]>('areas', fetchAreas);
 
   const navigateToAreaDetail = (areaId: number) => {
     (navigation.navigate as any)('AreaDetail', { areaId });
@@ -69,10 +58,7 @@ const AreaManagementScreen = () => {
           data={filteredArea}
           keyExtractor={(item: Area) => item.areaId.toString()}
           renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.card}
-              onPress={() => navigateToAreaDetail(item.areaId)}
-            >
+            <TouchableOpacity style={styles.card} onPress={() => navigateToAreaDetail(item.areaId)}>
               <View style={styles.cardWrapper}>
                 <View
                   style={{
@@ -102,22 +88,17 @@ const AreaManagementScreen = () => {
                       color={getIconByAreaType(item?.areaType)?.color}
                       size={20}
                     />
-                    <Tooltip enterTouchDelay={200} title="Cow Type">
-                      <Text style={styles.areaType}>
-                        {formatType(item.areaType)}
-                      </Text>
+                    <Tooltip enterTouchDelay={200} title='Cow Type'>
+                      <Text style={styles.areaType}>{formatType(item.areaType)}</Text>
                     </Tooltip>
                   </View>
                 </View>
                 <DividerUI />
                 <View style={styles.cardContent}>
-                  <TextTitle
-                    content={`${item.width}m x ${item.length}m`}
-                    title="Dimension"
-                  />
+                  <TextTitle content={`${item.width}m x ${item.length}m`} title='Dimension' />
                   <TextTitle
                     content={`${item.penWidth}m x ${item.penLength}m`}
-                    title="Pen Dimension"
+                    title='Pen Dimension'
                   />
                 </View>
               </View>

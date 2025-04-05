@@ -7,45 +7,54 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
+  RefreshControl,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import apiClient from '@config/axios/axios';
-import { useQuery } from 'react-query';
 import { useNavigation } from '@react-navigation/native';
-import FloatingButton from '@components/FloatingButton/FloatingButton';
-import { ReportTaskData } from '@model/Task/Task';
+import LoadingScreen from '@components/LoadingScreen/LoadingScreen';
+import { ReportTaskData, Task } from '@model/Task/Task';
 import { getReportImage } from '@utils/getImage';
 import RenderHTML from 'react-native-render-html';
+import apiClient from '@config/axios/axios';
+import { useQuery } from 'react-query';
 
 interface ReportTaskProps {
-  taskId: string | number;
+  reportTask: ReportTaskData | null;
+  task: Task;
+  date: string;
 }
 
-const fetchReportTasks = async (taskId: string | number): Promise<ReportTaskData[]> => {
-  const response = await apiClient.get(`/reportTask/task/${taskId}`);
-  return response.data;
+const fetchReportTask = async (date: string, taskId: number): Promise<ReportTaskData> => {
+  const response = await apiClient.get(`/reportTask/task/${taskId}/date?date=${date}`);
+  console.log('Fetched report:', response.data);
+  return response.data || null; // Return null if no data
 };
 
-const ReportTask: React.FC<ReportTaskProps> = ({ taskId }) => {
-  const navigation = useNavigation<any>(); // Use 'any' for simplicity; ideally, define RootStackParamList
+const ReportTask: React.FC<ReportTaskProps> = ({ reportTask: initialReportTask, task, date }) => {
+  const navigation = useNavigation<any>();
+  const [refreshing, setRefreshing] = React.useState(false);
 
   const {
-    data: reportTasks,
+    data: reportTask,
     isLoading,
     isError,
     error,
-  } = useQuery(['reportTasks', taskId], () => fetchReportTasks(taskId), { enabled: !!taskId });
+    refetch,
+  } = useQuery(['reportTask', task.taskId, date], () => fetchReportTask(date, task.taskId), {
+    initialData: initialReportTask,
+    staleTime: 0,
+    cacheTime: 5 * 60 * 1000,
+  });
 
   const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
+    switch (status?.toLowerCase()) {
       case 'completed':
-        return '#52c41a'; // Green
+        return '#52c41a';
       case 'in progress':
-        return '#1890ff'; // Blue
+        return '#1890ff';
       case 'pending':
-        return '#ffa940'; // Orange
+        return '#ffa940';
       default:
-        return '#8c8c8c'; // Grey
+        return '#8c8c8c';
     }
   };
 
@@ -53,125 +62,143 @@ const ReportTask: React.FC<ReportTaskProps> = ({ taskId }) => {
     navigation.navigate('ReportTaskDetail', { report });
   };
 
-  return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.card}>
-          <Text style={styles.title}>Report Task #{taskId}</Text>
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refetch();
+      console.log('Refresh successful, new data:', reportTask);
+    } catch (err) {
+      console.error('Refresh failed:', err);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
-          {/* Existing Reports List */}
-          <View style={styles.reportListContainer}>
-            <Text style={styles.sectionTitle}>Existing Reports</Text>
-            {isLoading ? (
-              <View style={styles.stateContainer}>
-                <Ionicons name='hourglass-outline' size={24} color='#595959' />
-                <Text style={styles.loadingText}>Loading reports...</Text>
+  const renderContent = () => (
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={styles.scrollContent}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor='#000'
+          title='Refreshing reports...'
+          titleColor='#333'
+        />
+      }
+    >
+      <View style={styles.card}>
+        <Text style={styles.title}>Report Task {task.taskTypeId.name}</Text>
+        <View style={styles.reportListContainer}>
+          <Text style={styles.sectionTitle}>Existing Reports</Text>
+          {isLoading ? (
+            <LoadingScreen message='Loading report...' />
+          ) : isError ? (
+            <View style={styles.noDataContainer}>
+              <Text style={styles.noDataText}>
+                Error: {(error as Error)?.message || 'Failed to load report'}
+              </Text>
+            </View>
+          ) : !reportTask ? (
+            <View style={styles.noDataContainer}>
+              <Text style={styles.noDataText}>No Report Data</Text>
+            </View>
+          ) : (
+            <TouchableOpacity
+              key={reportTask.reportTaskId}
+              style={styles.reportCard}
+              onPress={() => handleReportPress(reportTask)}
+            >
+              <View style={styles.reportHeader}>
+                <Text style={styles.reportId}>
+                  Report {new Date(reportTask.date).toLocaleDateString()}
+                </Text>
+                <View
+                  style={[
+                    styles.statusBadge,
+                    { backgroundColor: getStatusColor(reportTask.status) },
+                  ]}
+                >
+                  <Text style={styles.statusText}>{reportTask.status}</Text>
+                </View>
               </View>
-            ) : isError ? (
-              <View style={styles.stateContainer}>
-                <Ionicons name='alert-circle-outline' size={24} color='#ff4d4f' />
-                <Text style={styles.errorText}>Error: {(error as Error).message}</Text>
-              </View>
-            ) : reportTasks && reportTasks.length > 0 ? (
-              <ScrollView>
-                {reportTasks.map((report) => (
-                  <TouchableOpacity
-                    key={report.reportTaskId}
-                    style={styles.reportCard}
-                    onPress={() => handleReportPress(report)}
-                  >
-                    <View style={styles.reportHeader}>
-                      <Text style={styles.reportId}>Report #{report.reportTaskId}</Text>
-                      <View
-                        style={[
-                          styles.statusBadge,
-                          { backgroundColor: getStatusColor(report.status) },
-                        ]}
-                      >
-                        <Text style={styles.statusText}>{report.status}</Text>
-                      </View>
-                    </View>
-                    <Text style={styles.reportDate}>
-                      Date: {new Date(report.date).toLocaleDateString()}
-                    </Text>
-                    <Text style={styles.reportTime}>
-                      Start: {new Date(report.startTime).toLocaleTimeString()}
-                      {report.endTime
-                        ? ` - End: ${new Date(report.endTime).toLocaleTimeString()}`
-                        : ''}
-                    </Text>
-                    {report.description && (
-                      <View>
-                        <Text style={styles.reportDescription}>Description:</Text>
-                        <View style={styles.reportHtmlContainer}>
-                          <RenderHTML
-                            contentWidth={Dimensions.get('window').width}
-                            source={{ html: report.description }}
-                          />
-                        </View>
-                      </View>
-                    )}
-                    {report.comment && (
-                      <View>
-                        <Text style={styles.reportComment}>Comment: </Text>
-                        <View style={styles.reportHtmlContainer}>
-                          <RenderHTML
-                            contentWidth={Dimensions.get('window').width}
-                            source={{ html: report.comment }}
-                          />
-                        </View>
-                      </View>
-                    )}
-                    {report.reportImages.length > 0 && (
-                      <ScrollView horizontal style={styles.imagePreviewContainer}>
-                        {report.reportImages.map((imageUri, index) => (
-                          <Image
-                            key={index}
-                            source={{ uri: getReportImage(imageUri.url) }}
-                            style={styles.reportImagePreview}
-                          />
-                        ))}
-                      </ScrollView>
-                    )}
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            ) : (
-              <View style={styles.stateContainer}>
-                <Ionicons name='document-text-outline' size={24} color='#888' />
-                <Text style={styles.noReportsText}>No reports available</Text>
-              </View>
-            )}
-          </View>
+              <Text style={styles.reportDate}>
+                Date: {new Date(reportTask.date).toLocaleDateString()}
+              </Text>
+              <Text style={styles.reportTime}>
+                Start: {new Date(reportTask.startTime).toLocaleTimeString()}
+                {reportTask.endTime
+                  ? ` - End: ${new Date(reportTask.endTime).toLocaleTimeString()}`
+                  : ''}
+              </Text>
+              {reportTask.description && (
+                <View>
+                  <Text style={styles.reportDescription}>Description:</Text>
+                  <View style={styles.reportHtmlContainer}>
+                    <RenderHTML
+                      contentWidth={Dimensions.get('window').width - 72}
+                      source={{ html: reportTask.description }}
+                    />
+                  </View>
+                </View>
+              )}
+              {reportTask.comment && (
+                <View>
+                  <Text style={styles.reportComment}>Comment: </Text>
+                  <View style={styles.reportHtmlContainer}>
+                    <RenderHTML
+                      contentWidth={Dimensions.get('window').width - 72}
+                      source={{ html: reportTask.comment }}
+                    />
+                  </View>
+                </View>
+              )}
+              {reportTask.reportImages?.length > 0 && (
+                <ScrollView horizontal style={styles.imagePreviewContainer}>
+                  {reportTask.reportImages.map((imageUri, index) => (
+                    <Image
+                      key={index}
+                      source={{ uri: getReportImage(imageUri.url) }}
+                      style={styles.reportImagePreview}
+                    />
+                  ))}
+                </ScrollView>
+              )}
+            </TouchableOpacity>
+          )}
         </View>
-      </ScrollView>
-    </View>
+      </View>
+    </ScrollView>
   );
+
+  return <View style={styles.container}>{renderContent()}</View>;
 };
 
+// Styles remain the same as in your original code
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '100%', // Explicitly set to full width
-    backgroundColor: '#f5f5f5', // Light gray background
-    // borderWidth: 1, // Uncomment for debugging width issues
-    // borderColor: 'red',
+    width: '100%',
+    backgroundColor: '#f5f5f5',
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 100, // Space for FloatingButton
+    paddingBottom: 100,
+    minHeight: Dimensions.get('window').height,
   },
   card: {
-    width: '100%', // Full width of parent
+    width: '100%',
     borderRadius: 12,
     padding: 20,
-    marginHorizontal: 2, // Small margin on sides for balance
+    marginHorizontal: 2,
     elevation: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     marginBottom: 20,
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 26,
@@ -190,7 +217,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   reportCard: {
-    width: '100%', // Full width of parent (card)
+    width: '100%',
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 16,
@@ -269,26 +296,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e0e0e0',
   },
-  stateContainer: {
+  noDataContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 20,
+    padding: 20,
   },
-  loadingText: {
+  noDataText: {
     fontSize: 16,
-    color: '#595959',
-    marginTop: 8,
-  },
-  errorText: {
-    fontSize: 16,
-    color: '#ff4d4f',
-    marginTop: 8,
-    textAlign: 'center',
-  },
-  noReportsText: {
-    fontSize: 16,
-    color: '#888',
-    marginTop: 8,
+    color: '#666',
+    fontWeight: '500',
   },
 });
 

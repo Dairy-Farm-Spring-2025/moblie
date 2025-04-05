@@ -59,9 +59,6 @@ const DetailCow: React.FC = () => {
     <View style={{ flex: 1 }}>
       <TitleNameCows title={t('cowDetails.title')} cowName={cow.name} />
       <ScrollView style={styles.container}>
-        {/* Ảnh bò */}
-        <Image source={{ uri: 'https://picsum.photos/400/400' }} style={styles.image} />
-
         {/* Thông tin chi tiết */}
         <View style={styles.card}>
           <Text style={styles.title}>{cow.name}</Text>
