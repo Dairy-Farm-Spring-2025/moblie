@@ -2,6 +2,7 @@ import CardComponent, { LeftContent } from '@components/Card/CardComponent';
 import { Cow } from '@model/Cow/Cow';
 import { formatType } from '@utils/format';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 
@@ -10,6 +11,7 @@ interface CardCowDetailProps {
 }
 
 const CardCowDetail = ({ cow }: CardCowDetailProps) => {
+  const {t} = useTranslation();
   return (
     <CardComponent>
       <CardComponent.Cover source={{ uri: 'https://picsum.photos/400/400' }} />
@@ -20,22 +22,22 @@ const CardCowDetail = ({ cow }: CardCowDetailProps) => {
       />
       <CardComponent.Content>
         <Text style={styles.text}>
-          🐄 <Text style={styles.bold}>Status:</Text>{' '}
+          🐄 <Text style={styles.bold}>{t('Status')}:</Text>{' '}
           {formatType(cow?.cowStatus as string)}
         </Text>
         <Text style={styles.text}>
-          📅 <Text style={styles.bold}>Date Entered:</Text> {cow?.dateOfEnter}
+          📅 <Text style={styles.bold}>{t('Date Entered')}:</Text> {cow?.dateOfEnter}
         </Text>
         <Text style={styles.text}>
-          📍 <Text style={styles.bold}>Origin:</Text>{' '}
+          📍 <Text style={styles.bold}>{t('Origin')}:</Text>{' '}
           {formatType(cow?.cowOrigin as string)}
         </Text>
         <Text style={styles.text}>
-          ⚧ <Text style={styles.bold}>Gender:</Text>{' '}
+          ⚧ <Text style={styles.bold}>{t('Gender')}:</Text>{' '}
           {formatType(cow?.gender as string)}
         </Text>
         <Text style={styles.text}>
-          🛠 <Text style={styles.bold}>Type:</Text> {cow?.cowType.name}
+          🛠 <Text style={styles.bold}>{t('Type')}:</Text> {cow?.cowType.name}
         </Text>
       </CardComponent.Content>
     </CardComponent>

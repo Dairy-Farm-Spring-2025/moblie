@@ -15,6 +15,7 @@ import { login } from '@core/store/authSlice';
 import { AppDispatch } from '@core/store/store';
 import { validateEmail } from '@utils/validation';
 import { FontAwesome } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 const SignInScreen: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -36,7 +37,7 @@ const SignInScreen: React.FC = () => {
       setEmailError('');
     }
   };
-
+  const { t } = useTranslation();
   // Real-time password validation
   const handlePasswordChange = (text: string) => {
     setPassword(text);
@@ -125,11 +126,11 @@ const SignInScreen: React.FC = () => {
         {loading ? (
           <ActivityIndicator color='#fff' />
         ) : (
-          <Text style={styles.signInButtonText}>Sign In</Text>
+          <Text style={styles.signInButtonText}>{t('Sign In')}</Text>
         )}
       </TouchableOpacity>
 
-      <Text style={styles.orText}>OR</Text>
+      <Text style={styles.orText}>{t('OR')}</Text>
 
       <TouchableOpacity style={styles.googleButton}>
         <Image
@@ -138,7 +139,7 @@ const SignInScreen: React.FC = () => {
           }}
           style={styles.googleIcon}
         />
-        <Text style={styles.googleButtonText}>Sign In with Google</Text>
+        <Text style={styles.googleButtonText}>{t('Sign In with Google')}</Text>
       </TouchableOpacity>
     </View>
   );

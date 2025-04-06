@@ -369,9 +369,8 @@ const TaskScreen: React.FC = () => {
                       return tasksForCell.length > 0 ? (
                         tasksForCell.map((task, index) => (
                           <NewTaskCard
-                            key={`${task.taskId}-${
-                              weekDates[selectedDayIndex].toISOString().split('T')[0]
-                            }-${index}`}
+                            key={`${task.taskId}-${weekDates[selectedDayIndex].toISOString().split('T')[0]
+                              }-${index}`}
                             task={task}
                             onPress={() => handleTaskPress(task)}
                             selectedDate={weekDates[selectedDayIndex]}

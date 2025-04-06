@@ -2,6 +2,7 @@ import apiClient from '@config/axios/axios';
 import { User } from '@model/User/User';
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View, StyleSheet, Alert } from 'react-native';
 import { TextInput, Button, Text, HelperText, Avatar, Divider } from 'react-native-paper';
 import { useMutation, useQuery } from 'react-query';
@@ -45,7 +46,7 @@ const ChangePasswordScreen = () => {
       },
     }
   );
-
+  const { t } = useTranslation();
   const handleChangePassword = () => {
     if (!oldPassword || !newPassword || !confirmPassword) {
       return Alert.alert('Error', 'Please fill all fields');
@@ -95,7 +96,7 @@ const ChangePasswordScreen = () => {
         </Text>
       </View>
       <Divider style={{ marginVertical: 10 }} />
-      <Text style={styles.title}>Change Your Password</Text>
+      <Text style={styles.title}>{t('Change Your Password')}</Text>
 
       <TextInput
         label='Old Password'
@@ -131,7 +132,7 @@ const ChangePasswordScreen = () => {
         style={styles.input}
       />
       <HelperText type='error' visible={newPassword.length > 0 && newPassword.length < 6}>
-        Password must be at least 6 characters
+        {t('Password must be at least 6 characters')}
       </HelperText>
 
       <TextInput
@@ -151,7 +152,7 @@ const ChangePasswordScreen = () => {
         style={styles.input}
       />
       <HelperText type='error' visible={confirmPassword !== '' && confirmPassword !== newPassword}>
-        Passwords do not match
+        {t('Passwords do not match')}
       </HelperText>
 
       <Button
@@ -161,7 +162,7 @@ const ChangePasswordScreen = () => {
         loading={loading}
         disabled={loading}
       >
-        Update Password
+        {t('Update Password')}
       </Button>
     </View>
   );

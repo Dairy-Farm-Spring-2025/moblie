@@ -89,7 +89,7 @@ const ReportTaskUpdateContent: React.FC<{
       <View style={styles.inputSection}>
         <View style={styles.inputLabelRow}>
           <Ionicons name='image-outline' size={20} color='#595959' style={styles.icon} />
-          <Text style={styles.textLabel}>Image:</Text>
+          <Text style={styles.textLabel}>{t('Image')}:</Text>
         </View>
         <View style={styles.imageUpdateContainer}>
           {formData.taskFile && (
@@ -101,7 +101,7 @@ const ReportTaskUpdateContent: React.FC<{
           <Divider style={{ margin: 10 }} />
           <TouchableOpacity style={styles.uploadButton} onPress={() => setImageModalVisible(true)}>
             <Ionicons name='camera-outline' size={24} color='#fff' />
-            <Text style={styles.uploadButtonText}>Add Image</Text>
+            <Text style={styles.uploadButtonText}>{t('Add Image')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -130,17 +130,17 @@ const ReportTaskUpdateContent: React.FC<{
           <View style={styles.modalContent}>
             <TouchableOpacity style={styles.modalButton} onPress={pickImage}>
               <Ionicons name='image-outline' size={30} color='#007bff' />
-              <Text style={styles.modalButtonText}>Pick from Gallery</Text>
+              <Text style={styles.modalButtonText}>{t('Pick from Gallery')}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.modalButton} onPress={takePicture}>
               <Ionicons name='camera' size={30} color='#007bff' />
-              <Text style={styles.modalButtonText}>Take a Photo</Text>
+              <Text style={styles.modalButtonText}>{t('Take a Photo')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.modalButton, styles.cancelButton]}
               onPress={() => setImageModalVisible(false)}
             >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
+              <Text style={styles.cancelButtonText}>{t('Cancel')}</Text>
             </TouchableOpacity>
           </View>
         </View>

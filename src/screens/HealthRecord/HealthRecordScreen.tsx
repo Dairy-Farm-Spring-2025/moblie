@@ -7,6 +7,7 @@ import { HealthRecord } from '@model/HealthRecord/HealthRecord';
 import { useNavigation } from '@react-navigation/native';
 import { formatType } from '@utils/format';
 import React, { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Card, IconButton, Text } from 'react-native-paper';
 import { useQuery } from 'react-query';
@@ -20,6 +21,7 @@ const fetchHealthRecord = async (): Promise<HealthRecord[]> => {
     );
   }
 };
+const {t} = useTranslation(); 
 const HealthRecordScreen = () => {
   const [searchText, setSearchText] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('name');
@@ -125,8 +127,8 @@ const HealthRecordScreen = () => {
             gap: 5,
           }}
         >
-          <Text>⚖️ Weight {item.weight} kg</Text>
-          <Text>📏 Size: {item.size} cm</Text>
+          <Text>⚖️ {t('Weight')} {item.weight} kg</Text>
+          <Text>📏 {t('Size')}: {item.size} cm</Text>
         </View>
       </Card>
     ),
