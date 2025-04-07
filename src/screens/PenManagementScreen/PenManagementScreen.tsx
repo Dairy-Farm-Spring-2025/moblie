@@ -7,6 +7,7 @@ import { Pen } from '@model/Pen/Pen';
 import { useNavigation } from '@react-navigation/native';
 import { formatFilteredType, formatType } from '@utils/format';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   FlatList,
   Image,
@@ -25,7 +26,7 @@ const PenManagementScreen = () => {
   const [searchText, setSearchText] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('name');
   const navigation = useNavigation();
-
+  const { t } = useTranslation();
   const {
     data: pens,
     isLoading,
@@ -69,7 +70,7 @@ const PenManagementScreen = () => {
       />
       {isLoading ? (
         <View>
-          <Text>Loading...</Text>
+          <Text>{t('Loading')}...</Text>
         </View>
       ) : isError ? (
         <View>

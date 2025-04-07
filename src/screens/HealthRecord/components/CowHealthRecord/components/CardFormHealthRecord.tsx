@@ -9,6 +9,7 @@ import { COW_STATUS } from '@services/data/cowStatus';
 import { OPTIONS_HEALTH_STATUS } from '@services/data/healthStatus';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { Alert, Keyboard, StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useMutation } from 'react-query';
@@ -19,6 +20,7 @@ interface CardFormHealthRecordProps {
 
 const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
   const navigation = useNavigation();
+  const {t} = useTranslation(); 
   const {
     control,
     handleSubmit,
@@ -51,7 +53,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
   return (
     <CardComponent>
       <CardComponent.Title
-        title={'Heath Record'}
+        title={t('Heath Record')}
         subTitle={'Enter your exam'}
         leftContent={(props: any) => (
           <LeftContent {...props} icon="cards-heart" />
@@ -73,7 +75,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
               <FormItem
                 name="weight"
                 control={control}
-                label="Weight (kilogram)"
+                label={t("Weight (kilogram)")}
                 rules={{
                   required: {
                     message: 'Required',
@@ -113,7 +115,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
               <FormItem
                 name="size"
                 control={control}
-                label="Size (meter)"
+                label={t("Size (meter)")}
                 rules={{
                   required: 'Size is required',
                   pattern: {
@@ -149,7 +151,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
               name="status"
               control={control}
               rules={{ required: 'Status is required' }}
-              label="Status"
+              label={t("Status")}
               error={errors?.status?.message}
               render={({ field: { onChange, value } }) => (
                 <CustomPicker
@@ -163,7 +165,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
 
           <View>
             <FormItem
-              label="Period"
+              label={t("Period")}
               name="period"
               control={control}
               rules={{ required: 'Period is required' }}
@@ -178,7 +180,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
             />
           </View>
           <Button mode="contained" onPress={handleSubmit(onSubmit)}>
-            Submit
+            {t('Submit')}
           </Button>
         </View>
       </CardComponent.Content>

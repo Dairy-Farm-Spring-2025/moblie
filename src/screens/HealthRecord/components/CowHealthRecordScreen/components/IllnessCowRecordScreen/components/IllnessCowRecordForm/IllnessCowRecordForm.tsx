@@ -18,6 +18,7 @@ import { Ionicons } from '@expo/vector-icons'; // Import Ionicons from @expo/vec
 import { useSelector } from 'react-redux';
 import { RootState } from '@core/store/store';
 import { COLORS } from '@common/GlobalStyle';
+import { useTranslation } from 'react-i18next';
 
 interface IllnessCowRecordFormProps {
   illness: IllnessCow;
@@ -53,7 +54,7 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
       symptoms: illness.symptoms,
     },
   });
-
+const {t} = useTranslation()
   const { mutate } = useMutation(
     async (data: IllnessPayload) => await apiClient.put(`illness/${illness.illnessId}`, data),
     {
@@ -104,12 +105,12 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
         {!isEditing ? (
           // Read-only view
           <View>
-            <Text style={styles.label}>Severity:</Text>
+            <Text style={styles.label}>{t('Severity')}:</Text>
             <Text style={styles.value}>{illness.severity || 'N/A'}</Text>
 
             <View style={styles.dateContainer}>
               <View>
-                <Text style={styles.label}>Start Date:</Text>
+                <Text style={styles.label}>{t('Start Date')}:</Text>
                 <Text style={styles.value}>{formattedStartDate}</Text>
               </View>
               <View>
@@ -117,17 +118,17 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
                 {/* Replaced faArrowRight with arrow-forward */}
               </View>
               <View>
-                <Text style={styles.label}>End Date:</Text>
+                <Text style={styles.label}>{t('End Date')}:</Text>
                 <Text style={styles.value}>{formattedEndDate}</Text>
               </View>
             </View>
 
-            <Text style={styles.label}>Prognosis:</Text>
+            <Text style={styles.label}>{t('Prognosis')}:</Text>
             <View>
               <RenderHtmlComponent htmlContent={illness.prognosis} />
             </View>
 
-            <Text style={styles.label}>Symptoms:</Text>
+            <Text style={styles.label}>{t('Symptoms')}:</Text>
             <View>
               <RenderHtmlComponent htmlContent={illness.symptoms} />
             </View>
@@ -151,10 +152,10 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
                   onValueChange={onChange}
                   selectedValue={value}
                   options={[
-                    { label: 'Mild', value: 'mild' },
-                    { label: 'Moderate', value: 'moderate' },
-                    { label: 'Severe', value: 'severe' }, // Corrected "Severity" to "Severe"
-                    { label: 'Critical', value: 'critical' },
+                    { label: t('Mild'), value: 'mild' },
+                    { label: t('Moderate'), value: 'moderate' },
+                    { label: t('Severe'), value: 'severe' }, // Corrected "Severity" to "Severe"
+                    { label: t('Critical'), value: 'critical' },
                   ]}
                 />
               )}
@@ -164,7 +165,7 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
               <View style={{ width: '48%' }}>
                 <FormItem
                   control={control}
-                  label='Start Date'
+                  label={t('Start Date')}
                   name='startDate'
                   render={() => (
                     <DateTimePicker
@@ -181,7 +182,7 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
               <View style={{ width: '48%' }}>
                 <FormItem
                   control={control}
-                  label='End Date'
+                  label={t('End Date')}
                   name='endDate'
                   render={() => (
                     <DateTimePicker
@@ -199,7 +200,7 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
 
             <FormItem
               control={control}
-              label='Prognosis'
+              label={t('Prognosis')}
               name='prognosis'
               rules={{ required: 'Must not be empty' }}
               render={({ field: { onChange, onBlur, value } }) => (
@@ -213,7 +214,7 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
 
             <FormItem
               control={control}
-              label='Symptoms'
+              label={t('Symptoms')}
               name='symptoms'
               rules={{ required: 'Must not be empty' }}
               render={({ field: { onChange, value } }) => (
@@ -227,14 +228,14 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
 
             <View style={styles.buttonContainer}>
               <Button mode='contained' style={styles.submitButton} onPress={handleSubmit(onSubmit)}>
-                Save
+                {t('Save')}
               </Button>
               <Button
                 mode='outlined'
                 style={styles.cancelButton}
                 onPress={() => setIsEditing(false)}
               >
-                Cancel
+                {t('Cancel')}
               </Button>
             </View>
           </>

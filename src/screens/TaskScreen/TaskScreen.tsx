@@ -17,6 +17,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { Task } from '@model/Task/Task';
 import { formatCamelCase } from '@utils/format';
+import { useTranslation } from 'react-i18next';
 
 const getWeekDates = (currentDate: Date) => {
   const today = new Date(currentDate);
@@ -29,7 +30,7 @@ const getWeekDates = (currentDate: Date) => {
     return date;
   });
 };
-
+const { t } = useTranslation();
 const fetchTasksByDateRange = async ({
   fromDate,
   toDate,
@@ -369,16 +370,15 @@ const TaskScreen: React.FC = () => {
                       return tasksForCell.length > 0 ? (
                         tasksForCell.map((task, index) => (
                           <NewTaskCard
-                            key={`${task.taskId}-${
-                              weekDates[selectedDayIndex].toISOString().split('T')[0]
-                            }-${index}`}
+                            key={`${task.taskId}-${weekDates[selectedDayIndex].toISOString().split('T')[0]
+                              }-${index}`}
                             task={task}
                             onPress={() => handleTaskPress(task)}
                             selectedDate={weekDates[selectedDayIndex]}
                           />
                         ))
                       ) : (
-                        <Text style={styles.noTasksText}>No tasks</Text>
+                        <Text style={styles.noTasksText}>{t('No tasks')}</Text>
                       );
                     })()}
                   </View>
