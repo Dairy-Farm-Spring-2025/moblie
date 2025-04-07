@@ -1,11 +1,11 @@
 import { t } from 'i18next';
 
-export const OPTIONS_HEALTH_STATUS = [
-  { label: 'Good', value: 'good' },
-  { label: 'Fair', value: 'fair' },
-  { label: 'Poor', value: 'poor' },
-  { label: 'Critical', value: 'critical' },
-  { label: 'Recovering', value: 'recovering' },
+export const OPTIONS_HEALTH_STATUS = () => [
+  { label: t('Good'), value: 'good' },
+  { label: t('Fair'), value: 'fair' },
+  { label: t('Poor'), value: 'poor' },
+  { label: t('Critical'), value: 'critical' },
+  { label: t('Recovering'), value: 'recovering' },
 ];
 
 export const OPTIONS_ILLNESS_DETAIL_STATUS = [

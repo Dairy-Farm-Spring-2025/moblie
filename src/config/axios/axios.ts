@@ -8,7 +8,6 @@ const baseURL = 'https://api.dairyfarmfpt.website/api/v1';
 // Create an Axios instance
 const apiClient = axios.create({
   baseURL: baseURL, // Replace with your API's base URL
-  timeout: 10000, // Optional timeout in milliseconds
 });
 
 const refreshToken = async (refreshToken: string) => {
@@ -53,7 +52,11 @@ apiClient.interceptors.response.use(
   async (error) => {
     // Handle response errors
     const originalRequest = error.config;
-    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      !originalRequest._retry
+    ) {
       originalRequest._retry = true;
       try {
         const state: RootState = store.getState();

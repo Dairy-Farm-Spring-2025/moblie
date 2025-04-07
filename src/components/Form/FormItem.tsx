@@ -53,7 +53,7 @@ const FormItem = ({
 const styles = StyleSheet.create({
   container: {},
   label: {
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: '500',
     marginBottom: 5,
   },

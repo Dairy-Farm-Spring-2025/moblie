@@ -1,20 +1,38 @@
+import React from 'react';
 import QrCodeScan from '@components/QrCodeScan/QrCodeScan';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DetailCow from '@screens/CowManagementScreen/components/DetailCow/DetailCow';
 import CowManagementRoute from '../CowManagementRoute/CowManagementRoute';
 import CowHealthInforScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/CowHealthInforScreen';
+import { RouteProp, useRoute } from '@react-navigation/native';
+import CowHealthRecord from '@screens/HealthRecord/components/CowHealthRecord/CowHealthRecord';
 
 const Stack = createNativeStackNavigator();
-
+type RootStackParamList = {
+  QrCodeScan: { selectedField: string };
+};
 const QrScanRoute: React.FC = () => {
+  const route = useRoute<RouteProp<RootStackParamList, 'QrCodeScan'>>();
+  const selectedField = route.params?.selectedField; // L
   return (
-    <Stack.Navigator initialRouteName='QrCodeScan'>
-      <Stack.Screen name='QrCodeScan' component={QrCodeScan} options={{ title: 'Qr Scan' }} />
-      <Stack.Screen name='CowDetails' component={DetailCow} options={{ title: 'Cow Details' }} />
+    <Stack.Navigator initialRouteName="QrCodeScan">
+      <Stack.Screen name="QrCodeScan" options={{ title: 'Qr Scan' }}>
+        {(props) => <QrCodeScan {...props} selectedField={selectedField} />}
+      </Stack.Screen>
       <Stack.Screen
-        name='CowHealthInforScreen'
+        name="CowDetails"
+        component={DetailCow}
+        options={{ title: 'Cow Details' }}
+      />
+      <Stack.Screen
+        name="CowHealthInforScreen"
         component={CowHealthInforScreen}
         options={{ title: 'Timeline Health Record' }}
+      />
+      <Stack.Screen
+        name="CowHealthRecord"
+        component={CowHealthRecord}
+        options={{ title: 'Cow Health Record' }}
       />
     </Stack.Navigator>
   );

@@ -35,7 +35,7 @@ const HealthRecordFormScreen = () => {
   } = useForm<HealthRecordForm>({
     defaultValues: {
       status: healthRecord.status,
-      size: healthRecord.size.toString() || 0,
+      size: healthRecord.size || 0,
       period: healthRecord.period,
       cowId: healthRecord.cowEntity.cowId,
     },
@@ -133,7 +133,7 @@ const HealthRecordFormScreen = () => {
                 error={errors?.status?.message}
                 render={({ field: { onChange, value } }) => (
                   <CustomPicker
-                    options={OPTIONS_HEALTH_STATUS}
+                    options={OPTIONS_HEALTH_STATUS()}
                     selectedValue={value}
                     onValueChange={onChange}
                   />
@@ -150,7 +150,7 @@ const HealthRecordFormScreen = () => {
                 error={errors?.period?.message}
                 render={({ field: { onChange, value } }) => (
                   <CustomPicker
-                    options={COW_STATUS}
+                    options={COW_STATUS()}
                     selectedValue={value}
                     onValueChange={onChange}
                   />

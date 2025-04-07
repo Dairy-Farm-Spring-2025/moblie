@@ -1,38 +1,44 @@
-export const COW_STATUS = [
+import { t } from 'i18next';
+
+export const COW_STATUS = () => [
   {
     value: 'milkingCow',
-    label: 'Milking Cow',
+    label: t('Milking cow'),
   },
   {
     value: 'dryCow',
-    label: 'Dry Cow',
+    label: t('Dry cow'),
   },
   {
     value: 'pregnantCow',
-    label: 'Pregnant Cow',
+    label: t('Pregnant cow'),
   },
   {
     value: 'openCow',
-    label: 'Open Cow',
+    label: t('Open cow'),
   },
   {
     value: 'calvingCow',
-    label: 'Calving Cow',
+    label: t('Calving cow'),
   },
   {
     value: 'sickCow',
-    label: 'Sick Cow',
+    label: t('Sick cow'),
+  },
+  {
+    value: 'seriousSickCow',
+    label: t('Serious Sick Cow'),
   },
   {
     value: 'breedingCow',
-    label: 'Breeding Cow',
+    label: t('Breeding cow'),
   },
   {
     value: 'quarantinedCow',
-    label: 'Quarantined Cow',
+    label: t('Quarantined cow'),
   },
   {
     value: 'culling',
-    label: 'Culling',
+    label: t('Culling'),
   },
 ];

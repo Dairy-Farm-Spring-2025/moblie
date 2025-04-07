@@ -1,24 +1,24 @@
+import { COLORS } from '@common/GlobalStyle';
+import apiClient from '@config/axios/axios';
 import { RootState } from '@core/store/store';
 import { Ionicons } from '@expo/vector-icons';
+import { Notification } from '@model/Notification/Notification';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import AboutScreen from '@screens/AboutScreen/AboutScreen';
+import NotificationScreen from '@screens/NotificationScreen/NotificationScreen';
 import SignInScreen from '@screens/SignInScreen/SignInScreen';
-import React, { useEffect, useState } from 'react';
-import { Alert, TouchableOpacity, View } from 'react-native';
+import { useNotifications } from '@services/Notification/Notification';
+import React, { useMemo, useState } from 'react';
+import { Alert, Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Text } from 'react-native-paper';
+import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import CowRoute from './CowRoute/CowRoute';
-import TaskScreen from '@screens/TaskScreen/TaskScreen';
-import QrScanRoute from './QrScanRoute/QrScanRoute';
 import ProfileManagementRoute from './ProfileManagementRoute/ProfileManagementRoute';
-import { COLORS } from '@common/GlobalStyle';
+import QrScanRoute from './QrScanRoute/QrScanRoute';
 import TaskManagementRoute from './TaskManagementRoute/TaskManagementRoute';
-import { useNotifications } from '@services/Notification/Notification';
-import NotificationScreen from '@screens/NotificationScreen/NotificationScreen';
-import apiClient from '@config/axios/axios';
-import { Notification } from '@model/Notification/Notification';
-import { useQuery } from 'react-query';
+import { t } from 'i18next';
 
 type RootStackParamList = {
   Home: undefined;
@@ -85,13 +85,59 @@ const NavigationWrapper = () => {
   const { isAuthenticated, roleName } = useSelector(
     (state: RootState) => state.auth
   );
+  const [isDrawerVisible, setIsDrawerVisible] = useState(false);
+  const [selectedField, setSelectedField] = useState<string | null>(null);
 
-  // Initialize notifications using the custom hook
   useNotifications({ navigation });
 
-  // Determine role-based colors
+  const optionsScan = useMemo(
+    () => [
+      {
+        label: t('scanQR.viewCowDetail', { defaultValue: 'View cow detail' }),
+        value: 'cow-detail',
+      },
+      {
+        label: t('scanQR.createHealthRecord', {
+          defaultValue: 'Create health record',
+        }),
+        value: 'create-health-record',
+      },
+      {
+        label: t('scanQR.createIllness', {
+          defaultValue: 'Create illness',
+        }),
+        value: 'create-illness',
+      },
+      {
+        label: t('scanQR.vaccineInjection', {
+          defaultValue: 'Create vaccine injection',
+        }),
+        value: 'create-vaccine-injection',
+      },
+    ],
+    []
+  );
   const isVeterinarian = roleName?.toLowerCase() === 'veterinarians';
   const roleColors = isVeterinarian ? COLORS.veterinarian : COLORS.worker;
+
+  const handleQrScanPress = () => {
+    setIsDrawerVisible(true);
+  };
+
+  const handleFieldSelect = (field: string) => {
+    setSelectedField(field);
+    setIsDrawerVisible(false);
+    // Reset the QRScan stack to QrCodeScan with the new selectedField
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: 'QRScan',
+          params: { selectedField: field },
+        },
+      ],
+    });
+  };
 
   if (!isAuthenticated && roleName === 'Manager') {
     Alert.alert('Error', 'You are not authorized to access this page.');
@@ -99,90 +145,164 @@ const NavigationWrapper = () => {
   }
 
   return isAuthenticated ? (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        lazy: false,
-        headerShown: false,
-        tabBarStyle: {
-          backgroundColor: COLORS.backgroundLayout,
-          height: 65,
-          shadowColor: '#000',
-          shadowOpacity: 0.1,
-        },
-        tabBarIcon: ({ size, focused }) => {
-          let iconName = 'home';
-          if (route.name === 'Notification') iconName = 'notifications';
-          if (route.name === 'Profile') iconName = 'person';
-          if (route.name === 'Task') iconName = 'checkbox';
-
-          return (
-            <Ionicons
-              name={iconName}
-              size={size}
-              color={focused ? roleColors.primary : roleColors.inactive}
-            />
-          );
-        },
-        unmountOnBlur: true,
-        tabBarActiveTintColor: roleColors.primary,
-        tabBarInactiveTintColor: roleColors.inactive,
-      })}
-    >
-      <Tab.Screen name="Home" component={CowRoute} key={'Home'} />
-      <Tab.Screen name="Task" component={TaskManagementRoute} key={'Task'} />
-      <Tab.Screen
-        name="QRScan"
-        component={QrScanRoute}
-        options={{
-          tabBarLabel: '',
-          tabBarActiveTintColor: '#333',
-          tabBarInactiveTintColor: 'gray',
-          tabBarIcon: ({ size, focused }) => (
-            <Ionicons
-              style={{ marginTop: 1 }}
-              name="qr-code"
-              size={size + 4}
-              color={focused ? '#fff' : '#f8f8f8'}
-            />
-          ),
-          tabBarButton: (props) => (
-            <CustomTabBarButton {...props} roleColors={roleColors} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Notification"
-        key={'Notification'}
-        component={NotificationScreen}
-        options={{
-          tabBarBadge:
-            myNotificationData &&
-            myNotificationData?.filter((element) => element.read === false)
-              ?.length > 0
-              ? myNotificationData?.filter((element) => element.read === false)
-                  ?.length
-              : undefined,
-          tabBarBadgeStyle: {
-            backgroundColor: 'red',
-            color: 'white',
-            width: 'auto',
-            height: 17,
-            fontSize: 12,
+    <>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          lazy: false,
+          headerShown: false,
+          detachInactiveScreens: true,
+          tabBarStyle: {
+            backgroundColor: COLORS.backgroundLayout,
+            height: 65,
+            shadowColor: '#000',
+            shadowOpacity: 0.1,
           },
-        }}
-      />
-      <Tab.Screen
-        name="Profile"
-        key={'Profile'}
-        component={ProfileManagementRoute}
-      />
-    </Tab.Navigator>
+          tabBarIcon: ({ size, focused }) => {
+            let iconName = 'home';
+            if (route.name === 'Notification') iconName = 'notifications';
+            if (route.name === 'Profile') iconName = 'person';
+            if (route.name === 'Task') iconName = 'checkbox';
+
+            return (
+              <Ionicons
+                name={iconName}
+                size={size}
+                color={focused ? roleColors.primary : roleColors.inactive}
+              />
+            );
+          },
+          unmountOnBlur: true,
+          tabBarActiveTintColor: roleColors.primary,
+          tabBarInactiveTintColor: roleColors.inactive,
+        })}
+      >
+        <Tab.Screen name="Home" component={CowRoute} key={'Home'} />
+        <Tab.Screen name="Task" component={TaskManagementRoute} key={'Task'} />
+        <Tab.Screen
+          name="QRScan"
+          component={QrScanRoute}
+          options={{
+            tabBarLabel: '',
+            tabBarActiveTintColor: '#333',
+            tabBarInactiveTintColor: 'gray',
+            tabBarIcon: ({ size, focused }) => (
+              <Ionicons
+                style={{ marginTop: 1 }}
+                name="qr-code"
+                size={size + 4}
+                color={focused ? '#fff' : '#f8f8f8'}
+              />
+            ),
+            tabBarButton: (props) => (
+              <CustomTabBarButton
+                {...props}
+                roleColors={roleColors}
+                onPress={handleQrScanPress}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Notification"
+          key={'Notification'}
+          component={NotificationScreen}
+          options={{
+            tabBarBadge:
+              myNotificationData &&
+              myNotificationData?.filter((element) => element.read === false)
+                ?.length > 0
+                ? myNotificationData?.filter(
+                    (element) => element.read === false
+                  )?.length
+                : undefined,
+            tabBarBadgeStyle: {
+              backgroundColor: 'red',
+              color: 'white',
+              width: 'auto',
+              height: 17,
+              fontSize: 12,
+            },
+          }}
+        />
+        <Tab.Screen
+          name="Profile"
+          key={'Profile'}
+          component={ProfileManagementRoute}
+        />
+      </Tab.Navigator>
+
+      <Modal
+        visible={isDrawerVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setIsDrawerVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.drawer}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <Text style={styles.drawerTitle}>Select a Field</Text>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setIsDrawerVisible(false)}
+              >
+                <Text style={styles.closeButtonText}>Close</Text>
+              </TouchableOpacity>
+            </View>
+            {optionsScan.map((element) => (
+              <TouchableOpacity
+                style={styles.drawerItem}
+                key={element.value}
+                onPress={() => handleFieldSelect(element.value)}
+              >
+                <Text>{element.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </Modal>
+    </>
   ) : (
     <Stack.Navigator>
       <Stack.Screen name="Login" component={SignInScreen} />
     </Stack.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  drawer: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  drawerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  drawerItem: {
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  closeButton: {
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    color: 'red',
+    fontSize: 16,
+  },
+});
 
 export const Routes: React.FC = () => {
   return (
