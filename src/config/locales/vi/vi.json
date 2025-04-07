@@ -333,5 +333,11 @@
     "view_illness": "Xem bệnh",
     "view_illness_detail": "Xem chi tiết bệnh",
     "view_vaccine_injection": "Xem tiêm vaccine"
+  },
+  "notification": {
+    "title": "Thông báo",
+    "loading": "Đang tải dữ liệu",
+    "error": "Lỗi khi tải dữ liệu",
+    "noNotifications": "Chưa có thông báo nào!"
   }
 }

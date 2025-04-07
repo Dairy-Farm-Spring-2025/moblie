@@ -154,5 +154,11 @@
     "view_illness": "View Illness",
     "view_illness_detail": "View Illness Detail",
     "view_vaccine_injection": "View Vaccine Injection"
+  },
+  "notification": {
+    "title": "Notification",
+    "loading": "Loading notifications...",
+    "error": "Failed to load notifications",
+    "noNotifications": "No notifications found"
   }
 }
