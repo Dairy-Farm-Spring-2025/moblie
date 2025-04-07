@@ -85,6 +85,12 @@ const HomeScreen: React.FC = () => {
       icon: <MaterialCommunityIcons name='open-in-app' size={SIZE_ICON} color='#000' />, // Replaced faChartArea with map-outline
       screen: 'MyExportItemScreen',
     },
+    {
+      id: 'VaccineCyclesManagementScreen',
+      title: t('vaccine_cycle.title'),
+      icon: <MaterialIcons name='vaccines' size={SIZE_ICON} color='#000' />, // Replaced faChartArea with map-outline
+      screen: 'VaccineCyclesManagementScreen',
+    },
   ];
 
   const applicationCards = [
