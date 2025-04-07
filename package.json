@@ -31,6 +31,7 @@
     "expo-dev-client": "~5.0.14",
     "expo-device": "~7.0.2",
     "expo-image-picker": "~16.0.6",
+    "expo-linear-gradient": "~14.0.2",
     "expo-notifications": "~0.29.14",
     "expo-status-bar": "~2.0.1",
     "i18next": "^24.2.2",
@@ -57,9 +58,9 @@
     "react-native-webview": "^13.13.5",
     "react-query": "^3.39.3",
     "react-redux": "^9.2.0",
+    "recyclerlistview": "^4.2.3",
     "redux-persist": "^6.0.0",
-    "zustand": "^5.0.3",
-    "expo-linear-gradient": "~14.0.2"
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

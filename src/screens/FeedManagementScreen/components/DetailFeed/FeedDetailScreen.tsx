@@ -26,6 +26,7 @@ type FeedDetailScreenProp = RouteProp<RootStackParamList, 'FeedDetail'>;
 
 const fetchFeed = async (id: number): Promise<FeedMeals> => {
   const response = await apiClient.get(`/feedmeals/${id}`); // Replace with your endpoint
+  console.log('Fetched feed:', response.data);
   return response.data;
 };
 
@@ -65,13 +66,11 @@ const FeedDetailScreen = () => {
     <ActivityIndicator />
   ) : (
     <ContainerComponent.ScrollView style={styles.container}>
-      <Text style={[styles.text, styles.textBold]}>
+      {/* <Text style={[styles.text, styles.textBold]}>
         {feed?.shift
-          ? `${feed?.shift === 'morningShift' ? '☀️' : '🌙'} ${formatCamelCase(
-              feed?.shift
-            )}`
+          ? `${feed?.shift === 'morningShift' ? '☀️' : '🌙'} ${formatCamelCase(feed?.shift)}`
           : 'N/A'}
-      </Text>
+      </Text> */}
       <View style={styles.titleContainer}>
         <Text style={styles.textName}>{feed?.name}</Text>
         <Text
@@ -83,9 +82,7 @@ const FeedDetailScreen = () => {
           ]}
         >
           {t('feed.cow_type')}:{' '}
-          {feed?.cowTypeEntity
-            ? formatCamelCase(feed?.cowTypeEntity.name)
-            : 'N/A'}
+          {feed?.cowTypeEntity ? formatCamelCase(feed?.cowTypeEntity.name) : 'N/A'}
         </Text>
         <Text
           style={[
@@ -95,8 +92,7 @@ const FeedDetailScreen = () => {
             },
           ]}
         >
-          {t('feed.cow_status')}:{' '}
-          {feed?.cowStatus ? formatCamelCase(feed?.cowStatus) : 'N/A'}
+          {t('feed.cow_status')}: {feed?.cowStatus ? formatCamelCase(feed?.cowStatus) : 'N/A'}
         </Text>
         <Text
           style={[
@@ -106,8 +102,7 @@ const FeedDetailScreen = () => {
             },
           ]}
         >
-          {t('feed.quantity')}:{' '}
-          {feed ? calculateTotalQuantity(feed.feedMealDetails) : 0} (kg)
+          {t('feed.quantity')}: {feed ? calculateTotalQuantity(feed.feedMealDetails) : 0} (kg)
         </Text>
         <DividerUI />
         <Text
@@ -130,16 +125,16 @@ const FeedDetailScreen = () => {
         }}
       >
         <CardComponent>
-          <TableFeed items={hay} feed="hay" />
+          <TableFeed items={hay} feed='hay' />
         </CardComponent>
         <CardComponent>
-          <TableFeed items={refined} feed="refined" />
+          <TableFeed items={refined} feed='refined' />
         </CardComponent>
         <CardComponent>
-          <TableFeed items={silage} feed="silage" />
+          <TableFeed items={silage} feed='silage' />
         </CardComponent>
         <CardComponent>
-          <TableFeed items={mineral} feed="mineral" />
+          <TableFeed items={mineral} feed='mineral' />
         </CardComponent>
       </ContainerComponent>
     </ContainerComponent.ScrollView>

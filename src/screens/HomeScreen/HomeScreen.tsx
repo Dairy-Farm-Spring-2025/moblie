@@ -3,12 +3,7 @@ import Layout from '@components/layout/Layout';
 import DividerUI from '@components/UI/DividerUI';
 import apiClient from '@config/axios/axios';
 import { RootState } from '@core/store/store';
-import {
-  AntDesign,
-  Feather,
-  Ionicons,
-  MaterialIcons,
-} from '@expo/vector-icons'; // Import Ionicons from @expo/vector-icons
+import { AntDesign, Feather, Ionicons, MaterialIcons } from '@expo/vector-icons'; // Import Ionicons from @expo/vector-icons
 import { User } from '@model/User/User';
 import { useNavigation } from '@react-navigation/native';
 import { getAvatar } from '@utils/getImage';
@@ -30,82 +25,76 @@ const fetchProfile = async (): Promise<User> => {
     const response = await apiClient.get('/users/profile');
     return response.data;
   } catch (error: any) {
-    throw new Error(
-      error?.message || 'An error occurred while fetching the data'
-    );
+    throw new Error(error?.message || 'An error occurred while fetching the data');
   }
 };
 
 const HomeScreen: React.FC = () => {
   const { t } = useTranslation();
   const user = useSelector((state: RootState) => state.auth);
-  const { data: profileData, isLoading } = useQuery<User>(
-    'users/profile',
-    fetchProfile
-  );
+  const { data: profileData, isLoading } = useQuery<User>('users/profile', fetchProfile);
   const navigation = useNavigation<NavigationProp>();
 
   const managementCards = [
     {
       id: 'CowManagementScreen',
       title: t('home.cow'),
-      icon: <MaterialCommunityIcons name="cow" size={32} color="#fff" />,
+      icon: <MaterialCommunityIcons name='cow' size={32} color='#fff' />,
       screen: 'CowManagementScreen',
     },
     {
       id: 'AreaManagementScreen',
       title: t('home.area'),
-      icon: <FontAwesome5 name="chart-area" size={30} color="#fff" />,
+      icon: <FontAwesome5 name='chart-area' size={30} color='#fff' />,
       screen: 'AreaManagementScreen',
     },
     {
       id: 'PenManagementScreen',
       title: t('home.pen'),
-      icon: <MaterialIcons name="warehouse" size={30} color="#fff" />, // Replaced faSliders with sliders
+      icon: <MaterialIcons name='warehouse' size={30} color='#fff' />, // Replaced faSliders with sliders
       screen: 'PenManagementScreen',
     },
     {
       id: 'MilkBatch',
       title: t('home.milk_batch'),
-      icon: <AntDesign name="barschart" size={30} color="#fff" />, // Replaced faDolly with cart-outline
+      icon: <AntDesign name='barschart' size={30} color='#fff' />, // Replaced faDolly with cart-outline
       screen: 'MilkBatchManagementScreen',
     },
     {
       id: 'HealthRecord',
       title: t('home.health_record'),
-      icon: <Ionicons name="medkit" size={30} color="#fff" />, // Replaced faNotesMedical with medkit-outline
+      icon: <Ionicons name='medkit' size={30} color='#fff' />, // Replaced faNotesMedical with medkit-outline
       screen: 'HealthRecordScreen',
     },
-    {
-      id: 'FarmLayoutScreen',
-      title: t('home.farm_layout'),
-      icon: <Feather name="map" size={30} color="#fff" />, // Replaced faChartArea with map-outline
-      screen: 'FarmLayout',
-    },
+    // {
+    //   id: 'FarmLayoutScreen',
+    //   title: t('home.farm_layout'),
+    //   icon: <Feather name='map' size={30} color='#fff' />, // Replaced faChartArea with map-outline
+    //   screen: 'FarmLayout',
+    // },
     {
       id: 'FeedManagementScreen',
       title: t('feed.title'),
-      icon: (
-        <MaterialCommunityIcons name="food-variant" size={30} color="#fff" />
-      ), // Replaced faChartArea with map-outline
+      icon: <MaterialCommunityIcons name='food-variant' size={30} color='#fff' />, // Replaced faChartArea with map-outline
       screen: 'FeedManagementScreen',
     },
     {
       id: 'MyExportItemScreen',
       title: t('export_item.title'),
-      icon: (
-        <MaterialCommunityIcons name="open-in-app" size={30} color="#fff" />
-      ), // Replaced faChartArea with map-outline
+      icon: <MaterialCommunityIcons name='open-in-app' size={30} color='#fff' />, // Replaced faChartArea with map-outline
       screen: 'MyExportItemScreen',
+    },
+    {
+      id: 'VaccineCyclesManagementScreen',
+      title: t('vaccine_cycle.title'),
+      icon: <MaterialIcons name='vaccines' size={24} color='#fff' />, // Replaced faChartArea with map-outline
+      screen: 'VaccineCyclesManagementScreen',
     },
   ];
 
-  const sections = [
-    { title: t('home.dairy_management'), data: managementCards },
-  ];
+  const sections = [{ title: t('home.dairy_management'), data: managementCards }];
 
-  const isVeterinarian =
-    profileData?.roleId?.name?.toLowerCase() === 'veterinarians';
+  const isVeterinarian = profileData?.roleId?.name?.toLowerCase() === 'veterinarians';
   const roleColors = isVeterinarian ? COLORS.veterinarian : COLORS.worker;
   const primaryColor = roleColors.primary;
   const backgroundColor = roleColors.accent;
@@ -127,30 +116,20 @@ const HomeScreen: React.FC = () => {
           onPress={() => card.screen && navigation.navigate(card.screen)}
         >
           {card.icon}
-          <Text style={[styles.cardTitle, { color: '#fff' }]}>
-            {card.title}
-          </Text>
+          <Text style={[styles.cardTitle, { color: '#fff' }]}>{card.title}</Text>
         </TouchableOpacity>
       ))}
     </View>
   );
 
-  const renderSectionHeader = ({
-    section: { title },
-  }: {
-    section: { title: string };
-  }) => (
-    <Text style={[styles.sectionHeader, { backgroundColor: primaryColor }]}>
-      {title}
-    </Text>
+  const renderSectionHeader = ({ section: { title } }: { section: { title: string } }) => (
+    <Text style={[styles.sectionHeader, { backgroundColor: primaryColor }]}>{title}</Text>
   );
 
   if (isLoading) {
     return (
       <Layout>
-        <View
-          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-        >
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator />
           <Text>{t('loading')}</Text>
         </View>
@@ -172,10 +151,7 @@ const HomeScreen: React.FC = () => {
             size={60}
             source={{ uri: `${getAvatar(profileData?.profilePhoto || '')}` }}
           />
-          <Badge
-            style={[styles.roleBadge, { backgroundColor: primaryColor }]}
-            size={20}
-          >
+          <Badge style={[styles.roleBadge, { backgroundColor: primaryColor }]} size={20}>
             {isVeterinarian ? t('home.vet') : t('home.worker')}
           </Badge>
         </View>

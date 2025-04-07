@@ -10,6 +10,7 @@ import { useQuery } from 'react-query';
 import { LogBox } from 'react-native';
 import TitleNameCows from '@components/TitleNameCows/TitleNameCows';
 import { useTranslation } from 'react-i18next';
+import RenderHTML from 'react-native-render-html';
 
 LogBox.ignoreLogs([
   'TRenderEngineProvider: Support for defaultProps will be removed',
@@ -97,7 +98,9 @@ const DetailCow: React.FC = () => {
             <Text style={styles.text}>
               📖 <Text style={styles.bold}>{t('cowDetails.description')}:</Text>
             </Text>
-            <RenderHtmlComponent htmlContent={cow.description} />
+            <View style={{ paddingHorizontal: 20 }}>
+              <RenderHTML source={{ html: cow.description ? cow.description : '' }} />
+            </View>
           </View>
         </View>
 
@@ -143,10 +146,14 @@ const DetailCow: React.FC = () => {
               🔹 <Text style={styles.bold}>{t('cowDetails.areaName')}:</Text>{' '}
               {formatCamelCase(cow.penResponse.area.name)}
             </Text>
-            <Text style={styles.text}>
-              🔹 <Text style={styles.bold}>{t('cowDetails.areaDescription')}:</Text>{' '}
-              {formatCamelCase(cow.penResponse.area.description)}
-            </Text>
+            <View style={{ flexDirection: 'column' }}>
+              <Text style={styles.text}>
+                🔹 <Text style={styles.bold}>{t('cowDetails.areaDescription')}:</Text>{' '}
+              </Text>
+              <View style={{ paddingHorizontal: 20 }}>
+                <RenderHTML source={{ html: cow.penResponse.area.description }} />
+              </View>
+            </View>
             <Text style={styles.text}>
               🔹 <Text style={styles.bold}>{t('cowDetails.areaType')}:</Text>{' '}
               {formatCamelCase(cow.penResponse.area.areaType)}

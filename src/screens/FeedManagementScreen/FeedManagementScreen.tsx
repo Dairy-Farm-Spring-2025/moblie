@@ -1,34 +1,41 @@
+import React, { useEffect, useState, useCallback } from 'react';
+import { Alert, FlatList, RefreshControl } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
+import { useQuery, useQueryClient } from 'react-query';
+import { useNavigation } from '@react-navigation/native';
+
 import ContainerComponent from '@components/Container/ContainerComponent';
 import SearchInput from '@components/Input/Search/SearchInput';
 import apiClient from '@config/axios/axios';
 import { FeedMeals } from '@model/Feed/Feed';
-import { formatFilteredType } from '@utils/format';
-import React, { useEffect, useState } from 'react';
-import { Alert, FlatList } from 'react-native';
-import { ActivityIndicator, Text } from 'react-native-paper';
-import { useQuery } from 'react-query';
 import CardFeed from './components/CardFeed/CardFeed';
-import { useNavigation } from '@react-navigation/native';
+
 const fetchFeed = async (): Promise<FeedMeals[]> => {
-  const response = await apiClient.get('/feedmeals'); // Replace with your endpoint
+  const response = await apiClient.get('/feedmeals');
+  console.log(response.data[0].feedMealDetails);
   return response.data;
 };
+
 const FeedManagementScreen = () => {
   const [searchText, setSearchText] = useState('');
-  const navigation = useNavigation();
   const [selectedFilter, setSelectedFilter] = useState('name');
+  const [refreshing, setRefreshing] = useState(false);
+
+  const navigation = useNavigation();
+  const queryClient = useQueryClient();
+
   const {
     data: feed,
     isLoading,
     isError,
     error,
+    refetch,
   } = useQuery<FeedMeals[]>('feedmeals', fetchFeed);
 
-  const filteredFeed = feed?.filter((feed) => {
-    if (selectedFilter === 'name') {
-      return feed?.name.toLowerCase().includes(searchText.toLowerCase());
-    }
-  });
+  const filteredFeed = feed?.filter(
+    (feed) =>
+      selectedFilter === 'name' && feed?.name.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   const navigateToFoodDetail = (feedId: number) => {
     (navigation.navigate as any)('FeedDetailScreen', { feedId });
@@ -38,7 +45,13 @@ const FeedManagementScreen = () => {
     if (isError) {
       Alert.alert('Error', (error as Error)?.message);
     }
-  }, []);
+  }, [isError, error]);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await queryClient.invalidateQueries('feedmeals'); // Làm mới dữ liệu
+    setRefreshing(false);
+  }, [queryClient]);
 
   return isLoading ? (
     <ActivityIndicator />
@@ -61,11 +74,9 @@ const FeedManagementScreen = () => {
         data={filteredFeed}
         keyExtractor={(item: FeedMeals) => item.feedMealId.toString()}
         renderItem={({ item }) => (
-          <CardFeed
-            item={item}
-            navigation={() => navigateToFoodDetail(item.feedMealId)}
-          />
+          <CardFeed item={item} navigation={() => navigateToFoodDetail(item.feedMealId)} />
         )}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       />
     </ContainerComponent>
   );

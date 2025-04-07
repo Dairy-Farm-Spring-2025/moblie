@@ -19,11 +19,7 @@ interface ScrollViewComponentProps extends ScrollViewProps {
   children?: React.ReactNode;
 }
 
-const ContainerComponent = ({
-  children,
-  style,
-  ...props
-}: ContainerComponentProps) => {
+const ContainerComponent = ({ children, style, ...props }: ContainerComponentProps) => {
   return (
     <View style={[styles.container, style]} {...props}>
       {children}
@@ -31,13 +27,14 @@ const ContainerComponent = ({
   );
 };
 
-const ScrollViewComponent = ({
-  children,
-  style,
-  ...props
-}: ScrollViewComponentProps) => {
+const ScrollViewComponent = ({ children, style, ...props }: ScrollViewComponentProps) => {
   return (
-    <ScrollView style={[styles.container, style]} {...props}>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      showsHorizontalScrollIndicator={false}
+      style={[styles.container, style]}
+      {...props}
+    >
       {children}
     </ScrollView>
   );

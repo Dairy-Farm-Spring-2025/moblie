@@ -1,6 +1,7 @@
 {
   "welcome": "Chào mừng đến với ứng dụng",
   "goodbye": "Tạm biệt",
+  "nodata": "Không tìm thấy dữ liệu",
   "profile": {
     "title": "Hồ sơ",
     "user_id": "ID Người dùng",
@@ -179,5 +180,37 @@
     "injectionSite": "Điểm tiêm",
     "vaccineItem": "Vắc-xin",
     "quantity": "Trữ lượng"
+  },
+  "vaccine_cycle": {
+    "title": "Chu kỳ tiêm vắc-xin",
+    "unnamedCycle": "Chu kỳ không tên",
+    "unknown": "Không xác định",
+    "noDescription": "Không có mô tả",
+    "unnamedDetail": "Chi tiết không tên",
+    "na": "N/A",
+    "cowType": "Loại bò",
+    "dosage": "Liều lượng",
+    "injectionSite": "Vị trí tiêm",
+    "firstInjection": "Tiêm đầu tiên: Tháng",
+    "periodic": "Định kỳ: Mỗi",
+    "item": "Vật phẩm",
+    "category": "Danh mục",
+    "warehouse": "Kho",
+    "loadingMessage": "Đang tải chu kỳ tiêm vắc-xin...",
+    "errorMessage": "Lỗi: {message}",
+    "unknownError": "Đã xảy ra lỗi không xác định",
+    "noData": "Không tìm thấy chu kỳ tiêm vắc-xin",
+    "searchBy": "Tìm kiếm theo {filter}...",
+    "nameFilter": "tên",
+    "descriptionFilter": "mô tả",
+    "cowTypeFilter": "loại bò"
+  },
+  "task_management": {
+    "title": "Quản lý công việc",
+    "tasks": "Công việc",
+    "task": "Công việc",
+    "create": "Tạo",
+    "report": "Báo cáo",
+    "detail": "Công Việc Chi Tiết"
   }
 }

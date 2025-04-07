@@ -89,7 +89,7 @@ const ReportTask: React.FC<ReportTaskProps> = ({ reportTask: initialReportTask, 
       }
     >
       <View style={styles.card}>
-        <Text style={styles.title}>Report Task {task.taskTypeId.name}</Text>
+        <Text style={styles.title}>Report {task.taskTypeId.name}</Text>
         <View style={styles.reportListContainer}>
           <Text style={styles.sectionTitle}>Existing Reports</Text>
           {isLoading ? (

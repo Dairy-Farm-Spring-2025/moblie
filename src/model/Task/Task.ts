@@ -25,7 +25,7 @@ export type Task = {
     illnessDetail: IllnessDetail | null;
     vaccineInjection: InjectionCow | null;
     illness: IllnessCow | null;
-  };
+  } | null;
 };
 
 export type ReportTaskData = {

@@ -31,6 +31,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isScrollable = true, onRefres
       <Header />
       {isScrollable ? (
         <ScrollView
+          showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.container}
           refreshControl={
             <RefreshControl
