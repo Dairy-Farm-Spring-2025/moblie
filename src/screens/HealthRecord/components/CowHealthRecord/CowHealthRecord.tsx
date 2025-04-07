@@ -5,10 +5,12 @@ import React from 'react';
 import {
   Alert,
   Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   TouchableWithoutFeedback,
-  View
+  View,
 } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { useQuery } from 'react-query';
@@ -47,14 +49,23 @@ const CowHealthRecord = () => {
   }
 
   return (
-    <ScrollView>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          <CardCowDetail cow={cow as Cow} />
-          <CardFormHealthRecord cowId={cowId} />
-        </View>
-      </TouchableWithoutFeedback>
-    </ScrollView>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
+    >
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.container}>
+            <CardCowDetail cow={cow as Cow} />
+            <CardFormHealthRecord cowId={cowId} />
+          </View>
+        </TouchableWithoutFeedback>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

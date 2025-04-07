@@ -1,4 +1,10 @@
-import { Cow, Severity, StatusIllnessDetail } from '@model/Cow/Cow';
+import {
+  Cow,
+  CowStatus,
+  CowStatusHealth,
+  Severity,
+  StatusIllnessDetail,
+} from '@model/Cow/Cow';
 
 export type Period =
   | 'milkingCow'
@@ -13,20 +19,33 @@ export type Period =
 
 export type HealthRecord = {
   status: 'good' | 'fair' | 'poor' | 'critical' | 'recovering';
+  healthRecordId: number;
+  bodyTemperature: number;
+  heartRate: number;
+  respiratoryRate: number;
+  ruminateActivity: number;
   weight: number;
   size: number;
-  period: Period;
-  healthRecordId: number;
+  description: string | null;
+  reportTime: string; // ISO date string
+  period: CowStatusHealth;
   cowEntity: Cow;
-  reportTime: string;
+  chestCircumference: number;
+  bodyLength: number;
 };
 
 export type HealthRecordForm = {
-  status: 'good' | 'fair' | 'poor' | 'critical' | 'recovering';
-  weight: number | any;
-  size: number | any;
-  period: Period;
+  bodyTemperature: number;
+  heartRate: number;
+  respiratoryRate: number;
+  ruminateActivity: number;
+  size: number;
+  description: string | null;
+  period: CowStatusHealth;
+  chestCircumference: number;
+  bodyLength: number;
   cowId: number;
+  status: 'good' | 'fair' | 'poor' | 'critical' | 'recovering';
 };
 
 export type IllnessPayload = {

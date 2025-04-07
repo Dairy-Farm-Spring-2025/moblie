@@ -339,5 +339,30 @@
     "loading": "Đang tải dữ liệu",
     "error": "Lỗi khi tải dữ liệu",
     "noNotifications": "Chưa có thông báo nào!"
-  }
+  },
+  "healthRecord": {
+    "createSuccess": "Tạo mới thành công",
+    "subTitle": "Nhập các thông tin yêu cầu",
+    "status": "Trạng thái",
+    "chestCircumference": "Vòng ngực",
+    "bodyLength": "Chiều dài cơ thể",
+    "bodyTemperature": "Nhiệt độ cơ thể",
+    "heartRate": "Nhịp tim",
+    "respiratoryRate": "Nhịp thở",
+    "ruminateActivity": "Hoạt động nhai lại",
+    "description": "Mô tả"
+  },
+  "Milking cow": "Bò đang vắt sữa",
+  "Dry cow": "Bò khô sữa",
+  "Pregnant cow": "Bò mang thai",
+  "Open cow": "Bò chưa mang thai",
+  "Calving cow": "Bò sắp đẻ",
+  "Sick cow": "Bò bị bệnh",
+  "Serious Sick Cow": "Bò bị bệnh nặng",
+  "Breeding cow": "Bò đang phối giống",
+  "Quarantined cow": "Bò cách ly",
+  "Good": "Tốt",
+  "Fair": "Khá",
+  "Poor": "Kém",
+  "Recovering": "Đang hồi phục"
 }

@@ -5,20 +5,16 @@ import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused hook
 
 type QrCodeScanProps = {
-  params: {
-    screens: string;
-  };
+  selectedField: string; // Nhận selectedField từ props
 };
 
-const QrCodeScan = () => {
+const QrCodeScan = ({ selectedField }: QrCodeScanProps) => {
   const [facing, setFacing] = useState<CameraType>('back');
   const [isCameraActive, setIsCameraActive] = useState(false); // Set to false initially
   const [permission, requestPermission] = useCameraPermissions();
   const navigation = useNavigation();
   const isFocused = useIsFocused(); // Hook to check if the screen is focused
-
-  const route = useRoute<RouteProp<QrCodeScanProps>>();
-
+  console.log(selectedField);
   useEffect(() => {
     if (isFocused) {
       setIsCameraActive(true); // Activate the camera when the screen is focused
@@ -34,7 +30,9 @@ const QrCodeScan = () => {
   if (!permission.granted) {
     return (
       <View style={styles.container}>
-        <Text style={styles.message}>We need your permission to show the camera</Text>
+        <Text style={styles.message}>
+          We need your permission to show the camera
+        </Text>
         <TouchableOpacity onPress={requestPermission}>
           <Text style={styles.buttonText}>Grant Permission</Text>
         </TouchableOpacity>
@@ -42,25 +40,59 @@ const QrCodeScan = () => {
     );
   }
 
+  const navigationMap: {
+    [key: string]: (navigate: any, cowId: number) => void;
+  } = {
+    'cow-detail': (navigate, cowId) => {
+      if (cowId) {
+        navigate('CowDetails', { cowId });
+      } else {
+        alert('Invalid QR code for Cow Details');
+        navigate('Home');
+      }
+    },
+    'create-health-record': (navigate, cowId) => {
+      if (cowId) {
+        navigate('CowHealthRecord', { cowId });
+      } else {
+        alert('Invalid QR code for Health Record');
+        navigate('Home');
+      }
+    },
+  };
+
+  const navigateScreenByField = ({
+    selectedField,
+    navigate,
+    scannedData,
+  }: {
+    selectedField: string;
+    navigate: any;
+    scannedData: string;
+  }) => {
+    // Extract cowId from scannedData
+    const cowIdMatch = scannedData.match(/\/cow-management\/(\d+)/);
+    const cowId = cowIdMatch ? Number(cowIdMatch[1]) : 0;
+
+    // Lấy hàm điều hướng từ navigationMap, mặc định trả về hàm báo lỗi nếu không tìm thấy
+    const navigateFn =
+      navigationMap[selectedField] ||
+      ((navigate) => {
+        alert('Unknown QR code format or unsupported field');
+        navigate('Home');
+      });
+
+    // Thực thi hàm điều hướng
+    navigateFn(navigate, cowId);
+  };
+
   const handleScanQRCode = (scannedData: string) => {
     console.log('Scanned Data:', scannedData);
-
-    if (scannedData.includes('/cow-management/')) {
-      const cowIdMatch = scannedData.match(/\/cow-management\/(\d+)/);
-      if (cowIdMatch) {
-        const cowId = Number(cowIdMatch[1]);
-        console.log('Scanned Cow ID:', cowId);
-        (navigation.navigate as any)('CowDetails', { cowId });
-      }
-    } else if (scannedData.includes('/health-management/')) {
-      const healthIdMatch = scannedData.match(/\/health-management\/(\d+)/);
-      if (healthIdMatch) {
-        const healthId = Number(healthIdMatch[1]);
-        (navigation.navigate as any)('HealthDetailScreen', { healthId });
-      }
-    } else {
-      alert('Unknown QR code format');
-    }
+    navigateScreenByField({
+      selectedField,
+      navigate: navigation.navigate,
+      scannedData,
+    });
   };
 
   function toggleCameraFacing() {
@@ -88,7 +120,10 @@ const QrCodeScan = () => {
             <Text style={styles.scanText}>Scan within this area</Text>
           </View>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={toggleCameraFacing}
+            >
               <Text style={styles.text}>Flip Camera</Text>
             </TouchableOpacity>
           </View>

@@ -15,6 +15,17 @@ export enum CowStatus {
   CULLING = 'culling',
 }
 
+export type CowStatusHealth =
+  | 'milkingCow'
+  | 'dryCow'
+  | 'pregnantCow'
+  | 'openCow'
+  | 'calvingCow'
+  | 'sickCow'
+  | 'breedingCow'
+  | 'quarantinedCow'
+  | 'culling';
+
 // Enum for Cow Origin
 export enum CowOrigin {
   EUROPEAN = 'european',
@@ -83,7 +94,11 @@ export type HealthResponse = {
   type: 'HEALTH_RECORD' | 'ILLNESS' | 'INJECTIONS';
 };
 
-export type InjectionStatus = 'pending' | 'inProgress' | 'completed' | 'canceled';
+export type InjectionStatus =
+  | 'pending'
+  | 'inProgress'
+  | 'completed'
+  | 'canceled';
 
 export type InjectionCow = {
   administeredBy: string | null;
@@ -178,6 +193,11 @@ export type IllnessDetail = {
     | 'other';
 };
 
-export type StatusIllnessDetail = 'observed' | 'treated' | 'cured' | 'ongoing' | 'deceased';
+export type StatusIllnessDetail =
+  | 'observed'
+  | 'treated'
+  | 'cured'
+  | 'ongoing'
+  | 'deceased';
 
 export type Severity = 'mild' | 'moderate' | 'severe' | 'critical';
