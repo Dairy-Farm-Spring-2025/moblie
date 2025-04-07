@@ -136,5 +136,23 @@
   },
   "validateForm": {
     "required": "Required field"
+  },
+  "task_detail": {
+    "priority": "Priority",
+    "status": "Status",
+    "date": "Date",
+    "area": "Area",
+    "assigned_by": "Assigned by",
+    "shift": "Shift",
+    "notes": "Notes",
+    "description": "Description",
+    "view_materials": "View Materials",
+    "check_in": "Check-in",
+    "checking_in": "Checking in...",
+    "show_more": "Show more",
+    "show_less": "Show less",
+    "view_illness": "View Illness",
+    "view_illness_detail": "View Illness Detail",
+    "view_vaccine_injection": "View Vaccine Injection"
   }
 }
