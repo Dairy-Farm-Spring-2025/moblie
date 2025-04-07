@@ -55,11 +55,11 @@ TextInputComponent.Number = Number;
 
 const styles = StyleSheet.create({
   input: {
-    height: 40,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 4,
     paddingHorizontal: 8,
+    paddingVertical: 10,
   },
   inputError: {
     borderColor: 'red',

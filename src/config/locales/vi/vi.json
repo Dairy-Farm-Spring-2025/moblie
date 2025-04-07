@@ -248,5 +248,38 @@
   "Image": "Hình ảnh",
   "Existing Reports": "Các báo cáo hiện có",
   "No Report Data": "Không có dữ liệu báo cáo",
-  "No tasks": "không có công việc"
+  "No tasks": "không có công việc",
+  "application": {
+    "titleView": "Xem đơn của bạn",
+    "titleCreate": "Tạo đơn",
+    "title": "Quản lý đơn",
+    "applicationType": "Loại đơn",
+    "titleFormItem": "Tiêu đề",
+    "content": "Nội dung",
+    "fromDate": "Từ ngày",
+    "toDate": "Tới ngày",
+    "subTitle": "Nhập các thông tin yêu cầu",
+    "submitButton": "Gửi yêu cầu",
+    "license1": "Đơn sẽ được gửi đến cho Quản lý.",
+    "license2": "Đơn sẽ được kiểm tra trong vòng 24h bởi Quản lý.",
+    "license3": "Bạn cần cung cấp đầy đủ thông tin cho mỗi Kiểu đơn. Quản lý sẽ dựa trên thông tin này để Xác nhận hoặc Từ chối đơn của bạn.",
+    "requestDate": "Ngày tạo",
+    "checkBy": "Kiểm tra bởi",
+    "cancelButton": "Hủy đơn",
+    "viewCommentButton": "Xem bình luận",
+    "viewMore": "Xem thêm",
+    "viewLess": "Thu nhỏ",
+    "closeComment": "Đóng bình luận",
+    "noComment": "Không có bình luận"
+  },
+  "validateForm": {
+    "required": "Yêu cầu nhập đầy đủ"
+  },
+  "Select...": "Chọn...",
+  "Enter...": "Nhập...",
+  "Date empty": "Dữ liệu trống",
+  "Processing": "Đang tiến hành",
+  "Complete": "Hoàn thành",
+  "Success": "Thành công",
+  "Error": "Lỗi"
 }

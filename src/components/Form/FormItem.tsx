@@ -28,6 +28,7 @@ const FormItem = ({
   render,
   ...props
 }: FormItemProps) => {
+  console.log(error);
   return (
     <View style={styles.container}>
       {/* Label */}

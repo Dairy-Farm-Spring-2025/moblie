@@ -8,6 +8,7 @@ import {
   Button,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import { t } from 'i18next';
 
 export interface Option {
   label: string;
@@ -25,7 +26,7 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
   options,
   selectedValue,
   onValueChange,
-  title = 'Select',
+  title = t('Select...'),
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [tempValue, setTempValue] = useState(selectedValue);
@@ -46,7 +47,12 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
         }}
       >
         <Text
-          style={[styles.buttonText, !selectedOption && styles.placeholderText]}
+          style={[
+            styles.buttonText,
+            ((!selectedOption && title === 'Select...') ||
+              title === 'Chọn...') &&
+              styles.placeholderText,
+          ]}
         >
           {selectedOption ? selectedOption.label : title}
         </Text>
