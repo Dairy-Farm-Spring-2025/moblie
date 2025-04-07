@@ -162,18 +162,6 @@ const TaskDetailContent: React.FC<{
 
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
-          <Ionicons name='calendar-outline' size={20} color={textColor} style={styles.icon} />
-          <Text style={[styles.textLabel, { color: textColor }]}>Date:</Text>
-        </View>
-        <View style={[styles.tag, { backgroundColor: '#e8e8e8' }]}>
-          <Text style={[styles.tagText, { color: textColor }]}>
-            {new Date(selectedDate).toLocaleDateString()}
-          </Text>
-        </View>
-      </View>
-
-      <View style={styles.infoRow}>
-        <View style={styles.labelContainer}>
           <Ionicons
             name='checkmark-circle-outline'
             size={20}
@@ -184,6 +172,18 @@ const TaskDetailContent: React.FC<{
         </View>
         <View style={[styles.tag, { backgroundColor: getStatusColor(task.status) }]}>
           <Text style={[styles.tagText, { color: '#fff' }]}>{formatCamelCase(task.status)}</Text>
+        </View>
+      </View>
+
+      <View style={styles.infoRow}>
+        <View style={styles.labelContainer}>
+          <Ionicons name='calendar-outline' size={20} color={textColor} style={styles.icon} />
+          <Text style={[styles.textLabel, { color: textColor }]}>Date:</Text>
+        </View>
+        <View style={[styles.tag, { backgroundColor: '#e8e8e8' }]}>
+          <Text style={[styles.tagText, { color: textColor }]}>
+            {new Date(selectedDate).toLocaleDateString()}
+          </Text>
         </View>
       </View>
 
@@ -216,7 +216,6 @@ const TaskDetailContent: React.FC<{
           style={[
             styles.tag,
             {
-              backgroundColor: getShiftColor(task.shift),
               flexDirection: 'row',
               alignItems: 'center',
             },
@@ -226,19 +225,9 @@ const TaskDetailContent: React.FC<{
             {formatCamelCase(task.shift)}
           </Text>
           {task.shift.toLowerCase().includes('night') ? (
-            <MaterialCommunityIcons
-              name='weather-night'
-              size={20}
-              color={getShiftTextColor(task.shift)}
-              style={styles.shiftIcon}
-            />
+            <MaterialCommunityIcons name='weather-night' size={20} style={styles.shiftIcon} />
           ) : (
-            <MaterialIcons
-              name='wb-sunny'
-              size={20}
-              color={getShiftTextColor(task.shift)}
-              style={styles.shiftIcon}
-            />
+            <MaterialIcons name='wb-sunny' size={20} style={styles.shiftIcon} />
           )}
         </View>
       </View>

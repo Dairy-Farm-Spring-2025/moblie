@@ -3,8 +3,8 @@ import { Area } from '@model/Area/Area';
 import { Pen } from '@model/Pen/Pen';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { formatType } from '@utils/format';
+import { t } from 'i18next';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Image, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useQuery } from 'react-query';
@@ -14,7 +14,6 @@ type RootStackParamList = {
 };
 
 type PenDetailScreenProp = RouteProp<RootStackParamList, 'PenDetail'>;
-const { t } = useTranslation()
 const fetchPenDetails = async (penId: number): Promise<Pen> => {
   const response = await apiClient.get(`/pens/${penId}`);
   return response.data;
@@ -23,11 +22,7 @@ const fetchPenDetails = async (penId: number): Promise<Pen> => {
 const PenDetailScreen = () => {
   const route = useRoute<PenDetailScreenProp>();
   const { penId } = route.params;
-  const {
-    data: pen,
-    isLoading,
-    isError,
-  } = useQuery(['pens', penId], () => fetchPenDetails(penId));
+  const { data: pen, isLoading, isError } = useQuery(['pens', penId], () => fetchPenDetails(penId));
 
   if (isLoading) {
     return <Text style={styles.loadingText}>{t('Loading pen details')}...</Text>;
@@ -55,12 +50,10 @@ const PenDetailScreen = () => {
           {pen.area.penLength}m
         </Text>
         <Text style={styles.text}>
-          📼 <Text style={styles.bold}>{t('Pen Type')}:</Text>{' '}
-          {formatType(pen.penType)}
+          📼 <Text style={styles.bold}>{t('Pen Type')}:</Text> {formatType(pen.penType)}
         </Text>
         <Text style={styles.text}>
-          📌 <Text style={styles.bold}>{t('Status')}:</Text>{' '}
-          {formatType(pen.penStatus)}
+          📌 <Text style={styles.bold}>{t('Status')}:</Text> {formatType(pen.penStatus)}
         </Text>
         <Text style={styles.text}>
           📍 <Text style={styles.bold}>{t('Area')}:</Text> {formatType(pen.area.name)}

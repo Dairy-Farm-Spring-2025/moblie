@@ -16,7 +16,7 @@ import { getReportImage } from '@utils/getImage';
 import RenderHTML from 'react-native-render-html';
 import apiClient from '@config/axios/axios';
 import { useQuery } from 'react-query';
-import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
 
 interface ReportTaskProps {
   reportTask: ReportTaskData | null;
@@ -62,7 +62,6 @@ const ReportTask: React.FC<ReportTaskProps> = ({ reportTask: initialReportTask, 
   const handleReportPress = (report: ReportTaskData) => {
     navigation.navigate('ReportTaskDetail', { report });
   };
-  const { t } = useTranslation();
   const onRefresh = async () => {
     setRefreshing(true);
     try {
@@ -90,7 +89,9 @@ const ReportTask: React.FC<ReportTaskProps> = ({ reportTask: initialReportTask, 
       }
     >
       <View style={styles.card}>
-        <Text style={styles.title}>{t('Report Task')} {task.taskTypeId.name}</Text>
+        <Text style={styles.title}>
+          {t('Report Task')} {task.taskTypeId.name}
+        </Text>
         <View style={styles.reportListContainer}>
           <Text style={styles.sectionTitle}>{t('Existing Reports')}</Text>
           {isLoading ? (

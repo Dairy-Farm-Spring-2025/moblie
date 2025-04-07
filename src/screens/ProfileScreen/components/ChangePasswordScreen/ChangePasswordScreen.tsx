@@ -1,8 +1,8 @@
 import apiClient from '@config/axios/axios';
 import { User } from '@model/User/User';
 import { useNavigation } from '@react-navigation/native';
+import { t } from 'i18next';
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { View, StyleSheet, Alert } from 'react-native';
 import { TextInput, Button, Text, HelperText, Avatar, Divider } from 'react-native-paper';
 import { useMutation, useQuery } from 'react-query';
@@ -46,7 +46,6 @@ const ChangePasswordScreen = () => {
       },
     }
   );
-  const { t } = useTranslation();
   const handleChangePassword = () => {
     if (!oldPassword || !newPassword || !confirmPassword) {
       return Alert.alert('Error', 'Please fill all fields');

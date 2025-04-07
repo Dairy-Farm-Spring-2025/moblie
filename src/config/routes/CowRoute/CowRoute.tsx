@@ -28,6 +28,7 @@ import FeedManagementScreen from '@screens/FeedManagementScreen/FeedManagementSc
 import FeedDetailScreen from '@screens/FeedManagementScreen/components/DetailFeed/FeedDetailScreen';
 import MyExportItemScreen from '@screens/MyExportItemScreen/MyExportItemScreen';
 import InjectionScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/InjectionScreen/InjectionScreen';
+import VaccineCyclesManagementScreen from '@screens/VaccineCyclesManagementScreen/VaccineCyclesManagementScreen';
 import MyApplicationScreen from '@screens/ApplicationScreen/MyApplicationScreen/MyApplicationScreen';
 import CreateApplicationScreen from '@screens/ApplicationScreen/CreateApplicationScreen/CreateApplicationScreen';
 
@@ -100,7 +101,7 @@ const CowRoute: React.FC = () => {
         options={{ title: 'Health Record' }}
       />
       <Stack.Screen
-        name='GeneralQrScanCow' // Renamed to avoid confusion with QrCodeScanCow
+        name='QrScanCow' // Renamed to avoid confusion with QrCodeScanCow
         component={QrScanCow}
         options={{ title: 'General Scan Cow' }}
       />
@@ -168,7 +169,16 @@ const CowRoute: React.FC = () => {
         }}
       />
       <Stack.Screen
-        name="ViewApplicationScreen"
+        name='VaccineCyclesManagementScreen'
+        component={VaccineCyclesManagementScreen}
+        options={{
+          title: t('vaccine_cycle.title', {
+            defaultValue: 'Vaccine Cycle',
+          }),
+        }}
+      />
+      <Stack.Screen
+        name='ViewApplicationScreen'
         component={MyApplicationScreen}
         options={{
           title: t('application.titleView', {
@@ -177,7 +187,7 @@ const CowRoute: React.FC = () => {
         }}
       />
       <Stack.Screen
-        name="CreateApplicationScreen"
+        name='CreateApplicationScreen'
         component={CreateApplicationScreen}
         options={{
           title: t('application.titleCreate', {

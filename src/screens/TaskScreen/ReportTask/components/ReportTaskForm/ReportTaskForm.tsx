@@ -16,14 +16,13 @@ import * as ImagePicker from 'expo-image-picker';
 import apiClient from '@config/axios/axios';
 import { useMutation } from 'react-query';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
 
 type RootStackParamList = {
   ReportTaskForm: { reportId: string | number };
 };
 
 type ReportTaskFormRouteProp = RouteProp<RootStackParamList, 'ReportTaskForm'>;
-const { t } = useTranslation();
 const ReportTaskForm: React.FC = () => {
   const navigation = useNavigation();
   const route = useRoute<ReportTaskFormRouteProp>();
@@ -132,7 +131,9 @@ const ReportTaskForm: React.FC = () => {
 
   return (
     <View style={styles.card}>
-      <Text style={styles.title}>{t('Report Task')} #{reportId}</Text>
+      <Text style={styles.title}>
+        {t('Report Task')} #{reportId}
+      </Text>
 
       <View style={styles.inputContainer}>
         <Text style={styles.label}>{t('Description')}</Text>

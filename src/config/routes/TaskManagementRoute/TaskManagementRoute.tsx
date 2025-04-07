@@ -1,10 +1,11 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import IllnessDetailForm from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/components/IllnessDetail/components/IllnessDetailForm';
+import IllnessReportForm from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/components/IllnessReportForm/IllnessReportForm';
 import IllnessCowRecordScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/IllnessCowRecordScreen';
 import InjectionScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/InjectionScreen/InjectionScreen';
 import ReportTaskDetail from '@screens/TaskScreen/ReportTask/components/ReportTaskDetail/ReportTaskDetail';
 import ReportTaskForm from '@screens/TaskScreen/ReportTask/components/ReportTaskForm/ReportTaskForm';
-import ReportTaskScreen from '@screens/TaskScreen/ReportTask/ReportTask';
+import ReportTaskScreen from '@screens/TaskScreen/ReportTask/ReportTaskScreen';
 import Materials from '@screens/TaskScreen/TaskDetail/components/Materials';
 import TaskDetail from '@screens/TaskScreen/TaskDetail/TaskDetail';
 import TaskScreen from '@screens/TaskScreen/TaskScreen';
@@ -18,9 +19,13 @@ const TaskManagementRoute: React.FC = () => {
       <Stack.Screen
         name='TaskScreen'
         component={TaskScreen}
-        options={{ title: 'Task', headerShown: false }}
+        options={{ title: t('task_management.title'), headerShown: false }}
       />
-      <Stack.Screen name='TaskDetail' component={TaskDetail} options={{ title: 'Task Details' }} />
+      <Stack.Screen
+        name='TaskDetail'
+        component={TaskDetail}
+        options={{ title: t('task_management.detail') }}
+      />
       <Stack.Screen
         name='ReportTaskForm'
         component={ReportTaskForm}
@@ -30,6 +35,15 @@ const TaskManagementRoute: React.FC = () => {
         name='ReportTaskDetail'
         component={ReportTaskDetail}
         options={{ title: 'Report Task' }}
+      />
+      <Stack.Screen
+        name='IllnessReportForm'
+        component={IllnessReportForm}
+        options={{
+          title: t('illness.title', {
+            defaultValue: 'Illness',
+          }),
+        }}
       />
       <Stack.Screen
         name='InjectionScreen'

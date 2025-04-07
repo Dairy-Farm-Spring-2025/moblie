@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { Alert } from 'react-native';
 
-const baseURL = 'http://34.124.196.11:8080/api/v1';
+const baseURL = 'https://api.dairyfarmfpt.website/api/v1';
 // Create an Axios instance
 const apiClient = axios.create({
   baseURL: baseURL, // Replace with your API's base URL

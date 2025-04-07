@@ -2,19 +2,18 @@ import ContainerComponent from '@components/Container/ContainerComponent';
 import apiClient from '@config/axios/axios';
 import { ExportItem } from '@model/ExportItem/ExportItem';
 import React from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, Text, View } from 'react-native'; // Added Text import
 import { useQuery } from 'react-query';
 import CardMyExportItem from './components/CardMyExportItem';
 import { ActivityIndicator } from 'react-native-paper';
+import { t } from 'i18next'; // Import t from i18next
 
 const fetchMyExportItem = async (): Promise<ExportItem[]> => {
   try {
     const response = await apiClient.get('/export_items/my');
     return response.data;
   } catch (error: any) {
-    throw new Error(
-      error?.message || 'An error occurred while fetching the data'
-    );
+    throw new Error(error?.message || 'An error occurred while fetching the data');
   }
 };
 
@@ -23,12 +22,13 @@ const MyExportItemScreen = () => {
     'export_items/my',
     fetchMyExportItem
   );
-  console.log(myNotificationData);
+  console.log('myNotificationData', myNotificationData);
+
   return (
     <ContainerComponent>
       {isLoading ? (
         <ActivityIndicator />
-      ) : (
+      ) : myNotificationData!.length > 0 ? (
         <FlatList
           data={myNotificationData}
           style={{
@@ -36,6 +36,10 @@ const MyExportItemScreen = () => {
           }}
           renderItem={({ item }) => <CardMyExportItem item={item} />}
         />
+      ) : (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{t('nodata')}</Text>
+        </View>
       )}
     </ContainerComponent>
   );

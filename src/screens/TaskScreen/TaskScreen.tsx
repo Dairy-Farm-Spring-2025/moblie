@@ -10,14 +10,13 @@ import {
 } from 'react-native';
 import { useQuery, UseQueryResult } from 'react-query';
 import apiClient from '@config/axios/axios';
-import SearchInput from '@components/Input/Search/SearchInput';
 import Layout from '@components/layout/Layout';
 import LoadingScreen from '@components/LoadingScreen/LoadingScreen';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { Task } from '@model/Task/Task';
 import { formatCamelCase } from '@utils/format';
-import { useTranslation } from 'react-i18next';
+import WeatherCard from '@components/WeatherCard/WeatherCard';
 
 const getWeekDates = (currentDate: Date) => {
   const today = new Date(currentDate);
@@ -30,7 +29,6 @@ const getWeekDates = (currentDate: Date) => {
     return date;
   });
 };
-const { t } = useTranslation();
 const fetchTasksByDateRange = async ({
   fromDate,
   toDate,
@@ -43,7 +41,7 @@ const fetchTasksByDateRange = async ({
     toDate: toDate.toISOString().split('T')[0],
   };
   const response = await apiClient.post('/tasks/myTasks/by-date-range/mb', requestBody);
-  console.log('response', response.data);
+  console.log('task', response.data);
   const tasksByDate = response.data || {};
   const allTasks: Task[] = [];
   Object.entries(tasksByDate).forEach(([_, tasks]: [string, any]) => {
@@ -256,7 +254,6 @@ const TaskScreen: React.FC = () => {
   const monthYear = currentMonday.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
   const handleTaskPress = (task: Task) => {
-    console.log('Task pressed:', task);
     (navigation.navigate as any)('TaskDetail', {
       task,
       selectedDate: weekDates[selectedDayIndex].toISOString().split('T')[0],
@@ -271,24 +268,7 @@ const TaskScreen: React.FC = () => {
     <Layout isScrollable={true} onRefresh={onRefresh}>
       <View style={styles.container}>
         <View style={styles.searchFilterContainer}>
-          <SearchInput
-            filteredData={filteredTasks}
-            onChangeText={setSearchText}
-            value={searchText}
-            typeFiltered={{
-              filteredType: [
-                'description',
-                'status',
-                'area',
-                'taskType',
-                'assigner',
-                'assignee',
-                'priority',
-                'shift',
-              ],
-              setSelectedFiltered: setSelectedFilter,
-            }}
-          />
+          <WeatherCard date={weekDates[selectedDayIndex]} />
         </View>
         <View style={styles.navigationContainer}>
           <TouchableOpacity onPress={goToPreviousWeek} style={styles.navButton}>
@@ -355,35 +335,53 @@ const TaskScreen: React.FC = () => {
             </Text>
           ) : (
             <View style={styles.tableContainer}>
-              {shifts.map((shift) => (
-                <View key={shift} style={styles.shiftSection}>
-                  <View style={styles.shiftHeader}>
-                    <Text style={styles.shiftText}>{shift}</Text>
-                  </View>
-                  <View style={styles.taskContainer}>
-                    {(() => {
-                      const tasksForCell = getTasksForCell(
-                        filteredTasks,
-                        weekDates[selectedDayIndex],
-                        shift
-                      );
-                      return tasksForCell.length > 0 ? (
-                        tasksForCell.map((task, index) => (
-                          <NewTaskCard
-                            key={`${task.taskId}-${weekDates[selectedDayIndex].toISOString().split('T')[0]
+              {shifts
+                .filter((shift) => {
+                  const tasksForCell = getTasksForCell(
+                    filteredTasks,
+                    weekDates[selectedDayIndex],
+                    shift
+                  );
+                  return tasksForCell.length > 0; // Only include shifts with tasks
+                })
+                .map((shift) => (
+                  <View key={shift} style={styles.shiftSection}>
+                    <View style={styles.shiftHeader}>
+                      <Text style={styles.shiftText}>{shift}</Text>
+                    </View>
+                    <View style={styles.taskContainer}>
+                      {(() => {
+                        const tasksForCell = getTasksForCell(
+                          filteredTasks,
+                          weekDates[selectedDayIndex],
+                          shift
+                        );
+                        return tasksForCell.length > 0 ? (
+                          tasksForCell.map((task, index) => (
+                            <NewTaskCard
+                              key={`${task.taskId}-${
+                                weekDates[selectedDayIndex].toISOString().split('T')[0]
                               }-${index}`}
-                            task={task}
-                            onPress={() => handleTaskPress(task)}
-                            selectedDate={weekDates[selectedDayIndex]}
-                          />
-                        ))
-                      ) : (
-                        <Text style={styles.noTasksText}>{t('No tasks')}</Text>
-                      );
-                    })()}
+                              task={task}
+                              onPress={() => handleTaskPress(task)}
+                              selectedDate={weekDates[selectedDayIndex]}
+                            />
+                          ))
+                        ) : (
+                          <Text style={styles.noTasksText}>No tasks</Text>
+                        );
+                      })()}
+                    </View>
                   </View>
-                </View>
-              ))}
+                ))}
+              {shifts.every((shift) => {
+                const tasksForCell = getTasksForCell(
+                  filteredTasks,
+                  weekDates[selectedDayIndex],
+                  shift
+                );
+                return tasksForCell.length === 0;
+              }) && <Text style={styles.noTasksText}>No tasks for this day</Text>}
             </View>
           )}
           <View style={{ height: 300 }} />
@@ -400,7 +398,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   searchFilterContainer: {
-    marginBottom: 10,
+    marginBottom: 5,
   },
   navigationContainer: {
     flexDirection: 'row',

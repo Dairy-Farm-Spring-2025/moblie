@@ -1,6 +1,7 @@
 {
   "welcome": "Welcome to the app",
   "goodbye": "Goodbye",
+  "nodata": "No data to display",
   "profile": {
     "title": "Profile",
     "user_id": "User ID",
@@ -100,6 +101,38 @@
   },
   "export_item": {
     "title": "Export Item"
+  },
+  "vaccine_cycle": {
+    "title": "Vaccine Cycle",
+    "unnamedCycle": "Unnamed Cycle",
+    "unknown": "Unknown",
+    "noDescription": "No description",
+    "unnamedDetail": "Unnamed Detail",
+    "na": "N/A",
+    "cowType": "Cow Type",
+    "dosage": "Dosage",
+    "injectionSite": "Injection Site",
+    "firstInjection": "First Injection: Month",
+    "periodic": "Periodic: Every",
+    "item": "Item",
+    "category": "Category",
+    "warehouse": "Warehouse",
+    "loadingMessage": "Fetching vaccine cycles...",
+    "errorMessage": "Error: {message}",
+    "unknownError": "An unknown error occurred",
+    "noData": "No vaccine cycles found",
+    "searchBy": "Search by {filter}...",
+    "nameFilter": "name",
+    "descriptionFilter": "description",
+    "cowTypeFilter": "cow type"
+  },
+  "task_management": {
+    "title": "Task Management",
+    "tasks": "Tasks",
+    "task": "Task",
+    "create": "Create",
+    "report": "Report",
+    "detail": "Detail"
   },
   "validateForm": {
     "required": "Required field"

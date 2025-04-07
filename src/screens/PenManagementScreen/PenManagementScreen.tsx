@@ -6,15 +6,9 @@ import apiClient from '@config/axios/axios';
 import { Pen } from '@model/Pen/Pen';
 import { useNavigation } from '@react-navigation/native';
 import { formatFilteredType, formatType } from '@utils/format';
+import { t } from 'i18next';
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import {
-  FlatList,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Text, Tooltip } from 'react-native-paper';
 import { useQuery } from 'react-query';
 const fetchPens = async (): Promise<Pen[]> => {
@@ -26,27 +20,17 @@ const PenManagementScreen = () => {
   const [searchText, setSearchText] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('name');
   const navigation = useNavigation();
-  const { t } = useTranslation();
-  const {
-    data: pens,
-    isLoading,
-    isError,
-    error,
-  } = useQuery<Pen[]>('pens', fetchPens);
+  const { data: pens, isLoading, isError, error } = useQuery<Pen[]>('pens', fetchPens);
 
   const filteredPen = pens?.filter((pen) => {
     if (selectedFilter === 'name') {
       return pen.name?.toLowerCase().includes(searchText.toLowerCase());
     } else if (selectedFilter === 'type') {
       const humanReadableType = formatFilteredType(pen.penType);
-      return humanReadableType
-        ?.toLowerCase()
-        .includes(searchText.toLowerCase());
+      return humanReadableType?.toLowerCase().includes(searchText.toLowerCase());
     } else if (selectedFilter === 'status') {
       const humanReadableType = formatFilteredType(pen.penStatus);
-      return humanReadableType
-        ?.toLowerCase()
-        .includes(searchText.toLowerCase());
+      return humanReadableType?.toLowerCase().includes(searchText.toLowerCase());
     } else if (selectedFilter === 'area') {
       return pen.area?.name?.toLowerCase().includes(searchText.toLowerCase());
     }
@@ -93,7 +77,7 @@ const PenManagementScreen = () => {
                 <View>
                   <View style={styles.cardTitle}>
                     <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
-                    <Tooltip enterTouchDelay={200} title="Area">
+                    <Tooltip enterTouchDelay={200} title='Area'>
                       <TagUI>{item.area.name}</TagUI>
                     </Tooltip>
                   </View>
@@ -105,14 +89,14 @@ const PenManagementScreen = () => {
                     }}
                   >
                     <View style={styles.cardContent}>
-                      <Tooltip title="Pen Status">
-                        <TagUI backgroundColor="orange" fontSize={10}>
+                      <Tooltip title='Pen Status'>
+                        <TagUI backgroundColor='orange' fontSize={10}>
                           {formatType(item.penStatus)}
                         </TagUI>
                       </Tooltip>
                     </View>
                     <TextTitle
-                      title="Dimension"
+                      title='Dimension'
                       content={`${item.area.penWidth}m x ${item.area.penLength}m`}
                     />
                   </View>
