@@ -5,10 +5,12 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Button,
+  Platform,
+  Dimensions,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { t } from 'i18next';
+import ButtonComponent from '@components/Button/ButtonComponent'; // Assuming you have a custom button
 
 export interface Option {
   label: string;
@@ -22,72 +24,75 @@ interface CustomPickerProps {
   title?: string;
 }
 
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+
 const CustomPicker: React.FC<CustomPickerProps> = ({
   options,
   selectedValue,
   onValueChange,
-  title = t('Select...'),
+  title = t('application.select_type', { defaultValue: 'Select type...' }),
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [tempValue, setTempValue] = useState(selectedValue);
+  const [tempValue, setTempValue] = useState(selectedValue || '');
 
+  // Sync tempValue with selectedValue
   useEffect(() => {
-    setTempValue(selectedValue); // Update tempValue when selectedValue changes
+    setTempValue(selectedValue || '');
   }, [selectedValue]);
 
-  const selectedOption = options.find((opt) => opt.value === selectedValue);
+  const selectedOption = options.find((opt) => opt.value === selectedValue) || null;
+
+  const handleConfirm = () => {
+    console.log('Confirm - setting value:', tempValue);
+    onValueChange(tempValue);
+    setModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setTempValue(selectedValue || ''); // Reset to original value
+    setModalVisible(false);
+  };
 
   return (
     <>
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
-          setTempValue(selectedValue); // Reset to selected value when opening modal
+          setTempValue(selectedValue || '');
           setModalVisible(true);
         }}
       >
-        <Text
-          style={[
-            styles.buttonText,
-            ((!selectedOption && title === 'Select...') ||
-              title === 'Chọn...') &&
-              styles.placeholderText,
-          ]}
-        >
+        <Text style={[styles.buttonText, !selectedOption && styles.placeholderText]}>
           {selectedOption ? selectedOption.label : title}
         </Text>
       </TouchableOpacity>
 
-      <Modal
-        visible={modalVisible}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Picker
-              selectedValue={tempValue}
-              onValueChange={(value) => setTempValue(value)} // Handle picker value change
-            >
-              {options.map((opt) => (
-                <Picker.Item
-                  key={opt.value}
-                  label={opt.label}
-                  value={opt.value}
-                />
-              ))}
-            </Picker>
-
-            <View style={styles.modalButtons}>
-              <Button
-                title="Confirm"
-                onPress={() => {
-                  onValueChange(tempValue); // Pass the selected value to the parent
-                  setModalVisible(false);
-                }}
-              />
-              <Button title="Cancel" onPress={() => setModalVisible(false)} />
+      <Modal visible={modalVisible} transparent animationType='slide' onRequestClose={handleCancel}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={tempValue}
+                onValueChange={(value) => setTempValue(value as string)}
+                style={styles.picker}
+                itemStyle={styles.pickerItem} // Consistent item styling
+              >
+                {options.map((opt) => (
+                  <Picker.Item key={opt.value} label={opt.label} value={opt.value} />
+                ))}
+              </Picker>
+            </View>
+            <View style={styles.buttonContainer}>
+              <ButtonComponent width={100} type='primary' onPress={handleConfirm}>
+                {t('task_detail.confirm', { defaultValue: 'Confirm' })}
+              </ButtonComponent>
+              <ButtonComponent
+                width={100}
+                type='secondary' // Assuming you have a secondary style
+                onPress={handleCancel}
+              >
+                {t('task_detail.cancel', { defaultValue: 'Cancel' })}
+              </ButtonComponent>
             </View>
           </View>
         </View>
@@ -100,31 +105,55 @@ const styles = StyleSheet.create({
   button: {
     borderWidth: 1,
     borderColor: '#ccc',
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 10,
+    padding: 12,
+    borderRadius: 8,
     backgroundColor: '#fff',
+    justifyContent: 'center',
+    minHeight: 48, // Consistent height across platforms
   },
   buttonText: {
     fontSize: 16,
     color: '#000',
+    textAlign: 'left', // Android picker buttons often align left
   },
   placeholderText: {
     color: '#999',
   },
-  modalContainer: {
+  modalOverlay: {
     flex: 1,
-    justifyContent: 'flex-end',
     backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
   },
-  modalContent: {
-    backgroundColor: 'white',
-    padding: 10,
+  modalContainer: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    paddingVertical: 20,
+    minHeight: 250, // Limit height to half screen
+    width: '100%',
   },
-  modalButtons: {
+  pickerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  picker: {
+    width: '100%',
+    ...(Platform.OS === 'ios' && { height: 230 }), // Fixed height for iOS wheel
+    ...(Platform.OS === 'android' && { marginVertical: 10 }), // Spacing for Android dropdown
+  },
+  pickerItem: {
+    fontSize: 22,
+    color: '#000',
+  },
+  buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 20,
+    paddingHorizontal: 20,
+    paddingBottom: Platform.OS === 'ios' ? 20 : 10, // Extra padding for iOS safe area
+  },
+  modalButton: {
+    flex: 1,
+    marginHorizontal: 5,
   },
 });
 

@@ -60,8 +60,7 @@ const CreateApplicationScreen = () => {
   });
 
   const { mutate } = useMutation(
-    async (data: ApplicationPayload) =>
-      await apiClient.post(`application/request`, data),
+    async (data: ApplicationPayload) => await apiClient.post(`application/request`, data),
     {
       onSuccess: (response: any) => {
         Alert.alert(t('Success'), response.message);
@@ -99,10 +98,7 @@ const CreateApplicationScreen = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
     >
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        keyboardShouldPersistTaps="handled"
-      >
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps='handled'>
         {isLoading ? (
           <ActivityIndicator />
         ) : isError ? (
@@ -157,8 +153,7 @@ const CreateApplicationScreen = () => {
                 </Text>
                 <Text style={styles.license}>
                   {t('application.license2', {
-                    defaultValue:
-                      'Application will be checked by Manager in 24h',
+                    defaultValue: 'Application will be checked by Manager in 24h',
                   })}
                 </Text>
                 <Text
@@ -190,16 +185,14 @@ const CreateApplicationScreen = () => {
                   subTitle={t('application.subTitle', {
                     defaultValue: 'Fill all the request',
                   })}
-                  leftContent={(props: any) => (
-                    <LeftContent {...props} icon="plus" />
-                  )}
+                  leftContent={(props: any) => <LeftContent {...props} icon='plus' />}
                 />
                 <DividerUI />
                 <CardComponent.Content>
                   <View style={styles.containerForm}>
                     <FormItem
                       control={control}
-                      name="typeId"
+                      name='typeId'
                       label={t('application.applicationType', {
                         defaultValue: 'Application type',
                       })}
@@ -207,28 +200,23 @@ const CreateApplicationScreen = () => {
                         required: t('validateForm.required'),
                       }}
                       error={errors.typeId ? errors.typeId.message : null}
-                      render={({ field: { onChange, value } }) => (
-                        <CustomPicker
-                          options={
-                            dataAppType?.map((item) => ({
-                              label: item.name,
-                              value: item.applicationId.toString(),
-                            })) || []
-                          }
-                          selectedValue={value || ''}
-                          onValueChange={(selected) => {
-                            onChange(Number(selected));
-                            setTypeValue(selected);
-                          }}
-                          title={
-                            value
-                              ? dataAppType?.find(
-                                  (element) => element.applicationId === value
-                                )?.name
-                              : undefined
-                          }
-                        />
-                      )}
+                      render={({ field: { onChange, value } }) => {
+                        const options =
+                          dataAppType?.map((item) => ({
+                            label: item.name,
+                            value: item.applicationId.toString(),
+                          })) || [];
+                        return (
+                          <CustomPicker
+                            options={options}
+                            selectedValue={value || ''} // Should be '' initially
+                            onValueChange={(selected) => {
+                              onChange(selected); // Update form state
+                              setTypeValue(selected); // Update local state
+                            }}
+                          />
+                        );
+                      }}
                     />
 
                     {/* Title Field */}
@@ -236,7 +224,7 @@ const CreateApplicationScreen = () => {
                       <>
                         <FormItem
                           control={control}
-                          name="title"
+                          name='title'
                           label={t('application.titleFormItem', {
                             defaultValue: 'Title',
                           })}
@@ -253,13 +241,13 @@ const CreateApplicationScreen = () => {
                                 onChange(text);
                               }}
                               value={value as any}
-                              returnKeyType="done"
+                              returnKeyType='done'
                             />
                           )}
                         />
                         <FormItem
                           control={control}
-                          name="content"
+                          name='content'
                           label={t('application.content', {
                             defaultValue: 'Content',
                           })}
@@ -269,9 +257,7 @@ const CreateApplicationScreen = () => {
                           error={errors.content ? errors.content.message : null}
                           render={({ field: { onChange, onBlur, value } }) => (
                             <TextInputComponent
-                              error={
-                                errors.content ? errors.content.message : ''
-                              }
+                              error={errors.content ? errors.content.message : ''}
                               editable
                               multiline
                               numberOfLines={4}
@@ -290,22 +276,20 @@ const CreateApplicationScreen = () => {
                         <View style={styles.containerDate}>
                           <FormItem
                             control={control}
-                            name="fromDate"
+                            name='fromDate'
                             label={t('application.fromDate', {
                               defaultValue: 'From Date',
                             })}
                             rules={{
                               required: t('validateForm.required'),
                             }}
-                            error={
-                              errors.fromDate ? errors.fromDate.message : null
-                            }
+                            error={errors.fromDate ? errors.fromDate.message : null}
                             render={({ field: { onChange, value } }) => (
                               <DateTimePicker
                                 value={fromDate || new Date()}
-                                mode="date"
+                                mode='date'
                                 is24Hour={true}
-                                display="default"
+                                display='default'
                                 minimumDate={new Date()}
                                 onChange={(e, date) => {
                                   handleFromDateChange(e, date);
@@ -318,7 +302,7 @@ const CreateApplicationScreen = () => {
                           {/* To Date Field */}
                           <FormItem
                             control={control}
-                            name="toDate"
+                            name='toDate'
                             label={t('application.toDate', {
                               defaultValue: 'To Date',
                             })}
@@ -329,9 +313,9 @@ const CreateApplicationScreen = () => {
                             render={({ field: { onChange, value } }) => (
                               <DateTimePicker
                                 value={toDate || new Date()}
-                                mode="date"
+                                mode='date'
                                 is24Hour={true}
-                                display="default"
+                                display='default'
                                 minimumDate={fromDate || new Date()} // To date should be after from date
                                 onChange={(e, date) => {
                                   handleToDateChange(e, date);
@@ -345,10 +329,7 @@ const CreateApplicationScreen = () => {
                     )}
 
                     {/* Submit Button */}
-                    <ButtonComponent
-                      type="primary"
-                      onPress={handleSubmit(onSubmit)}
-                    >
+                    <ButtonComponent type='primary' onPress={handleSubmit(onSubmit)}>
                       {t('application.submitButton', {
                         defaultValue: 'Submit',
                       })}

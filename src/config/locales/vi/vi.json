@@ -314,5 +314,24 @@
   "Processing": "Đang tiến hành",
   "Complete": "Hoàn thành",
   "Success": "Thành công",
-  "Error": "Lỗi"
+  "Error": "Lỗi",
+  "task_detail": {
+    "title": "Chi tiết công việc",
+    "priority": "Độ Ưu tiên",
+    "status": "Trạng thái",
+    "date": "Ngày",
+    "area": "Khu vực",
+    "assigned_by": "Được giao bởi",
+    "shift": "Ca làm việc",
+    "notes": "Ghi chú",
+    "description": "Mô tả",
+    "view_materials": "Xem công việc",
+    "check_in": "Điểm danh",
+    "checking_in": "Đang điểm danh...",
+    "show_more": "Xem thêm",
+    "show_less": "Thu gọn",
+    "view_illness": "Xem bệnh",
+    "view_illness_detail": "Xem chi tiết bệnh",
+    "view_vaccine_injection": "Xem tiêm vaccine"
+  }
 }

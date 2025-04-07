@@ -10,6 +10,7 @@ import { Button, SegmentedButtons } from 'react-native-paper';
 import { Alert } from 'react-native';
 import ReportTask from '@screens/TaskScreen/ReportTask/ReportTask';
 import { formatCamelCase } from '@utils/format';
+import { t } from 'i18next';
 
 type RootStackParamList = {
   TaskDetail: { task: Task; selectedDate: string };
@@ -36,7 +37,7 @@ const TaskDetailContent: React.FC<{
   const navigation = useNavigation();
 
   const handleToggleExpand = () => setIsExpanded(!isExpanded);
-  console.log('task', task.material.vaccineInjection?.id);
+  console.log('task', task.material?.vaccineInjection?.id);
 
   // Check if a report exists for the selected date
   const hasReportForDate = task.reportTask && task.reportTask.date === selectedDate;
@@ -126,17 +127,17 @@ const TaskDetailContent: React.FC<{
     switch (screenType) {
       case 'illness':
         (navigation.navigate as any)('IllnessCowRecordScreen', {
-          illnessId: task.material.illness?.illnessId,
+          illnessId: task.material?.illness?.illnessId,
         });
         break;
       case 'illnessDetail':
         (navigation.navigate as any)('IllnessDetailForm', {
-          illnessDetail: task.material.illnessDetail,
+          illnessDetail: task.material?.illnessDetail,
         });
         break;
       case 'vaccineInjection':
         (navigation.navigate as any)('InjectionScreen', {
-          vaccineInjectionId: task.material.vaccineInjection?.id,
+          vaccineInjectionId: task.material?.vaccineInjection?.id,
         });
         break;
       default:
@@ -153,7 +154,7 @@ const TaskDetailContent: React.FC<{
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
           <AntDesign name='exclamationcircleo' size={21} color={textColor} style={styles.icon} />
-          <Text style={[styles.textLabel, { color: textColor }]}>Priority:</Text>
+          <Text style={[styles.textLabel, { color: textColor }]}>{t('task_detail.priority')}:</Text>
         </View>
         <View style={[styles.priorityBadge, { backgroundColor: priorityColor }]}>
           <Text style={[styles.priorityText, { color: '#fff' }]}>{task.priority}</Text>
@@ -168,7 +169,7 @@ const TaskDetailContent: React.FC<{
             color={textColor}
             style={styles.icon}
           />
-          <Text style={[styles.textLabel, { color: textColor }]}>Status:</Text>
+          <Text style={[styles.textLabel, { color: textColor }]}>{t('task_detail.status')}:</Text>
         </View>
         <View style={[styles.tag, { backgroundColor: getStatusColor(task.status) }]}>
           <Text style={[styles.tagText, { color: '#fff' }]}>{formatCamelCase(task.status)}</Text>
@@ -178,7 +179,7 @@ const TaskDetailContent: React.FC<{
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
           <Ionicons name='calendar-outline' size={20} color={textColor} style={styles.icon} />
-          <Text style={[styles.textLabel, { color: textColor }]}>Date:</Text>
+          <Text style={[styles.textLabel, { color: textColor }]}>{t('task_detail.date')}:</Text>
         </View>
         <View style={[styles.tag, { backgroundColor: '#e8e8e8' }]}>
           <Text style={[styles.tagText, { color: textColor }]}>
@@ -190,7 +191,7 @@ const TaskDetailContent: React.FC<{
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
           <Ionicons name='location-outline' size={20} color={textColor} style={styles.icon} />
-          <Text style={[styles.textLabel, { color: textColor }]}>Area:</Text>
+          <Text style={[styles.textLabel, { color: textColor }]}>{t('task_detail.area')}:</Text>
         </View>
         <View style={[styles.tag, { backgroundColor: '#e8e8e8' }]}>
           <Text style={[styles.tagText, { color: textColor }]}>{task.areaId.name}</Text>
@@ -200,7 +201,9 @@ const TaskDetailContent: React.FC<{
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
           <Ionicons name='person-outline' size={20} color={textColor} style={styles.icon} />
-          <Text style={[styles.textLabel, { color: textColor }]}>Assigned by:</Text>
+          <Text style={[styles.textLabel, { color: textColor }]}>
+            {t('task_detail.assigned_by')}:
+          </Text>
         </View>
         <View style={[styles.tag, { backgroundColor: '#e8e8e8' }]}>
           <Text style={[styles.tagText, { color: textColor }]}>{task.assignerName}</Text>
@@ -210,7 +213,7 @@ const TaskDetailContent: React.FC<{
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
           <Ionicons name='time-outline' size={20} color={textColor} style={styles.icon} />
-          <Text style={[styles.textLabel, { color: textColor }]}>Shift:</Text>
+          <Text style={[styles.textLabel, { color: textColor }]}>{t('task_detail.shift')}:</Text>
         </View>
         <View
           style={[
@@ -236,7 +239,7 @@ const TaskDetailContent: React.FC<{
         <View style={styles.infoRow}>
           <View style={styles.labelContainer}>
             <Ionicons name='chatbubble-outline' size={20} color={textColor} style={styles.icon} />
-            <Text style={[styles.textLabel, { color: textColor }]}>Notes:</Text>
+            <Text style={[styles.textLabel, { color: textColor }]}>{t('task_detail.notes')}:</Text>
           </View>
           <View style={[styles.tag, { backgroundColor: '#e8e8e8' }]}>
             <Text style={[styles.tagText, { color: textColor }]}>{task.completionNotes}</Text>
@@ -247,7 +250,9 @@ const TaskDetailContent: React.FC<{
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
           <Ionicons name='document-text-outline' size={20} color={textColor} style={styles.icon} />
-          <Text style={[styles.textLabel, { color: textColor }]}>Description:</Text>
+          <Text style={[styles.textLabel, { color: textColor }]}>
+            {t('task_detail.description')}:
+          </Text>
         </View>
       </View>
       <View style={styles.descriptionContainerWrapper}>
@@ -284,14 +289,18 @@ const TaskDetailContent: React.FC<{
               color={textColor}
               style={styles.icon}
             />
-            <Text style={[styles.textLabel, { color: textColor }]}>View Materials:</Text>
+            <Text style={[styles.textLabel, { color: textColor }]}>
+              {t('task_detail.view_materials')}:
+            </Text>
           </View>
           <TouchableOpacity onPress={handleViewMaterials} disabled={isCheckingIn}>
             <Text style={styles.materials}>View</Text>
           </TouchableOpacity>
         </View>
       )}
-      {(task.material.illness || task.material.illnessDetail || task.material.vaccineInjection) && (
+      {(task.material?.illness ||
+        task.material?.illnessDetail ||
+        task.material?.vaccineInjection) && (
         <View style={styles.infoRow}>
           <View style={styles.labelContainer}>
             <Ionicons
@@ -300,7 +309,9 @@ const TaskDetailContent: React.FC<{
               color={textColor}
               style={styles.icon}
             />
-            <Text style={[styles.textLabel, { color: textColor }]}>View Materials:</Text>
+            <Text style={[styles.textLabel, { color: textColor }]}>
+              {t('task_detail.view_materials')}:
+            </Text>
           </View>
           {/* Illness Link */}
           {task.material.illness && (
@@ -308,7 +319,7 @@ const TaskDetailContent: React.FC<{
               onPress={() => handleNavigateScreen('illness')}
               disabled={isCheckingIn}
             >
-              <Text style={styles.materials}>View Illness</Text>
+              <Text style={styles.materials}>{t('task_detail.view_illness')}</Text>
             </TouchableOpacity>
           )}
 
@@ -318,7 +329,7 @@ const TaskDetailContent: React.FC<{
               onPress={() => handleNavigateScreen('illnessDetail')}
               disabled={isCheckingIn}
             >
-              <Text style={styles.materials}>View Illness Detail</Text>
+              <Text style={styles.materials}>{t('task_detail.view_illness_detail')}</Text>
             </TouchableOpacity>
           )}
 
@@ -328,7 +339,7 @@ const TaskDetailContent: React.FC<{
               onPress={() => handleNavigateScreen('vaccineInjection')}
               disabled={isCheckingIn}
             >
-              <Text style={styles.materials}>View Vaccine Injection</Text>
+              <Text style={styles.materials}>{t('task_detail.view_vaccine_injection')}</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -361,7 +372,7 @@ const TaskDetail: React.FC = () => {
   const checkInMutation = useMutation<unknown, ApiError, string | number>(
     (taskId: string | number) => apiClient.post(`/reportTask/joinTask/${taskId}`),
     {
-      onSuccess: (response) => {
+      onSuccess: (response: any) => {
         Alert.alert('Success', response.data?.message || 'Task checked in successfully!');
         queryClient.invalidateQueries('tasks');
       },
@@ -385,8 +396,8 @@ const TaskDetail: React.FC = () => {
         value={selectedSegment}
         onValueChange={setSelectedSegment}
         buttons={[
-          { value: 'detail', label: 'Task Detail', icon: 'file-document' },
-          { value: 'report', label: 'Report Task', icon: 'chart-bar' },
+          { value: 'detail', label: t('task_detail.title'), icon: 'file-document' },
+          { value: 'report', label: t('Report Task'), icon: 'chart-bar' },
         ]}
       />
       {selectedSegment === 'detail' ? (
