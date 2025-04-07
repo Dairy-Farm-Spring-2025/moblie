@@ -29,6 +29,8 @@ import FeedDetailScreen from '@screens/FeedManagementScreen/components/DetailFee
 import MyExportItemScreen from '@screens/MyExportItemScreen/MyExportItemScreen';
 import InjectionScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/InjectionScreen/InjectionScreen';
 import VaccineCyclesManagementScreen from '@screens/VaccineCyclesManagementScreen/VaccineCyclesManagementScreen';
+import MyApplicationScreen from '@screens/ApplicationScreen/MyApplicationScreen/MyApplicationScreen';
+import CreateApplicationScreen from '@screens/ApplicationScreen/CreateApplicationScreen/CreateApplicationScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -172,6 +174,24 @@ const CowRoute: React.FC = () => {
         options={{
           title: t('vaccine_cycle.title', {
             defaultValue: 'Vaccine Cycle',
+          }),
+        }}
+      />
+      <Stack.Screen
+        name='ViewApplicationScreen'
+        component={MyApplicationScreen}
+        options={{
+          title: t('application.titleView', {
+            defaultValue: 'View my application',
+          }),
+        }}
+      />
+      <Stack.Screen
+        name='CreateApplicationScreen'
+        component={CreateApplicationScreen}
+        options={{
+          title: t('application.titleCreate', {
+            defaultValue: 'Create application',
           }),
         }}
       />

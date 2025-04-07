@@ -5,6 +5,7 @@ import { useMutation } from 'react-query';
 import apiClient from '@config/axios/axios';
 import Dropdown from '@components/Dropdown/Dropdown';
 import TitleNameCows from '@components/TitleNameCows/TitleNameCows';
+import { useTranslation } from 'react-i18next';
 
 interface FormDataType {
   name: string;
@@ -25,7 +26,7 @@ const ProfileUpdateScreen: React.FC = () => {
   const [address, setAddress] = useState<string>('');
   const [dob, setDob] = useState<string>('');
   const [gender, setGender] = useState<string>('');
-
+  const { t } = useTranslation();
   const mutation = useMutation(
     async (formData: FormData) => {
       const response = await apiClient.put('/users/update', formData);
@@ -60,19 +61,19 @@ const ProfileUpdateScreen: React.FC = () => {
 
   return (
     <ScrollView>
-      <TitleNameCows title='Update Your Profile' cowName='' />
+      <TitleNameCows title={t('Update Your Profile')} cowName='' />
       <View style={styles.container}>
-        <TextInput label='Name' value={name} onChangeText={setName} style={styles.input} />
+        <TextInput label={t('Name')} value={name} onChangeText={setName} style={styles.input} />
         <TextInput
-          label='Phone Number'
+          label={t('Phone Number')}
           value={phoneNumber}
           onChangeText={setPhoneNumber}
           keyboardType='phone-pad'
           style={styles.input}
         />
-        <TextInput label='Address' value={address} onChangeText={setAddress} style={styles.input} />
+        <TextInput label={t('Address')} value={address} onChangeText={setAddress} style={styles.input} />
         <TextInput
-          label='Date of Birth'
+          label={t('Date of Birth')}
           value={dob}
           onChangeText={setDob}
           placeholder='YYYY-MM-DD'
@@ -92,7 +93,7 @@ const ProfileUpdateScreen: React.FC = () => {
           loading={mutation.isLoading}
           disabled={mutation.isLoading}
         >
-          Update Profile
+          {t('Update Profile')}
         </Button>
       </View>
     </ScrollView>

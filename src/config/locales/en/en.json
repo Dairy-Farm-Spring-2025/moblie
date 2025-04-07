@@ -133,5 +133,8 @@
     "create": "Create",
     "report": "Report",
     "detail": "Detail"
+  },
+  "validateForm": {
+    "required": "Required field"
   }
 }

@@ -18,6 +18,7 @@ import { useQuery, useMutation } from 'react-query';
 import { CreateCowModel } from '@model/Request/CreateCow';
 import { CowType } from '@model/Cow/Cow';
 import { Button } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
 
 const fetchCowType = async (): Promise<CowType[]> => {
   try {
@@ -31,7 +32,7 @@ const fetchCowType = async (): Promise<CowType[]> => {
 const CreateCow: React.FC = () => {
   const navigation = useNavigation();
   const { data: cowTypes, isLoading, isError } = useQuery('cow-types', fetchCowType);
-
+  const { t } = useTranslation()
   const [cowData, setCowData] = useState<CreateCowModel>({
     cowStatus: 'milkingCow',
     dateOfBirth: new Date().toISOString(),
@@ -62,9 +63,9 @@ const CreateCow: React.FC = () => {
       style={{ flex: 1 }}
     >
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>Create New Cow</Text>
+        <Text style={styles.title}>{('Create New Cow')}</Text>
 
-        <Text style={styles.label}>Description</Text>
+        <Text style={styles.label}>{('Description')}</Text>
         <TextInput
           style={styles.input}
           placeholder='Enter description'
@@ -72,7 +73,7 @@ const CreateCow: React.FC = () => {
           onChangeText={(text) => handleChange('description', text)}
         />
 
-        <Text style={styles.label}>Cow Type</Text>
+        <Text style={styles.label}>{t('Cow Type')}</Text>
         {isLoading ? (
           <ActivityIndicator size='small' color='#0000ff' />
         ) : isError ? (
@@ -93,7 +94,7 @@ const CreateCow: React.FC = () => {
           </Picker>
         )}
 
-        <Text style={styles.label}>Cow Status</Text>
+        <Text style={styles.label}>{t('Cow Status')}</Text>
         <Picker
           selectedValue={cowData.cowStatus}
           style={styles.input}
@@ -143,11 +144,11 @@ const CreateCow: React.FC = () => {
           style={styles.input}
           onValueChange={(itemValue) => handleChange('gender', itemValue)}
         >
-          <Picker.Item label='Female' value='female' />
-          <Picker.Item label='Male' value='male' />
+          <Picker.Item label={t('Female')} value='female' />
+          <Picker.Item label={t('Male')} value='male' />
         </Picker>
 
-        <Text style={styles.label}>Date of Birth</Text>
+        <Text style={styles.label}>{t('Date of Birth')}</Text>
         <DateTimePicker
           value={new Date(cowData.dateOfBirth)}
           mode='date'
@@ -157,7 +158,7 @@ const CreateCow: React.FC = () => {
           }
         />
 
-        <Text style={styles.label}>Date of Enter</Text>
+        <Text style={styles.label}>{t('Date of Enter')}</Text>
         <DateTimePicker
           value={new Date(cowData.dateOfEnter)}
           mode='date'

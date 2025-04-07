@@ -16,13 +16,14 @@ import * as ImagePicker from 'expo-image-picker';
 import apiClient from '@config/axios/axios';
 import { useMutation } from 'react-query';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 
 type RootStackParamList = {
   ReportTaskForm: { reportId: string | number };
 };
 
 type ReportTaskFormRouteProp = RouteProp<RootStackParamList, 'ReportTaskForm'>;
-
+const { t } = useTranslation();
 const ReportTaskForm: React.FC = () => {
   const navigation = useNavigation();
   const route = useRoute<ReportTaskFormRouteProp>();
@@ -38,7 +39,7 @@ const ReportTaskForm: React.FC = () => {
     if (Platform.OS !== 'web') {
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permission Denied', 'Sorry, we need camera permissions to take pictures!');
+        Alert.alert(t('Permission Denied', 'Sorry, we need camera permissions to take pictures!'));
         return false;
       }
     }
@@ -131,10 +132,10 @@ const ReportTaskForm: React.FC = () => {
 
   return (
     <View style={styles.card}>
-      <Text style={styles.title}>Report Task #{reportId}</Text>
+      <Text style={styles.title}>{t('Report Task')} #{reportId}</Text>
 
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Description</Text>
+        <Text style={styles.label}>{t('Description')}</Text>
         <TextInput
           style={styles.input}
           value={formData.description}
@@ -145,10 +146,10 @@ const ReportTaskForm: React.FC = () => {
       </View>
 
       <View style={styles.imageContainer}>
-        <Text style={styles.label}>Uploaded/Captured Image</Text>
+        <Text style={styles.label}>{t('Uploaded/Captured Image')}</Text>
         <TouchableOpacity style={styles.uploadButton} onPress={() => setModalVisible(true)}>
           <Ionicons name='camera-outline' size={24} color='#fff' />
-          <Text style={styles.uploadButtonText}>Add Image</Text>
+          <Text style={styles.uploadButtonText}>{t('Add Image')}</Text>
         </TouchableOpacity>
         {formData.imagesFile && (
           <Image source={{ uri: formData.imagesFile }} style={styles.imagePreviewItem} />
@@ -178,17 +179,17 @@ const ReportTaskForm: React.FC = () => {
           <View style={styles.modalContent}>
             <TouchableOpacity style={styles.modalButton} onPress={pickImage}>
               <Ionicons name='image-outline' size={30} color='#007bff' />
-              <Text style={styles.modalButtonText}>Pick from Gallery</Text>
+              <Text style={styles.modalButtonText}>{t('Pick from Gallery')}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.modalButton} onPress={takePicture}>
               <Ionicons name='camera' size={30} color='#007bff' />
-              <Text style={styles.modalButtonText}>Take a Photo</Text>
+              <Text style={styles.modalButtonText}>{t('Take a Photo')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.modalButton, styles.cancelButton]}
               onPress={() => setModalVisible(false)}
             >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
+              <Text style={styles.cancelButtonText}>{t('Cancel')}</Text>
             </TouchableOpacity>
           </View>
         </View>

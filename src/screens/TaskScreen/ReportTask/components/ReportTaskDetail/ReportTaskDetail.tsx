@@ -18,12 +18,13 @@ import apiClient from '@config/axios/axios';
 import { ReportTaskData } from '@model/Task/Task';
 import { getReportImage } from '@utils/getImage';
 import RenderHTML from 'react-native-render-html';
+import { useTranslation } from 'react-i18next';
 
 type RootStackParamList = {
   ReportTaskDetail: { report: ReportTaskData };
   ReportTaskForm: { reportId: number };
 };
-
+const { t } = useTranslation();
 type ReportTaskDetailRouteProp = RouteProp<RootStackParamList, 'ReportTaskDetail'>;
 
 const fetchReportTask = async (reportId: number): Promise<ReportTaskData> => {
@@ -62,7 +63,7 @@ const ReportTaskDetailContent: React.FC<{
   if (!report) {
     return (
       <View style={styles.card}>
-        <Text style={styles.title}>Loading Report...</Text>
+        <Text style={styles.title}>{t('Loading Report')}...</Text>
       </View>
     );
   }
@@ -72,7 +73,7 @@ const ReportTaskDetailContent: React.FC<{
   return (
     <View style={styles.card}>
       <View style={styles.header}>
-        <Text style={styles.title}>Report #{report.reportTaskId}</Text>
+        <Text style={styles.title}>{t('Report')} #{report.reportTaskId}</Text>
         <View style={[styles.statusBadge, { backgroundColor: getStatusColor(report.status) }]}>
           <Text style={styles.statusText}>{report.status}</Text>
         </View>
@@ -81,7 +82,7 @@ const ReportTaskDetailContent: React.FC<{
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
           <Ionicons name='calendar-outline' size={20} color='#595959' style={styles.icon} />
-          <Text style={styles.textLabel}>Date:</Text>
+          <Text style={styles.textLabel}>{t('Date')}:</Text>
         </View>
         <View style={styles.dataContainer}>
           <View style={styles.tag}>
@@ -93,7 +94,7 @@ const ReportTaskDetailContent: React.FC<{
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
           <Ionicons name='time-outline' size={20} color='#595959' style={styles.icon} />
-          <Text style={styles.textLabel}>Start Time:</Text>
+          <Text style={styles.textLabel}>{t('Start Time')}:</Text>
         </View>
         <View style={styles.dataContainer}>
           <View style={styles.tag}>
@@ -105,7 +106,7 @@ const ReportTaskDetailContent: React.FC<{
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
           <Ionicons name='time-outline' size={20} color='#595959' style={styles.icon} />
-          <Text style={styles.textLabel}>End Time:</Text>
+          <Text style={styles.textLabel}>{t('End Time')}:</Text>
         </View>
         <View style={styles.dataContainer}>
           <View style={styles.tag}>
@@ -118,7 +119,7 @@ const ReportTaskDetailContent: React.FC<{
 
       <View style={styles.infoRow}>
         <Ionicons name='document-text-outline' size={20} color='#595959' style={styles.icon} />
-        <Text style={styles.textLabel}>Description:</Text>
+        <Text style={styles.textLabel}>{t('Description')}:</Text>
       </View>
       <View style={styles.contentContainer}>
         <RenderHTML source={{ html: report?.description || '<p>N/A</p>' }} />
@@ -126,7 +127,7 @@ const ReportTaskDetailContent: React.FC<{
 
       <View style={styles.infoRow}>
         <Ionicons name='chatbubble-outline' size={20} color='#595959' style={styles.icon} />
-        <Text style={styles.textLabel}>Comment:</Text>
+        <Text style={styles.textLabel}>{t('Comment')}:</Text>
       </View>
       <View style={styles.contentContainer}>
         <RenderHTML source={{ html: report.comment || '<p>N/A</p>' }} />
@@ -135,7 +136,7 @@ const ReportTaskDetailContent: React.FC<{
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
           <Ionicons name='person-outline' size={20} color='#595959' style={styles.icon} />
-          <Text style={styles.textLabel}>Reviewer:</Text>
+          <Text style={styles.textLabel}>{t('Reviewer')}:</Text>
         </View>
         <View style={styles.dataContainer}>
           <View style={styles.tag}>
@@ -152,7 +153,7 @@ const ReportTaskDetailContent: React.FC<{
 
       <View style={styles.infoRow}>
         <Ionicons name='image-outline' size={20} color='#595959' style={styles.icon} />
-        <Text style={styles.textLabel}>Images:</Text>
+        <Text style={styles.textLabel}>{t('Images')}:</Text>
       </View>
       <View style={styles.contentContainer}>
         {report.reportImages.length > 0 ? (
@@ -166,7 +167,7 @@ const ReportTaskDetailContent: React.FC<{
             ))}
           </ScrollView>
         ) : (
-          <Text style={styles.noContentText}>No images</Text>
+          <Text style={styles.noContentText}>{t('No images')}</Text>
         )}
       </View>
 

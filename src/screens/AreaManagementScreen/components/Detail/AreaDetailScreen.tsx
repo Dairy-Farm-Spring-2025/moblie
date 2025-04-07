@@ -3,6 +3,7 @@ import { Area } from '@model/Area/Area';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { formatType } from '@utils/format';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Image, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useQuery } from 'react-query';
@@ -17,7 +18,7 @@ const fetchAreaDetails = async (areaId: number): Promise<Area> => {
   const response = await apiClient.get(`/areas/${areaId}`);
   return response.data;
 };
-
+const { t } = useTranslation()
 const AreaDetailScreen = () => {
   const route = useRoute<AreaDetailScreenProp>();
   const { areaId } = route.params;
@@ -49,15 +50,15 @@ const AreaDetailScreen = () => {
       <View style={styles.card}>
         <Text style={styles.title}>{area.name}</Text>
         <Text style={styles.text}>
-          📏 <Text style={styles.bold}>Dimension:</Text> {area.width}m x{' '}
+          📏 <Text style={styles.bold}>{t('Dimension')}:</Text> {area.width}m x{' '}
           {area.length}m
         </Text>
         <Text style={styles.text}>
-          📏 <Text style={styles.bold}>Pen Dimension:</Text> {area.penWidth}m x{' '}
+          📏 <Text style={styles.bold}>{t('Pen Dimension')}:</Text> {area.penWidth}m x{' '}
           {area.penLength}m
         </Text>
         <Text style={styles.text}>
-          📍 <Text style={styles.bold}>Area Type:</Text>{' '}
+          📍 <Text style={styles.bold}>{t('Area Type')}:</Text>{' '}
           {formatType(area.areaType)}
         </Text>
         <View
@@ -65,7 +66,7 @@ const AreaDetailScreen = () => {
             flexDirection: 'column',
           }}
         >
-          <Text style={[styles.text, styles.bold]}>📖 Description:</Text>
+          <Text style={[styles.text, styles.bold]}>📖 {t('Description')}:</Text>
           <Text>{area.description}</Text>
         </View>
       </View>
@@ -74,13 +75,13 @@ const AreaDetailScreen = () => {
 
       {/* Thời gian tạo/cập nhật */}
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>📅 Timestamps</Text>
+        <Text style={styles.sectionTitle}>📅 {t('Timestamps')}</Text>
         <Text style={styles.text}>
           🕒 <Text style={styles.bold}>Created At:</Text>{' '}
           {new Date(area.createdAt).toLocaleString()}
         </Text>
         <Text style={styles.text}>
-          🕒 <Text style={styles.bold}>Updated At:</Text>{' '}
+          🕒 <Text style={styles.bold}>{t('Updated At')}:</Text>{' '}
           {new Date(area.updatedAt).toLocaleString()}
         </Text>
       </View>

@@ -4,6 +4,7 @@ import { Pen } from '@model/Pen/Pen';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { formatType } from '@utils/format';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Image, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useQuery } from 'react-query';
@@ -13,7 +14,7 @@ type RootStackParamList = {
 };
 
 type PenDetailScreenProp = RouteProp<RootStackParamList, 'PenDetail'>;
-
+const { t } = useTranslation()
 const fetchPenDetails = async (penId: number): Promise<Pen> => {
   const response = await apiClient.get(`/pens/${penId}`);
   return response.data;
@@ -29,11 +30,11 @@ const PenDetailScreen = () => {
   } = useQuery(['pens', penId], () => fetchPenDetails(penId));
 
   if (isLoading) {
-    return <Text style={styles.loadingText}>Loading pen details...</Text>;
+    return <Text style={styles.loadingText}>{t('Loading pen details')}...</Text>;
   }
 
   if (isError || !pen) {
-    return <Text style={styles.errorText}>Failed to load pen details</Text>;
+    return <Text style={styles.errorText}>{t('Failed to load pen details')}</Text>;
   }
 
   return (
@@ -50,26 +51,26 @@ const PenDetailScreen = () => {
       <View style={styles.card}>
         <Text style={styles.title}>{pen.name}</Text>
         <Text style={styles.text}>
-          📏 <Text style={styles.bold}>Dimension:</Text> {pen.area.penWidth}m x{' '}
+          📏 <Text style={styles.bold}>{t('Dimension')}:</Text> {pen.area.penWidth}m x{' '}
           {pen.area.penLength}m
         </Text>
         <Text style={styles.text}>
-          📼 <Text style={styles.bold}>Pen Type:</Text>{' '}
+          📼 <Text style={styles.bold}>{t('Pen Type')}:</Text>{' '}
           {formatType(pen.penType)}
         </Text>
         <Text style={styles.text}>
-          📌 <Text style={styles.bold}>Status:</Text>{' '}
+          📌 <Text style={styles.bold}>{t('Status')}:</Text>{' '}
           {formatType(pen.penStatus)}
         </Text>
         <Text style={styles.text}>
-          📍 <Text style={styles.bold}>Area:</Text> {formatType(pen.area.name)}
+          📍 <Text style={styles.bold}>{t('Area')}:</Text> {formatType(pen.area.name)}
         </Text>
         <View
           style={{
             flexDirection: 'column',
           }}
         >
-          <Text style={[styles.text, styles.bold]}>📖 Description:</Text>
+          <Text style={[styles.text, styles.bold]}>📖 {t('Description')}:</Text>
           <Text>{pen.description}</Text>
         </View>
       </View>

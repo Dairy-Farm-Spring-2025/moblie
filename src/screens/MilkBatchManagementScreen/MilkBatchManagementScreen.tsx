@@ -19,6 +19,7 @@ import { format } from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
 import FloatingButton from '@components/FloatingButton/FloatingButton';
 import { LineChart } from 'react-native-gifted-charts';
+import { useTranslation } from 'react-i18next';
 
 const fetchMilkBatch = async (): Promise<MilkBatch[]> => {
   try {
@@ -28,7 +29,7 @@ const fetchMilkBatch = async (): Promise<MilkBatch[]> => {
     throw new Error(error?.message || 'An error occurred while fetching the data');
   }
 };
-
+const { t } = useTranslation();
 const MilkBatchManagementScreen: React.FC = () => {
   const navigation = useNavigation();
   const {
@@ -60,13 +61,13 @@ const MilkBatchManagementScreen: React.FC = () => {
   const renderDailyMilk = useCallback(
     ({ item }: { item: DailyMilk }) => (
       <View style={styles.dailyMilkCard}>
-        <Text style={styles.dailyMilkText}>Shift: {item.shift}</Text>
+        <Text style={styles.dailyMilkText}>{t('Shift')}: {item.shift}</Text>
         <Text style={styles.dailyMilkText}>
-          Milk Date: {format(new Date(item.milkDate), 'dd/MM/yyyy')}
+          {t('Milk Date')}: {format(new Date(item.milkDate), 'dd/MM/yyyy')}
         </Text>
-        <Text style={styles.dailyMilkText}>Volume: {item.volume} liters</Text>
-        <Text style={styles.dailyMilkText}>Worker: {item.worker.name}</Text>
-        <Text style={styles.dailyMilkText}>Cow: {item.cow.name}</Text>
+        <Text style={styles.dailyMilkText}>{t('Volume')}: {item.volume} {t('liters')}</Text>
+        <Text style={styles.dailyMilkText}>{t('Worker')}: {item.worker.name}</Text>
+        <Text style={styles.dailyMilkText}>{t('Cow')}: {item.cow.name}</Text>
       </View>
     ),
     []
@@ -76,16 +77,16 @@ const MilkBatchManagementScreen: React.FC = () => {
     ({ item }: { item: MilkBatch }) => (
       <View style={styles.milkBatchCard}>
         <TouchableOpacity onPress={() => toggleMilkBatchDetails(item)}>
-          <Text style={styles.milkBatchTitle}>Milk Batch ID: {item.milkBatchId}</Text>
-          <Text>Total Volume: {item.totalVolume} liters</Text>
-          <Text>Date: {format(new Date(item.date), 'dd/MM/yyyy')}</Text>
-          <Text>Expiry Date: {format(new Date(item.expiryDate), 'dd/MM/yyyy')}</Text>
-          <Text>Status: {item.status}</Text>
+          <Text style={styles.milkBatchTitle}>{t('Milk Batch ID')}: {item.milkBatchId}</Text>
+          <Text>{t('Total Volume')}: {item.totalVolume} {t('liters')}</Text>
+          <Text>{t('Date')}: {format(new Date(item.date), 'dd/MM/yyyy')}</Text>
+          <Text>{t('Expiry Date')}: {format(new Date(item.expiryDate), 'dd/MM/yyyy')}</Text>
+          <Text>{t('Status')}: {item.status}</Text>
         </TouchableOpacity>
 
         {selectedMilkBatch?.milkBatchId === item.milkBatchId && (
           <>
-            <Text style={styles.sectionTitle}>Daily Milks:</Text>
+            <Text style={styles.sectionTitle}>{t('Daily Milks')}:</Text>
             <FlatList
               data={item.dailyMilks}
               renderItem={renderDailyMilk}
@@ -146,19 +147,19 @@ const MilkBatchManagementScreen: React.FC = () => {
             </View>
             <View style={styles.card}>
               <Ionicons name='stats-chart-outline' size={30} color='#4CAF50' />
-              <Text style={styles.cardTitle}>Avg. Volume/Batch</Text>
+              <Text style={styles.cardTitle}>{t('Avg. Volume/Batch')}</Text>
               <Text style={styles.cardValue}>{averageVolumePerBatch} L</Text>
             </View>
             <View style={styles.card}>
               <Ionicons name='cube-outline' size={30} color='#4CAF50' />
-              <Text style={styles.cardTitle}>Total Batches</Text>
+              <Text style={styles.cardTitle}>{t('Total Batches')}</Text>
               <Text style={styles.cardValue}>{numberOfBatches}</Text>
             </View>
           </View>
 
           {/* Line Chart for Milk Volume Trend */}
           <View style={styles.chartContainer}>
-            <Text style={styles.chartTitle}>Milk Volume Trend (liters)</Text>
+            <Text style={styles.chartTitle}>{t('Milk Volume Trend')} (liters)</Text>
             <LineChart
               data={chartData}
               width={Dimensions.get('window').width - 40}
@@ -186,32 +187,32 @@ const MilkBatchManagementScreen: React.FC = () => {
           >
             <View style={styles.modalOverlay}>
               <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>Milk Batch Details</Text>
+                <Text style={styles.modalTitle}>{t('Milk Batch Details')}</Text>
                 {selectedBatchDetails && (
                   <>
                     <Text style={styles.modalText}>
-                      <Text style={styles.bold}>Milk Batch ID:</Text>{' '}
+                      <Text style={styles.bold}>{t('Milk Batch ID')}:</Text>{' '}
                       {selectedBatchDetails.milkBatchId}
                     </Text>
                     <Text style={styles.modalText}>
-                      <Text style={styles.bold}>Total Volume:</Text>{' '}
-                      {selectedBatchDetails.totalVolume} liters
+                      <Text style={styles.bold}>{t('Total Volume')}:</Text>{' '}
+                      {selectedBatchDetails.totalVolume} {t('liters')}
                     </Text>
                     <Text style={styles.modalText}>
-                      <Text style={styles.bold}>Date:</Text>{' '}
+                      <Text style={styles.bold}>{t('Date')}:</Text>{' '}
                       {format(new Date(selectedBatchDetails.date), 'dd/MM/yyyy')}
                     </Text>
                     <Text style={styles.modalText}>
-                      <Text style={styles.bold}>Expiry Date:</Text>{' '}
+                      <Text style={styles.bold}>{t('Expiry Date')}:</Text>{' '}
                       {format(new Date(selectedBatchDetails.expiryDate), 'dd/MM/yyyy')}
                     </Text>
                     <Text style={styles.modalText}>
-                      <Text style={styles.bold}>Status:</Text> {selectedBatchDetails.status}
+                      <Text style={styles.bold}>{t('Status')}:</Text> {selectedBatchDetails.status}
                     </Text>
                   </>
                 )}
                 <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
-                  <Text style={styles.closeButtonText}>Close</Text>
+                  <Text style={styles.closeButtonText}>{t('Close')}</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -227,7 +228,7 @@ const MilkBatchManagementScreen: React.FC = () => {
         </ScrollView>
       ) : (
         <View style={styles.noMilkBatchesContainer}>
-          <Text>No milk batches found</Text>
+          <Text>{t('No milk batches found')}</Text>
         </View>
       )}
       <FloatingButton

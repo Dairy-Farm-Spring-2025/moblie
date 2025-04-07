@@ -12,6 +12,7 @@ import { Ionicons } from '@expo/vector-icons'; // or 'react-native-vector-icons/
 import { Text, Tooltip } from 'react-native-paper';
 import { useQuery } from 'react-query';
 import { getIconByAreaType } from '@utils/icon/areaIcon';
+import { useTranslation } from 'react-i18next';
 const fetchAreas = async (): Promise<Area[]> => {
   const response = await apiClient.get('/areas'); // Replace with your endpoint
   return response.data;
@@ -25,7 +26,7 @@ const AreaManagementScreen = () => {
   const navigateToAreaDetail = (areaId: number) => {
     (navigation.navigate as any)('AreaDetail', { areaId });
   };
-
+  const { t } = useTranslation();
   const filteredArea = area?.filter((area) => {
     if (selectedFilter === 'name') {
       return area?.name.toLowerCase().includes(searchText.toLowerCase());
@@ -95,10 +96,10 @@ const AreaManagementScreen = () => {
                 </View>
                 <DividerUI />
                 <View style={styles.cardContent}>
-                  <TextTitle content={`${item.width}m x ${item.length}m`} title='Dimension' />
+                  <TextTitle content={`${item.width}m x ${item.length}m`} title={t('Dimension')} />
                   <TextTitle
                     content={`${item.penWidth}m x ${item.penLength}m`}
-                    title='Pen Dimension'
+                    title={t('Pen Dimension')}
                   />
                 </View>
               </View>
