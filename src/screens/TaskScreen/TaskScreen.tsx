@@ -17,7 +17,6 @@ import { useNavigation } from '@react-navigation/native';
 import { Task } from '@model/Task/Task';
 import { formatCamelCase } from '@utils/format';
 import WeatherCard from '@components/WeatherCard/WeatherCard';
-import { useTranslation } from 'react-i18next';
 
 const getWeekDates = (currentDate: Date) => {
   const today = new Date(currentDate);
@@ -30,7 +29,6 @@ const getWeekDates = (currentDate: Date) => {
     return date;
   });
 };
-const { t } = useTranslation();
 const fetchTasksByDateRange = async ({
   fromDate,
   toDate,

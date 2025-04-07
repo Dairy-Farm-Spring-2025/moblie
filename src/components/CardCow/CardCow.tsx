@@ -3,11 +3,11 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Tooltip } from 'react-native-paper';
 import { Cow, Gender } from '@model/Cow/Cow';
 import { convertToDDMMYYYY, formatCamelCase } from '@utils/format';
-import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import TextRenderHorizontal from '@components/UI/TextRenderHorizontal';
 import DividerUI from '@components/UI/DividerUI';
 import useRoleColor from '@utils/hooks/hooks';
+import { t } from 'i18next';
 
 interface CardCowProps {
   cow: Cow | undefined;
@@ -16,8 +16,6 @@ interface CardCowProps {
 }
 
 const CardCow: React.FC<CardCowProps> = ({ cow, onPress, width }) => {
-  const { t } = useTranslation();
-
   if (!cow) {
     return (
       <TouchableOpacity style={styles.card} onPress={onPress}>

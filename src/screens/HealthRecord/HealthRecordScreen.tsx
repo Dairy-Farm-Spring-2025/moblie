@@ -6,8 +6,8 @@ import apiClient from '@config/axios/axios';
 import { HealthRecord } from '@model/HealthRecord/HealthRecord';
 import { useNavigation } from '@react-navigation/native';
 import { formatType } from '@utils/format';
+import { t } from 'i18next';
 import React, { useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Card, IconButton, Text } from 'react-native-paper';
 import { useQuery } from 'react-query';
@@ -16,12 +16,9 @@ const fetchHealthRecord = async (): Promise<HealthRecord[]> => {
     const response = await apiClient.get('/health-record');
     return response.data;
   } catch (error: any) {
-    throw new Error(
-      error?.message || 'An error occurred while fetching the data'
-    );
+    throw new Error(error?.message || 'An error occurred while fetching the data');
   }
 };
-const {t} = useTranslation(); 
 const HealthRecordScreen = () => {
   const [searchText, setSearchText] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('name');
@@ -36,20 +33,15 @@ const HealthRecordScreen = () => {
 
   const filteredHealthRecord = healthRecordData?.filter((healthRecord) => {
     if (selectedFilter === 'name') {
-      return healthRecord?.cowEntity?.name
-        ?.toLowerCase()
-        .includes(searchText.toLowerCase());
+      return healthRecord?.cowEntity?.name?.toLowerCase().includes(searchText.toLowerCase());
     }
   });
 
   const sortedHealthRecord = filteredHealthRecord?.sort(
-    (a, b) =>
-      new Date(b.reportTime).getTime() - new Date(a.reportTime).getTime()
+    (a, b) => new Date(b.reportTime).getTime() - new Date(a.reportTime).getTime()
   );
 
-  const getStatusIcon = (
-    status: 'good' | 'fair' | 'poor' | 'critical' | 'recovering'
-  ) => {
+  const getStatusIcon = (status: 'good' | 'fair' | 'poor' | 'critical' | 'recovering') => {
     switch (status) {
       case 'good':
         return 'check-circle-outline';
@@ -67,9 +59,7 @@ const HealthRecordScreen = () => {
   };
 
   // Function to return status color based on status
-  const getStatusColor = (
-    status: 'good' | 'fair' | 'poor' | 'critical' | 'recovering'
-  ) => {
+  const getStatusColor = (status: 'good' | 'fair' | 'poor' | 'critical' | 'recovering') => {
     switch (status) {
       case 'good':
         return 'green';
@@ -109,12 +99,12 @@ const HealthRecordScreen = () => {
           {/* Cow Name and Period */}
           <View style={styles.containerItemContent}>
             <View style={styles.infoContainer}>
-              <Text variant="titleLarge" style={styles.cowName}>
+              <Text variant='titleLarge' style={styles.cowName}>
                 {item.cowEntity?.name}
               </Text>
               <TagUI>{formatType(item.period)}</TagUI>
             </View>
-            <Text variant="bodySmall" style={styles.reportTime}>
+            <Text variant='bodySmall' style={styles.reportTime}>
               {new Date(item.reportTime).toLocaleString()}
             </Text>
           </View>
@@ -127,8 +117,12 @@ const HealthRecordScreen = () => {
             gap: 5,
           }}
         >
-          <Text>⚖️ {t('Weight')} {item.weight} kg</Text>
-          <Text>📏 {t('Size')}: {item.size} cm</Text>
+          <Text>
+            ⚖️ {t('Weight')} {item.weight} kg
+          </Text>
+          <Text>
+            📏 {t('Size')}: {item.size} cm
+          </Text>
         </View>
       </Card>
     ),

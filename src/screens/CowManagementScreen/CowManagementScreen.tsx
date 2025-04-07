@@ -6,10 +6,8 @@ import { useNavigation } from '@react-navigation/native';
 import { RecyclerListView, DataProvider, LayoutProvider } from 'recyclerlistview';
 import apiClient from '@config/axios/axios';
 import { Cow } from '@model/Cow/Cow';
-import FloatingButton from '@components/FloatingButton/FloatingButton';
 import SearchInput from '@components/Input/Search/SearchInput';
 import CardCow from '@components/CardCow/CardCow';
-import { useTranslation } from 'react-i18next';
 
 // Fetch cows data from API
 const fetchCows = async (): Promise<Cow[]> => {
@@ -18,7 +16,6 @@ const fetchCows = async (): Promise<Cow[]> => {
 };
 
 const CowManagementScreen: React.FC = () => {
-  const { t } = useTranslation();
   const [selectedSegment, setSelectedSegment] = useState('list');
   const [searchText, setSearchText] = useState('');
   const [selectedFilter, setSelectedFilter] = useState<'name' | 'origin' | 'type' | 'pen' | 'area'>(

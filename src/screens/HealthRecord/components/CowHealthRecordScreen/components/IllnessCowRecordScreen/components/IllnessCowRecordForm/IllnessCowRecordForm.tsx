@@ -18,7 +18,7 @@ import { Ionicons } from '@expo/vector-icons'; // Import Ionicons from @expo/vec
 import { useSelector } from 'react-redux';
 import { RootState } from '@core/store/store';
 import { COLORS } from '@common/GlobalStyle';
-import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
 
 interface IllnessCowRecordFormProps {
   illness: IllnessCow;
@@ -54,7 +54,6 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
       symptoms: illness.symptoms,
     },
   });
-const {t} = useTranslation()
   const { mutate } = useMutation(
     async (data: IllnessPayload) => await apiClient.put(`illness/${illness.illnessId}`, data),
     {

@@ -1,8 +1,8 @@
 import CardComponent, { LeftContent } from '@components/Card/CardComponent';
 import { Cow } from '@model/Cow/Cow';
 import { formatType } from '@utils/format';
+import { t } from 'i18next';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 
@@ -11,30 +11,26 @@ interface CardCowDetailProps {
 }
 
 const CardCowDetail = ({ cow }: CardCowDetailProps) => {
-  const {t} = useTranslation();
   return (
     <CardComponent>
       <CardComponent.Cover source={{ uri: 'https://picsum.photos/400/400' }} />
       <CardComponent.Title
         title={cow?.name}
         subTitle={cow?.dateOfBirth}
-        leftContent={(props: any) => <LeftContent {...props} icon="folder" />}
+        leftContent={(props: any) => <LeftContent {...props} icon='folder' />}
       />
       <CardComponent.Content>
         <Text style={styles.text}>
-          🐄 <Text style={styles.bold}>{t('Status')}:</Text>{' '}
-          {formatType(cow?.cowStatus as string)}
+          🐄 <Text style={styles.bold}>{t('Status')}:</Text> {formatType(cow?.cowStatus as string)}
         </Text>
         <Text style={styles.text}>
           📅 <Text style={styles.bold}>{t('Date Entered')}:</Text> {cow?.dateOfEnter}
         </Text>
         <Text style={styles.text}>
-          📍 <Text style={styles.bold}>{t('Origin')}:</Text>{' '}
-          {formatType(cow?.cowOrigin as string)}
+          📍 <Text style={styles.bold}>{t('Origin')}:</Text> {formatType(cow?.cowOrigin as string)}
         </Text>
         <Text style={styles.text}>
-          ⚧ <Text style={styles.bold}>{t('Gender')}:</Text>{' '}
-          {formatType(cow?.gender as string)}
+          ⚧ <Text style={styles.bold}>{t('Gender')}:</Text> {formatType(cow?.gender as string)}
         </Text>
         <Text style={styles.text}>
           🛠 <Text style={styles.bold}>{t('Type')}:</Text> {cow?.cowType.name}

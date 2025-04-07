@@ -9,8 +9,8 @@ import { Dimensions, Image, ScrollView, StyleSheet, Text, View } from 'react-nat
 import { useQuery } from 'react-query';
 import { LogBox } from 'react-native';
 import TitleNameCows from '@components/TitleNameCows/TitleNameCows';
-import { useTranslation } from 'react-i18next';
 import RenderHTML from 'react-native-render-html';
+import { t } from 'i18next';
 
 LogBox.ignoreLogs([
   'TRenderEngineProvider: Support for defaultProps will be removed',
@@ -30,7 +30,6 @@ const fetchCowDetails = async (cowId: number): Promise<Cow> => {
 };
 
 const DetailCow: React.FC = () => {
-  const { t } = useTranslation(); // Initialize the translation hook
   const route = useRoute<DetailCowRouteProp>();
   const navigator = useNavigation();
   const { cowId } = route.params;

@@ -5,7 +5,7 @@ import { useMutation } from 'react-query';
 import apiClient from '@config/axios/axios';
 import Dropdown from '@components/Dropdown/Dropdown';
 import TitleNameCows from '@components/TitleNameCows/TitleNameCows';
-import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
 
 interface FormDataType {
   name: string;
@@ -26,7 +26,6 @@ const ProfileUpdateScreen: React.FC = () => {
   const [address, setAddress] = useState<string>('');
   const [dob, setDob] = useState<string>('');
   const [gender, setGender] = useState<string>('');
-  const { t } = useTranslation();
   const mutation = useMutation(
     async (formData: FormData) => {
       const response = await apiClient.put('/users/update', formData);
@@ -71,7 +70,12 @@ const ProfileUpdateScreen: React.FC = () => {
           keyboardType='phone-pad'
           style={styles.input}
         />
-        <TextInput label={t('Address')} value={address} onChangeText={setAddress} style={styles.input} />
+        <TextInput
+          label={t('Address')}
+          value={address}
+          onChangeText={setAddress}
+          style={styles.input}
+        />
         <TextInput
           label={t('Date of Birth')}
           value={dob}

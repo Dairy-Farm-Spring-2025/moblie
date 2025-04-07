@@ -15,7 +15,7 @@ import { login } from '@core/store/authSlice';
 import { AppDispatch } from '@core/store/store';
 import { validateEmail } from '@utils/validation';
 import { FontAwesome } from '@expo/vector-icons';
-import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
 
 const SignInScreen: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -37,7 +37,6 @@ const SignInScreen: React.FC = () => {
       setEmailError('');
     }
   };
-  const { t } = useTranslation();
   // Real-time password validation
   const handlePasswordChange = (text: string) => {
     setPassword(text);

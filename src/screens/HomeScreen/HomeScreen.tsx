@@ -14,7 +14,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
 
 const SIZE_ICON = 40;
 
@@ -32,7 +32,6 @@ const fetchProfile = async (): Promise<User> => {
 };
 
 const HomeScreen: React.FC = () => {
-  const { t } = useTranslation();
   const user = useSelector((state: RootState) => state.auth);
   const { data: profileData, isLoading } = useQuery<User>('users/profile', fetchProfile);
   const navigation = useNavigation<NavigationProp>();
@@ -170,7 +169,7 @@ const HomeScreen: React.FC = () => {
       <View style={styles.headerContainer}>
         <View style={styles.welcomeContainer}>
           <Text style={styles.welcomeText}>{t('home.welcome')}</Text>
-          <Text style={[styles.welcomeText, { color: primaryColor }]}>
+          <Text style={[styles.welcomeText, { color: COLORS.primary }]}>
             {profileData?.name || ''}
           </Text>
         </View>
@@ -179,7 +178,10 @@ const HomeScreen: React.FC = () => {
             size={60}
             source={{ uri: `${getAvatar(profileData?.profilePhoto || '')}` }}
           />
-          <Badge style={[styles.roleBadge, { backgroundColor: primaryColor }]} size={20}>
+          <Badge
+            style={[styles.roleBadge, { backgroundColor: primaryColor, color: '#fff' }]}
+            size={20}
+          >
             {isVeterinarian ? t('home.vet') : t('home.worker')}
           </Badge>
         </View>
@@ -222,7 +224,7 @@ const styles = StyleSheet.create({
   roleBadge: {
     position: 'absolute',
     bottom: -5,
-    right: -5,
+    right: -4,
     color: '#000FFF',
     fontWeight: 'bold',
   },

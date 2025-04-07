@@ -6,10 +6,8 @@ import { Button } from 'react-native-paper';
 import { updateNewAccessToken } from '@core/store/authSlice';
 import { store } from '@core/store/store';
 import apiClient from '@config/axios/axios';
-import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
 
-const baseURL = 'http://34.124.196.11:8080/api/v1';
-const { t } = useTranslation()
 const AboutScreen: React.FC = () => {
   const testApiCall = async () => {
     try {

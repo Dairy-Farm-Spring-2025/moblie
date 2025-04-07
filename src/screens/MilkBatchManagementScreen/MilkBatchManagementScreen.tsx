@@ -19,7 +19,7 @@ import { format } from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
 import FloatingButton from '@components/FloatingButton/FloatingButton';
 import { LineChart } from 'react-native-gifted-charts';
-import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
 
 const fetchMilkBatch = async (): Promise<MilkBatch[]> => {
   try {
@@ -29,7 +29,6 @@ const fetchMilkBatch = async (): Promise<MilkBatch[]> => {
     throw new Error(error?.message || 'An error occurred while fetching the data');
   }
 };
-const { t } = useTranslation();
 const MilkBatchManagementScreen: React.FC = () => {
   const navigation = useNavigation();
   const {
@@ -61,13 +60,21 @@ const MilkBatchManagementScreen: React.FC = () => {
   const renderDailyMilk = useCallback(
     ({ item }: { item: DailyMilk }) => (
       <View style={styles.dailyMilkCard}>
-        <Text style={styles.dailyMilkText}>{t('Shift')}: {item.shift}</Text>
+        <Text style={styles.dailyMilkText}>
+          {t('Shift')}: {item.shift}
+        </Text>
         <Text style={styles.dailyMilkText}>
           {t('Milk Date')}: {format(new Date(item.milkDate), 'dd/MM/yyyy')}
         </Text>
-        <Text style={styles.dailyMilkText}>{t('Volume')}: {item.volume} {t('liters')}</Text>
-        <Text style={styles.dailyMilkText}>{t('Worker')}: {item.worker.name}</Text>
-        <Text style={styles.dailyMilkText}>{t('Cow')}: {item.cow.name}</Text>
+        <Text style={styles.dailyMilkText}>
+          {t('Volume')}: {item.volume} {t('liters')}
+        </Text>
+        <Text style={styles.dailyMilkText}>
+          {t('Worker')}: {item.worker.name}
+        </Text>
+        <Text style={styles.dailyMilkText}>
+          {t('Cow')}: {item.cow.name}
+        </Text>
       </View>
     ),
     []
@@ -77,11 +84,21 @@ const MilkBatchManagementScreen: React.FC = () => {
     ({ item }: { item: MilkBatch }) => (
       <View style={styles.milkBatchCard}>
         <TouchableOpacity onPress={() => toggleMilkBatchDetails(item)}>
-          <Text style={styles.milkBatchTitle}>{t('Milk Batch ID')}: {item.milkBatchId}</Text>
-          <Text>{t('Total Volume')}: {item.totalVolume} {t('liters')}</Text>
-          <Text>{t('Date')}: {format(new Date(item.date), 'dd/MM/yyyy')}</Text>
-          <Text>{t('Expiry Date')}: {format(new Date(item.expiryDate), 'dd/MM/yyyy')}</Text>
-          <Text>{t('Status')}: {item.status}</Text>
+          <Text style={styles.milkBatchTitle}>
+            {t('Milk Batch ID')}: {item.milkBatchId}
+          </Text>
+          <Text>
+            {t('Total Volume')}: {item.totalVolume} {t('liters')}
+          </Text>
+          <Text>
+            {t('Date')}: {format(new Date(item.date), 'dd/MM/yyyy')}
+          </Text>
+          <Text>
+            {t('Expiry Date')}: {format(new Date(item.expiryDate), 'dd/MM/yyyy')}
+          </Text>
+          <Text>
+            {t('Status')}: {item.status}
+          </Text>
         </TouchableOpacity>
 
         {selectedMilkBatch?.milkBatchId === item.milkBatchId && (

@@ -7,9 +7,9 @@ import { HealthRecordForm } from '@model/HealthRecord/HealthRecord';
 import { useNavigation } from '@react-navigation/native';
 import { COW_STATUS } from '@services/data/cowStatus';
 import { OPTIONS_HEALTH_STATUS } from '@services/data/healthStatus';
+import { t } from 'i18next';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
 import { Alert, Keyboard, StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useMutation } from 'react-query';
@@ -20,7 +20,6 @@ interface CardFormHealthRecordProps {
 
 const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
   const navigation = useNavigation();
-  const {t} = useTranslation(); 
   const {
     control,
     handleSubmit,
@@ -35,8 +34,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
     },
   });
   const { mutate } = useMutation(
-    async (data: HealthRecordForm) =>
-      await apiClient.post('health-record', data),
+    async (data: HealthRecordForm) => await apiClient.post('health-record', data),
     {
       onSuccess: () => {
         Alert.alert('Success', 'Cow created successfully');
@@ -55,9 +53,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
       <CardComponent.Title
         title={t('Heath Record')}
         subTitle={'Enter your exam'}
-        leftContent={(props: any) => (
-          <LeftContent {...props} icon="cards-heart" />
-        )}
+        leftContent={(props: any) => <LeftContent {...props} icon='cards-heart' />}
       />
       <CardComponent.Content>
         <View style={styles.formContainer}>
@@ -73,9 +69,9 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
               }}
             >
               <FormItem
-                name="weight"
+                name='weight'
                 control={control}
-                label={t("Weight (kilogram)")}
+                label={t('Weight (kilogram)')}
                 rules={{
                   required: {
                     message: 'Required',
@@ -93,7 +89,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInputComponent.Number
                     error={errors.size ? errors.size.message : ''}
-                    placeholder="Enter your weight"
+                    placeholder='Enter your weight'
                     maxLength={3}
                     onBlur={onBlur}
                     onChangeText={(text) => {
@@ -101,7 +97,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                       onChange(numericValue);
                     }}
                     value={value as any}
-                    returnKeyType="done" // Adds "Done" on the keyboard
+                    returnKeyType='done' // Adds "Done" on the keyboard
                     onSubmitEditing={Keyboard.dismiss}
                   />
                 )}
@@ -113,9 +109,9 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
               }}
             >
               <FormItem
-                name="size"
+                name='size'
                 control={control}
-                label={t("Size (meter)")}
+                label={t('Size (meter)')}
                 rules={{
                   required: 'Size is required',
                   pattern: {
@@ -131,7 +127,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInputComponent.Number
                     error={errors.size ? errors.size.message : ''}
-                    placeholder="Enter your size"
+                    placeholder='Enter your size'
                     maxLength={3}
                     onBlur={onBlur}
                     onChangeText={(text) => {
@@ -139,7 +135,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                       onChange(numericValue);
                     }}
                     value={value as any}
-                    returnKeyType="done" // Adds "Done" on the keyboard
+                    returnKeyType='done' // Adds "Done" on the keyboard
                     onSubmitEditing={Keyboard.dismiss}
                   />
                 )}
@@ -148,10 +144,10 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
           </View>
           <View>
             <FormItem
-              name="status"
+              name='status'
               control={control}
               rules={{ required: 'Status is required' }}
-              label={t("Status")}
+              label={t('Status')}
               error={errors?.status?.message}
               render={({ field: { onChange, value } }) => (
                 <CustomPicker
@@ -165,21 +161,17 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
 
           <View>
             <FormItem
-              label={t("Period")}
-              name="period"
+              label={t('Period')}
+              name='period'
               control={control}
               rules={{ required: 'Period is required' }}
               error={errors?.period?.message}
               render={({ field: { onChange, value } }) => (
-                <CustomPicker
-                  options={COW_STATUS}
-                  selectedValue={value}
-                  onValueChange={onChange}
-                />
+                <CustomPicker options={COW_STATUS} selectedValue={value} onValueChange={onChange} />
               )}
             />
           </View>
-          <Button mode="contained" onPress={handleSubmit(onSubmit)}>
+          <Button mode='contained' onPress={handleSubmit(onSubmit)}>
             {t('Submit')}
           </Button>
         </View>

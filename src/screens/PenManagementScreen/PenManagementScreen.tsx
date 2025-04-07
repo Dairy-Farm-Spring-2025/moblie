@@ -6,8 +6,8 @@ import apiClient from '@config/axios/axios';
 import { Pen } from '@model/Pen/Pen';
 import { useNavigation } from '@react-navigation/native';
 import { formatFilteredType, formatType } from '@utils/format';
+import { t } from 'i18next';
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Text, Tooltip } from 'react-native-paper';
 import { useQuery } from 'react-query';
@@ -20,7 +20,6 @@ const PenManagementScreen = () => {
   const [searchText, setSearchText] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('name');
   const navigation = useNavigation();
-  const { t } = useTranslation();
   const { data: pens, isLoading, isError, error } = useQuery<Pen[]>('pens', fetchPens);
 
   const filteredPen = pens?.filter((pen) => {

@@ -18,7 +18,7 @@ import { useQuery, useMutation } from 'react-query';
 import { CreateCowModel } from '@model/Request/CreateCow';
 import { CowType } from '@model/Cow/Cow';
 import { Button } from 'react-native-paper';
-import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
 
 const fetchCowType = async (): Promise<CowType[]> => {
   try {
@@ -32,7 +32,6 @@ const fetchCowType = async (): Promise<CowType[]> => {
 const CreateCow: React.FC = () => {
   const navigation = useNavigation();
   const { data: cowTypes, isLoading, isError } = useQuery('cow-types', fetchCowType);
-  const { t } = useTranslation()
   const [cowData, setCowData] = useState<CreateCowModel>({
     cowStatus: 'milkingCow',
     dateOfBirth: new Date().toISOString(),
@@ -63,9 +62,9 @@ const CreateCow: React.FC = () => {
       style={{ flex: 1 }}
     >
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>{('Create New Cow')}</Text>
+        <Text style={styles.title}>{'Create New Cow'}</Text>
 
-        <Text style={styles.label}>{('Description')}</Text>
+        <Text style={styles.label}>{'Description'}</Text>
         <TextInput
           style={styles.input}
           placeholder='Enter description'

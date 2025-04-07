@@ -2,8 +2,8 @@ import apiClient from '@config/axios/axios';
 import { Area } from '@model/Area/Area';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { formatType } from '@utils/format';
+import { t } from 'i18next';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Image, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useQuery } from 'react-query';
@@ -18,7 +18,6 @@ const fetchAreaDetails = async (areaId: number): Promise<Area> => {
   const response = await apiClient.get(`/areas/${areaId}`);
   return response.data;
 };
-const { t } = useTranslation()
 const AreaDetailScreen = () => {
   const route = useRoute<AreaDetailScreenProp>();
   const { areaId } = route.params;
@@ -50,16 +49,14 @@ const AreaDetailScreen = () => {
       <View style={styles.card}>
         <Text style={styles.title}>{area.name}</Text>
         <Text style={styles.text}>
-          📏 <Text style={styles.bold}>{t('Dimension')}:</Text> {area.width}m x{' '}
-          {area.length}m
+          📏 <Text style={styles.bold}>{t('Dimension')}:</Text> {area.width}m x {area.length}m
         </Text>
         <Text style={styles.text}>
           📏 <Text style={styles.bold}>{t('Pen Dimension')}:</Text> {area.penWidth}m x{' '}
           {area.penLength}m
         </Text>
         <Text style={styles.text}>
-          📍 <Text style={styles.bold}>{t('Area Type')}:</Text>{' '}
-          {formatType(area.areaType)}
+          📍 <Text style={styles.bold}>{t('Area Type')}:</Text> {formatType(area.areaType)}
         </Text>
         <View
           style={{

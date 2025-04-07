@@ -18,13 +18,12 @@ import apiClient from '@config/axios/axios';
 import { ReportTaskData } from '@model/Task/Task';
 import { getReportImage } from '@utils/getImage';
 import RenderHTML from 'react-native-render-html';
-import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
 
 type RootStackParamList = {
   ReportTaskDetail: { report: ReportTaskData };
   ReportTaskForm: { reportId: number };
 };
-const { t } = useTranslation();
 type ReportTaskDetailRouteProp = RouteProp<RootStackParamList, 'ReportTaskDetail'>;
 
 const fetchReportTask = async (reportId: number): Promise<ReportTaskData> => {
@@ -73,7 +72,9 @@ const ReportTaskDetailContent: React.FC<{
   return (
     <View style={styles.card}>
       <View style={styles.header}>
-        <Text style={styles.title}>{t('Report')} #{report.reportTaskId}</Text>
+        <Text style={styles.title}>
+          {t('Report')} #{report.reportTaskId}
+        </Text>
         <View style={[styles.statusBadge, { backgroundColor: getStatusColor(report.status) }]}>
           <Text style={styles.statusText}>{report.status}</Text>
         </View>
