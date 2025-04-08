@@ -3,10 +3,7 @@ import CustomPicker from '@components/CustomPicker/CustomPicker';
 import FormItem from '@components/Form/FormItem';
 import TextInputComponent from '@components/Input/TextInput/TextInputComponent';
 import apiClient from '@config/axios/axios';
-import {
-  HealthRecord,
-  HealthRecordForm,
-} from '@model/HealthRecord/HealthRecord';
+import { HealthRecord, HealthRecordForm } from '@model/HealthRecord/HealthRecord';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { COW_STATUS } from '@services/data/cowStatus';
 import { OPTIONS_HEALTH_STATUS } from '@services/data/healthStatus';
@@ -19,10 +16,7 @@ type RootStackParamList = {
   HealthRecordFormScreen: { healthRecord: HealthRecord };
 };
 
-type HealthRecordFormScreenRouteProp = RouteProp<
-  RootStackParamList,
-  'HealthRecordFormScreen'
->;
+type HealthRecordFormScreenRouteProp = RouteProp<RootStackParamList, 'HealthRecordFormScreen'>;
 
 const HealthRecordFormScreen = () => {
   const route = useRoute<HealthRecordFormScreenRouteProp>();
@@ -42,10 +36,7 @@ const HealthRecordFormScreen = () => {
   });
   const { mutate } = useMutation(
     async (data: HealthRecordForm) =>
-      await apiClient.put(
-        `health-record/${healthRecord?.healthRecordId}`,
-        data
-      ),
+      await apiClient.put(`health-record/${healthRecord?.healthRecordId}`, data),
     {
       onSuccess: () => {
         Alert.alert('Success', 'Cow created successfully');
@@ -73,9 +64,7 @@ const HealthRecordFormScreen = () => {
         <CardComponent.Title
           title={'Heath Record'}
           subTitle={'Enter your exam'}
-          leftContent={(props: any) => (
-            <LeftContent {...props} icon="cards-heart" />
-          )}
+          leftContent={(props: any) => <LeftContent {...props} icon='cards-heart' />}
         />
         <CardComponent.Content>
           <View style={styles.formContainer}>
@@ -91,9 +80,9 @@ const HealthRecordFormScreen = () => {
                 }}
               >
                 <FormItem
-                  name="size"
+                  name='size'
                   control={control}
-                  label="Size (meter)"
+                  label='Size (meter)'
                   rules={{
                     required: 'Size is required',
                     pattern: {
@@ -109,7 +98,7 @@ const HealthRecordFormScreen = () => {
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInputComponent.Number
                       error={errors.size ? errors.size.message : ''}
-                      placeholder="Enter your size"
+                      placeholder='Enter your size'
                       maxLength={3}
                       onBlur={onBlur}
                       onChangeText={(text) => {
@@ -117,7 +106,7 @@ const HealthRecordFormScreen = () => {
                         onChange(numericValue);
                       }}
                       value={value}
-                      returnKeyType="done" // Adds "Done" on the keyboard
+                      returnKeyType='done' // Adds "Done" on the keyboard
                       onSubmitEditing={Keyboard.dismiss}
                     />
                   )}
@@ -126,10 +115,10 @@ const HealthRecordFormScreen = () => {
             </View>
             <View>
               <FormItem
-                name="status"
+                name='status'
                 control={control}
                 rules={{ required: 'Status is required' }}
-                label="Status"
+                label='Status'
                 error={errors?.status?.message}
                 render={({ field: { onChange, value } }) => (
                   <CustomPicker
@@ -143,8 +132,8 @@ const HealthRecordFormScreen = () => {
 
             <View>
               <FormItem
-                label="Period"
-                name="period"
+                label='Period'
+                name='period'
                 control={control}
                 rules={{ required: 'Period is required' }}
                 error={errors?.period?.message}
@@ -157,7 +146,7 @@ const HealthRecordFormScreen = () => {
                 )}
               />
             </View>
-            <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+            <Button title='Submit' onPress={handleSubmit(onSubmit)} />
           </View>
         </CardComponent.Content>
       </CardComponent>

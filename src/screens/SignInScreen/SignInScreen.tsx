@@ -1,5 +1,5 @@
 import AccountServices from '@services/AccountServices';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import { AppDispatch } from '@core/store/store';
 import { validateEmail } from '@utils/validation';
 import { FontAwesome } from '@expo/vector-icons';
 import { t } from 'i18next';
+import * as ExpoLinking from 'expo-linking';
 
 const SignInScreen: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -25,6 +26,9 @@ const SignInScreen: React.FC = () => {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const dispatch: AppDispatch = useDispatch();
+
+  // Đảm bảo redirectUri khớp với mạng LAN
+  const redirectUri = 'exp://192.168.2.12:8081/--/oauth2/callback'; // Hardcode cho LAN
 
   // Real-time email validation
   const handleEmailChange = (text: string) => {
@@ -37,6 +41,7 @@ const SignInScreen: React.FC = () => {
       setEmailError('');
     }
   };
+
   // Real-time password validation
   const handlePasswordChange = (text: string) => {
     setPassword(text);
@@ -54,17 +59,14 @@ const SignInScreen: React.FC = () => {
       Alert.alert('Error', 'Please enter both email and password.');
       return;
     }
-
     if (!validateEmail(email)) {
       Alert.alert('Error', 'Invalid email format.');
       return;
     }
-
     if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters long.');
+      Alert.alert('Error', 'Password must be at least 6 characters long');
       return;
     }
-
     setLoading(true);
     try {
       const response = await AccountServices.login(email, password);
@@ -75,11 +77,9 @@ const SignInScreen: React.FC = () => {
           dispatch(login({ ...response.data, isAuthenticated: true }));
         } else {
           Alert.alert('Error', 'You are not authorized to access this page.');
-          return;
         }
       } else {
         Alert.alert('Error', 'Invalid email or password.');
-        return;
       }
     } catch (error: any) {
       Alert.alert('Error', error.message);
@@ -87,6 +87,75 @@ const SignInScreen: React.FC = () => {
       setLoading(false);
     }
   };
+
+  // Handle Google Sign-In
+  const handleNavigateGoogle = async () => {
+    const baseUrl = 'https://api.dairyfarmfpt.website/oauth2/authorize/google';
+    const googleAuthUrl =
+      `${baseUrl}?` +
+      `client_id=796302756667-v8k7e9vj907llfj9nrucos35ndqll7i5.apps.googleusercontent.com` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+      `&response_type=code` +
+      `&scope=openid%20profile%20email` +
+      `&state=platform=mobile`;
+
+    try {
+      console.log('Opening URL:', googleAuthUrl); // Debug URL
+      const supported = await ExpoLinking.canOpenURL(googleAuthUrl);
+      if (supported) {
+        await ExpoLinking.openURL(googleAuthUrl);
+      } else {
+        Alert.alert('Error', "Can't open this URL");
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to initiate Google Sign-In');
+      console.error('Error:', error);
+    }
+  };
+
+  // Handle deep link redirect
+  useEffect(() => {
+    const handleDeepLink = (event: { url: string }) => {
+      const url = event.url;
+      console.log('Deep link received:', url);
+
+      try {
+        const { queryParams } = ExpoLinking.parse(url);
+        const accessToken = queryParams?.access_token;
+        const refreshToken = queryParams?.refresh_token;
+        const userId = queryParams?.userId;
+        const userName = queryParams?.userName;
+        const roleName = queryParams?.roleName;
+
+        if (accessToken && refreshToken) {
+          dispatch(
+            login({
+              accessToken,
+              refreshToken,
+              userId,
+              userName,
+              roleName,
+              isAuthenticated: true,
+            })
+          );
+          Alert.alert('Success', `Welcome, ${userName || 'User'}`);
+        } else {
+          // Alert.alert('Error', 'Missing tokens in redirect URL');
+          // console.error('Query params:', queryParams);
+        }
+      } catch (error) {
+        Alert.alert('Error', 'Failed to process redirect URL');
+        console.error('Deep link error:', error);
+      }
+    };
+
+    const subscription = ExpoLinking.addEventListener('url', handleDeepLink);
+    ExpoLinking.getInitialURL().then((url) => {
+      if (url) handleDeepLink({ url });
+    });
+
+    return () => subscription.remove();
+  }, [dispatch]);
 
   return (
     <View style={styles.container}>
@@ -131,7 +200,7 @@ const SignInScreen: React.FC = () => {
 
       <Text style={styles.orText}>{t('OR')}</Text>
 
-      <TouchableOpacity style={styles.googleButton}>
+      <TouchableOpacity onPress={handleNavigateGoogle} style={styles.googleButton}>
         <Image
           source={{
             uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png',
@@ -144,6 +213,7 @@ const SignInScreen: React.FC = () => {
   );
 };
 
+// Styles giữ nguyên như bạn đã cung cấp
 const styles = StyleSheet.create({
   container: {
     flex: 1,

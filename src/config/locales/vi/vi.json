@@ -338,7 +338,10 @@
     "title": "Thông báo",
     "loading": "Đang tải dữ liệu",
     "error": "Lỗi khi tải dữ liệu",
-    "noNotifications": "Chưa có thông báo nào!"
+    "noNotifications": "Chưa có thông báo nào!",
+    "ago": "trước",
+    "min_ago": "phút trước",
+    "now": "bây giờ"
   },
   "healthRecord": {
     "createSuccess": "Tạo mới thành công",
@@ -364,5 +367,12 @@
   "Good": "Tốt",
   "Fair": "Khá",
   "Poor": "Kém",
-  "Recovering": "Đang hồi phục"
+  "Recovering": "Đang hồi phục",
+  "scanQR": {
+    "title": "Quét QR",
+    "reportIllness": "Báo cáo bệnh",
+    "createHealthRecord": "Khám định kỳ",
+    "viewCowDetail": "Xem chi tiết bò",
+    "vaccineInjection": "Tiêm vaccine"
+  }
 }

@@ -26,7 +26,7 @@ type FeedDetailScreenProp = RouteProp<RootStackParamList, 'FeedDetail'>;
 
 const fetchFeed = async (id: number): Promise<FeedMeals> => {
   const response = await apiClient.get(`/feedmeals/${id}`); // Replace with your endpoint
-  console.log('Fetched feed:', response.data);
+  // console.log('Fetched feed:', response.data);
   return response.data;
 };
 

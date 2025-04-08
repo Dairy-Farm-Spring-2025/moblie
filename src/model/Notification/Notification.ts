@@ -12,12 +12,8 @@ export type Notification = {
     description: string;
     link: string;
     category: CategoryNotification;
+    dateTime: string;
   };
   read: boolean;
 };
-export type CategoryNotification =
-  | 'milking'
-  | 'feeding'
-  | 'heathcare'
-  | 'task'
-  | 'other';
+export type CategoryNotification = 'milking' | 'feeding' | 'heathcare' | 'task' | 'other';

@@ -1,4 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AreaDetailScreen from '@screens/AreaManagementScreen/components/Detail/AreaDetailScreen';
 import IllnessDetailForm from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/components/IllnessDetail/components/IllnessDetailForm';
 import IllnessReportForm from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/components/IllnessReportForm/IllnessReportForm';
 import IllnessCowRecordScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/IllnessCowRecordScreen';
@@ -65,6 +66,11 @@ const TaskManagementRoute: React.FC = () => {
         options={{ title: 'Illness Cow Record' }}
       />
       <Stack.Screen name='Materials' component={Materials} options={{ title: 'Materials' }} />
+      <Stack.Screen
+        name='AreaDetail'
+        component={AreaDetailScreen}
+        options={{ title: 'Area Details' }}
+      />
     </Stack.Navigator>
   );
 };

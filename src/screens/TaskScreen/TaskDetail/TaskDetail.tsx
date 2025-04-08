@@ -145,6 +145,10 @@ const TaskDetailContent: React.FC<{
     }
   };
 
+  const navigateToAreaDetail = (areaId: number) => {
+    (navigation.navigate as any)('AreaDetail', { areaId });
+  };
+
   return (
     <View style={[styles.card, { borderLeftColor: priorityColor }]}>
       <View style={styles.header}>
@@ -193,9 +197,12 @@ const TaskDetailContent: React.FC<{
           <Ionicons name='location-outline' size={20} color={textColor} style={styles.icon} />
           <Text style={[styles.textLabel, { color: textColor }]}>{t('task_detail.area')}:</Text>
         </View>
-        <View style={[styles.tag, { backgroundColor: '#e8e8e8' }]}>
+        <TouchableOpacity
+          onPress={() => navigateToAreaDetail(task.areaId.areaId)}
+          style={[styles.tag, { backgroundColor: '#e8e8e8' }]}
+        >
           <Text style={[styles.tagText, { color: textColor }]}>{task.areaId.name}</Text>
-        </View>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.infoRow}>

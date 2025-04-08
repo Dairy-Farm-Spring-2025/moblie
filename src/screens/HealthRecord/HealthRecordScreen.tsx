@@ -76,9 +76,13 @@ const HealthRecordScreen = () => {
     }
   };
 
+  const handleNavigate = (cowId: number) => {
+    (navigation.navigate as any)('CowHealthRecord', { cowId: cowId });
+  };
+
   const renderHealthRecordItem = useCallback(
     ({ item }: { item: HealthRecord }) => (
-      <Card style={styles.card}>
+      <Card onPress={() => handleNavigate(item.cowEntity.cowId)} style={styles.card}>
         <View style={styles.cardContent}>
           {/* Status Icon */}
           <View

@@ -14,10 +14,7 @@ type RootStackParamList = {
   CowHealthInforScreen: { healthResponses: HealthResponse[]; cowName: string };
 };
 
-type CowHealthInforScreenRouteProp = RouteProp<
-  RootStackParamList,
-  'CowHealthInforScreen'
->;
+type CowHealthInforScreenRouteProp = RouteProp<RootStackParamList, 'CowHealthInforScreen'>;
 
 const CowHealthInforScreen = () => {
   const route = useRoute<CowHealthInforScreenRouteProp>();
@@ -72,10 +69,7 @@ const CowHealthInforScreen = () => {
               subTitle={data?.severity ? formatType(data?.severity) : 'N/A'}
             />
             <CardComponent.Content>
-              <TextRenderHorizontal
-                title="User"
-                content={data?.userEntity?.name ?? 'Unknown'}
-              />
+              <TextRenderHorizontal title='User' content={data?.userEntity?.name ?? 'Unknown'} />
             </CardComponent.Content>
           </CardComponent>
         </TouchableOpacity>
@@ -92,12 +86,9 @@ const CowHealthInforScreen = () => {
           }
         >
           <CardComponent style={styles.card}>
-            <CardComponent.Title
-              title={rowData.title}
-              subTitle={formatType(data?.status)}
-            />
+            <CardComponent.Title title={rowData.title} subTitle={formatType(data?.status)} />
             <CardComponent.Content>
-              <TextRenderHorizontal title="Size" content={`${data?.size}(m)`} />
+              <TextRenderHorizontal title='Size' content={`${data?.size}(m)`} />
             </CardComponent.Content>
           </CardComponent>
         </TouchableOpacity>
@@ -120,16 +111,12 @@ const CowHealthInforScreen = () => {
             />
             <CardComponent.Content>
               <TextRenderHorizontal
-                title="Administered By"
-                content={
-                  typeof data?.administeredBy === 'string'
-                    ? data?.administeredBy
-                    : 'N/A'
-                }
+                title='Administered By'
+                content={typeof data?.administeredBy === 'string' ? data?.administeredBy : 'N/A'}
               />
               <TextRenderHorizontal
                 styleTextContent={{ flexWrap: 'wrap', flexShrink: 1 }}
-                title="Description"
+                title='Description'
                 content={data?.description ? data?.description : 'N/A'}
               />
             </CardComponent.Content>
@@ -148,28 +135,34 @@ const CowHealthInforScreen = () => {
   };
   return (
     <View style={{ flex: 1 }}>
-      <TitleNameCows title="Timeline Health Record - " cowName={cowName} />
-      <Timeline
-        data={timelineData}
-        renderDetail={renderDetail} // Use custom card renderer
-        innerCircle="icon"
-        circleSize={25}
-        timeContainerStyle={{ minWidth: 72, marginTop: 5 }}
-        timeStyle={{
-          color: 'grey',
-          fontStyle: 'italic',
-        }}
-        circleColor="green"
-        lineColor="#C0C0C0"
-        lineWidth={1}
-        options={
-          {
-            style: {
-              padding: 20,
-            },
-          } as any
-        }
-      />
+      <TitleNameCows title='Timeline Health Record - ' cowName={cowName} />
+      {timelineData.length > 0 ? (
+        <Timeline
+          data={timelineData}
+          renderDetail={renderDetail} // Use custom card renderer
+          innerCircle='icon'
+          circleSize={25}
+          timeContainerStyle={{ minWidth: 72, marginTop: 5 }}
+          timeStyle={{
+            color: 'grey',
+            fontStyle: 'italic',
+          }}
+          circleColor='green'
+          lineColor='#C0C0C0'
+          lineWidth={1}
+          options={
+            {
+              style: {
+                padding: 20,
+              },
+            } as any
+          }
+        />
+      ) : (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ fontSize: 18, fontWeight: 'bold' }}>No health records</Text>
+        </View>
+      )}
     </View>
   );
 };

@@ -38,9 +38,7 @@ const fetchNotification = async (): Promise<Notification[]> => {
     const response = await apiClient.get('/notifications/myNotification');
     return response.data;
   } catch (error: any) {
-    throw new Error(
-      error?.message || 'An error occurred while fetching the data'
-    );
+    throw new Error(error?.message || 'An error occurred while fetching the data');
   }
 };
 
@@ -82,9 +80,7 @@ const NavigationWrapper = () => {
     fetchNotification
   );
   const navigation = useNavigation();
-  const { isAuthenticated, roleName } = useSelector(
-    (state: RootState) => state.auth
-  );
+  const { isAuthenticated, roleName } = useSelector((state: RootState) => state.auth);
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [selectedField, setSelectedField] = useState<string | null>(null);
 
@@ -103,10 +99,10 @@ const NavigationWrapper = () => {
         value: 'create-health-record',
       },
       {
-        label: t('scanQR.createIllness', {
-          defaultValue: 'Create illness',
+        label: t('scanQR.reportIllness', {
+          defaultValue: 'Report illness',
         }),
-        value: 'create-illness',
+        value: 'report-illness',
       },
       {
         label: t('scanQR.vaccineInjection', {
@@ -176,10 +172,10 @@ const NavigationWrapper = () => {
           tabBarInactiveTintColor: roleColors.inactive,
         })}
       >
-        <Tab.Screen name="Home" component={CowRoute} key={'Home'} />
-        <Tab.Screen name="Task" component={TaskManagementRoute} key={'Task'} />
+        <Tab.Screen name='Home' component={CowRoute} key={'Home'} />
+        <Tab.Screen name='Task' component={TaskManagementRoute} key={'Task'} />
         <Tab.Screen
-          name="QRScan"
+          name='QRScan'
           component={QrScanRoute}
           options={{
             tabBarLabel: '',
@@ -188,32 +184,25 @@ const NavigationWrapper = () => {
             tabBarIcon: ({ size, focused }) => (
               <Ionicons
                 style={{ marginTop: 1 }}
-                name="qr-code"
+                name='qr-code'
                 size={size + 4}
                 color={focused ? '#fff' : '#f8f8f8'}
               />
             ),
             tabBarButton: (props) => (
-              <CustomTabBarButton
-                {...props}
-                roleColors={roleColors}
-                onPress={handleQrScanPress}
-              />
+              <CustomTabBarButton {...props} roleColors={roleColors} onPress={handleQrScanPress} />
             ),
           }}
         />
         <Tab.Screen
-          name="Notification"
+          name='Notification'
           key={'Notification'}
           component={NotificationScreen}
           options={{
             tabBarBadge:
               myNotificationData &&
-              myNotificationData?.filter((element) => element.read === false)
-                ?.length > 0
-                ? myNotificationData?.filter(
-                    (element) => element.read === false
-                  )?.length
+              myNotificationData?.filter((element) => element.read === false)?.length > 0
+                ? myNotificationData?.filter((element) => element.read === false)?.length
                 : undefined,
             tabBarBadgeStyle: {
               backgroundColor: 'red',
@@ -224,17 +213,13 @@ const NavigationWrapper = () => {
             },
           }}
         />
-        <Tab.Screen
-          name="Profile"
-          key={'Profile'}
-          component={ProfileManagementRoute}
-        />
+        <Tab.Screen name='Profile' key={'Profile'} component={ProfileManagementRoute} />
       </Tab.Navigator>
 
       <Modal
         visible={isDrawerVisible}
         transparent={true}
-        animationType="slide"
+        animationType='slide'
         onRequestClose={() => setIsDrawerVisible(false)}
       >
         <View style={styles.modalContainer}>
@@ -269,7 +254,7 @@ const NavigationWrapper = () => {
     </>
   ) : (
     <Stack.Navigator>
-      <Stack.Screen name="Login" component={SignInScreen} />
+      <Stack.Screen name='Login' component={SignInScreen} />
     </Stack.Navigator>
   );
 };
