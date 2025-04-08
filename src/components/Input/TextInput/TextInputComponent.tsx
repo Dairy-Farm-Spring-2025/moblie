@@ -7,6 +7,7 @@ interface TextInputComponentProps extends TextInputProps {
   returnKeyType?: 'done' | 'go' | 'next' | 'search' | 'send';
   onBlur?: () => void;
   error: any;
+  readOnly?: boolean;
 }
 
 const TextInputComponent = ({
@@ -15,14 +16,20 @@ const TextInputComponent = ({
   returnKeyType,
   error = '',
   onBlur,
+  readOnly = false,
   ...props
 }: TextInputComponentProps) => {
   return (
     <TextInput
-      style={[styles.input, error !== '' ? styles.inputError : null]}
+      style={[
+        styles.input,
+        error !== '' ? styles.inputError : null,
+        readOnly && styles.readOnlyBackground,
+      ]}
       value={value}
       onChangeText={onChangeText}
       returnKeyType={returnKeyType}
+      readOnly={readOnly}
       onBlur={onBlur}
       {...props}
     />
@@ -35,16 +42,22 @@ const Number = ({
   returnKeyType,
   error = '',
   onBlur,
+  readOnly = false,
   ...props
 }: TextInputComponentProps) => {
   return (
     <TextInput
-      style={[styles.input, error !== '' ? styles.inputError : null]}
+      style={[
+        styles.input,
+        error !== '' ? styles.inputError : null,
+        readOnly && styles.readOnlyBackground,
+      ]}
       value={value}
       onChangeText={onChangeText}
       returnKeyType={returnKeyType}
       onBlur={onBlur}
       keyboardType="numeric"
+      readOnly={readOnly}
       onSubmitEditing={Keyboard.dismiss}
       {...props}
     />
@@ -63,6 +76,9 @@ const styles = StyleSheet.create({
   },
   inputError: {
     borderColor: 'red',
+  },
+  readOnlyBackground: {
+    backgroundColor: '#e5e7eb',
   },
 });
 

@@ -1,48 +1,106 @@
+import ButtonComponent from '@components/Button/ButtonComponent';
 import CardComponent, { LeftContent } from '@components/Card/CardComponent';
 import CustomPicker from '@components/CustomPicker/CustomPicker';
 import FormItem from '@components/Form/FormItem';
 import TextInputComponent from '@components/Input/TextInput/TextInputComponent';
 import apiClient from '@config/axios/axios';
-import { HealthRecord, HealthRecordForm } from '@model/HealthRecord/HealthRecord';
+import {
+  HealthRecord,
+  HealthRecordForm,
+} from '@model/HealthRecord/HealthRecord';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { COW_STATUS } from '@services/data/cowStatus';
 import { OPTIONS_HEALTH_STATUS } from '@services/data/healthStatus';
-import React from 'react';
+import { t } from 'i18next';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { Alert, Button, Keyboard, StyleSheet, View } from 'react-native';
+import {
+  Alert,
+  Button,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { useMutation } from 'react-query';
 
 type RootStackParamList = {
-  HealthRecordFormScreen: { healthRecord: HealthRecord };
+  HealthRecordFormScreen: {
+    healthRecord: HealthRecord;
+    fromScreen: 'cow' | 'health';
+  };
 };
 
-type HealthRecordFormScreenRouteProp = RouteProp<RootStackParamList, 'HealthRecordFormScreen'>;
+type HealthRecordFormScreenRouteProp = RouteProp<
+  RootStackParamList,
+  'HealthRecordFormScreen'
+>;
 
 const HealthRecordFormScreen = () => {
   const route = useRoute<HealthRecordFormScreenRouteProp>();
   const navigation = useNavigation();
-  const { healthRecord } = route.params;
+  const { healthRecord, fromScreen } = route.params;
+  const [isEditing, setIsEditing] = React.useState(false);
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<HealthRecordForm>({
-    defaultValues: {
+    reset,
+  } = useForm<HealthRecordForm>();
+
+  useEffect(() => {
+    if (healthRecord) {
+      reset({
+        status: healthRecord.status,
+        size: healthRecord.size,
+        period: healthRecord.period,
+        cowId: healthRecord.cowEntity?.cowId,
+        bodyLength: healthRecord.bodyLength,
+        bodyTemperature: healthRecord.bodyTemperature,
+        chestCircumference: healthRecord.chestCircumference,
+        description: healthRecord.description,
+        heartRate: healthRecord.heartRate,
+        respiratoryRate: healthRecord.respiratoryRate,
+        ruminateActivity: healthRecord.ruminateActivity,
+      });
+    }
+  }, [healthRecord]);
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    reset({
       status: healthRecord.status,
-      size: healthRecord.size || 0,
+      size: healthRecord.size,
       period: healthRecord.period,
-      cowId: healthRecord.cowEntity.cowId,
-    },
-  });
+      cowId: healthRecord.cowEntity?.cowId,
+      bodyLength: healthRecord.bodyLength,
+      bodyTemperature: healthRecord.bodyTemperature,
+      chestCircumference: healthRecord.chestCircumference,
+      description: healthRecord.description,
+      heartRate: healthRecord.heartRate,
+      respiratoryRate: healthRecord.respiratoryRate,
+      ruminateActivity: healthRecord.ruminateActivity,
+    });
+  };
+
   const { mutate } = useMutation(
     async (data: HealthRecordForm) =>
-      await apiClient.put(`health-record/${healthRecord?.healthRecordId}`, data),
+      await apiClient.put(
+        `health-record/${healthRecord?.healthRecordId}`,
+        data
+      ),
     {
       onSuccess: () => {
-        Alert.alert('Success', 'Cow created successfully');
-        (navigation.navigate as any)('CowDetails', {
-          cowId: healthRecord?.cowEntity?.cowId,
-        });
+        Alert.alert('Success', t('Update health record success'));
+        if (fromScreen === 'cow') {
+          (navigation.navigate as any)('CowDetails', {
+            cowId: healthRecord?.cowEntity?.cowId,
+          });
+        } else {
+          (navigation.navigate as any)('HealthRecordScreen');
+        }
       },
       onError: (error: any) => {
         Alert.alert('Error', error.response.data.message);
@@ -53,36 +111,68 @@ const HealthRecordFormScreen = () => {
     mutate(data);
   };
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-        justifyContent: 'center',
-        padding: 20,
-      }}
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
     >
-      <CardComponent>
-        <CardComponent.Title
-          title={'Heath Record'}
-          subTitle={'Enter your exam'}
-          leftContent={(props: any) => <LeftContent {...props} icon='cards-heart' />}
-        />
-        <CardComponent.Content>
-          <View style={styles.formContainer}>
-            <View
-              style={{
-                flexDirection: 'row',
-                gap: 10,
-              }}
-            >
-              <View
-                style={{
-                  width: '100%',
-                }}
-              >
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+      >
+        <CardComponent>
+          <CardComponent.Title
+            title={t('Heath Record')}
+            subTitle={t('healthRecord.subTitle', {
+              defaultValue: 'Fill information form',
+            })}
+            leftContent={(props: any) => (
+              <LeftContent {...props} icon="cards-heart" />
+            )}
+          />
+          <CardComponent.Content>
+            <View style={styles.formContainer}>
+              <View>
                 <FormItem
-                  name='size'
+                  label={`🕰️ ${t('Period')}`}
+                  name="period"
                   control={control}
-                  label='Size (meter)'
+                  rules={{ required: 'Period is required' }}
+                  error={errors?.period?.message}
+                  render={({ field: { onChange, value } }) => (
+                    <CustomPicker
+                      options={COW_STATUS()}
+                      selectedValue={value}
+                      onValueChange={onChange}
+                      readOnly={!isEditing}
+                    />
+                  )}
+                />
+              </View>
+              <View>
+                <FormItem
+                  name="status"
+                  control={control}
+                  rules={{ required: 'Status is required' }}
+                  label={`🐄 ${t('healthRecord.status', {
+                    defaultValue: 'Status',
+                  })}`}
+                  error={errors?.status?.message}
+                  render={({ field: { onChange, value } }) => (
+                    <CustomPicker
+                      options={OPTIONS_HEALTH_STATUS()}
+                      selectedValue={value}
+                      onValueChange={onChange}
+                      readOnly={!isEditing}
+                    />
+                  )}
+                />
+              </View>
+              <View>
+                <FormItem
+                  name="size"
+                  control={control}
+                  label={`📐 ${t('Size (meter)')}`}
                   rules={{
                     required: 'Size is required',
                     pattern: {
@@ -98,59 +188,339 @@ const HealthRecordFormScreen = () => {
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInputComponent.Number
                       error={errors.size ? errors.size.message : ''}
-                      placeholder='Enter your size'
+                      placeholder={t('Enter...')}
                       maxLength={3}
                       onBlur={onBlur}
                       onChangeText={(text) => {
                         const numericValue = text.replace(/[^0-9]/g, '');
                         onChange(numericValue);
                       }}
-                      value={value}
-                      returnKeyType='done' // Adds "Done" on the keyboard
+                      value={value?.toString() ?? ''}
+                      returnKeyType="done" // Adds "Done" on the keyboard
                       onSubmitEditing={Keyboard.dismiss}
+                      readOnly={!isEditing}
                     />
                   )}
                 />
               </View>
-            </View>
-            <View>
-              <FormItem
-                name='status'
-                control={control}
-                rules={{ required: 'Status is required' }}
-                label='Status'
-                error={errors?.status?.message}
-                render={({ field: { onChange, value } }) => (
-                  <CustomPicker
-                    options={OPTIONS_HEALTH_STATUS()}
-                    selectedValue={value}
-                    onValueChange={onChange}
+              <View style={styles.containerField}>
+                <View style={styles.containerForm}>
+                  <FormItem
+                    name="chestCircumference"
+                    control={control}
+                    label={`🎯 ${t('healthRecord.chestCircumference', {
+                      defaultValue: 'Chest Circumference (meter)',
+                    })}`}
+                    rules={{
+                      required: {
+                        message: 'Required',
+                      },
+                      pattern: {
+                        value: /^[0-9]*$/,
+                        message: 'Only numbers are allowed',
+                      },
+                      min: {
+                        value: 1,
+                        message: 'Chest Circumference must be greater than 0',
+                      },
+                    }}
+                    error={errors?.chestCircumference?.message}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <TextInputComponent.Number
+                        error={errors.size ? errors.size.message : ''}
+                        placeholder={t('Enter...')}
+                        maxLength={3}
+                        onBlur={onBlur}
+                        onChangeText={(text) => {
+                          const numericValue = text.replace(/[^0-9]/g, '');
+                          onChange(numericValue);
+                        }}
+                        value={value?.toString() ?? ''}
+                        returnKeyType="done" // Adds "Done" on the keyboard
+                        onSubmitEditing={Keyboard.dismiss}
+                        readOnly={!isEditing}
+                      />
+                    )}
                   />
-                )}
-              />
-            </View>
-
-            <View>
-              <FormItem
-                label='Period'
-                name='period'
-                control={control}
-                rules={{ required: 'Period is required' }}
-                error={errors?.period?.message}
-                render={({ field: { onChange, value } }) => (
-                  <CustomPicker
-                    options={COW_STATUS()}
-                    selectedValue={value}
-                    onValueChange={onChange}
+                </View>
+                <View style={styles.containerForm}>
+                  <FormItem
+                    name="bodyLength"
+                    control={control}
+                    label={`📐 ${t('healthRecord.bodyLength', {
+                      defaultValue: 'Body Length (meter)',
+                    })}`}
+                    rules={{
+                      required: {
+                        message: 'Required',
+                      },
+                      pattern: {
+                        value: /^[0-9]*$/,
+                        message: 'Only numbers are allowed',
+                      },
+                      min: {
+                        value: 1,
+                        message: 'Chest Circumference must be greater than 0',
+                      },
+                    }}
+                    error={errors?.bodyLength?.message}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <TextInputComponent.Number
+                        error={
+                          errors.bodyLength ? errors.bodyLength.message : ''
+                        }
+                        placeholder={t('Enter...')}
+                        maxLength={3}
+                        onBlur={onBlur}
+                        onChangeText={(text) => {
+                          const numericValue = text.replace(/[^0-9]/g, '');
+                          onChange(numericValue);
+                        }}
+                        value={value?.toString() ?? ''}
+                        returnKeyType="done" // Adds "Done" on the keyboard
+                        onSubmitEditing={Keyboard.dismiss}
+                        readOnly={!isEditing}
+                      />
+                    )}
                   />
-                )}
-              />
+                </View>
+                <View style={styles.containerForm}>
+                  <FormItem
+                    name="bodyTemperature"
+                    control={control}
+                    label={`🌡️ ${t('healthRecord.bodyTemperature', {
+                      defaultValue: 'Body Temperature (°C)',
+                    })}`}
+                    rules={{
+                      required: {
+                        message: 'Required',
+                      },
+                      pattern: {
+                        value: /^[0-9]*$/,
+                        message: 'Only numbers are allowed',
+                      },
+                      min: {
+                        value: 1,
+                        message: 'Chest Circumference must be greater than 0',
+                      },
+                    }}
+                    error={errors?.bodyTemperature?.message}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <TextInputComponent.Number
+                        error={
+                          errors.bodyTemperature
+                            ? errors.bodyTemperature.message
+                            : ''
+                        }
+                        placeholder={t('Enter...')}
+                        maxLength={3}
+                        onBlur={onBlur}
+                        onChangeText={(text) => {
+                          const numericValue = text.replace(/[^0-9]/g, '');
+                          onChange(numericValue);
+                        }}
+                        value={value?.toString() ?? ''}
+                        returnKeyType="done" // Adds "Done" on the keyboard
+                        onSubmitEditing={Keyboard.dismiss}
+                        readOnly={!isEditing}
+                      />
+                    )}
+                  />
+                </View>
+                <View style={styles.containerForm}>
+                  <FormItem
+                    name="heartRate"
+                    control={control}
+                    label={`❤️ ${t('healthRecord.heartRate', {
+                      defaultValue: 'Heart Rate (BPM)',
+                    })}`}
+                    rules={{
+                      required: {
+                        message: 'Required',
+                      },
+                      pattern: {
+                        value: /^[0-9]*$/,
+                        message: 'Only numbers are allowed',
+                      },
+                      min: {
+                        value: 1,
+                        message: 'Heart Rate must be greater than 0',
+                      },
+                    }}
+                    error={errors?.heartRate?.message}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <TextInputComponent.Number
+                        error={errors.heartRate ? errors.heartRate.message : ''}
+                        placeholder={t('Enter...')}
+                        maxLength={3}
+                        onBlur={onBlur}
+                        onChangeText={(text) => {
+                          const numericValue = text.replace(/[^0-9]/g, '');
+                          onChange(numericValue);
+                        }}
+                        value={value?.toString() ?? ''}
+                        returnKeyType="done" // Adds "Done" on the keyboard
+                        onSubmitEditing={Keyboard.dismiss}
+                        readOnly={!isEditing}
+                      />
+                    )}
+                  />
+                </View>
+                <View style={styles.containerForm}>
+                  <FormItem
+                    name="respiratoryRate"
+                    control={control}
+                    label={`🫁 ${t('healthRecord.respiratoryRate', {
+                      defaultValue: 'Respiratory Rate (times/minutes)',
+                    })}`}
+                    rules={{
+                      required: {
+                        message: 'Required',
+                      },
+                      pattern: {
+                        value: /^[0-9]*$/,
+                        message: 'Only numbers are allowed',
+                      },
+                      min: {
+                        value: 1,
+                        message: 'Respiratory Rate must be greater than 0',
+                      },
+                    }}
+                    error={errors?.respiratoryRate?.message}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <TextInputComponent.Number
+                        error={
+                          errors.respiratoryRate
+                            ? errors.respiratoryRate.message
+                            : ''
+                        }
+                        placeholder={t('Enter...')}
+                        maxLength={3}
+                        onBlur={onBlur}
+                        onChangeText={(text) => {
+                          const numericValue = text.replace(/[^0-9]/g, '');
+                          onChange(numericValue);
+                        }}
+                        value={value?.toString() ?? ''}
+                        returnKeyType="done" // Adds "Done" on the keyboard
+                        onSubmitEditing={Keyboard.dismiss}
+                        readOnly={!isEditing}
+                      />
+                    )}
+                  />
+                </View>
+                <View style={styles.containerForm}>
+                  <FormItem
+                    name="ruminateActivity"
+                    control={control}
+                    label={`🐮 ${t('healthRecord.ruminateActivity', {
+                      defaultValue: 'Ruminate Activity (minutes/days)',
+                    })}`}
+                    rules={{
+                      required: {
+                        message: 'Required',
+                      },
+                      pattern: {
+                        value: /^[0-9]*$/,
+                        message: 'Only numbers are allowed',
+                      },
+                      min: {
+                        value: 1,
+                        message: 'Ruminate Activity must be greater than 0',
+                      },
+                    }}
+                    error={errors?.ruminateActivity?.message}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <TextInputComponent.Number
+                        error={
+                          errors.ruminateActivity
+                            ? errors.ruminateActivity.message
+                            : ''
+                        }
+                        placeholder={t('Enter...')}
+                        maxLength={3}
+                        onBlur={onBlur}
+                        onChangeText={(text) => {
+                          const numericValue = text.replace(/[^0-9]/g, '');
+                          onChange(numericValue);
+                        }}
+                        value={value?.toString() ?? ''}
+                        returnKeyType="done" // Adds "Done" on the keyboard
+                        onSubmitEditing={Keyboard.dismiss}
+                        readOnly={!isEditing}
+                      />
+                    )}
+                  />
+                </View>
+              </View>
+              <View>
+                <FormItem
+                  name="description"
+                  control={control}
+                  label={t('healthRecord.description', {
+                    defaultValue: 'Description',
+                  })}
+                  rules={{
+                    required: {
+                      message: 'Required',
+                    },
+                  }}
+                  error={errors?.description?.message}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInputComponent
+                      error={
+                        errors.description ? errors.description.message : ''
+                      }
+                      editable
+                      multiline
+                      numberOfLines={4}
+                      placeholder={t('Enter...')}
+                      onBlur={onBlur}
+                      onChangeText={(text) => {
+                        onChange(text);
+                      }}
+                      value={value as any}
+                      onSubmitEditing={Keyboard.dismiss}
+                      readOnly={!isEditing}
+                    />
+                  )}
+                />
+              </View>
+              {!isEditing && (
+                <ButtonComponent
+                  type="warning"
+                  onPress={() => setIsEditing(true)}
+                >
+                  {t('Edit')}
+                </ButtonComponent>
+              )}
+              {isEditing && (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    gap: 5,
+                  }}
+                >
+                  <ButtonComponent
+                    width={'50%'}
+                    type="volcano"
+                    onPress={handleCancelEdit}
+                  >
+                    {t('Cancel')}
+                  </ButtonComponent>
+                  <ButtonComponent
+                    width={'50%'}
+                    onPress={handleSubmit(onSubmit)}
+                  >
+                    {t('Confirm')}
+                  </ButtonComponent>
+                </View>
+              )}
             </View>
-            <Button title='Submit' onPress={handleSubmit(onSubmit)} />
-          </View>
-        </CardComponent.Content>
-      </CardComponent>
-    </View>
+          </CardComponent.Content>
+        </CardComponent>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -158,6 +528,15 @@ const styles = StyleSheet.create({
   formContainer: {
     flexDirection: 'column',
     gap: 20,
+  },
+  containerForm: {
+    width: '48%',
+  },
+  containerField: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    justifyContent: 'space-between',
   },
 });
 

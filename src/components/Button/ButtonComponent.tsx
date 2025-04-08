@@ -68,7 +68,7 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
 
 const styles = StyleSheet.create({
   button: {
-    paddingVertical: 5,
+    paddingVertical: 7,
     paddingHorizontal: 10,
     borderRadius: 8,
     alignItems: 'center',
