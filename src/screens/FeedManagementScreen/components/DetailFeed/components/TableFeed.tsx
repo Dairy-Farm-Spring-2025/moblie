@@ -34,16 +34,18 @@ const TableFeed = ({ items, feed }: TableFeedProps) => {
           <TableComponent.Title style={styles.marginCell}>{t('feed.storage')}</TableComponent.Title>
         </TableComponent.Header>
 
-        {items.slice(from, to).map((element: FeedMealDetails) => (
-          <TableComponent.Row key={element.itemEntity.itemId}>
-            <TableComponent.Cell>{element.itemEntity.name}</TableComponent.Cell>
-            <TableComponent.Cell numeric>
-              {element.itemEntity.quantity} ({element.itemEntity.unit})
-            </TableComponent.Cell>
-            <TableComponent.Cell style={styles.marginCell}>
-              {element.itemEntity.warehouseLocationEntity.name}
-            </TableComponent.Cell>
-          </TableComponent.Row>
+        {items.slice(from, to).map((element: FeedMealDetails, index: number) => (
+          <View key={element.itemEntity.itemId + index}>
+            <TableComponent.Row>
+              <TableComponent.Cell>{element.itemEntity.name}</TableComponent.Cell>
+              <TableComponent.Cell numeric>
+                {element.itemEntity.quantity} ({element.itemEntity.unit})
+              </TableComponent.Cell>
+              <TableComponent.Cell style={styles.marginCell}>
+                {element.itemEntity.warehouseLocationEntity.name}
+              </TableComponent.Cell>
+            </TableComponent.Row>
+          </View>
         ))}
 
         <TableComponent.Pagination items={items} page={pages} numberOfItemsPerPage={itemPage} />

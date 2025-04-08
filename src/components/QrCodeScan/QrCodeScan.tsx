@@ -3,18 +3,46 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { CameraType, CameraView, useCameraPermissions } from 'expo-camera';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused hook
+import apiClient from '@config/axios/axios';
+import { Cow } from '@model/Cow/Cow';
+import { useQuery } from 'react-query';
 
 type QrCodeScanProps = {
   selectedField: string; // Nhận selectedField từ props
+};
+
+const fetchCowDetails = async (cowId: number): Promise<Cow> => {
+  const response = await apiClient.get(`/cows/${cowId}`);
+  return response.data;
 };
 
 const QrCodeScan = ({ selectedField }: QrCodeScanProps) => {
   const [facing, setFacing] = useState<CameraType>('back');
   const [isCameraActive, setIsCameraActive] = useState(false); // Set to false initially
   const [permission, requestPermission] = useCameraPermissions();
+  const [scannedCowId, setScannedCowId] = useState<number | null>(null);
   const navigation = useNavigation();
   const isFocused = useIsFocused(); // Hook to check if the screen is focused
   console.log(selectedField);
+
+  // Move useQuery to top level
+  const {
+    data: cow,
+    isLoading,
+    isError,
+  } = useQuery(['cow', scannedCowId], () => fetchCowDetails(scannedCowId!), {
+    enabled: !!scannedCowId, // Only fetch when we have a cowId
+    onSuccess: (data) => {
+      if (selectedField === 'report-illness' && !isLoading) {
+        navigation.navigate('IllnessReportForm', { cow: data });
+      }
+    },
+    onError: () => {
+      alert('Error fetching cow details');
+      navigation.navigate('Home');
+    },
+  });
+
   useEffect(() => {
     if (isFocused) {
       setIsCameraActive(true); // Activate the camera when the screen is focused
@@ -30,9 +58,7 @@ const QrCodeScan = ({ selectedField }: QrCodeScanProps) => {
   if (!permission.granted) {
     return (
       <View style={styles.container}>
-        <Text style={styles.message}>
-          We need your permission to show the camera
-        </Text>
+        <Text style={styles.message}>We need your permission to show the camera</Text>
         <TouchableOpacity onPress={requestPermission}>
           <Text style={styles.buttonText}>Grant Permission</Text>
         </TouchableOpacity>
@@ -54,6 +80,14 @@ const QrCodeScan = ({ selectedField }: QrCodeScanProps) => {
     'create-health-record': (navigate, cowId) => {
       if (cowId) {
         navigate('CowHealthRecord', { cowId });
+      } else {
+        alert('Invalid QR code for Health Record');
+        navigate('Home');
+      }
+    },
+    'report-illness': (navigate, cowId) => {
+      if (cowId) {
+        setScannedCowId(cowId); // Trigger the useQuery
       } else {
         alert('Invalid QR code for Health Record');
         navigate('Home');
@@ -120,10 +154,7 @@ const QrCodeScan = ({ selectedField }: QrCodeScanProps) => {
             <Text style={styles.scanText}>Scan within this area</Text>
           </View>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={toggleCameraFacing}
-            >
+            <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
               <Text style={styles.text}>Flip Camera</Text>
             </TouchableOpacity>
           </View>

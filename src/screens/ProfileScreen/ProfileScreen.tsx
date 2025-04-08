@@ -21,7 +21,7 @@ import { User } from '@model/User/User';
 import { getAvatar } from '@utils/getImage';
 import { convertToDDMMYYYY } from '@utils/format';
 import { useTranslation } from 'react-i18next';
-import { Ionicons } from '@expo/vector-icons';
+import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 
 const fetchProfile = async (): Promise<User> => {
@@ -202,11 +202,12 @@ const ProfileScreen: React.FC = () => {
                 ]}
                 onPress={() => changeLanguage('en')}
               >
-                <Ionicons
-                  name='flag-outline'
+                <FontAwesome5
+                  name='font-awesome-flag'
                   size={24}
                   color={i18n.language === 'en' ? '#6200ee' : '#666'}
                 />
+
                 <Text style={styles.languageText}>EN</Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -216,11 +217,12 @@ const ProfileScreen: React.FC = () => {
                 ]}
                 onPress={() => changeLanguage('vi')}
               >
-                <Ionicons
-                  name='flag-outline'
+                <FontAwesome5
+                  name='font-awesome-flag'
                   size={24}
-                  color={i18n.language === 'vi' ? '#6200ee' : '#666'}
+                  color={i18n.language === 'en' ? '#6200ee' : '#666'}
                 />
+
                 <Text style={styles.languageText}>VI</Text>
               </TouchableOpacity>
             </View>

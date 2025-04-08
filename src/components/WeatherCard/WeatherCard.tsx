@@ -131,6 +131,10 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ date }) => {
               <Ionicons name='speedometer' size={16} color='#007bff' />
               <Text style={styles.detailText}>Gió: {weather.windSpeed} kph</Text>
             </View>
+            <View style={styles.detailItem}>
+              <Ionicons name='location' size={16} color='#007bff' />
+              <Text style={styles.detailText}>Địa Chỉ: FPT University</Text>
+            </View>
           </View>
         </View>
       ) : (

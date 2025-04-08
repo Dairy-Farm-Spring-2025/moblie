@@ -8,6 +8,7 @@ import { ActivityIndicator, Text } from 'react-native-paper';
 import { useQuery } from 'react-query';
 import CardNotification from './components/CardNotification';
 import { t } from 'i18next';
+import { RefreshControl } from 'react-native-gesture-handler';
 
 const fetchNotification = async (): Promise<Notification[]> => {
   try {
@@ -19,10 +20,25 @@ const fetchNotification = async (): Promise<Notification[]> => {
 };
 
 const NotificationScreen = () => {
-  const { data: myNotificationData, isLoading } = useQuery<Notification[]>(
-    'notifications/myNotification',
-    fetchNotification
-  );
+  const {
+    data: myNotificationData,
+    isLoading,
+    refetch,
+  } = useQuery<Notification[]>('notifications/myNotification', fetchNotification);
+
+  // State for refresh control
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  // Refresh handler
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await refetch(); // Refetch the data
+    } finally {
+      setRefreshing(false);
+    }
+  }, [refetch]);
+
   return (
     <Layout isScrollable={false}>
       {isLoading ? (
@@ -36,6 +52,14 @@ const NotificationScreen = () => {
                 paddingHorizontal: 5,
               }}
               data={myNotificationData}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                  colors={['#0000ff']} // Optional: customize the refresh indicator color
+                  tintColor='#0000ff' // Optional: iOS specific color
+                />
+              }
               keyExtractor={(item: Notification) => item.id.notificationId.toString()}
               renderItem={({ item }) => <CardNotification item={item as Notification} />}
             />

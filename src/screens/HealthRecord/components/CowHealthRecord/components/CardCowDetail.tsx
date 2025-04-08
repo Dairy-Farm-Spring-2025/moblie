@@ -13,7 +13,6 @@ interface CardCowDetailProps {
 const CardCowDetail = ({ cow }: CardCowDetailProps) => {
   return (
     <CardComponent>
-      <CardComponent.Cover source={{ uri: 'https://picsum.photos/400/400' }} />
       <CardComponent.Title
         title={cow?.name}
         subTitle={cow?.dateOfBirth}
