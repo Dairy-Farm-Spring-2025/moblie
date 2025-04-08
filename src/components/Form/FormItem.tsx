@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TextInput, Keyboard } from 'react-native';
 import { Controller, ControllerProps } from 'react-hook-form';
+import { Tooltip } from 'react-native-paper';
 
 interface FormItemProps extends ControllerProps {
   name: string;
@@ -32,9 +33,11 @@ const FormItem = ({
   return (
     <View style={styles.container}>
       {/* Label */}
-      <Text style={styles.label}>
-        <Text style={styles.required}>*</Text> {label}
-      </Text>
+      <Tooltip title={`${label}`}>
+        <Text style={styles.label} numberOfLines={1} ellipsizeMode="tail">
+          <Text style={styles.required}>*</Text> {label}
+        </Text>
+      </Tooltip>
 
       {/* Input Field */}
       <Controller

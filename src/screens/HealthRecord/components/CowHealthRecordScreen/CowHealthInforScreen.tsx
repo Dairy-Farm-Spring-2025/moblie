@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { HealthResponse, IllnessCow } from '@model/Cow/Cow';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { convertToDDMMYYYY, formatType } from '@utils/format';
+import { t } from 'i18next';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Text } from 'react-native-paper';
@@ -14,7 +15,10 @@ type RootStackParamList = {
   CowHealthInforScreen: { healthResponses: HealthResponse[]; cowName: string };
 };
 
-type CowHealthInforScreenRouteProp = RouteProp<RootStackParamList, 'CowHealthInforScreen'>;
+type CowHealthInforScreenRouteProp = RouteProp<
+  RootStackParamList,
+  'CowHealthInforScreen'
+>;
 
 const CowHealthInforScreen = () => {
   const route = useRoute<CowHealthInforScreenRouteProp>();
@@ -65,11 +69,14 @@ const CowHealthInforScreen = () => {
         >
           <CardComponent style={styles.card}>
             <CardComponent.Title
-              title={rowData.title}
-              subTitle={data?.severity ? formatType(data?.severity) : 'N/A'}
+              title={t(rowData.title)}
+              subTitle={data?.severity ? t(formatType(data?.severity)) : 'N/A'}
             />
             <CardComponent.Content>
-              <TextRenderHorizontal title='User' content={data?.userEntity?.name ?? 'Unknown'} />
+              <TextRenderHorizontal
+                title="User"
+                content={data?.userEntity?.name ?? 'Unknown'}
+              />
             </CardComponent.Content>
           </CardComponent>
         </TouchableOpacity>
@@ -82,13 +89,26 @@ const CowHealthInforScreen = () => {
           onPress={() =>
             (navigator as any).navigate('HealthRecordFormScreen', {
               healthRecord: data,
+              fromScreen: 'cow',
             })
           }
         >
           <CardComponent style={styles.card}>
-            <CardComponent.Title title={rowData.title} subTitle={formatType(data?.status)} />
+            <CardComponent.Title
+              title={t(rowData.title)}
+              subTitle={t(formatType(data?.status))}
+            />
             <CardComponent.Content>
-              <TextRenderHorizontal title='Size' content={`${data?.size}(m)`} />
+              <View style={{ flexDirection: 'column', gap: 5 }}>
+                <TextRenderHorizontal
+                  title={t('Size (meter)')}
+                  content={`${data?.size}`}
+                />
+                <TextRenderHorizontal
+                  title={t('Weight (kilogram)')}
+                  content={`${data?.weight}`}
+                />
+              </View>
             </CardComponent.Content>
           </CardComponent>
         </TouchableOpacity>
@@ -106,17 +126,23 @@ const CowHealthInforScreen = () => {
         >
           <CardComponent style={styles.card}>
             <CardComponent.Title
-              title={rowData.title}
-              subTitle={data?.status ? formatType(data?.status) : 'N/A'}
+              title={t(rowData.title)}
+              subTitle={data?.status ? t(formatType(data?.status)) : 'N/A'}
             />
             <CardComponent.Content>
               <TextRenderHorizontal
-                title='Administered By'
-                content={typeof data?.administeredBy === 'string' ? data?.administeredBy : 'N/A'}
+                title={t('healthRecord.administeredBy', {
+                  defaultValue: 'Administered By',
+                })}
+                content={
+                  typeof data?.administeredBy === 'string'
+                    ? data?.administeredBy
+                    : 'N/A'
+                }
               />
               <TextRenderHorizontal
                 styleTextContent={{ flexWrap: 'wrap', flexShrink: 1 }}
-                title='Description'
+                title={t('Description')}
                 content={data?.description ? data?.description : 'N/A'}
               />
             </CardComponent.Content>
@@ -135,20 +161,20 @@ const CowHealthInforScreen = () => {
   };
   return (
     <View style={{ flex: 1 }}>
-      <TitleNameCows title='Timeline Health Record - ' cowName={cowName} />
+      <TitleNameCows title="Timeline Health Record - " cowName={cowName} />
       {timelineData.length > 0 ? (
         <Timeline
           data={timelineData}
           renderDetail={renderDetail} // Use custom card renderer
-          innerCircle='icon'
+          innerCircle="icon"
           circleSize={25}
           timeContainerStyle={{ minWidth: 72, marginTop: 5 }}
           timeStyle={{
             color: 'grey',
             fontStyle: 'italic',
           }}
-          circleColor='green'
-          lineColor='#C0C0C0'
+          circleColor="green"
+          lineColor="#C0C0C0"
           lineWidth={1}
           options={
             {
@@ -159,8 +185,12 @@ const CowHealthInforScreen = () => {
           }
         />
       ) : (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ fontSize: 18, fontWeight: 'bold' }}>No health records</Text>
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <Text style={{ fontSize: 18, fontWeight: 'bold' }}>
+            No health records
+          </Text>
         </View>
       )}
     </View>
