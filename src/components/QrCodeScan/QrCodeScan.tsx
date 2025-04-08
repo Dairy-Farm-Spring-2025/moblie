@@ -6,6 +6,8 @@ import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused 
 import apiClient from '@config/axios/axios';
 import { Cow } from '@model/Cow/Cow';
 import { useQuery } from 'react-query';
+import { useSelector } from 'react-redux';
+import { RootState } from '@core/store/store';
 
 type QrCodeScanProps = {
   selectedField: string; // Nhận selectedField từ props
@@ -23,6 +25,8 @@ const QrCodeScan = ({ selectedField }: QrCodeScanProps) => {
   const [scannedCowId, setScannedCowId] = useState<number | null>(null);
   const navigation = useNavigation();
   const isFocused = useIsFocused(); // Hook to check if the screen is focused
+  const { roleName } = useSelector((state: RootState) => state.auth);
+
   console.log(selectedField);
 
   // Move useQuery to top level
@@ -34,12 +38,17 @@ const QrCodeScan = ({ selectedField }: QrCodeScanProps) => {
     enabled: !!scannedCowId, // Only fetch when we have a cowId
     onSuccess: (data) => {
       if (selectedField === 'report-illness' && !isLoading) {
-        navigation.navigate('IllnessReportForm', { cow: data });
+        console.log(roleName);
+        if (roleName.toLocaleLowerCase() === 'veterinarians') {
+          (navigation.navigate as any)('IllnessReportScreen', { cow: data });
+        } else {
+          (navigation.navigate as any)('IllnessReportForm', { cow: data });
+        }
       }
     },
     onError: () => {
       alert('Error fetching cow details');
-      navigation.navigate('Home');
+      (navigation.navigate as any)('Home');
     },
   });
 
