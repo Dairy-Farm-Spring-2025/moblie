@@ -181,7 +181,7 @@ const ReportTaskDetailContent: React.FC<{
         {showReportButton && (
           <TouchableOpacity style={styles.reportButton} onPress={handleNavigateReportTask}>
             <Ionicons name='document-text-outline' size={24} color='#fff' />
-            <Text style={styles.reportButtonText}>Report</Text>
+            <Text style={styles.reportButtonText}>{t('Report')}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -200,7 +200,7 @@ const ReportTaskDetail: React.FC = () => {
   if (!initialReport) {
     return (
       <View style={styles.container}>
-        <Text>Loading...</Text>
+        <Text>{t('Loading')}...</Text>
       </View>
     );
   }
