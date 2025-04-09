@@ -4,7 +4,7 @@
   "nodata": "Không tìm thấy dữ liệu",
   "profile": {
     "title": "Hồ sơ",
-    "user_id": "ID Người dùng",
+    "employee_id": "Mã số nhân viên",
     "phone_number": "Số điện thoại",
     "email": "Email",
     "gender": "Giới tính",
@@ -167,7 +167,11 @@
     "item": "Vật phẩm"
   },
   "illness": {
-    "title": "Bệnh"
+    "title": "Bệnh",
+    "Edit the illness details": "Sửa chi tiết bệnh",
+    "View illness details": "Xem chi tiết bệnh",
+    "Illness Record": "Hồ Sơ Bệnh",
+    "Illness Cow Record": "Hồ Sơ Bệnh Bò"
   },
   "injections": {
     "title": "Tiêm phòng",
@@ -223,8 +227,17 @@
     "medium": "Trung bình",
     "high": "Cao",
     "low": "Thấp",
-    "critical": "Quan Trọng"
+    "critical": "Quan Trọng",
+    "Report_Task_Form": "Báo cáo Công Việc",
+    "Report Task": "Báo cáo Công Việc",
+    "Report_Task_Detail": "Báo cáo Công Việc Chi Tiết",
+    "Report_Detail": "Báo cáo Chi Tiết",
+    "Update_Report": "Chỉnh sửa Báo cáo",
+    "Report": "Báo cáo",
+    "Not_Reviewed": "Chưa có"
   },
+  "Select_a_Field": "Chọn công việc",
+  "Close": "Đóng",
   "Dimension": "Kích thước",
   "Pen Dimension": "Kích thước chuồng",
   "AboutScreen": "Giới thiệu",
@@ -293,6 +306,8 @@
   "Image": "Hình ảnh",
   "Existing Reports": "Các báo cáo hiện có",
   "No Report Data": "Không có dữ liệu báo cáo",
+  "Area Details": "Chi tiết khu vực",
+  "Illness Treatment Plan": "Kế hoạc chữa bệnh",
   "No tasks": "không có công việc",
   "application": {
     "titleView": "Xem đơn của bạn",

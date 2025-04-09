@@ -31,12 +31,16 @@ const TaskManagementRoute: React.FC = () => {
       <Stack.Screen
         name='ReportTaskForm'
         component={ReportTaskForm}
-        options={{ title: 'Report Task Form' }}
+        options={{
+          title: t('task_management.Report_Task_Form', { defaultValue: 'Report Task Form' }),
+        }}
       />
       <Stack.Screen
         name='ReportTaskDetail'
         component={ReportTaskDetail}
-        options={{ title: 'Report Task' }}
+        options={{
+          title: t('task_management.Report_Task_Detail', { defaultValue: 'Report Task Detail' }),
+        }}
       />
       <Stack.Screen
         name='IllnessReportForm'
@@ -64,19 +68,19 @@ const TaskManagementRoute: React.FC = () => {
       <Stack.Screen
         name='IllnessCowRecordScreen'
         component={IllnessCowRecordScreen}
-        options={{ title: 'Illness Cow Record' }}
+        options={{ title: t('illness.Illness Cow Record', { defaultValue: 'Illness Cow Record' }) }}
       />
       <Stack.Screen name='Materials' component={Materials} options={{ title: 'Materials' }} />
       <Stack.Screen
         name='AreaDetail'
         component={AreaDetailScreen}
-        options={{ title: 'Area Details' }}
+        options={{ title: t('Area Details') }}
       />
       <Stack.Screen name='CowDetails' component={DetailCow} options={{ title: 'Detail Cow' }} />
       <Stack.Screen
         name='IllnessPlanScreen'
         component={IllnessPlanScreen}
-        options={{ title: 'Illness Plan' }}
+        options={{ title: t('Illness Treatment Plan') }}
       />
     </Stack.Navigator>
   );

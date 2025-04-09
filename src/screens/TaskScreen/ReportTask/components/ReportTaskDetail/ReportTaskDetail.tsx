@@ -78,7 +78,7 @@ const ReportTaskDetailContent: React.FC<{
     <View style={styles.card}>
       <View style={styles.header}>
         <Text style={styles.title}>
-          {t('Report')} #{report.reportTaskId}
+          {t('task_management.Report', { defaultValue: 'Report' })} #{report.reportTaskId}
         </Text>
         <View style={[styles.statusBadge, { backgroundColor: getStatusColor(report.status) }]}>
           <Text style={styles.statusText}>{report.status}</Text>
@@ -151,7 +151,7 @@ const ReportTaskDetailContent: React.FC<{
                 ? typeof report.reviewer_id === 'number'
                   ? report.reviewer_id
                   : report.reviewer_id.name
-                : 'Not reviewed'}
+                : t('task_management.Not_Reviewed', { defaultValue: 'Not Reviewed' })}
             </Text>
           </View>
         </View>
@@ -281,10 +281,14 @@ const ReportTaskDetail: React.FC = () => {
         value={selectedSegment}
         onValueChange={setSelectedSegment}
         buttons={[
-          { value: 'detail', label: 'Report Detail', icon: 'file-document' },
+          {
+            value: 'detail',
+            label: t('task_management.Report_Detail', { defaultValue: 'Report Detail' }),
+            icon: 'file-document',
+          },
           {
             value: 'update',
-            label: 'Update Report',
+            label: t('task_management.Update_Report', { defaultValue: 'Update Report' }),
             icon: 'pencil-outline',
             disabled: isExpired,
           },

@@ -420,14 +420,12 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
     marginBottom: 20,
   },
   updateButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#52c41a',
     paddingVertical: 12,
     paddingHorizontal: 20,

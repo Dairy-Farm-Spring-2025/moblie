@@ -94,15 +94,19 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
   return (
     <CardComponent style={styles.container}>
       <CardComponent.Title
-        title={'Illness Record'}
-        subTitle={isEditing ? 'Edit the illness details' : 'View illness details'}
+        title={t('illness.Illness Record', { defaultValue: 'Illness Record' })}
+        subTitle={
+          isEditing
+            ? t('illness.Edit the illness details', { defaultValue: 'Edit the illness details' })
+            : t('iness.View illness details', { defaultValue: 'View illness details' })
+        }
         leftContent={(props: any) => <LeftContent {...props} icon='cards-heart' />}
       />
       <CardComponent.Content>
         {!isEditing ? (
           // Read-only view
           <View>
-            <Text style={styles.label}>{t('Severity')}:</Text>
+            <Text style={styles.label}>{t('Severity', { defaultValue: 'Severity' })}:</Text>
             <Text style={styles.value}>{illness.severity || 'N/A'}</Text>
 
             <View style={styles.dateContainer}>
@@ -142,7 +146,7 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
           <>
             <FormItem
               control={control}
-              label='Severity'
+              label={t('Severity', { defaultValue: 'Severity' })}
               name='severity'
               render={({ field: { onChange, onBlur, value } }) => (
                 <CustomPicker
@@ -151,7 +155,7 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
                   options={[
                     { label: t('Mild'), value: 'mild' },
                     { label: t('Moderate'), value: 'moderate' },
-                    { label: t('Severe'), value: 'severe' }, // Corrected "Severity" to "Severe"
+                    { label: t('Severe'), value: 'severe' },
                     { label: t('Critical'), value: 'critical' },
                   ]}
                 />
