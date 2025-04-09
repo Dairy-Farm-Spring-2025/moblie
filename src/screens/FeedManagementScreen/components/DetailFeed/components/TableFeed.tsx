@@ -35,7 +35,7 @@ const TableFeed = ({ items, feed }: TableFeedProps) => {
         </TableComponent.Header>
 
         {items.slice(from, to).map((element: FeedMealDetails, index: number) => (
-          <View key={element.itemEntity.itemId + index}>
+          <View key={element.itemEntity.itemId + element.itemEntity.name + index}>
             <TableComponent.Row>
               <TableComponent.Cell>{element.itemEntity.name}</TableComponent.Cell>
               <TableComponent.Cell numeric>

@@ -288,9 +288,9 @@ const IllnessPlanScreen = () => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.title}>
+        {/* <Text style={styles.title}>
           {t('illness_plan.title', { defaultValue: 'Create Illness Plan' })}
-        </Text>
+        </Text> */}
 
         <FlatList
           data={plans}

@@ -7,6 +7,7 @@ import {
   Modal,
   ActivityIndicator,
   ScrollView,
+  Image,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { AppDispatch, RootState } from '@core/store/store';
@@ -23,6 +24,8 @@ import { convertToDDMMYYYY } from '@utils/format';
 import { useTranslation } from 'react-i18next';
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import vietnam from '../../../assets/vietnam.png'; // Adjust the path based on your folder structure
+import us from '../../../assets/us.png'; // Adjust the path based on your folder structure
 
 const fetchProfile = async (): Promise<User> => {
   try {
@@ -202,11 +205,7 @@ const ProfileScreen: React.FC = () => {
                 ]}
                 onPress={() => changeLanguage('en')}
               >
-                <FontAwesome5
-                  name='font-awesome-flag'
-                  size={24}
-                  color={i18n.language === 'en' ? '#6200ee' : '#666'}
-                />
+                <Image style={styles.languageImage} source={us} />
 
                 <Text style={styles.languageText}>EN</Text>
               </TouchableOpacity>
@@ -217,12 +216,7 @@ const ProfileScreen: React.FC = () => {
                 ]}
                 onPress={() => changeLanguage('vi')}
               >
-                <FontAwesome5
-                  name='font-awesome-flag'
-                  size={24}
-                  color={i18n.language === 'en' ? '#6200ee' : '#666'}
-                />
-
+                <Image style={styles.languageImage} source={vietnam} />
                 <Text style={styles.languageText}>VI</Text>
               </TouchableOpacity>
             </View>
@@ -233,8 +227,8 @@ const ProfileScreen: React.FC = () => {
           {/* User Info */}
           <List.Section>
             <List.Item
-              title={t('profile.user_id')}
-              description={profileData?.id || 'N/A'}
+              title={t('profile.employee_id', { defaultValue: 'Employee ID' })}
+              description={profileData?.employeeNumber || 'N/A'}
               left={() => <List.Icon icon='identifier' />}
             />
             <List.Item
@@ -317,6 +311,12 @@ const styles = StyleSheet.create({
   },
   avatarContainer: {
     position: 'relative',
+  },
+  languageImage: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    marginRight: 5,
   },
   cameraIcon: {
     position: 'absolute',

@@ -231,12 +231,14 @@ const NavigationWrapper = () => {
                 justifyContent: 'space-between',
               }}
             >
-              <Text style={styles.drawerTitle}>Select a Field</Text>
+              <Text style={styles.drawerTitle}>
+                {t('Select_a_Field', { defaultValue: 'Select a Field' })}
+              </Text>
               <TouchableOpacity
                 style={styles.closeButton}
                 onPress={() => setIsDrawerVisible(false)}
               >
-                <Text style={styles.closeButtonText}>Close</Text>
+                <Text style={styles.closeButtonText}>{t('Close', { defaultValue: 'Close' })}</Text>
               </TouchableOpacity>
             </View>
             {optionsScan.map((element) => (
