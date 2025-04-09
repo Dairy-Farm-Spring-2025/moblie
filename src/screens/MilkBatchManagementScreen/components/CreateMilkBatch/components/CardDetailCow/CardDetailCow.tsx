@@ -19,10 +19,6 @@ interface CardDetailCowProps {
 const CardDetailCow: React.FC<CardDetailCowProps> = ({ cow, onPress, width, dailyMilk }) => {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
-      <Image
-        source={{ uri: 'https://picsum.photos/200/300' }} // Replace with cow image
-        style={styles.cardImage}
-      />
       <View style={styles.cardWrapper}>
         <View style={styles.cardHeader}>
           <Text style={styles.cardTitle}>{cow?.name}</Text>

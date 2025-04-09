@@ -10,6 +10,8 @@ import {
   Platform,
   Modal,
   TextInput,
+  TouchableWithoutFeedback,
+  Keyboard, // Import Keyboard
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -130,75 +132,80 @@ const ReportTaskForm: React.FC = () => {
   };
 
   return (
-    <View style={styles.card}>
-      <Text style={styles.title}>
-        {t('Report Task')} #{reportId}
-      </Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <View style={styles.card}>
+          <Text style={styles.title}>
+            {t('Report Task')} #{reportId}
+          </Text>
 
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>{t('Description')}</Text>
-        <TextInput
-          style={styles.input}
-          value={formData.description}
-          onChangeText={(text) => setFormData((prev) => ({ ...prev, description: text }))}
-          placeholder='Enter task description'
-          multiline
-        />
-      </View>
-
-      <View style={styles.imageContainer}>
-        <Text style={styles.label}>{t('Uploaded/Captured Image')}</Text>
-        <TouchableOpacity style={styles.uploadButton} onPress={() => setModalVisible(true)}>
-          <Ionicons name='camera-outline' size={24} color='#fff' />
-          <Text style={styles.uploadButtonText}>{t('Add Image')}</Text>
-        </TouchableOpacity>
-        {formData.imagesFile && (
-          <Image source={{ uri: formData.imagesFile }} style={styles.imagePreviewItem} />
-        )}
-      </View>
-
-      <TouchableOpacity
-        style={[
-          styles.submitButton,
-          reportTaskFormMutation.isLoading && styles.submitButtonDisabled,
-        ]}
-        onPress={handleSubmit}
-        disabled={reportTaskFormMutation.isLoading}
-      >
-        <Text style={styles.submitButtonText}>
-          {reportTaskFormMutation.isLoading ? 'Submitting...' : 'Submit Report'}
-        </Text>
-      </TouchableOpacity>
-
-      <Modal
-        animationType='slide'
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <TouchableOpacity style={styles.modalButton} onPress={pickImage}>
-              <Ionicons name='image-outline' size={30} color='#007bff' />
-              <Text style={styles.modalButtonText}>{t('Pick from Gallery')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.modalButton} onPress={takePicture}>
-              <Ionicons name='camera' size={30} color='#007bff' />
-              <Text style={styles.modalButtonText}>{t('Take a Photo')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.modalButton, styles.cancelButton]}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={styles.cancelButtonText}>{t('Cancel')}</Text>
-            </TouchableOpacity>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>{t('Description')}</Text>
+            <TextInput
+              style={styles.input}
+              value={formData.description}
+              onChangeText={(text) => setFormData((prev) => ({ ...prev, description: text }))}
+              placeholder='Enter task description'
+              multiline
+            />
           </View>
+
+          <View style={styles.imageContainer}>
+            <Text style={styles.label}>{t('Uploaded/Captured Image')}</Text>
+            <TouchableOpacity style={styles.uploadButton} onPress={() => setModalVisible(true)}>
+              <Ionicons name='camera-outline' size={24} color='#fff' />
+              <Text style={styles.uploadButtonText}>{t('Add Image')}</Text>
+            </TouchableOpacity>
+            {formData.imagesFile && (
+              <Image source={{ uri: formData.imagesFile }} style={styles.imagePreviewItem} />
+            )}
+          </View>
+
+          <TouchableOpacity
+            style={[
+              styles.submitButton,
+              reportTaskFormMutation.isLoading && styles.submitButtonDisabled,
+            ]}
+            onPress={handleSubmit}
+            disabled={reportTaskFormMutation.isLoading}
+          >
+            <Text style={styles.submitButtonText}>
+              {reportTaskFormMutation.isLoading ? 'Submitting...' : 'Submit Report'}
+            </Text>
+          </TouchableOpacity>
+
+          <Modal
+            animationType='slide'
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <TouchableOpacity style={styles.modalButton} onPress={pickImage}>
+                  <Ionicons name='image-outline' size={30} color='#007bff' />
+                  <Text style={styles.modalButtonText}>{t('Pick from Gallery')}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.modalButton} onPress={takePicture}>
+                  <Ionicons name='camera' size={30} color='#007bff' />
+                  <Text style={styles.modalButtonText}>{t('Take a Photo')}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.cancelButton]}
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Text style={styles.cancelButtonText}>{t('Cancel')}</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
         </View>
-      </Modal>
-    </View>
+      </ScrollView>
+    </TouchableWithoutFeedback>
   );
 };
 
+// Styles remain the same
 const styles = StyleSheet.create({
   card: {
     width: '100%',
