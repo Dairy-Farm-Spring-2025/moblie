@@ -20,6 +20,12 @@ import { getReportImage } from '@utils/getImage';
 import RenderHTML from 'react-native-render-html';
 import { t } from 'i18next';
 
+type FileData = {
+  uri: string;
+  name: string;
+  type: string;
+} | null;
+
 type RootStackParamList = {
   ReportTaskDetail: { report: ReportTaskData };
   ReportTaskForm: { reportId: number };
@@ -34,9 +40,8 @@ const fetchReportTask = async (reportId: number): Promise<ReportTaskData> => {
 
 const ReportTaskDetailContent: React.FC<{
   report?: ReportTaskData;
-  onUpdate: (description: string, taskFile: string | null) => void;
   isUpdating: boolean;
-}> = ({ report, onUpdate, isUpdating }) => {
+}> = ({ report, isUpdating }) => {
   const navigation = useNavigation<any>();
   console.log('Report Images:', report?.reportImages);
 
@@ -215,20 +220,35 @@ const ReportTaskDetail: React.FC = () => {
   const isExpired = currentDate > reportDate;
 
   const updateReportMutation = useMutation(
-    (data: FormData) => {
-      console.log('Sending update request with FormData:');
-      console.log(`URL: /reportTask/update/${report!.reportTaskId}`);
-      return apiClient.put(`/reportTask/update/${report!.reportTaskId}`, data);
+    async (data: { description: string; deleteUrls: string[]; newImage: FileData }) => {
+      const formDataToSend = new FormData();
+
+      // Construct the "request" object
+      const request = {
+        description: data.description,
+        deleteUrls: data.deleteUrls,
+      };
+      // Append the "request" object as a JSON string
+      formDataToSend.append('request', JSON.stringify(request));
+
+      // Append the new image under "newImages" if it exists
+      if (data.newImage) {
+        formDataToSend.append('newImages', data.newImage as any);
+      }
+
+      console.log('Sending update request with FormData:', formDataToSend);
+      return apiClient.put(`/reportTask/update/${report?.reportTaskId}`, formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
     },
     {
-      onSuccess: (response) => {
-        console.log('Update successful:', response.data);
+      onSuccess: () => {
         Alert.alert('Success', 'Report updated successfully!');
-        queryClient.invalidateQueries('reportTasks');
-        queryClient.invalidateQueries(['reportTask', initialReport.reportTaskId]);
-        navigation.goBack();
       },
       onError: (error: any) => {
+        console.error('Failed to update report:', error.response?.data || error.message);
         Alert.alert(
           'Error',
           `Failed to update report: ${error.response?.data?.message || error.message}`
@@ -237,24 +257,10 @@ const ReportTaskDetail: React.FC = () => {
     }
   );
 
-  const handleUpdate = (description: string, imagesFile: string | null) => {
-    console.log('handleUpdate called with:', { description, imagesFile });
-    const formDataToSend = new FormData();
-    formDataToSend.append('description', description);
-    if (imagesFile) {
-      const uriParts = imagesFile.split('.');
-      const fileType = uriParts[uriParts.length - 1];
-      const fileData = {
-        uri: imagesFile,
-        name: `image.reportTask.${fileType}`,
-        type: `image/${fileType}`,
-      };
-      console.log('Appending file:', fileData);
-      formDataToSend.append('imagesFile', fileData as any);
-    }
-    updateReportMutation.mutate(formDataToSend);
+  const handleUpdate = (description: string, deleteUrls: string[], newImage: FileData) => {
+    console.log('handleUpdate called with:', { description, deleteUrls, newImage });
+    updateReportMutation.mutate({ description, deleteUrls, newImage });
   };
-
   const onRefresh = async () => {
     setRefreshing(true);
     try {
@@ -297,11 +303,7 @@ const ReportTaskDetail: React.FC = () => {
         }
       >
         {selectedSegment === 'detail' ? (
-          <ReportTaskDetailContent
-            report={report}
-            onUpdate={handleUpdate}
-            isUpdating={updateReportMutation.isLoading}
-          />
+          <ReportTaskDetailContent report={report} isUpdating={updateReportMutation.isLoading} />
         ) : (
           <ReportTaskUpdateContent
             report={report!}

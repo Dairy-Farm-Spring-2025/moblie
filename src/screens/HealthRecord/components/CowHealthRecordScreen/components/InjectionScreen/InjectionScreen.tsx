@@ -2,12 +2,12 @@ import CardComponent from '@components/Card/CardComponent';
 import ContainerComponent from '@components/Container/ContainerComponent';
 import apiClient from '@config/axios/axios';
 import { InjectionCow, InjectionStatus } from '@model/Cow/Cow';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { convertToDDMMYYYY, formatCamelCase } from '@utils/format';
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Text, Title } from 'react-native-paper';
-import { useQuery } from 'react-query';
+import React, { useState } from 'react';
+import { Alert, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Button, Modal, Text, TextInput, Title } from 'react-native-paper';
+import { useMutation, useQuery } from 'react-query';
 import { Ionicons } from '@expo/vector-icons';
 import TagUI from '@components/UI/TagUI';
 import { t } from 'i18next';
@@ -18,7 +18,7 @@ import { getStatusItemDarkColor } from '@utils/getColorsStatus';
 import { StatusItem } from '@model/Item/Item';
 
 type RootStackParamList = {
-  InjectionScreen: { vaccineInjectionId: number };
+  InjectionScreen: { vaccineInjectionId: number; taskId?: number }; // taskId made optional
 };
 
 type InjectionScreenRouteProp = RouteProp<RootStackParamList, 'InjectionScreen'>;
@@ -36,9 +36,31 @@ const statusColors: Record<InjectionStatus, string> = {
   canceled: '#B91C1C', // Dark Red
 };
 
+const exportMaterial = async ({
+  itemId,
+  taskId,
+  quantity,
+}: {
+  itemId: number | undefined;
+  taskId?: number; // Made optional
+  quantity: number;
+}) => {
+  const response = await apiClient.post('/export_items/create', {
+    quantity,
+    itemId,
+    ...(taskId && { taskId }), // Only include taskId if it exists
+  });
+  return response.data;
+};
+
 const InjectionScreen = () => {
   const route = useRoute<InjectionScreenRouteProp>();
-  const { vaccineInjectionId } = route.params;
+  const { vaccineInjectionId, taskId } = route.params;
+  const navigation = useNavigation();
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [quantity, setQuantity] = useState('');
+  const [exportTaskId, setExportTaskId] = useState<string | undefined>(taskId?.toString());
   const {
     data: injections,
     isLoading,
@@ -48,6 +70,35 @@ const InjectionScreen = () => {
     fetchVaccineInjections(vaccineInjectionId)
   );
   const getStatusDarkColor = (status: InjectionStatus) => statusColors[status] || '#374151'; // Default Dark Gray
+
+  const exportMutation = useMutation(exportMaterial, {
+    onSuccess: (data, variables) => {
+      Alert.alert('Success', `export item with ID ${variables.itemId} exported successfully!`);
+      setModalVisible(false);
+      setQuantity('');
+      setExportTaskId(taskId?.toString());
+      setTimeout(() => {
+        (navigation.goBack as any)();
+      }, 500);
+    },
+    onError: (error: any) => {
+      Alert.alert('Error', error?.response?.data?.message || 'Failed to export material');
+    },
+  });
+
+  const handleExport = () => {
+    if (!quantity || isNaN(Number(quantity))) {
+      Alert.alert('Error', 'Please enter a valid quantity');
+      return;
+    }
+
+    exportMutation.mutate({
+      itemId: injections?.vaccineCycleDetail.itemEntity.itemId,
+      taskId: exportTaskId ? Number(exportTaskId) : undefined,
+      quantity: Number(quantity),
+    });
+  };
+
   if (isError) {
     <Text>{(error as any)?.message}</Text>;
   }
@@ -142,11 +193,19 @@ const InjectionScreen = () => {
             </View>
           </CardComponent>
           <CardComponent>
-            <Text style={styles.titleCard}>
-              {t('injections.vaccineItem', {
-                defaultValue: 'Vaccine Item',
-              })}
-            </Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Text style={styles.titleCard}>
+                {t('injections.vaccineItem', {
+                  defaultValue: 'Vaccine Item',
+                })}
+              </Text>
+              <Text
+                style={{ fontSize: 16, fontWeight: '500' }}
+                onPress={() => setModalVisible(true)}
+              >
+                Export
+              </Text>
+            </View>
             <DividerUI />
             <View
               style={{
@@ -183,13 +242,40 @@ const InjectionScreen = () => {
                 title={t('injections.category', { defaultValue: 'Category' })}
                 content={injections?.vaccineCycleDetail.itemEntity.categoryEntity.name}
               />
-              <TextRenderHorizontal
+              {/* <TextRenderHorizontal
                 title={t('injections.quantity', { defaultValue: 'Quantity' })}
                 content={`${injections?.vaccineCycleDetail.itemEntity.quantity} (${injections?.vaccineCycleDetail.itemEntity.unit})`}
+              /> */}
+              <TextRenderHorizontal
+                title={t('injections.description', { defaultValue: 'Description' })}
+                content={`${injections?.vaccineCycleDetail.itemEntity.description}`}
               />
             </View>
           </CardComponent>
         </View>
+        {/* Export Modal */}
+        <Modal
+          visible={modalVisible}
+          onDismiss={() => setModalVisible(false)}
+          contentContainerStyle={styles.modalContainer}
+        >
+          <Title>Export Material</Title>
+          <TextInput
+            label='Quantity'
+            value={quantity}
+            onChangeText={setQuantity}
+            keyboardType='numeric'
+            style={styles.input}
+          />
+          <View style={styles.modalButtons}>
+            <Button mode='outlined' onPress={() => setModalVisible(false)}>
+              Cancel
+            </Button>
+            <Button mode='contained' onPress={handleExport} loading={exportMutation.isLoading}>
+              Export
+            </Button>
+          </View>
+        </Modal>
       </View>
     </ContainerComponent.ScrollView>
   );
@@ -222,6 +308,20 @@ const styles = StyleSheet.create({
     padding: 10,
     flexDirection: 'column',
     gap: 15,
+  },
+  modalContainer: {
+    backgroundColor: 'white',
+    padding: 20,
+    margin: 20,
+    borderRadius: 8,
+  },
+  input: {
+    marginVertical: 10,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
   },
 });
 

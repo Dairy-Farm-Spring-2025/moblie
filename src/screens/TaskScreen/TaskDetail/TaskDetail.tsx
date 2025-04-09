@@ -40,14 +40,17 @@ const TaskDetailContent: React.FC<{
   console.log('task', task.material?.vaccineInjection?.id);
 
   // Check if a report exists for the selected date
+  console.log('task Date', task.reportTask?.date);
+  console.log('task Date', selectedDate);
   const hasReportForDate = task.reportTask && task.reportTask.date === selectedDate;
   // Check if task status is completed
   const isCompleted = task.status.toLowerCase() === 'completed';
   // Check if current date is within task duration
-  const currentDate = new Date();
-  const fromDate = new Date(task.fromDate);
-  const toDate = new Date(task.toDate);
-  const isWithinCurrentDateRange = currentDate >= fromDate && currentDate <= toDate;
+  const currentDateNow = new Date();
+  const currentDateStr = new Date(currentDateNow.toISOString().split('T')[0]);
+  const fromDate = new Date(task.fromDate.split('T')[0]);
+  const toDate = new Date(task.toDate.split('T')[0]);
+  const isWithinCurrentDateRange = currentDateStr >= fromDate && currentDateStr <= toDate;
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -120,7 +123,7 @@ const TaskDetailContent: React.FC<{
   const textColor = '#333'; // Fixed for white card background
 
   const handleViewMaterials = () =>
-    (navigation.navigate as any)('Materials', { areaId: task.areaId.areaId });
+    (navigation.navigate as any)('Materials', { area: task.areaId, taskId: task.taskId });
 
   // Navigation handler
   const handleNavigateScreen = (screenType: string) => {
@@ -138,6 +141,7 @@ const TaskDetailContent: React.FC<{
       case 'vaccineInjection':
         (navigation.navigate as any)('InjectionScreen', {
           vaccineInjectionId: task.material?.vaccineInjection?.id,
+          taskId: task.taskId,
         });
         break;
       default:
@@ -148,6 +152,11 @@ const TaskDetailContent: React.FC<{
   const navigateToAreaDetail = (areaId: number) => {
     (navigation.navigate as any)('AreaDetail', { areaId });
   };
+
+  console.log('isCheckingIn', isCheckingIn);
+  console.log('hasReportForDate', hasReportForDate);
+  console.log('isCompleted', isCompleted);
+  console.log('isWithinCurrentDateRange', isWithinCurrentDateRange);
 
   return (
     <View style={[styles.card, { borderLeftColor: priorityColor }]}>
@@ -292,29 +301,30 @@ const TaskDetailContent: React.FC<{
         )}
       </View>
 
-      {task.taskTypeId.name.toLowerCase() === 'cho ăn' && (
-        <View style={styles.infoRow}>
-          <View style={styles.labelContainer}>
-            <Ionicons
-              name='document-text-outline'
-              size={20}
-              color={textColor}
-              style={styles.icon}
-            />
-            <Text style={[styles.textLabel, { color: textColor }]}>
-              {t('task_detail.view_materials')}:
-            </Text>
+      {task.taskTypeId.name.toLowerCase() === 'cho ăn' &&
+        hasReportForDate &&
+        isWithinCurrentDateRange && (
+          <View style={styles.infoRow}>
+            <View style={styles.labelContainer}>
+              <Ionicons
+                name='document-text-outline'
+                size={20}
+                color={textColor}
+                style={styles.icon}
+              />
+              <Text style={[styles.textLabel, { color: textColor }]}>
+                {t('task_detail.view_materials')}:
+              </Text>
+            </View>
+            <TouchableOpacity onPress={handleViewMaterials} disabled={isCheckingIn}>
+              <Text style={styles.materials}>View</Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={handleViewMaterials} disabled={isCheckingIn}>
-            <Text style={styles.materials}>View</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+        )}
       {(task.material?.illness ||
         task.material?.illnessDetail ||
         task.material?.vaccineInjection) &&
-        !isCompleted &&
-        !hasReportForDate &&
+        hasReportForDate &&
         isWithinCurrentDateRange && (
           <View style={styles.infoRow}>
             <View style={styles.labelContainer}>

@@ -4,6 +4,7 @@ export type Item = {
   status: StatusItem;
   unit: Unit;
   quantity: number;
+  description: string;
   categoryEntity: {
     categoryId: number;
     name: string;
@@ -36,9 +37,4 @@ export type Unit =
   | 'bag'
   | 'box';
 
-export type StatusItem =
-  | 'available'
-  | 'outOfStock'
-  | 'damaged'
-  | 'expired'
-  | 'reserved';
+export type StatusItem = 'available' | 'outOfStock' | 'damaged' | 'expired' | 'reserved';
