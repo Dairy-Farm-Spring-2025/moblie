@@ -2,6 +2,7 @@ import CardComponent from '@components/Card/CardComponent';
 import FloatingButton from '@components/FloatingButton/FloatingButton';
 import TextRenderHorizontal from '@components/UI/TextRenderHorizontal';
 import apiClient from '@config/axios/axios';
+import { RootState } from '@core/store/store';
 import { IllnessCow, IllnessDetail } from '@model/Cow/Cow';
 import { useNavigation } from '@react-navigation/native';
 import { formatType } from '@utils/format';
@@ -11,6 +12,7 @@ import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { IconButton, Text } from 'react-native-paper';
 import Timeline from 'react-native-timeline-flatlist';
 import { useMutation } from 'react-query';
+import { useSelector } from 'react-redux';
 
 interface IllnessDetailProps {
   illness: IllnessCow;
@@ -18,6 +20,8 @@ interface IllnessDetailProps {
 }
 
 const IllnessDetailRecord = ({ illness, refetch }: IllnessDetailProps) => {
+  const { userId } = useSelector((state: RootState) => state.auth);
+
   const navigator = useNavigation();
   const timelineData = illness.illnessDetails.map((element: IllnessDetail) => ({
     time: element?.date,
@@ -50,6 +54,11 @@ const IllnessDetailRecord = ({ illness, refetch }: IllnessDetailProps) => {
     ]);
   };
 
+  const handleShowName = (vet: any) => {
+    if (!vet) return 'N/A';
+    return vet?.id === userId ? vet?.name + ' (You)' : vet?.name;
+  };
+
   const renderItem = (rowData: any) => {
     const { data } = rowData;
     console.log(data);
@@ -71,13 +80,11 @@ const IllnessDetailRecord = ({ illness, refetch }: IllnessDetailProps) => {
               alignItems: 'center',
             }}
           >
-            <Text style={{ fontWeight: '600', fontSize: 16 }}>
-              {formatType(rowData.title)}
-            </Text>
+            <Text style={{ fontWeight: '600', fontSize: 16 }}>{formatType(rowData.title)}</Text>
             <IconButton
               icon={'delete-outline'}
               size={20}
-              iconColor="red"
+              iconColor='red'
               onPress={() => deleteItemDetail(data.illnessDetailId)}
             />
           </View>
@@ -92,7 +99,7 @@ const IllnessDetailRecord = ({ illness, refetch }: IllnessDetailProps) => {
                 title={t('illness_detail.veterinarians', {
                   defaultValue: 'Veterinarian',
                 })}
-                content={data?.veterinarian ? data?.veterinarian?.name : 'N/A'}
+                content={handleShowName(data?.veterinarian)}
               />
               <TextRenderHorizontal
                 title={t('illness_detail.item', {
@@ -110,19 +117,18 @@ const IllnessDetailRecord = ({ illness, refetch }: IllnessDetailProps) => {
     <View style={{ flex: 1 }}>
       <Timeline
         data={timelineData.sort(
-          (a: any, b: any) =>
-            new Date(b?.time)?.getTime() - new Date(a?.time)?.getTime()
+          (a: any, b: any) => new Date(b?.time)?.getTime() - new Date(a?.time)?.getTime()
         )}
         renderDetail={renderItem}
-        innerCircle="icon"
+        innerCircle='icon'
         circleSize={25}
         timeContainerStyle={{ minWidth: 72, marginTop: 5 }}
         timeStyle={{
           color: 'grey',
           fontStyle: 'italic',
         }}
-        circleColor="green"
-        lineColor="#C0C0C0"
+        circleColor='green'
+        lineColor='#C0C0C0'
         lineWidth={1}
         options={
           {

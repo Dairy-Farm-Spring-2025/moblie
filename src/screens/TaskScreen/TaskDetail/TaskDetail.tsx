@@ -161,7 +161,10 @@ const TaskDetailContent: React.FC<{
           <Text style={[styles.textLabel, { color: textColor }]}>{t('task_detail.priority')}:</Text>
         </View>
         <View style={[styles.priorityBadge, { backgroundColor: priorityColor }]}>
-          <Text style={[styles.priorityText, { color: '#fff' }]}>{task.priority}</Text>
+          <Text style={[styles.priorityText, { color: '#fff' }]}>
+            {' '}
+            {t(`task_management.${task.priority}`, { defaultValue: task.priority })}
+          </Text>
         </View>
       </View>
 
@@ -232,7 +235,9 @@ const TaskDetailContent: React.FC<{
           ]}
         >
           <Text style={[styles.tagText, { color: getShiftTextColor(task.shift) }]}>
-            {formatCamelCase(task.shift)}
+            {t(`task_management.${formatCamelCase(task.shift)}`, {
+              defaultValue: formatCamelCase(task.shift),
+            })}
           </Text>
           {task.shift.toLowerCase().includes('night') ? (
             <MaterialCommunityIcons name='weather-night' size={20} style={styles.shiftIcon} />
@@ -307,50 +312,53 @@ const TaskDetailContent: React.FC<{
       )}
       {(task.material?.illness ||
         task.material?.illnessDetail ||
-        task.material?.vaccineInjection) && (
-        <View style={styles.infoRow}>
-          <View style={styles.labelContainer}>
-            <Ionicons
-              name='document-text-outline'
-              size={20}
-              color={textColor}
-              style={styles.icon}
-            />
-            <Text style={[styles.textLabel, { color: textColor }]}>
-              {t('task_detail.view_materials')}:
-            </Text>
+        task.material?.vaccineInjection) &&
+        !isCompleted &&
+        !hasReportForDate &&
+        isWithinCurrentDateRange && (
+          <View style={styles.infoRow}>
+            <View style={styles.labelContainer}>
+              <Ionicons
+                name='document-text-outline'
+                size={20}
+                color={textColor}
+                style={styles.icon}
+              />
+              <Text style={[styles.textLabel, { color: textColor }]}>
+                {t('task_detail.view_materials')}:
+              </Text>
+            </View>
+            {/* Illness Link */}
+            {task.material?.illness && (
+              <TouchableOpacity
+                onPress={() => handleNavigateScreen('illness')}
+                disabled={isCheckingIn}
+              >
+                <Text style={styles.materials}>{t('task_detail.view_illness')}</Text>
+              </TouchableOpacity>
+            )}
+
+            {/* IllnessDetail Link */}
+            {task.material?.illnessDetail && (
+              <TouchableOpacity
+                onPress={() => handleNavigateScreen('illnessDetail')}
+                disabled={isCheckingIn}
+              >
+                <Text style={styles.materials}>{t('task_detail.view_illness_detail')}</Text>
+              </TouchableOpacity>
+            )}
+
+            {/* VaccineInjection Link */}
+            {task.material?.vaccineInjection && (
+              <TouchableOpacity
+                onPress={() => handleNavigateScreen('vaccineInjection')}
+                disabled={isCheckingIn}
+              >
+                <Text style={styles.materials}>{t('task_detail.view_vaccine_injection')}</Text>
+              </TouchableOpacity>
+            )}
           </View>
-          {/* Illness Link */}
-          {task.material.illness && (
-            <TouchableOpacity
-              onPress={() => handleNavigateScreen('illness')}
-              disabled={isCheckingIn}
-            >
-              <Text style={styles.materials}>{t('task_detail.view_illness')}</Text>
-            </TouchableOpacity>
-          )}
-
-          {/* IllnessDetail Link */}
-          {task.material.illnessDetail && (
-            <TouchableOpacity
-              onPress={() => handleNavigateScreen('illnessDetail')}
-              disabled={isCheckingIn}
-            >
-              <Text style={styles.materials}>{t('task_detail.view_illness_detail')}</Text>
-            </TouchableOpacity>
-          )}
-
-          {/* VaccineInjection Link */}
-          {task.material.vaccineInjection && (
-            <TouchableOpacity
-              onPress={() => handleNavigateScreen('vaccineInjection')}
-              disabled={isCheckingIn}
-            >
-              <Text style={styles.materials}>{t('task_detail.view_vaccine_injection')}</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      )}
+        )}
 
       <View style={[styles.buttonsContainer, isCompleted && styles.centeredButtonContainer]}>
         {!isCompleted && !hasReportForDate && isWithinCurrentDateRange && (
@@ -434,6 +442,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: '100%',
+    marginTop: 10,
     borderRadius: 18,
     padding: 20,
     elevation: 6,

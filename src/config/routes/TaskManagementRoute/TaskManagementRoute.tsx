@@ -1,12 +1,13 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AreaDetailScreen from '@screens/AreaManagementScreen/components/Detail/AreaDetailScreen';
+import DetailCow from '@screens/CowManagementScreen/components/DetailCow/DetailCow';
 import IllnessDetailForm from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/components/IllnessDetail/components/IllnessDetailForm';
 import IllnessReportForm from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/components/IllnessReportForm/IllnessReportForm';
 import IllnessCowRecordScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/IllnessCowRecordScreen';
+import IllnessPlanScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessPlanScreen/IllnessPlanScreen';
 import InjectionScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/InjectionScreen/InjectionScreen';
 import ReportTaskDetail from '@screens/TaskScreen/ReportTask/components/ReportTaskDetail/ReportTaskDetail';
 import ReportTaskForm from '@screens/TaskScreen/ReportTask/components/ReportTaskForm/ReportTaskForm';
-import ReportTaskScreen from '@screens/TaskScreen/ReportTask/ReportTaskScreen';
 import Materials from '@screens/TaskScreen/TaskDetail/components/Materials';
 import TaskDetail from '@screens/TaskScreen/TaskDetail/TaskDetail';
 import TaskScreen from '@screens/TaskScreen/TaskScreen';
@@ -25,7 +26,7 @@ const TaskManagementRoute: React.FC = () => {
       <Stack.Screen
         name='TaskDetail'
         component={TaskDetail}
-        options={{ title: t('task_management.detail') }}
+        options={{ title: t('task_management.detail', { defaultValue: 'Task Detail' }) }}
       />
       <Stack.Screen
         name='ReportTaskForm'
@@ -70,6 +71,12 @@ const TaskManagementRoute: React.FC = () => {
         name='AreaDetail'
         component={AreaDetailScreen}
         options={{ title: 'Area Details' }}
+      />
+      <Stack.Screen name='CowDetails' component={DetailCow} options={{ title: 'Detail Cow' }} />
+      <Stack.Screen
+        name='IllnessPlanScreen'
+        component={IllnessPlanScreen}
+        options={{ title: 'Illness Plan' }}
       />
     </Stack.Navigator>
   );

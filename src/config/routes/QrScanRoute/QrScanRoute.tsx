@@ -9,7 +9,7 @@ import CowHealthRecord from '@screens/HealthRecord/components/CowHealthRecord/Co
 import HealthRecordFormScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/HealthRecordFormScreen/HealthRecordFormScreen';
 import IllnessReportForm from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/components/IllnessReportForm/IllnessReportForm';
 import { t } from 'i18next';
-import IllnessReportScreen from '@screens/HealthRecord/components/IllnessReportScreen/IllnessReportScreen';
+import IllnessReportScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessReportScreen/IllnessReportScreen';
 
 const Stack = createNativeStackNavigator();
 type RootStackParamList = {

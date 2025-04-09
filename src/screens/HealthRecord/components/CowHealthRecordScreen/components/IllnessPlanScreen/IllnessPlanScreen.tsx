@@ -1,0 +1,433 @@
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  FlatList,
+} from 'react-native';
+import { useQuery } from 'react-query';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { t } from 'i18next';
+import apiClient from '@config/axios/axios';
+import { InjectionSite } from '@model/Illness/enums/InjectionSite';
+import { Item } from '@model/Item/Item';
+import { IllnessPlan, IllnessPlanRequest } from '@model/IllnessPlan/IllnessPlan';
+import CustomPicker, { Option } from '@components/CustomPicker/CustomPicker';
+import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
+import TextEditorComponent from '@components/Input/TextEditor/TextEditorComponent';
+import { IllnessCow } from '@model/Cow/Cow';
+
+type RootStackParamList = {
+  IllnessPlanScreen: { illness: IllnessCow };
+};
+
+type IllnessPlanScreenRouteProp = RouteProp<RootStackParamList, 'IllnessPlanScreen'>;
+
+// Fetch vaccine data
+const fetchVaccines = async (): Promise<Item[]> => {
+  const response = await apiClient.get('/items/vaccine');
+  return response.data;
+};
+
+const IllnessPlanScreen = () => {
+  const route = useRoute<IllnessPlanScreenRouteProp>();
+  const navigation = useNavigation();
+  const { illness } = route.params;
+
+  const [plans, setPlans] = useState<IllnessPlan[]>([
+    {
+      dosage: 0,
+      injectionSite: InjectionSite.leftArm,
+      date: '2025-04-08',
+      itemId: 0,
+      description: '',
+      illnessId: illness.illnessId,
+    },
+  ]);
+  const [showDatePicker, setShowDatePicker] = useState<number | null>(null);
+  const [expandedPlans, setExpandedPlans] = useState<boolean[]>([true]); // Track which plans are expanded
+  const [errors, setErrors] = useState<{ [key: string]: { message: string } }[]>([]); // Track errors for each plan
+
+  // Fetch vaccines
+  const {
+    data: vaccines,
+    isLoading,
+    isError,
+  } = useQuery('vaccines', fetchVaccines, {
+    onError: (error) => {
+      console.error('Error fetching vaccines:', error);
+    },
+  });
+
+  // Map vaccines to CustomPicker options
+  const vaccineOptions: Option[] = vaccines
+    ? vaccines.map((vaccine) => ({
+        label: vaccine.name,
+        value: vaccine.itemId.toString(),
+      }))
+    : [];
+
+  // Options for InjectionSite picker
+  const injectionSiteOptions: Option[] = Object.values(InjectionSite).map((site) => ({
+    label: site
+      .split(/(?=[A-Z])/)
+      .join(' ')
+      .replace(/\b\w/g, (char) => char.toUpperCase()),
+    value: site,
+  }));
+
+  const handlePlanChange = (index: number, field: keyof IllnessPlan, value: any) => {
+    setPlans((prev) => prev.map((plan, i) => (i === index ? { ...plan, [field]: value } : plan)));
+  };
+
+  const addNewPlan = () => {
+    setPlans((prev) => [
+      ...prev,
+      {
+        dosage: 0,
+        injectionSite: InjectionSite.leftArm,
+        date: '2025-04-08',
+        itemId: 0,
+        description: '',
+        illnessId: illness.illnessId,
+      },
+    ]);
+    setExpandedPlans((prev) => [...prev, true]); // Expand new plan by default
+    setErrors((prev) => [...prev, {}]); // Add empty error object for new plan
+  };
+
+  const removePlan = (index: number) => {
+    setPlans((prev) => prev.filter((_, i) => i !== index));
+    setExpandedPlans((prev) => prev.filter((_, i) => i !== index));
+    setErrors((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const togglePlan = (index: number) => {
+    setExpandedPlans((prev) => prev.map((expanded, i) => (i === index ? !expanded : expanded)));
+  };
+
+  const handleDateChange = (index: number, event: any, selectedDate?: Date) => {
+    setShowDatePicker(null);
+    if (selectedDate) {
+      const formattedDate = selectedDate.toISOString().split('T')[0];
+      handlePlanChange(index, 'date', formattedDate);
+    }
+  };
+
+  const handleSubmit = async () => {
+    // Basic validation
+    const newErrors = plans.map((plan) => {
+      const error: { [key: string]: { message: string } } = {};
+      if (plan.dosage <= 0) {
+        error.dosage = {
+          message: t('illness_plan.dosage_error', {
+            defaultValue: 'Dosage must be greater than 0',
+          }),
+        };
+      }
+      if (plan.itemId === 0) {
+        error.itemId = {
+          message: t('illness_plan.vaccine_error', { defaultValue: 'Please select a vaccine' }),
+        };
+      }
+      if (!plan.description.trim()) {
+        error.description = {
+          message: t('illness_plan.description_error', { defaultValue: 'Description is required' }),
+        };
+      }
+      return error;
+    });
+
+    setErrors(newErrors);
+
+    // Check if there are any errors
+    if (newErrors.some((error) => Object.keys(error).length > 0)) {
+      return;
+    }
+
+    const requestBody: IllnessPlanRequest = { plans };
+    try {
+      await apiClient.post('/illness-detail/create-plan', requestBody.plans);
+      console.log('Illness Plans Submitted:', requestBody.plans);
+      navigation.goBack();
+    } catch (error) {
+      console.error('Error submitting illness plans:', error);
+      alert(
+        t('illness_plan.submit_error', {
+          defaultValue: 'Error submitting plans. Please try again.',
+        })
+      );
+    }
+  };
+
+  const isExpendedIcons = (index: number) => {
+    if (expandedPlans[index]) {
+      return 'up';
+    }
+    return 'down';
+  };
+
+  const renderPlan = ({ item, index }: { item: IllnessPlan; index: number }) => (
+    <View style={styles.planCard}>
+      <TouchableOpacity style={styles.planHeader} onPress={() => togglePlan(index)}>
+        <Text style={styles.planTitle}>
+          {t('illness_plan.plan', { defaultValue: 'Plan' })} {index + 1}
+        </Text>
+        <AntDesign name={isExpendedIcons(index)} size={24} color='#333' />
+      </TouchableOpacity>
+
+      {expandedPlans[index] && (
+        <>
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>
+              {t('illness_plan.dosage', { defaultValue: 'Dosage (mL or mg)' })}
+            </Text>
+            <TextInput
+              style={[styles.input, errors[index]?.dosage && styles.inputError]}
+              value={item.dosage.toString()}
+              onChangeText={(text) => handlePlanChange(index, 'dosage', Number(text))}
+              placeholder={t('illness_plan.dosage_placeholder', { defaultValue: 'Enter dosage' })}
+              keyboardType='numeric'
+            />
+            {errors[index]?.dosage && (
+              <Text style={styles.errorText}>{errors[index].dosage.message}</Text>
+            )}
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>
+              {t('illness_plan.injection_site', { defaultValue: 'Injection Site' })}
+            </Text>
+            <CustomPicker
+              options={injectionSiteOptions}
+              selectedValue={item.injectionSite}
+              onValueChange={(value) =>
+                handlePlanChange(index, 'injectionSite', value as InjectionSite)
+              }
+              title={t('illness_plan.select_injection_site', {
+                defaultValue: 'Select injection site...',
+              })}
+            />
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>{t('illness_plan.date', { defaultValue: 'Date' })}</Text>
+            <TouchableOpacity style={styles.input} onPress={() => setShowDatePicker(index)}>
+              <Text style={styles.dateText}>{item.date}</Text>
+            </TouchableOpacity>
+            {showDatePicker === index && (
+              <DateTimePicker
+                value={new Date(item.date)}
+                mode='date'
+                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                onChange={(event, date) => handleDateChange(index, event, date)}
+              />
+            )}
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>
+              {t('illness_plan.vaccine', { defaultValue: 'Vaccine/Medication' })}
+            </Text>
+            {isLoading ? (
+              <Text style={styles.loadingText}>
+                {t('illness_plan.loading', { defaultValue: 'Loading vaccines...' })}
+              </Text>
+            ) : isError ? (
+              <Text style={styles.errorText}>
+                {t('illness_plan.error', { defaultValue: 'Error loading vaccines' })}
+              </Text>
+            ) : (
+              <>
+                <CustomPicker
+                  options={vaccineOptions}
+                  selectedValue={item.itemId.toString()}
+                  onValueChange={(value) => handlePlanChange(index, 'itemId', Number(value))}
+                  title={t('illness_plan.select_vaccine', { defaultValue: 'Select vaccine...' })}
+                />
+                {errors[index]?.itemId && (
+                  <Text style={styles.errorText}>{errors[index].itemId.message}</Text>
+                )}
+              </>
+            )}
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>
+              {t('illness_plan.description', { defaultValue: 'Description' })}
+            </Text>
+            <TextEditorComponent
+              onChange={(text: string) => handlePlanChange(index, 'description', text)}
+              value={item.description}
+              error={errors[index]?.description?.message}
+            />
+          </View>
+
+          {plans.length > 1 && (
+            <TouchableOpacity style={styles.removeButton} onPress={() => removePlan(index)}>
+              <Text style={styles.removeButtonText}>
+                {t('illness_plan.remove', { defaultValue: 'Remove Plan' })}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </>
+      )}
+    </View>
+  );
+
+  return (
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Text style={styles.title}>
+          {t('illness_plan.title', { defaultValue: 'Create Illness Plan' })}
+        </Text>
+
+        <FlatList
+          data={plans}
+          renderItem={renderPlan}
+          keyExtractor={(item, index) => index.toString()}
+          scrollEnabled={false}
+        />
+
+        <TouchableOpacity style={styles.addButton} onPress={addNewPlan}>
+          <Text style={styles.addButtonText}>
+            {t('illness_plan.add_plan', { defaultValue: 'Add Another Plan' })}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+          <Text style={styles.submitButtonText}>
+            {t('illness_plan.submit', { defaultValue: 'Submit Plans' })}
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F8F9FA',
+  },
+  scrollContainer: {
+    padding: 20,
+    paddingBottom: 40,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#1A1A1A',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  planCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    marginBottom: 15,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  planHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
+  planTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+  },
+  formGroup: {
+    marginBottom: 15,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#CCCCCC',
+    borderRadius: 8,
+    padding: 10,
+    fontSize: 16,
+    color: '#333',
+    backgroundColor: '#FFFFFF',
+    minHeight: 50,
+  },
+  inputError: {
+    borderColor: '#FF3B30',
+  },
+  dateText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  addButton: {
+    backgroundColor: '#34C759',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  addButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  removeButton: {
+    backgroundColor: '#FF3B30',
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginHorizontal: 15,
+    marginBottom: 10,
+  },
+  removeButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  submitButton: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  submitButtonText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+  },
+  errorText: {
+    fontSize: 14,
+    color: '#FF3B30',
+    marginTop: 5,
+  },
+});
+
+export default IllnessPlanScreen;

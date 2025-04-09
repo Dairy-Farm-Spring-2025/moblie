@@ -211,7 +211,19 @@
     "task": "Công việc",
     "create": "Tạo",
     "report": "Báo cáo",
-    "detail": "Công Việc Chi Tiết"
+    "detail": "Công Việc Chi Tiết",
+    "Day": "Ngày",
+    "Night": "Đêm",
+    "report_submitted": "Đã báo cáo",
+    "not_submitted": "Chưa báo cáo",
+    "shift": "Ca",
+    "Day Shift": "Ca ngày",
+    "Night Shift": "Ca đêm",
+    "area": "Khu vực",
+    "medium": "Trung bình",
+    "high": "Cao",
+    "low": "Thấp",
+    "critical": "Quan Trọng"
   },
   "Dimension": "Kích thước",
   "Pen Dimension": "Kích thước chuồng",
@@ -377,5 +389,13 @@
     "createHealthRecord": "Khám định kỳ",
     "viewCowDetail": "Xem chi tiết bò",
     "vaccineInjection": "Tiêm vaccine"
+  },
+  "weather": {
+    "title": "Thời Tiết",
+    "humidity": "Độ ẩm",
+    "wind": "Gió",
+    "temperature": "Nhiệt độ",
+    "location": "Địa điểm",
+    "NoTasks": "Không có công việc nào"
   }
 }
