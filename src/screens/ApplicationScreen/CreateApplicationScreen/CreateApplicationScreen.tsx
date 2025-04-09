@@ -64,7 +64,7 @@ const CreateApplicationScreen = () => {
     {
       onSuccess: (response: any) => {
         Alert.alert(t('Success'), response.message);
-        (navigation as any).navigate('MyApplicationScreen');
+        (navigation as any).navigate('ViewApplicationScreen');
       },
       onError: (error: any) => {
         Alert.alert(t('Error'), error.response.data.message);

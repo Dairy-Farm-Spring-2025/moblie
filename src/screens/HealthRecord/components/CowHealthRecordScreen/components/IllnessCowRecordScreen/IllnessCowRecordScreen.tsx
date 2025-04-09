@@ -33,8 +33,8 @@ const IllnessCowRecordScreen = () => {
 
   const navigation = useNavigation();
 
-  const handlePress = (cow: Cow) => {
-    (navigation as any).navigate('IllnessReportForm', { cow });
+  const handlePress = (illness: IllnessCow) => {
+    (navigation as any).navigate('IllnessPlanScreen', { illness: illness });
   };
 
   if (isLoading) {
@@ -82,7 +82,7 @@ const IllnessCowRecordScreen = () => {
       )}
       <FloatingButton
         onPress={() => {
-          handlePress(illness.cowEntity);
+          handlePress(illness);
         }}
       />
     </View>

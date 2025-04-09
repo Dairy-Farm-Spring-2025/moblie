@@ -28,7 +28,8 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
   const navigation = useNavigation();
   const [isEditing, setIsEditing] = useState(false); // Toggle for edit mode
   const [startDate, setStartDate] = useState(new Date(illness.startDate)?.toISOString());
-  const [endDate, setEndDate] = useState(new Date(illness.endDate)?.toISOString());
+  const [symptoms, setSymptoms] = useState(illness.symptoms);
+  const [endDate, setEndDate] = useState();
 
   const { roleName } = useSelector((state: RootState) => state.auth);
   const getColorByrole = () => {
@@ -48,14 +49,13 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
     formState: { errors },
   } = useForm<IllnessPayload>({
     defaultValues: {
-      cowId: illness.cowEntity.cowId,
       prognosis: illness.prognosis,
       severity: illness.severity,
-      symptoms: illness.symptoms,
     },
   });
   const { mutate } = useMutation(
-    async (data: IllnessPayload) => await apiClient.put(`illness/${illness.illnessId}`, data),
+    async (data: IllnessPayload) =>
+      await apiClient.put(`illness/prognosis/${illness.illnessId}`, data),
     {
       onSuccess: (response: any) => {
         console.log(response);
@@ -82,8 +82,6 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
   const onSubmit = async (values: IllnessPayload) => {
     const payload: IllnessPayload = {
       ...values,
-      startDate,
-      endDate,
     };
     mutate(payload);
   };
@@ -124,7 +122,7 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
 
             <Text style={styles.label}>{t('Prognosis')}:</Text>
             <View>
-              <RenderHtmlComponent htmlContent={illness.prognosis} />
+              <RenderHtmlComponent htmlContent={illness.prognosis || 'N/A'} />
             </View>
 
             <Text style={styles.label}>{t('Symptoms')}:</Text>
@@ -162,38 +160,13 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
 
             <View style={styles.dateContainer}>
               <View style={{ width: '48%' }}>
-                <FormItem
-                  control={control}
-                  label={t('Start Date')}
-                  name='startDate'
-                  render={() => (
-                    <DateTimePicker
-                      value={new Date(startDate)}
-                      mode='date'
-                      is24Hour={true}
-                      display='default'
-                      onChange={handleStartDateChange}
-                    />
-                  )}
-                />
+                <Text style={styles.label}>{t('Start Date')}</Text>
+                <Text style={styles.value}>{formattedStartDate}</Text>
               </View>
 
               <View style={{ width: '48%' }}>
-                <FormItem
-                  control={control}
-                  label={t('End Date')}
-                  name='endDate'
-                  render={() => (
-                    <DateTimePicker
-                      value={endDate ? new Date(endDate) : new Date()}
-                      mode='date'
-                      is24Hour={true}
-                      display='default'
-                      onChange={handleEndDateChange}
-                      minimumDate={new Date(startDate)}
-                    />
-                  )}
-                />
+                <Text style={styles.label}>{t('Start Date')}</Text>
+                <Text style={styles.value}>{endDate ? formattedEndDate : 'N/A'}</Text>
               </View>
             </View>
 
@@ -215,14 +188,7 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
               control={control}
               label={t('Symptoms')}
               name='symptoms'
-              rules={{ required: 'Must not be empty' }}
-              render={({ field: { onChange, value } }) => (
-                <TextEditorComponent
-                  onChange={onChange}
-                  value={value}
-                  error={errors?.symptoms?.message}
-                />
-              )}
+              render={({ field: { value } }) => <Text style={styles.textView}>{symptoms}</Text>}
             />
 
             <View style={styles.buttonContainer}>
@@ -278,6 +244,11 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     flex: 1,
+  },
+  textView: {
+    marginTop: 10,
+    padding: 10,
+    color: '#333',
   },
 });
 

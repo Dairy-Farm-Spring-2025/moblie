@@ -57,8 +57,9 @@ const IllnessDetailForm = () => {
   const [date, setDate] = useState(new Date(illnessDetail.date).toISOString());
   const [optionsItemVaccine, setOptionsItemVaccine] = useState<any[]>([]);
 
-  const { roleName } = useSelector((state: RootState) => state.auth);
+  const { roleName, userId } = useSelector((state: RootState) => state.auth);
   const textColor = '#333';
+  console.log('userId', userId);
 
   const getColorByRole = () => {
     switch (roleName) {
@@ -160,6 +161,12 @@ const IllnessDetailForm = () => {
     setIsEditMode(!isEditMode);
   };
 
+  const handleShowName = () => {
+    return veterinarianProfile?.id === userId
+      ? veterinarianProfile?.name + ' (You)'
+      : veterinarianProfile?.name;
+  };
+
   return (
     <ScrollView style={styles.container}>
       <CardComponent>
@@ -244,7 +251,11 @@ const IllnessDetailForm = () => {
               {veterinarianProfile && (
                 <CardComponent style={styles.card}>
                   <CardComponent.Title
-                    title={veterinarianProfile.name}
+                    title={
+                      veterinarianProfile.id === userId
+                        ? veterinarianProfile.name + '(You)'
+                        : veterinarianProfile.name
+                    }
                     subTitle={veterinarianProfile.roleId.name}
                     leftContent={() => (
                       <Avatar.Image
@@ -380,7 +391,7 @@ const IllnessDetailForm = () => {
               {veterinarianProfile ? (
                 <CardComponent style={styles.card}>
                   <CardComponent.Title
-                    title={veterinarianProfile.name}
+                    title={handleShowName()}
                     subTitle={veterinarianProfile.roleId.name}
                     leftContent={() => (
                       <Avatar.Image

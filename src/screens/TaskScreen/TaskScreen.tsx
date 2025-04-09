@@ -17,6 +17,15 @@ import { useNavigation } from '@react-navigation/native';
 import { Task } from '@model/Task/Task';
 import { formatCamelCase } from '@utils/format';
 import WeatherCard from '@components/WeatherCard/WeatherCard';
+import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
+
+const handleLanguageDate = (lang: string) => {
+  if (lang === 'vi') {
+    return 'vi-VN';
+  }
+  return 'en-US';
+};
 
 const getWeekDates = (currentDate: Date) => {
   const today = new Date(currentDate);
@@ -140,12 +149,14 @@ const NewTaskCard = ({
       <View style={styles.taskHeader}>
         <Text style={[styles.taskCardTitle, { color: textColor }]}>{task.taskTypeId.name}</Text>
         <View style={[styles.priorityBadge, { borderColor: textColor }]}>
-          <Text style={[styles.priorityBadgeText, { color: textColor }]}>{task.priority}</Text>
+          <Text style={[styles.priorityBadgeText, { color: textColor }]}>
+            {t(`task_management.${task.priority}`, { defaultValue: task.priority })}
+          </Text>
         </View>
       </View>
-      <Text style={[styles.taskCardText, { color: textColor }]}>
-        Shift: {formatCamelCase(task.shift)}
-      </Text>
+      <Text style={[styles.taskCardText, { color: textColor }]}>{`${t('task_management.area', {
+        defaultValue: 'Area',
+      })}: ${task.areaId.name}`}</Text>
       <View style={styles.reportStatusContainer}>
         <Ionicons
           name={hasReportForSelectedDate ? 'checkmark-circle' : 'alert-circle'}
@@ -154,7 +165,9 @@ const NewTaskCard = ({
           style={styles.reportStatusIcon}
         />
         <Text style={[styles.reportStatusText, { color: textColor }]}>
-          {hasReportForSelectedDate ? 'Submitted' : 'Not Submitted'}
+          {hasReportForSelectedDate
+            ? t('task_management.report_submitted', { defaultValue: 'Submitted' })
+            : t('task_management.not_submitted', { defaultValue: 'Not Submitted' })}
         </Text>
       </View>
     </TouchableOpacity>
@@ -163,6 +176,7 @@ const NewTaskCard = ({
 
 const TaskScreen: React.FC = () => {
   const navigation = useNavigation();
+  const { i18n } = useTranslation();
   const [searchText, setSearchText] = useState('');
   const [selectedFilter, setSelectedFilter] = useState<
     'description' | 'status' | 'area' | 'taskType' | 'assigner' | 'assignee' | 'priority' | 'shift'
@@ -183,7 +197,6 @@ const TaskScreen: React.FC = () => {
 
   const weekDates = getWeekDates(currentMonday);
   const queryKey = ['tasks', weekDates[0].toISOString(), weekDates[6].toISOString()];
-
   const {
     data: tasks,
     isLoading,
@@ -251,7 +264,10 @@ const TaskScreen: React.FC = () => {
     setSelectedDayIndex(0);
   };
 
-  const monthYear = currentMonday.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const monthYear = currentMonday.toLocaleDateString(handleLanguageDate(i18n.language), {
+    month: 'long',
+    year: 'numeric',
+  });
 
   const handleTaskPress = (task: Task) => {
     (navigation.navigate as any)('TaskDetail', {
@@ -304,7 +320,9 @@ const TaskScreen: React.FC = () => {
                     ]}
                     numberOfLines={1}
                   >
-                    {date.toLocaleDateString('en-US', { weekday: 'short' })}
+                    {date.toLocaleDateString(handleLanguageDate(i18n.language), {
+                      weekday: 'short',
+                    })}
                   </Text>
                   <Text
                     style={[
@@ -312,7 +330,10 @@ const TaskScreen: React.FC = () => {
                       selectedDayIndex === index && styles.segmentTextSelected,
                     ]}
                   >
-                    {date.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit' })}
+                    {date.toLocaleDateString(handleLanguageDate(i18n.language), {
+                      day: '2-digit',
+                      month: '2-digit',
+                    })}
                   </Text>
                   {taskCount > 0 && (
                     <View style={styles.badge}>
@@ -347,7 +368,11 @@ const TaskScreen: React.FC = () => {
                 .map((shift) => (
                   <View key={shift} style={styles.shiftSection}>
                     <View style={styles.shiftHeader}>
-                      <Text style={styles.shiftText}>{shift}</Text>
+                      <Text style={styles.shiftText}>
+                        {shift === 'Day'
+                          ? t('task_management.Day', { defaultValue: 'Day' })
+                          : t('task_management.Night', { defaultValue: 'Night' })}
+                      </Text>
                     </View>
                     <View style={styles.taskContainer}>
                       {(() => {
@@ -368,7 +393,9 @@ const TaskScreen: React.FC = () => {
                             />
                           ))
                         ) : (
-                          <Text style={styles.noTasksText}>No tasks</Text>
+                          <Text style={styles.noTasksText}>
+                            {t('task_management.NoTasks', { defaultValue: 'No tasks' })}
+                          </Text>
                         );
                       })()}
                     </View>
@@ -384,7 +411,7 @@ const TaskScreen: React.FC = () => {
               }) && <Text style={styles.noTasksText}>No tasks for this day</Text>}
             </View>
           )}
-          <View style={{ height: 300 }} />
+          <View style={{ height: 400 }} />
         </ScrollView>
       </View>
     </Layout>

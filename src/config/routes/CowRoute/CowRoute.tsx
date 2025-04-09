@@ -32,6 +32,7 @@ import VaccineCyclesManagementScreen from '@screens/VaccineCyclesManagementScree
 import MyApplicationScreen from '@screens/ApplicationScreen/MyApplicationScreen/MyApplicationScreen';
 import CreateApplicationScreen from '@screens/ApplicationScreen/CreateApplicationScreen/CreateApplicationScreen';
 import VaccineCycleDetailScreen from '@screens/VaccineCyclesManagementScreen/components/VaccineCycleDetailScreen/VaccineCycleDetailScreen';
+import IllnessPlanScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessPlanScreen/IllnessPlanScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -202,6 +203,11 @@ const CowRoute: React.FC = () => {
             defaultValue: 'Create application',
           }),
         }}
+      />
+      <Stack.Screen
+        name='IllnessPlanScreen'
+        component={IllnessPlanScreen}
+        options={{ title: 'Illness Plan' }}
       />
     </Stack.Navigator>
   );

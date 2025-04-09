@@ -4,31 +4,35 @@ import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import { format, isAfter, isToday } from 'date-fns';
 import { useQuery, UseQueryResult } from 'react-query';
+import { useTranslation } from 'react-i18next';
+import { vi, enUS } from 'date-fns/locale'; // Import locales for Vietnamese and English
+import { t } from 'i18next';
 
 interface WeatherData {
-  temperature: number; // in Celsius (average or current)
-  maxTemp?: number; // Maximum temperature in Celsius (optional for current)
-  minTemp?: number; // Minimum temperature in Celsius (optional for current)
-  condition: string; // Weather description
-  icon: string; // Weather icon URL
-  humidity: number; // in percentage
-  windSpeed: number; // in kph
+  temperature: number;
+  maxTemp?: number;
+  minTemp?: number;
+  condition: string;
+  icon: string;
+  humidity: number;
+  windSpeed: number;
 }
 
 interface WeatherCardProps {
-  date: Date; // Date for which weather is fetched
+  date: Date;
 }
 
-const fetchWeather = async (date: Date): Promise<WeatherData> => {
+const fetchWeather = async (date: Date, lang: string): Promise<WeatherData> => {
   const API_KEY = '2124cd937c4745e399753107250404';
   const today = new Date();
   const formattedDate = format(date, 'yyyy-MM-dd');
   const location = '10.841254037526662,106.81040870930549';
+  const apiLang = lang === 'vi' ? 'vi' : 'en';
 
   try {
     if (isToday(date)) {
       const response = await axios.get('http://api.weatherapi.com/v1/current.json', {
-        params: { key: API_KEY, q: location, lang: 'vi' },
+        params: { key: API_KEY, q: location, lang: apiLang },
       });
       return {
         temperature: response.data.current.temp_c,
@@ -36,13 +40,12 @@ const fetchWeather = async (date: Date): Promise<WeatherData> => {
         icon: `https:${response.data.current.condition.icon}`,
         humidity: response.data.current.humidity,
         windSpeed: response.data.current.wind_kph,
-        // No max/min temp for current; could fetch forecast for today if needed
       };
     } else if (isAfter(date, today)) {
       const daysAhead = Math.ceil((date.getTime() - today.getTime()) / (1000 * 3600 * 24));
       if (daysAhead <= 14) {
         const response = await axios.get('http://api.weatherapi.com/v1/forecast.json', {
-          params: { key: API_KEY, q: location, days: daysAhead + 1, lang: 'vi' },
+          params: { key: API_KEY, q: location, days: daysAhead + 1, lang: apiLang },
         });
         const forecastDay = response.data.forecast.forecastday[daysAhead];
         return {
@@ -58,7 +61,7 @@ const fetchWeather = async (date: Date): Promise<WeatherData> => {
       throw new Error('Weather data is only available up to 14 days in the future.');
     } else {
       const response = await axios.get('http://api.weatherapi.com/v1/history.json', {
-        params: { key: API_KEY, q: location, dt: formattedDate, lang: 'vi' },
+        params: { key: API_KEY, q: location, dt: formattedDate, lang: apiLang },
       });
       const forecastDay = response.data.forecast.forecastday[0].day;
       return {
@@ -83,30 +86,39 @@ const fetchWeather = async (date: Date): Promise<WeatherData> => {
 };
 
 const WeatherCard: React.FC<WeatherCardProps> = ({ date }) => {
-  const queryKey = ['weather', format(date, 'yyyy-MM-dd')];
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language.split('-')[0]; // Get base language code (vi or en)
+
+  const queryKey = ['weather', format(date, 'yyyy-MM-dd'), currentLang];
 
   const {
     data: weather,
     isLoading,
     isError,
     error,
-  }: UseQueryResult<WeatherData, Error> = useQuery(queryKey, () => fetchWeather(date), {
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 30 * 60 * 1000, // 30 minutes
-  });
+  }: UseQueryResult<WeatherData, Error> = useQuery(
+    queryKey,
+    () => fetchWeather(date, currentLang),
+    {
+      staleTime: 5 * 60 * 1000,
+      cacheTime: 30 * 60 * 1000,
+    }
+  );
+
+  const dateFormat = currentLang === 'vi' ? 'EEEE, dd MMMM yyyy' : 'EEEE, MMMM dd, yyyy';
+  const dateLocale = currentLang === 'vi' ? vi : enUS;
 
   return (
     <View style={styles.card}>
       <View style={styles.header}>
-        <Text style={styles.dateText}>{format(date, 'EEEE, MMMM dd, yyyy')}</Text>
+        <Text style={styles.dateText}>{format(date, dateFormat, { locale: dateLocale })}</Text>
       </View>
 
-      {/* Weather Display */}
       {isLoading ? (
         <ActivityIndicator size='large' color='#007bff' style={styles.loader} />
       ) : isError ? (
         <Text style={styles.errorText}>
-          {error ? `Error: ${error.message}` : 'Could not fetch weather data.'}
+          {error ? `${t('error')}: ${error.message}` : t('fetchError')}
         </Text>
       ) : weather ? (
         <View style={styles.weatherContent}>
@@ -118,27 +130,37 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ date }) => {
             </Text>
             {weather.maxTemp !== undefined && weather.minTemp !== undefined && (
               <Text style={styles.tempRange}>
-                Cao: {Math.round(weather.maxTemp)}°C / Thấp: {Math.round(weather.minTemp)}°C
+                {currentLang === 'vi'
+                  ? `Cao: ${Math.round(weather.maxTemp)}°C / Thấp: ${Math.round(weather.minTemp)}°C`
+                  : `High: ${Math.round(weather.maxTemp)}°C / Low: ${Math.round(
+                      weather.minTemp
+                    )}°C`}
               </Text>
             )}
           </View>
           <View style={styles.weatherDetails}>
             <View style={styles.detailItem}>
               <Ionicons name='water' size={16} color='#007bff' />
-              <Text style={styles.detailText}>Độ ẩm: {weather.humidity}%</Text>
+              <Text style={styles.detailText}>
+                {t('weather.humidity', { defaultValue: 'Humidity' })}: {weather.humidity}%
+              </Text>
             </View>
             <View style={styles.detailItem}>
               <Ionicons name='speedometer' size={16} color='#007bff' />
-              <Text style={styles.detailText}>Gió: {weather.windSpeed} kph</Text>
+              <Text style={styles.detailText}>
+                {t('weather.wind', { defaultValue: 'Wind' })}: {weather.windSpeed} kph
+              </Text>
             </View>
             <View style={styles.detailItem}>
               <Ionicons name='location' size={16} color='#007bff' />
-              <Text style={styles.detailText}>Địa Chỉ: FPT University</Text>
+              <Text style={styles.detailText}>
+                {t('weather.location', { defaultValue: 'Location' })}: FPT University
+              </Text>
             </View>
           </View>
         </View>
       ) : (
-        <Text style={styles.noDataText}>Không có dữ liệu thời tiết</Text>
+        <Text style={styles.noDataText}>{t('weather.noData')}</Text>
       )}
     </View>
   );
