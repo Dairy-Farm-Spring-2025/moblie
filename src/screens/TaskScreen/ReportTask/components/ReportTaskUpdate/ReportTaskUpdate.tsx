@@ -134,7 +134,9 @@ const ReportTaskUpdateContent: React.FC<{
 
   return (
     <View style={styles.card}>
-      <Text style={styles.title}>{t('Update Report')} #{report.reportTaskId}</Text>
+      <Text style={styles.title}>
+        {t('Update Report')} #{report.reportTaskId}
+      </Text>
 
       <View style={styles.inputSection}>
         <View style={styles.inputLabelRow}>

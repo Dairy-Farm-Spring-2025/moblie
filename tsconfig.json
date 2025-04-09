@@ -15,7 +15,7 @@
       "@core/*": ["./src/core/*"],
       "@store/*": ["./src/core/store/*"],
       "@services/*": ["./src/services/*"],
-      "@assets/*": ["./assets/*"]
+      "@assets/*": ["assets/*"]
     }
   }
 }

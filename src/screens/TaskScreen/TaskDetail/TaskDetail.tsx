@@ -45,6 +45,7 @@ const TaskDetailContent: React.FC<{
   const hasReportForDate = task.reportTask && task.reportTask.date === selectedDate;
   // Check if task status is completed
   const isCompleted = task.status.toLowerCase() === 'completed';
+  const isReported = task.reportTask && task.reportTask.status.toLowerCase() === 'closed';
   // Check if current date is within task duration
   const currentDateNow = new Date();
   const currentDateStr = new Date(currentDateNow.toISOString().split('T')[0]);
@@ -188,7 +189,9 @@ const TaskDetailContent: React.FC<{
           <Text style={[styles.textLabel, { color: textColor }]}>{t('task_detail.status')}:</Text>
         </View>
         <View style={[styles.tag, { backgroundColor: getStatusColor(task.status) }]}>
-          <Text style={[styles.tagText, { color: '#fff' }]}>{formatCamelCase(task.status)}</Text>
+          <Text style={[styles.tagText, { color: '#fff' }]}>
+            {formatCamelCase(task.reportTask?.status!) || formatCamelCase(task.status)}
+          </Text>
         </View>
       </View>
 
@@ -303,6 +306,7 @@ const TaskDetailContent: React.FC<{
 
       {task.taskTypeId.name.toLowerCase() === 'cho ăn' &&
         hasReportForDate &&
+        !isReported &&
         isWithinCurrentDateRange && (
           <View style={styles.infoRow}>
             <View style={styles.labelContainer}>
@@ -317,7 +321,9 @@ const TaskDetailContent: React.FC<{
               </Text>
             </View>
             <TouchableOpacity onPress={handleViewMaterials} disabled={isCheckingIn}>
-              <Text style={styles.materials}>View</Text>
+              <Text style={styles.materials}>
+                {t('task_detail.view', { defaultValue: 'View' })}
+              </Text>
             </TouchableOpacity>
           </View>
         )}
@@ -325,6 +331,7 @@ const TaskDetailContent: React.FC<{
         task.material?.illnessDetail ||
         task.material?.vaccineInjection) &&
         hasReportForDate &&
+        !isReported &&
         isWithinCurrentDateRange && (
           <View style={styles.infoRow}>
             <View style={styles.labelContainer}>
