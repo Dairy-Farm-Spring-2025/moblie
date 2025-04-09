@@ -387,9 +387,8 @@ const TaskScreen: React.FC = () => {
                         return tasksForCell.length > 0 ? (
                           tasksForCell.map((task, index) => (
                             <NewTaskCard
-                              key={`${task.taskId}-${
-                                weekDates[selectedDayIndex].toISOString().split('T')[0]
-                              }-${index}`}
+                              key={`${task.taskId}-${weekDates[selectedDayIndex].toISOString().split('T')[0]
+                                }-${index}`}
                               task={task}
                               onPress={() => handleTaskPress(task)}
                               selectedDate={weekDates[selectedDayIndex]}
@@ -411,7 +410,7 @@ const TaskScreen: React.FC = () => {
                   shift
                 );
                 return tasksForCell.length === 0;
-              }) && <Text style={styles.noTasksText}>No tasks for this day</Text>}
+              }) && <Text style={styles.noTasksText}>{t('No tasks for this day')}</Text>}
             </View>
           )}
           <View style={{ height: 400 }} />

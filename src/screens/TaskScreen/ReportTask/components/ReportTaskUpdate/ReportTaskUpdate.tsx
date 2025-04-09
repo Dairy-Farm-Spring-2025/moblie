@@ -1,5 +1,5 @@
 import { ReportTaskData } from '@model/Task/Task';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Image, StyleSheet, ScrollView } from 'react-native';
 import { Alert, Modal, Platform, TouchableOpacity, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
@@ -41,7 +41,7 @@ const ReportTaskUpdateContent: React.FC<{
     if (Platform.OS !== 'web') {
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permission Denied', 'Sorry, we need camera permissions to take pictures!');
+        Alert.alert(t('Permission Denied', 'Sorry, we need camera permissions to take pictures!'));
         return false;
       }
     }
@@ -135,12 +135,12 @@ const ReportTaskUpdateContent: React.FC<{
 
   return (
     <View style={styles.card}>
-      <Text style={styles.title}>Update Report #{report.reportTaskId}</Text>
+      <Text style={styles.title}>{t('Update Report')} #{report.reportTaskId}</Text>
 
       <View style={styles.inputSection}>
         <View style={styles.inputLabelRow}>
           <Ionicons name='document-text-outline' size={20} color='#595959' style={styles.icon} />
-          <Text style={styles.textLabel}>Description:</Text>
+          <Text style={styles.textLabel}>{t('Description')}:</Text>
         </View>
         <TextInput
           style={styles.input}
@@ -158,7 +158,7 @@ const ReportTaskUpdateContent: React.FC<{
         </View>
         <View style={styles.imageUpdateContainer}>
           {formData.existingImages.length === 0 && formData.newImages.length === 0 ? (
-            <Text style={styles.noImageText}>No images available</Text>
+            <Text style={styles.noImageText}>{t('No images available')}</Text>
           ) : (
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {/* Display existing images */}
