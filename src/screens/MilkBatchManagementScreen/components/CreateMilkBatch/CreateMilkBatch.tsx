@@ -34,8 +34,8 @@ const CreateMilkBatch = () => {
         Alert.alert('Success', 'Milk batch created successfully');
         navigation.goBack();
       },
-      onError: () => {
-        Alert.alert('Error', 'Failed to create milk batch');
+      onError: (err) => {
+        Alert.alert('Error', err?.response?.data?.message || 'Failed to create milk batch');
       },
     }
   );
@@ -92,7 +92,6 @@ const CreateMilkBatch = () => {
                 <Picker.Item label='Shift 1 (0h-6h)' value='shiftOne' />
                 <Picker.Item label='Shift 2 (6h-12h)' value='shiftTwo' />
                 <Picker.Item label='Shift 3 (12h-18h)' value='shiftThree' />
-                <Picker.Item label='Shift 4 (18h-24h)' value='shiftFour' />
               </Picker>
             </View>
 
