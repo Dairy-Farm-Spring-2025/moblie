@@ -136,7 +136,7 @@ const ReportTask: React.FC<ReportTaskProps> = ({ reportTask: initialReportTask, 
               </Text>
               {reportTask.description && (
                 <View>
-                  <Text style={styles.reportDescription}>Description:</Text>
+                  <Text style={styles.reportDescription}>{t('Description')}:</Text>
                   <View style={styles.reportHtmlContainer}>
                     <RenderHTML
                       contentWidth={Dimensions.get('window').width - 72}
@@ -147,7 +147,7 @@ const ReportTask: React.FC<ReportTaskProps> = ({ reportTask: initialReportTask, 
               )}
               {reportTask.comment && (
                 <View>
-                  <Text style={styles.reportComment}>Comment: </Text>
+                  <Text style={styles.reportComment}>{t('Comment')}: </Text>
                   <View style={styles.reportHtmlContainer}>
                     <RenderHTML
                       contentWidth={Dimensions.get('window').width - 72}

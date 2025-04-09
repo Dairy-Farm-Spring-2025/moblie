@@ -412,5 +412,10 @@
     "temperature": "Nhiệt độ",
     "location": "Địa điểm",
     "NoTasks": "Không có công việc nào"
-  }
+  },
+  "Update Report": "Cập nhật báo cáo",
+  "No images available": "không có sẵn ảnh",
+  "No tasks for this day": "không có công việc cho hôm nay",
+  "Failed to load area details": "",
+  "Loading area details": "",
 }

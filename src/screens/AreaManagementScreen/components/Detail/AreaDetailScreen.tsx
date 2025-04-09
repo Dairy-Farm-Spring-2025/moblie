@@ -28,11 +28,11 @@ const AreaDetailScreen = () => {
   } = useQuery(['areas', areaId], () => fetchAreaDetails(areaId));
 
   if (isLoading) {
-    return <Text style={styles.loadingText}>Loading area details...</Text>;
+    return <Text style={styles.loadingText}>{t('Loading area details')}...</Text>;
   }
 
   if (isError || !area) {
-    return <Text style={styles.errorText}>Failed to load area details</Text>;
+    return <Text style={styles.errorText}>{t('Failed to load area details')}</Text>;
   }
 
   return (
@@ -74,7 +74,7 @@ const AreaDetailScreen = () => {
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>📅 {t('Timestamps')}</Text>
         <Text style={styles.text}>
-          🕒 <Text style={styles.bold}>Created At:</Text>{' '}
+          🕒 <Text style={styles.bold}>{t('Created At')}:</Text>{' '}
           {new Date(area.createdAt).toLocaleString()}
         </Text>
         <Text style={styles.text}>
