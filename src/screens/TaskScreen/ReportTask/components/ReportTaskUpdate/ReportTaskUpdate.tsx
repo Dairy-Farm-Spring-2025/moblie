@@ -1,22 +1,40 @@
 import { ReportTaskData } from '@model/Task/Task';
 import { useState } from 'react';
-import { Image, StyleSheet } from 'react-native';
+import { Image, StyleSheet, ScrollView } from 'react-native';
 import { Alert, Modal, Platform, TouchableOpacity, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Divider, Text, TextInput } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { getReportImage } from '@utils/getImage';
+import { t } from 'i18next';
+
+type FileData = {
+  uri: string;
+  name: string;
+  type: string;
+} | null;
 
 const ReportTaskUpdateContent: React.FC<{
   report: ReportTaskData;
-  onUpdate: (description: string, taskFile: string | null) => void;
+  onUpdate: (description: string, deleteUrls: string[], newImage: FileData) => void;
   isUpdating: boolean;
 }> = ({ report, onUpdate, isUpdating }) => {
-  const [formData, setFormData] = useState<{ description: string; taskFile: string | null }>({
+  const initialImages = report.reportImages?.map((img) => img.url) || [];
+
+  const [formData, setFormData] = useState<{
+    description: string;
+    existingImages: string[];
+    newImages: string[];
+    deleteUrls: string[];
+  }>({
     description: report.description || '',
-    taskFile: report.reportImages?.[0].url || null,
+    existingImages: initialImages,
+    newImages: [],
+    deleteUrls: [],
   });
   const [imageModalVisible, setImageModalVisible] = useState(false);
+  const [reviewModalVisible, setReviewModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const requestCameraPermission = async () => {
     if (Platform.OS !== 'web') {
@@ -38,7 +56,10 @@ const ReportTaskUpdateContent: React.FC<{
 
     if (!result.canceled) {
       const selectedImage = result.assets[0].uri;
-      setFormData((prev) => ({ ...prev, taskFile: selectedImage }));
+      setFormData((prev) => ({
+        ...prev,
+        newImages: [...prev.newImages, selectedImage],
+      }));
       setImageModalVisible(false);
     }
   };
@@ -55,7 +76,10 @@ const ReportTaskUpdateContent: React.FC<{
 
     if (!result.canceled) {
       const capturedImage = result.assets[0].uri;
-      setFormData((prev) => ({ ...prev, taskFile: capturedImage }));
+      setFormData((prev) => ({
+        ...prev,
+        newImages: [...prev.newImages, capturedImage],
+      }));
       setImageModalVisible(false);
     }
   };
@@ -65,7 +89,47 @@ const ReportTaskUpdateContent: React.FC<{
       Alert.alert('Error', 'Please enter a description.');
       return;
     }
-    onUpdate(formData.description, formData.taskFile);
+
+    // For simplicity, we'll send only the first new image (if any) to match the API's current expectation
+    // If the API supports multiple new images, you can adjust the parent component accordingly
+    let fileData: FileData = null;
+    if (formData.newImages.length > 0) {
+      const firstNewImage = formData.newImages[0];
+      const uriParts = firstNewImage.split('.');
+      const fileType = uriParts[uriParts.length - 1];
+      fileData = {
+        uri: firstNewImage,
+        name: `image.reportTask.${fileType}`,
+        type: `image/${fileType}`,
+      };
+    }
+
+    onUpdate(formData.description, formData.deleteUrls, fileData);
+  };
+
+  const openImageReview = (imageUri: string) => {
+    setSelectedImage(imageUri);
+    setReviewModalVisible(true);
+  };
+
+  const removeImage = (imageUri: string, isExisting: boolean) => {
+    if (isExisting) {
+      // Extract the file name from the image URL
+      const fileName = imageUri.substring(imageUri.lastIndexOf('/') + 1);
+      // Construct the deleteUrl in the required format
+      const deleteUrl = `https://api.dairyfarmfpt.website/uploads/reportTasks/${fileName}`;
+      setFormData((prev) => ({
+        ...prev,
+        existingImages: prev.existingImages.filter((uri) => uri !== imageUri),
+        deleteUrls: [...prev.deleteUrls, deleteUrl],
+      }));
+    } else {
+      // Remove from newImages
+      setFormData((prev) => ({
+        ...prev,
+        newImages: prev.newImages.filter((uri) => uri !== imageUri),
+      }));
+    }
   };
 
   return (
@@ -89,14 +153,45 @@ const ReportTaskUpdateContent: React.FC<{
       <View style={styles.inputSection}>
         <View style={styles.inputLabelRow}>
           <Ionicons name='image-outline' size={20} color='#595959' style={styles.icon} />
-          <Text style={styles.textLabel}>{t('Image')}:</Text>
+          <Text style={styles.textLabel}>{t('Images')}:</Text>
         </View>
         <View style={styles.imageUpdateContainer}>
-          {formData.taskFile && (
-            <Image
-              source={{ uri: getReportImage(formData.taskFile) }}
-              style={styles.imagePreviewItem}
-            />
+          {formData.existingImages.length === 0 && formData.newImages.length === 0 ? (
+            <Text style={styles.noImageText}>No images available</Text>
+          ) : (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {/* Display existing images */}
+              {formData.existingImages.map((imageUri, index) => (
+                <View key={`existing-${index}`} style={styles.imagePreviewWrapper}>
+                  <TouchableOpacity onPress={() => openImageReview(imageUri)}>
+                    <Image
+                      source={{ uri: getReportImage(imageUri) }}
+                      style={styles.imagePreviewItem}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.removeButton}
+                    onPress={() => removeImage(imageUri, true)}
+                  >
+                    <Ionicons name='close-circle' size={24} color='#ff4d4f' />
+                  </TouchableOpacity>
+                </View>
+              ))}
+              {/* Display new images */}
+              {formData.newImages.map((imageUri, index) => (
+                <View key={`new-${index}`} style={styles.imagePreviewWrapper}>
+                  <TouchableOpacity onPress={() => openImageReview(imageUri)}>
+                    <Image source={{ uri: imageUri }} style={styles.imagePreviewItem} />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.removeButton}
+                    onPress={() => removeImage(imageUri, false)}
+                  >
+                    <Ionicons name='close-circle' size={24} color='#ff4d4f' />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </ScrollView>
           )}
           <Divider style={{ margin: 10 }} />
           <TouchableOpacity style={styles.uploadButton} onPress={() => setImageModalVisible(true)}>
@@ -141,6 +236,36 @@ const ReportTaskUpdateContent: React.FC<{
               onPress={() => setImageModalVisible(false)}
             >
               <Text style={styles.cancelButtonText}>{t('Cancel')}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Image Review Modal */}
+      <Modal
+        animationType='fade'
+        transparent={true}
+        visible={reviewModalVisible}
+        onRequestClose={() => setReviewModalVisible(false)}
+      >
+        <View style={styles.reviewModalContainer}>
+          <View style={styles.reviewModalContent}>
+            {selectedImage && (
+              <Image
+                source={{
+                  uri: selectedImage.startsWith('file://')
+                    ? selectedImage
+                    : getReportImage(selectedImage),
+                }}
+                style={styles.reviewImage}
+                resizeMode='contain'
+              />
+            )}
+            <TouchableOpacity
+              style={styles.closeReviewButton}
+              onPress={() => setReviewModalVisible(false)}
+            >
+              <Ionicons name='close' size={30} color='#fff' />
             </TouchableOpacity>
           </View>
         </View>
@@ -247,13 +372,27 @@ const styles = StyleSheet.create({
   imageUpdateContainer: {
     alignItems: 'flex-start',
   },
+  imagePreviewWrapper: {
+    position: 'relative',
+    marginTop: 20,
+    marginRight: 10,
+  },
   imagePreviewItem: {
     width: 80,
     height: 80,
     borderRadius: 8,
-    marginTop: 10,
     borderWidth: 1,
     borderColor: '#e0e0e0',
+  },
+  removeButton: {
+    position: 'absolute',
+    top: -10,
+    right: -10,
+  },
+  noImageText: {
+    fontSize: 14,
+    color: '#595959',
+    marginTop: 10,
   },
   input: {
     width: '100%',
@@ -354,6 +493,31 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  reviewModalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+  },
+  reviewModalContent: {
+    width: '90%',
+    height: '70%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  reviewImage: {
+    width: '100%',
+    height: '100%',
+  },
+  closeReviewButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 20,
+    padding: 5,
   },
 });
 

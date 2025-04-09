@@ -147,7 +147,9 @@ const NewTaskCard = ({
       onPress={onPress}
     >
       <View style={styles.taskHeader}>
-        <Text style={[styles.taskCardTitle, { color: textColor }]}>{task.taskTypeId.name}</Text>
+        <Text style={[styles.taskCardTitle, { color: textColor }]}>
+          {task.taskTypeId.name || 'Unknown'}
+        </Text>
         <View style={[styles.priorityBadge, { borderColor: textColor }]}>
           <Text style={[styles.priorityBadgeText, { color: textColor }]}>
             {t(`task_management.${task.priority}`, { defaultValue: task.priority })}
@@ -156,7 +158,7 @@ const NewTaskCard = ({
       </View>
       <Text style={[styles.taskCardText, { color: textColor }]}>{`${t('task_management.area', {
         defaultValue: 'Area',
-      })}: ${task.areaId.name}`}</Text>
+      })}: ${task.areaId.name || 'Unknown'}`}</Text>
       <View style={styles.reportStatusContainer}>
         <Ionicons
           name={hasReportForSelectedDate ? 'checkmark-circle' : 'alert-circle'}
@@ -270,6 +272,7 @@ const TaskScreen: React.FC = () => {
   });
 
   const handleTaskPress = (task: Task) => {
+    console.log('Task pressed:', task);
     (navigation.navigate as any)('TaskDetail', {
       task,
       selectedDate: weekDates[selectedDayIndex].toISOString().split('T')[0],
