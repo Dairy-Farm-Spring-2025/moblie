@@ -22,10 +22,9 @@ import { User } from '@model/User/User';
 import { getAvatar } from '@utils/getImage';
 import { convertToDDMMYYYY } from '@utils/format';
 import { useTranslation } from 'react-i18next';
-import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
-import vietnam from '../../../assets/vietnam.png'; // Adjust the path based on your folder structure
-import us from '../../../assets/us.png'; // Adjust the path based on your folder structure
+import vietnam from '@assets/vietnam.png'; // Adjust the path based on your folder structure
+import us from '@assets/us.png'; // Adjust the path based on your folder structure
 
 const fetchProfile = async (): Promise<User> => {
   try {

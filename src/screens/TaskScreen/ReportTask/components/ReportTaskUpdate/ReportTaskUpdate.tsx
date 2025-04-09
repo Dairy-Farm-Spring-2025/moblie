@@ -7,6 +7,7 @@ import { Divider, Text, TextInput } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { getReportImage } from '@utils/getImage';
 import { t } from 'i18next';
+import React from 'react';
 
 type FileData = {
   uri: string;

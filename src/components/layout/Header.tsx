@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   Animated,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -10,6 +11,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useSiderStore } from '@core/store/sliderStore/sliderStore';
+import logo from '@assets/logo.png';
 
 const Header: React.FC = () => {
   const { isSiderVisible, toggleSider, closeSider } = useSiderStore();
@@ -34,16 +36,17 @@ const Header: React.FC = () => {
   return (
     <>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.siderTrigger} onPress={toggleSider}>
+        {/* <TouchableOpacity style={styles.siderTrigger} onPress={toggleSider}>
           <Ionicons name='menu' size={24} color='#000' />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        <Image source={logo} style={styles.logo} />
         <Text style={styles.headerTitle}>Dairy Farm Management</Text>
-        <TouchableOpacity style={styles.notificationIcon}>
+        {/* <TouchableOpacity style={styles.notificationIcon}>
           <Ionicons name='notifications' size={24} color='#000' />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
-      {isSiderVisible && (
+      {/* {isSiderVisible && (
         <TouchableWithoutFeedback onPress={toggleSider}>
           <Animated.View style={[styles.sider, { transform: [{ translateX: siderAnimation }] }]}>
             <TouchableOpacity onPress={() => handleNavigation('Home')}>
@@ -57,7 +60,7 @@ const Header: React.FC = () => {
             </TouchableOpacity>
           </Animated.View>
         </TouchableWithoutFeedback>
-      )}
+      )} */}
     </>
   );
 };
@@ -66,12 +69,17 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 10,
+    justifyContent: 'space-around',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     backgroundColor: 'white',
   },
   siderTrigger: {
     padding: 5,
+  },
+  logo: {
+    width: 40,
+    height: 40,
   },
   headerTitle: {
     fontSize: 18,

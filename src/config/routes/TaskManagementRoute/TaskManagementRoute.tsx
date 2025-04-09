@@ -1,3 +1,4 @@
+import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AreaDetailScreen from '@screens/AreaManagementScreen/components/Detail/AreaDetailScreen';
 import DetailCow from '@screens/CowManagementScreen/components/DetailCow/DetailCow';
