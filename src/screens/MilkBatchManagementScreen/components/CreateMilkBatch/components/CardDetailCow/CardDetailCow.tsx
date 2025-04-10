@@ -1,8 +1,6 @@
-// CardDetailCow.tsx
-
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { Tooltip } from 'react-native-paper';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Tooltip, Button } from 'react-native-paper';
 import { Cow } from '@model/Cow/Cow';
 import { formatCamelCase } from '@utils/format';
 
@@ -13,12 +11,19 @@ interface CardDetailCowProps {
     cowId: number;
   };
   onPress: () => void;
+  onDelete: () => void; // New prop for delete action
   width?: number;
 }
 
-const CardDetailCow: React.FC<CardDetailCowProps> = ({ cow, onPress, width, dailyMilk }) => {
+const CardDetailCow: React.FC<CardDetailCowProps> = ({
+  cow,
+  onPress,
+  onDelete,
+  width,
+  dailyMilk,
+}) => {
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress}>
+    <TouchableOpacity style={[styles.card]} onPress={onPress}>
       <View style={styles.cardWrapper}>
         <View style={styles.cardHeader}>
           <Text style={styles.cardTitle}>{cow?.name}</Text>
@@ -30,6 +35,18 @@ const CardDetailCow: React.FC<CardDetailCowProps> = ({ cow, onPress, width, dail
           <Text style={styles.cardTitle}>Daily Milk Volume: {dailyMilk?.volume}</Text>
           <Text style={styles.cardDetails}>Origin: {formatCamelCase(cow?.cowOrigin || '')}</Text>
           <Text style={styles.cardDetails}>Born: {cow?.dateOfBirth}</Text>
+          {/* Delete Button */}
+          <Button
+            mode='text'
+            onPress={(e) => {
+              e.stopPropagation(); // Prevent onPress from triggering when deleting
+              onDelete();
+            }}
+            style={styles.deleteButton}
+            labelStyle={styles.deleteButtonLabel}
+          >
+            Delete
+          </Button>
         </View>
       </View>
     </TouchableOpacity>
@@ -49,13 +66,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-  },
-  cardImage: {
-    width: '100%',
-    height: 150,
-    borderRadius: 10,
-    marginBottom: 10,
-    objectFit: 'fill',
   },
   cardWrapper: {
     flexDirection: 'column',
@@ -85,6 +95,14 @@ const styles = StyleSheet.create({
   cardDetails: {
     fontSize: 12,
     color: 'gray',
+  },
+  deleteButton: {
+    marginTop: 10,
+    alignSelf: 'flex-end', // Align button to the right
+  },
+  deleteButtonLabel: {
+    color: 'red',
+    fontSize: 12,
   },
 });
 

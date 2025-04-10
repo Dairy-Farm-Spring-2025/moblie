@@ -169,7 +169,7 @@ const NewTaskCard = ({
         <Ionicons
           name={hasReportForSelectedDate ? 'checkmark-circle' : 'alert-circle'}
           size={16}
-          color={hasReportForSelectedDate ? (isLightBackground ? '#52c41a' : '#fff') : '#ffd700'}
+          color={hasReportForSelectedDate ? (isLightBackground ? '#333' : '#fff') : '#ffd700'}
           style={styles.reportStatusIcon}
         />
         <Text style={[styles.reportStatusText, { color: textColor }]}>
