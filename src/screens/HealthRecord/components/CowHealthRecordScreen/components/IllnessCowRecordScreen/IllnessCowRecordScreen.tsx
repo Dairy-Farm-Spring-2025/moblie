@@ -10,6 +10,7 @@ import { useQuery } from 'react-query';
 import TitleNameCows from '@components/TitleNameCows/TitleNameCows';
 import FloatingButton from '@components/FloatingButton/FloatingButton';
 import IllnessReportForm from './components/IllnessReportForm/IllnessReportForm';
+import { t } from 'i18next';
 type RootStackParamList = {
   IllnessCowRecordScreen: { illnessId: number };
 };
@@ -59,14 +60,21 @@ const IllnessCowRecordScreen = () => {
         flex: 1,
       }}
     >
-      <TitleNameCows title='Illness Record - ' cowName={illness.cowEntity.name} />
+      <TitleNameCows
+        title={`${t('illness.title_illness_cow_record', { defaultValue: 'Illness' })} - `}
+        cowName={illness.cowEntity.name}
+      />
       <SegmentedButtons
         style={styles.segmentedButtons}
         value={selectedSegment}
         onValueChange={setSelectedSegment}
         buttons={[
-          { value: 'illness-record', label: 'Illness Record', icon: 'cow' },
-          { value: 'illness-detail', label: 'Illness Detail', icon: 'plus' },
+          {
+            value: 'illness-record',
+            label: t('illness.Illness Record', { defaultValue: 'Illness Record' }),
+            icon: 'cow',
+          },
+          { value: 'illness-detail', label: t('illness.Illness Detail'), icon: 'plus' },
         ]}
       />
       {selectedSegment === 'illness-record' ? (

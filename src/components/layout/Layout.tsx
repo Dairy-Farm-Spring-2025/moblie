@@ -38,7 +38,6 @@ const Layout: React.FC<LayoutProps> = ({ children, isScrollable = true, onRefres
               refreshing={refreshing}
               onRefresh={handleRefresh}
               tintColor='#000' // Customize the refresh indicator color
-              title='Pull to refresh' // Optional: Text shown during refresh (iOS)
               titleColor='#000' // Optional: Text color (iOS)
             />
           }

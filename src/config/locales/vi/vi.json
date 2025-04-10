@@ -190,10 +190,13 @@
   },
   "illness": {
     "title": "Bệnh",
-    "Edit the illness details": "Sửa chi tiết bệnh",
-    "View illness details": "Xem chi tiết bệnh",
+    "Edit_the_illness_details": "Sửa chi tiết bệnh",
+    "View_illness_details": "Xem chi tiết bệnh",
     "Illness Record": "Hồ Sơ Bệnh",
-    "Illness Cow Record": "Hồ Sơ Bệnh Bò"
+    "Illness Cow Record": "Hồ Sơ Bệnh Bò",
+    "Illness Detail": "Chi tiết bệnh",
+    "title_illness_record": "Hồ sơ bệnh",
+    "title_illness_cow_record": "Hồ sơ bệnh bò"
   },
   "injections": {
     "title": "Tiêm phòng",
@@ -280,7 +283,7 @@
   "Date of Birth": "Ngày sinh",
   "Date of Enter": "Ngày nhập",
   "Symptoms": "Triệu chứng",
-  "Prognosis": "Tiên lượng",
+  "Prognosis": "Chẩn đoán bệnh",
   "End Date": "Ngày kết thúc",
   "Start Date": "Ngày bắt đầu",
   "Severity": "Mức độ nghiêm trọng",
@@ -447,5 +450,26 @@
   "No images available": "không có sẵn ảnh",
   "No tasks for this day": "không có công việc cho hôm nay",
   "Failed to load area details": "",
-  "Loading area details": ""
+  "Loading area details": "",
+  "illness_plan": {
+    "title": "Tạo Kế Hoạch Điều Trị",
+    "plan": "Kế hoạch",
+    "dosage": "Liều lượng (mL hoặc mg)",
+    "dosage_placeholder": "Nhập liều lượng",
+    "dosage_error": "Liều lượng phải lớn hơn 0",
+    "injection_site": "Vị trí tiêm",
+    "select_injection_site": "Chọn vị trí tiêm...",
+    "date": "Ngày",
+    "vaccine": "Vắc-xin/Thuốc",
+    "select_vaccine": "Chọn vắc-xin...",
+    "vaccine_error": "Vui lòng chọn một loại vắc-xin",
+    "description": "Mô tả",
+    "description_error": "Mô tả là bắt buộc",
+    "add_plan": "Thêm Kế Hoạch Khác",
+    "remove": "Xóa Kế Hoạch",
+    "submit": "Gửi Kế Hoạch",
+    "submit_error": "Lỗi khi gửi kế hoạch. Vui lòng thử lại.",
+    "loading": "Đang tải vắc-xin...",
+    "error": "Lỗi tải vắc-xin"
+  }
 }
