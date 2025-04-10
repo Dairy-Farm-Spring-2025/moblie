@@ -39,8 +39,9 @@ const ProfileUpdateScreen: React.FC = () => {
   const [ward, setWard] = useState<string>('');
   const [district, setDistrict] = useState<string>('');
   const [province, setProvince] = useState<string>('');
+  console.log('user', user);
   const [dob, setDob] = useState<string>(''); // Stored as DD-MM-YYYY
-  const [gender, setGender] = useState<string>('');
+  const [gender, setGender] = useState<string>(user.gender?.toLowerCase() || 'male');
   const [provinceOptions, setProvinceOptions] = useState<Option[]>([]);
   const [districtOptions, setDistrictOptions] = useState<Option[]>([]);
   const [wardOptions, setWardOptions] = useState<Option[]>([]);
@@ -78,7 +79,7 @@ const ProfileUpdateScreen: React.FC = () => {
     if (user) {
       setName(user.name || '');
       setPhoneNumber(user.phoneNumber || '');
-      setGender(user.gender?.toLowerCase() || '');
+      setGender(user.gender!.toLowerCase() || 'male');
       if (user.dob) setDob(parseDobToDisplayFormat(user.dob)); // Convert YYYY-MM-DD to DD-MM-YYYY
 
       // Parse address
@@ -300,6 +301,7 @@ const ProfileUpdateScreen: React.FC = () => {
             selectedValue={gender}
             onValueChange={setGender}
             title={t('profile.selectGender', { defaultValue: 'Select Gender' })}
+            readOnly={!isEditing}
           />
 
           {/* Address */}
@@ -312,20 +314,21 @@ const ProfileUpdateScreen: React.FC = () => {
               selectedValue={province}
               onValueChange={setProvince}
               title={t('profile.selectProvince', { defaultValue: 'Select Province' })}
+              readOnly={!isEditing}
             />
             <CustomPicker
               options={districtOptions}
               selectedValue={district}
               onValueChange={setDistrict}
               title={t('profile.selectDistrict', { defaultValue: 'Select District' })}
-              readOnly={!province}
+              readOnly={!isEditing || !province}
             />
             <CustomPicker
               options={wardOptions}
               selectedValue={ward}
               onValueChange={setWard}
               title={t('profile.selectWard', { defaultValue: 'Select Ward' })}
-              readOnly={!district}
+              readOnly={!isEditing || !district}
             />
             <TextInput
               label={t('profile.streetAddress', { defaultValue: 'Street Address' })}
