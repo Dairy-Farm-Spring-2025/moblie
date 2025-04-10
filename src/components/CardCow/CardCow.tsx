@@ -11,7 +11,7 @@ import { t } from 'i18next';
 
 interface CardCowProps {
   cow: Cow | undefined;
-  onPress: () => void;
+  onPress?: () => void;
   width?: number;
 }
 
@@ -50,10 +50,12 @@ const CardCow: React.FC<CardCowProps> = ({ cow, onPress, width }) => {
         </View>
         <DividerUI />
         <View style={styles.cardContent}>
-          <TextRenderHorizontal
-            title={t('card_cow.pen', { defaultValue: 'Pen' })}
-            content={cow?.penResponse ? formatCamelCase(cow?.penResponse?.name) : 'N/A'}
-          />
+          {cow?.penResponse && (
+            <TextRenderHorizontal
+              title={t('card_cow.pen', { defaultValue: 'Pen' })}
+              content={cow?.penResponse ? formatCamelCase(cow?.penResponse?.name) : 'N/A'}
+            />
+          )}
           <TextRenderHorizontal
             title={t('card_cow.origin', { defaultValue: 'Origin' })}
             content={t(formatCamelCase(cow.cowOrigin || 'N/A'))}

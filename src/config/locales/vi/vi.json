@@ -197,6 +197,7 @@
   },
   "injections": {
     "title": "Tiêm phòng",
+    "injection_info": "Thông tin tiêm phòng",
     "vaccineCycleDetail": "Chu kỳ vắc-xin chi tiết",
     "dosage": "Liều lượng",
     "firstInjectionMonth": "Tháng tiêm mũi đầu tiên",
@@ -205,7 +206,9 @@
     "vaccineType": "Kiểu vắc-xin",
     "injectionSite": "Điểm tiêm",
     "vaccineItem": "Vắc-xin",
-    "quantity": "Trữ lượng"
+    "quantity": "Trữ lượng",
+    "cow": "Bò",
+    "export": "Xuất hàng"
   },
   "vaccine_cycle": {
     "title": "Chu kỳ tiêm vắc-xin",
