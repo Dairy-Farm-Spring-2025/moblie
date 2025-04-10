@@ -246,7 +246,7 @@ const ProfileScreen: React.FC = () => {
           />
           <List.Item
             title={t('profile.gender')}
-            description={profileData?.gender || 'N/A'}
+            description={t(`profile.${profileData?.gender}`) || 'N/A'}
             left={() => <List.Icon icon='gender-male-female' />}
           />
           <List.Item
