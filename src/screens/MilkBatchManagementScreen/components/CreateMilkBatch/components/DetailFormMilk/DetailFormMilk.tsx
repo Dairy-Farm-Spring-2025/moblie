@@ -70,7 +70,6 @@ const DetailFormMilk: React.FC = () => {
   return (
     <>
       <ScrollView style={styles.container}>
-        <Image source={{ uri: 'https://picsum.photos/400/400' }} style={styles.image} />
         <View style={styles.card}>
           <Text style={styles.title}>{cow.name}</Text>
           <Text style={styles.text}>

@@ -4,6 +4,7 @@ import { ListCowMilk } from '@model/Milk/ListCowMilk/ListCowMilk';
 type ListCowMilkStore = {
   listCowMilk: ListCowMilk[];
   setListCowMilk: (newItem: ListCowMilk) => void;
+  removeCowMilk: (cowId: number) => void; // New function to remove item
 };
 
 export const useListCowMilkStore = create<ListCowMilkStore>((set) => ({
@@ -24,4 +25,8 @@ export const useListCowMilkStore = create<ListCowMilkStore>((set) => ({
         listCowMilk: isExisting ? updatedList : [...updatedList, newItem],
       };
     }),
+  removeCowMilk: (cowId) =>
+    set((state) => ({
+      listCowMilk: state.listCowMilk.filter((item) => item.dailyMilk.cowId !== cowId),
+    })),
 }));

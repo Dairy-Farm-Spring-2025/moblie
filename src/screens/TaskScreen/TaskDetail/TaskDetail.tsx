@@ -457,7 +457,11 @@ const TaskDetail: React.FC = () => {
         value={selectedSegment}
         onValueChange={setSelectedSegment}
         buttons={[
-          { value: 'detail', label: t('task_detail.title'), icon: 'file-document' },
+          {
+            value: 'detail',
+            label: t('task_detail.title', { defaultValue: 'Task Detail' }),
+            icon: 'file-document',
+          },
           { value: 'report', label: t('Report Task'), icon: 'chart-bar' },
         ]}
       />

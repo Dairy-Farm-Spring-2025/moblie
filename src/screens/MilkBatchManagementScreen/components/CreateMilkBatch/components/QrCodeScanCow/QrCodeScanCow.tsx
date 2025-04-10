@@ -12,6 +12,7 @@ type QrCodeScanCowProps = {
 const QrCodeScanCow = () => {
   const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
+  const [hasScanned, setHasScanned] = useState(false); // New state to track scanning
   const navigation = useNavigation();
   const route = useRoute<RouteProp<QrCodeScanCowProps>>();
 
@@ -31,10 +32,11 @@ const QrCodeScanCow = () => {
   }
 
   const handleScanQRCode = (scannedData: string) => {
+    if (hasScanned) return; // Ignore if already scanned
     const cowIdMatch = scannedData.match(/\/cow-management\/(\d+)/);
     if (cowIdMatch) {
       const extractedCowId = Number(cowIdMatch[1]);
-      // Send the scanned cow ID back to the form screen
+      setHasScanned(true); // Mark as scanned
       (navigation.navigate as any)(route.params.screens, {
         cowId: extractedCowId,
       });

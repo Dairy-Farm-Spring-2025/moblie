@@ -23,7 +23,7 @@ import { useListCowMilkStore } from '@core/store/ListCowDailyMilk/useListCowMilk
 const CreateMilkBatch = () => {
   const [volume, setVolume] = useState('');
   const [shift, setShift] = useState('morning');
-  const { listCowMilk, setListCowMilk } = useListCowMilkStore();
+  const { listCowMilk, setListCowMilk, removeCowMilk } = useListCowMilkStore();
 
   const navigation = useNavigation();
 
@@ -58,6 +58,13 @@ const CreateMilkBatch = () => {
     (navigation.navigate as any)('MilkBatchManagementScreen');
   };
 
+  const handleDelete = (cowId: number) => {
+    Alert.alert('Confirm Delete', 'Are you sure you want to remove this cow from the list?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Delete', onPress: () => removeCowMilk(cowId), style: 'destructive' },
+    ]);
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -81,6 +88,7 @@ const CreateMilkBatch = () => {
                       screens: 'CreateMilkBatch',
                     })
                   }
+                  onDelete={() => handleDelete(c.cow?.cowId || 0)} // Pass delete handler
                 />
               ))}
             </View>
@@ -123,7 +131,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    justifyContent: 'space-between', // Ensures spacing between content and button
+    justifyContent: 'space-between',
   },
   detailCow: {
     justifyContent: 'center',
@@ -136,14 +144,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   formContainer: {
-    flexGrow: 1, // Pushes content up, leaving space for the button at the bottom
+    flexGrow: 1,
   },
   buttonContainer: {
     position: 'absolute',
     bottom: 30,
     left: 0,
     right: 0,
-    paddingHorizontal: 16, // Add some spacing for better appearance
+    paddingHorizontal: 16,
   },
 });
 
