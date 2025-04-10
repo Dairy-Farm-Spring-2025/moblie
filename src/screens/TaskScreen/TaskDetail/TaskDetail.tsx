@@ -123,8 +123,12 @@ const TaskDetailContent: React.FC<{
   const priorityColor = getPriorityColor(task.priority);
   const textColor = '#333'; // Fixed for white card background
 
-  const handleViewMaterials = () =>
-    (navigation.navigate as any)('Materials', { area: task.areaId, taskId: task.taskId });
+  const handleViewMaterials = (screen: string) => {
+    if (screen === 'feed') {
+      (navigation.navigate as any)('Materials', { area: task.areaId, taskId: task.taskId });
+    }
+    return (navigation.navigate as any)('MilkBatchManagementScreen');
+  };
 
   // Navigation handler
   const handleNavigateScreen = (screenType: string) => {
@@ -207,18 +211,20 @@ const TaskDetailContent: React.FC<{
         </View>
       </View>
 
-      <View style={styles.infoRow}>
-        <View style={styles.labelContainer}>
-          <Ionicons name='location-outline' size={20} color={textColor} style={styles.icon} />
-          <Text style={[styles.textLabel, { color: textColor }]}>{t('task_detail.area')}:</Text>
+      {task.areaId && (
+        <View style={styles.infoRow}>
+          <View style={styles.labelContainer}>
+            <Ionicons name='location-outline' size={20} color={textColor} style={styles.icon} />
+            <Text style={[styles.textLabel, { color: textColor }]}>{t('task_detail.area')}:</Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => navigateToAreaDetail(task.areaId.areaId)}
+            style={[styles.tag, { backgroundColor: '#e8e8e8' }]}
+          >
+            <Text style={[styles.tagText, { color: textColor }]}>{task.areaId.name}</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          onPress={() => navigateToAreaDetail(task.areaId.areaId)}
-          style={[styles.tag, { backgroundColor: '#e8e8e8' }]}
-        >
-          <Text style={[styles.tagText, { color: textColor }]}>{task.areaId.name}</Text>
-        </TouchableOpacity>
-      </View>
+      )}
 
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
@@ -320,7 +326,30 @@ const TaskDetailContent: React.FC<{
                 {t('task_detail.view_materials')}:
               </Text>
             </View>
-            <TouchableOpacity onPress={handleViewMaterials} disabled={isCheckingIn}>
+            <TouchableOpacity onPress={() => handleViewMaterials('feed')} disabled={isCheckingIn}>
+              <Text style={styles.materials}>
+                {t('task_detail.view', { defaultValue: 'View' })}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      {task.taskTypeId.name.toLowerCase() === 'lấy sữa bò' &&
+        hasReportForDate &&
+        !isReported &&
+        isWithinCurrentDateRange && (
+          <View style={styles.infoRow}>
+            <View style={styles.labelContainer}>
+              <Ionicons
+                name='document-text-outline'
+                size={20}
+                color={textColor}
+                style={styles.icon}
+              />
+              <Text style={[styles.textLabel, { color: textColor }]}>
+                {t('task_detail.view_materials')}:
+              </Text>
+            </View>
+            <TouchableOpacity onPress={() => handleViewMaterials('milk')} disabled={isCheckingIn}>
               <Text style={styles.materials}>
                 {t('task_detail.view', { defaultValue: 'View' })}
               </Text>

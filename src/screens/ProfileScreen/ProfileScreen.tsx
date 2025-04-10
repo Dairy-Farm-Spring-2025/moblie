@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   StyleSheet,
@@ -8,11 +8,12 @@ import {
   ActivityIndicator,
   ScrollView,
   Image,
+  Dimensions,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { AppDispatch, RootState } from '@core/store/store';
 import { Avatar, Text, Button, Divider, List, Badge } from 'react-native-paper';
-import Layout from '@components/layout/Layout';
+import Layout from '@components/layout/Layout'; // Your Layout component
 import { logout } from '@core/store/authSlice';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
@@ -22,9 +23,9 @@ import { User } from '@model/User/User';
 import { getAvatar } from '@utils/getImage';
 import { convertToDDMMYYYY } from '@utils/format';
 import { useTranslation } from 'react-i18next';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
-import vietnam from '@assets/vietnam.png'; // Adjust the path based on your folder structure
-import us from '@assets/us.png'; // Adjust the path based on your folder structure
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import vietnam from '@assets/vietnam.png';
+import us from '@assets/us.png';
 
 const fetchProfile = async (): Promise<User> => {
   try {
@@ -58,7 +59,7 @@ const ProfileScreen: React.FC = () => {
     },
     {
       onSuccess: () => {
-        refetch();
+        refetch(); // Refetch profile data after successful update
         Alert.alert(t('profile.update_success'), t('profile.update_success'));
       },
       onError: (error: any) =>
@@ -133,16 +134,21 @@ const ProfileScreen: React.FC = () => {
     }
   };
 
-  // Function to change language and save to AsyncStorage
   const changeLanguage = async (lng: string) => {
     try {
-      await AsyncStorage.setItem('language', lng); // Save the selected language to AsyncStorage
-      i18n.changeLanguage(lng); // Update the language in i18next
+      await AsyncStorage.setItem('language', lng);
+      i18n.changeLanguage(lng);
     } catch (error) {
       console.error('Error saving language to AsyncStorage:', error);
       Alert.alert(t('error'), t('language_change_error'));
     }
   };
+
+  // Refresh handler
+  const handleRefresh = useCallback(async () => {
+    await refetch(); // Refetch profile data
+    setImage(null); // Reset local image state if needed
+  }, [refetch]);
 
   if (isLoading) {
     return (
@@ -166,117 +172,121 @@ const ProfileScreen: React.FC = () => {
   }
 
   return (
-    <Layout>
-      <ScrollView style={styles.container} contentContainerStyle={{ flexGrow: 1 }}>
-        <View style={{ flex: 1 }}>
-          {/* Profile Header */}
-          <View style={styles.header}>
-            <TouchableOpacity style={styles.avatarContainer} onPress={() => setModalVisible(true)}>
-              {profileData?.profilePhoto ? (
-                <Avatar.Image
-                  size={150}
-                  source={{
-                    uri: `${getAvatar(profileData.profilePhoto)}`,
-                  }}
-                />
-              ) : (
-                <Avatar.Icon size={150} icon='account' />
-              )}
-              <Avatar.Icon size={40} icon='camera' style={styles.cameraIcon} />
+    <Layout isScrollable={true} onRefresh={handleRefresh}>
+      <View style={styles.container}>
+        {/* Profile Header */}
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.avatarContainer} onPress={() => setModalVisible(true)}>
+            {profileData?.profilePhoto ? (
+              <Avatar.Image
+                size={150}
+                source={{
+                  uri: `${getAvatar(profileData.profilePhoto)}`,
+                }}
+              />
+            ) : (
+              <Avatar.Icon size={150} icon='account' />
+            )}
+            <Avatar.Icon size={40} icon='camera' style={styles.cameraIcon} />
+          </TouchableOpacity>
+          <Text variant='headlineMedium' style={styles.fullName}>
+            {profileData?.name || 'N/A'}
+          </Text>
+          <Text variant='bodyMedium' style={styles.role}>
+            {profileData?.roleId?.name || t('no_role')}
+          </Text>
+          <Badge
+            style={[styles.statusBadge, { backgroundColor: isAuthenticated ? 'green' : 'red' }]}
+          >
+            {isAuthenticated ? t('authenticated') : t('not_authenticated')}
+          </Badge>
+          {/* Language Selection Buttons */}
+          <View style={styles.languageContainer}>
+            <TouchableOpacity
+              style={[
+                styles.languageButton,
+                { borderColor: i18n.language === 'en' ? '#6200ee' : '#ccc' },
+              ]}
+              onPress={() => changeLanguage('en')}
+            >
+              <Image style={styles.languageImage} source={us} />
+              <Text style={styles.languageText}>EN</Text>
             </TouchableOpacity>
-            <Text variant='headlineMedium' style={styles.fullName}>
-              {profileData?.name || 'N/A'}
-            </Text>
-            <Text variant='bodyMedium' style={styles.role}>
-              {profileData?.roleId?.name || t('no_role')}
-            </Text>
-            <Badge
-              style={[styles.statusBadge, { backgroundColor: isAuthenticated ? 'green' : 'red' }]}
+            <TouchableOpacity
+              style={[
+                styles.languageButton,
+                { borderColor: i18n.language === 'vi' ? '#6200ee' : '#ccc' },
+              ]}
+              onPress={() => changeLanguage('vi')}
             >
-              {isAuthenticated ? t('authenticated') : t('not_authenticated')}
-            </Badge>
-            {/* Language Selection Buttons */}
-            <View style={styles.languageContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.languageButton,
-                  { borderColor: i18n.language === 'en' ? '#6200ee' : '#ccc' },
-                ]}
-                onPress={() => changeLanguage('en')}
-              >
-                <Image style={styles.languageImage} source={us} />
-
-                <Text style={styles.languageText}>EN</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.languageButton,
-                  { borderColor: i18n.language === 'vi' ? '#6200ee' : '#ccc' },
-                ]}
-                onPress={() => changeLanguage('vi')}
-              >
-                <Image style={styles.languageImage} source={vietnam} />
-                <Text style={styles.languageText}>VI</Text>
-              </TouchableOpacity>
-            </View>
+              <Image style={styles.languageImage} source={vietnam} />
+              <Text style={styles.languageText}>VI</Text>
+            </TouchableOpacity>
           </View>
+        </View>
 
-          <Divider style={styles.divider} />
+        <Divider style={styles.divider} />
 
-          {/* User Info */}
-          <List.Section>
-            <List.Item
-              title={t('profile.employee_id', { defaultValue: 'Employee ID' })}
-              description={profileData?.employeeNumber || 'N/A'}
-              left={() => <List.Icon icon='identifier' />}
-            />
-            <List.Item
-              title={t('profile.phone_number')}
-              description={profileData?.phoneNumber || 'N/A'}
-              left={() => <List.Icon icon='phone' />}
-            />
-            <List.Item
-              title={t('profile.email')}
-              description={profileData?.email || 'N/A'}
-              left={() => <List.Icon icon='email' />}
-            />
-            <List.Item
-              title={t('profile.gender')}
-              description={profileData?.gender || 'N/A'}
-              left={() => <List.Icon icon='gender-male-female' />}
-            />
-            <List.Item
-              title={t('profile.address')}
-              description={profileData?.address || 'N/A'}
-              left={() => <List.Icon icon='home' />}
-            />
-            <List.Item
-              title={t('profile.date_of_birth')}
-              description={profileData?.dob ? convertToDDMMYYYY(profileData.dob) : 'N/A'}
-              left={() => <List.Icon icon='calendar' />}
-            />
-          </List.Section>
+        {/* User Info */}
+        <List.Section>
+          <List.Item
+            title={t('profile.employee_id', { defaultValue: 'Employee ID' })}
+            description={profileData?.employeeNumber || 'N/A'}
+            left={() => <List.Icon icon='identifier' />}
+          />
+          <List.Item
+            title={t('profile.phone_number')}
+            description={profileData?.phoneNumber || 'N/A'}
+            left={() => <List.Icon icon='phone' />}
+          />
+          <List.Item
+            title={t('profile.email')}
+            description={profileData?.email || 'N/A'}
+            left={() => <List.Icon icon='email' />}
+          />
+          <List.Item
+            title={t('profile.gender')}
+            description={profileData?.gender || 'N/A'}
+            left={() => <List.Icon icon='gender-male-female' />}
+          />
+          <List.Item
+            title={t('profile.address')}
+            description={profileData?.address || 'N/A'}
+            left={() => <List.Icon icon='home' />}
+          />
+          <List.Item
+            title={t('profile.date_of_birth')}
+            description={profileData?.dob ? convertToDDMMYYYY(profileData.dob) : 'N/A'}
+            left={() => <List.Icon icon='calendar' />}
+          />
+        </List.Section>
 
-          <Divider style={styles.divider} />
+        <Divider style={styles.divider} />
 
-          {/* Actions */}
-          <View style={styles.actions}>
-            <Button
-              mode='contained-tonal'
-              onPress={() => (navigation.navigate as any)('ChangePassword')}
-              style={styles.button}
-            >
-              {t('profile.change_password')}
-            </Button>
-            <Button
-              onPress={() => dispatch(logout())}
-              mode='outlined'
-              textColor='red'
-              style={styles.button}
-            >
-              {t('profile.logout')}
-            </Button>
-          </View>
+        {/* Actions */}
+        <View style={styles.actions}>
+          <Button
+            mode='contained'
+            onPress={() => (navigation.navigate as any)('UpdateInfo', { profile: profileData })}
+            style={styles.button}
+          >
+            {t('profile.edit_profile')}
+          </Button>
+          <Button
+            mode='contained-tonal'
+            onPress={() => (navigation.navigate as any)('ChangePassword')}
+            style={styles.button}
+          >
+            {t('profile.change_password')}
+          </Button>
+          <Button
+            onPress={() => dispatch(logout())}
+            mode='outlined'
+            textColor='red'
+            style={styles.button}
+          >
+            {t('profile.logout')}
+          </Button>
         </View>
 
         {/* Modal for image selection */}
@@ -295,7 +305,7 @@ const ProfileScreen: React.FC = () => {
             </View>
           </View>
         </Modal>
-      </ScrollView>
+      </View>
     </Layout>
   );
 };

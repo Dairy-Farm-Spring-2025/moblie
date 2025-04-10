@@ -156,9 +156,15 @@ const NewTaskCard = ({
           </Text>
         </View>
       </View>
-      <Text style={[styles.taskCardText, { color: textColor }]}>{`${t('task_management.area', {
-        defaultValue: 'Area',
-      })}: ${task.areaId.name || 'Unknown'}`}</Text>
+      {task.areaId ? (
+        <Text style={[styles.taskCardText, { color: textColor }]}>{`${t('task_management.area', {
+          defaultValue: 'Area',
+        })}: ${task.areaId && (task.areaId.name || 'Unknown')}`}</Text>
+      ) : (
+        <Text style={[styles.taskCardText, { color: textColor }]}>{`${t('task_management.Status', {
+          defaultValue: 'Status',
+        })}: ${task.status && (task.status || 'Unknown')}`}</Text>
+      )}
       <View style={styles.reportStatusContainer}>
         <Ionicons
           name={hasReportForSelectedDate ? 'checkmark-circle' : 'alert-circle'}
@@ -387,8 +393,9 @@ const TaskScreen: React.FC = () => {
                         return tasksForCell.length > 0 ? (
                           tasksForCell.map((task, index) => (
                             <NewTaskCard
-                              key={`${task.taskId}-${weekDates[selectedDayIndex].toISOString().split('T')[0]
-                                }-${index}`}
+                              key={`${task.taskId}-${
+                                weekDates[selectedDayIndex].toISOString().split('T')[0]
+                              }-${index}`}
                               task={task}
                               onPress={() => handleTaskPress(task)}
                               selectedDate={weekDates[selectedDayIndex]}
