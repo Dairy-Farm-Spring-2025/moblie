@@ -13,6 +13,9 @@ import Materials from '@screens/TaskScreen/TaskDetail/components/Materials';
 import TaskDetail from '@screens/TaskScreen/TaskDetail/TaskDetail';
 import TaskScreen from '@screens/TaskScreen/TaskScreen';
 import { t } from 'i18next';
+import MilkBatchManagementScreen from '@screens/MilkBatchManagementScreen/MilkBatchManagementScreen';
+import DetailMilkBatch from '@screens/MilkBatchManagementScreen/components/DetailMilkBatch/DetailMilkBatch';
+import QrCodeScanCow from '@screens/MilkBatchManagementScreen/components/CreateMilkBatch/components/QrCodeScanCow/QrCodeScanCow';
 
 const Stack = createNativeStackNavigator();
 
@@ -82,6 +85,21 @@ const TaskManagementRoute: React.FC = () => {
         name='IllnessPlanScreen'
         component={IllnessPlanScreen}
         options={{ title: t('Illness Treatment Plan') }}
+      />
+      <Stack.Screen
+        name='MilkBatchManagementScreen'
+        component={MilkBatchManagementScreen}
+        options={{ title: 'Milk Batch Management' }}
+      />
+      <Stack.Screen
+        name='MilkBatchDetail'
+        component={DetailMilkBatch}
+        options={{ title: 'Milk Batch Details' }}
+      />
+      <Stack.Screen
+        name='QrCodeScanCow'
+        component={QrCodeScanCow}
+        options={{ title: 'Scan Cow for Milk Batch' }}
       />
     </Stack.Navigator>
   );

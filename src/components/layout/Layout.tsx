@@ -46,7 +46,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isScrollable = true, onRefres
           {children}
         </ScrollView>
       ) : (
-        <View style={styles.container}>{children}</View>
+        <View style={[styles.container, { height: '100%' }]}>{children}</View>
       )}
     </SafeAreaView>
   );
@@ -59,7 +59,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flexGrow: 1,
-    height: '100%',
     padding: 20,
     backgroundColor: '#fff',
   },
