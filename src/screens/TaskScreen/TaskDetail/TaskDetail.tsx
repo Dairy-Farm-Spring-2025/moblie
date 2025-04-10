@@ -125,9 +125,12 @@ const TaskDetailContent: React.FC<{
 
   const handleViewMaterials = (screen: string) => {
     if (screen === 'feed') {
+      console.log('feed', screen);
       (navigation.navigate as any)('Materials', { area: task.areaId, taskId: task.taskId });
+    } else {
+      (navigation.navigate as any)('MilkBatchManagementScreen');
+      console.log('milk', screen);
     }
-    return (navigation.navigate as any)('MilkBatchManagementScreen');
   };
 
   // Navigation handler
