@@ -15,7 +15,7 @@ import LoadingScreen from '@components/LoadingScreen/LoadingScreen';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { Task } from '@model/Task/Task';
-import { formatCamelCase } from '@utils/format';
+import { formatCamelCase, getVietnamISOString } from '@utils/format';
 import WeatherCard from '@components/WeatherCard/WeatherCard';
 import { t } from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -174,8 +174,16 @@ const NewTaskCard = ({
         />
         <Text style={[styles.reportStatusText, { color: textColor }]}>
           {hasReportForSelectedDate
-            ? t('task_management.report_submitted', { defaultValue: 'Submitted' })
-            : t('task_management.not_submitted', { defaultValue: 'Not Submitted' })}
+            ? task.reportTask && task.reportTask.status.toLowerCase() === 'closed'
+              ? t('task_management.report_submitted', { defaultValue: 'Submitted' })
+              : task.reportTask && task.reportTask.status.toLowerCase() === 'processing'
+              ? t('task_management.report_processing', {
+                  defaultValue: 'Already report waiting for review',
+                })
+              : t('task_management.IsCheckin_But_Not_Report', {
+                  defaultValue: 'Already check-in but not submitted',
+                })
+            : t('task_management.Not_Checkin', { defaultValue: 'Not check-in yet' })}
         </Text>
       </View>
     </TouchableOpacity>
@@ -190,14 +198,17 @@ const TaskScreen: React.FC = () => {
     'description' | 'status' | 'area' | 'taskType' | 'assigner' | 'assignee' | 'priority' | 'shift'
   >('description');
   const [currentMonday, setCurrentMonday] = useState(() => {
-    const today = new Date();
+    const currentDateNow = getVietnamISOString();
+    const today = new Date(currentDateNow);
+    console.log('today', today);
     const dayOfWeek = today.getDay();
     const monday = new Date(today);
     monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
     return monday;
   });
   const [selectedDayIndex, setSelectedDayIndex] = useState(() => {
-    const today = new Date();
+    const currentDateNow = getVietnamISOString();
+    const today = new Date(currentDateNow);
     const dayOfWeek = today.getDay();
     return dayOfWeek === 0 ? 6 : dayOfWeek - 1;
   });

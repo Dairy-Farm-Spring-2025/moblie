@@ -9,7 +9,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { Button, SegmentedButtons } from 'react-native-paper';
 import { Alert } from 'react-native';
 import ReportTask from '@screens/TaskScreen/ReportTask/ReportTask';
-import { formatCamelCase } from '@utils/format';
+import { formatCamelCase, getVietnamISOString } from '@utils/format';
 import { t } from 'i18next';
 
 type RootStackParamList = {
@@ -47,10 +47,12 @@ const TaskDetailContent: React.FC<{
   const isCompleted = task.status.toLowerCase() === 'completed';
   const isReported = task.reportTask && task.reportTask.status.toLowerCase() === 'closed';
   // Check if current date is within task duration
-  const currentDateNow = new Date();
-  const currentDateStr = new Date(currentDateNow.toISOString().split('T')[0]);
+  const currentDateNow = getVietnamISOString();
+  console.log('currentDateNow', currentDateNow);
+  const currentDateStr = new Date(currentDateNow.split('T')[0]);
   const fromDate = new Date(task.fromDate.split('T')[0]);
   const toDate = new Date(task.toDate.split('T')[0]);
+  console.log('fromDate', fromDate, 'toDate', toDate, 'currentDateStr', currentDateStr);
   const isWithinCurrentDateRange = currentDateStr >= fromDate && currentDateStr <= toDate;
 
   const getPriorityColor = (priority: string) => {
@@ -313,7 +315,7 @@ const TaskDetailContent: React.FC<{
         )}
       </View>
 
-      {task.taskTypeId.name.toLowerCase() === 'cho ăn' &&
+      {task.taskTypeId.name.toLowerCase() === 'cho bò ăn' &&
         hasReportForDate &&
         !isReported &&
         isWithinCurrentDateRange && (
