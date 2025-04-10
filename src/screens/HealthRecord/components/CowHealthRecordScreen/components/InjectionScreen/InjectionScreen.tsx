@@ -1,7 +1,7 @@
 import CardComponent from '@components/Card/CardComponent';
 import ContainerComponent from '@components/Container/ContainerComponent';
 import apiClient from '@config/axios/axios';
-import { InjectionCow, InjectionStatus } from '@model/Cow/Cow';
+import { Cow, InjectionCow, InjectionStatus } from '@model/Cow/Cow';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { convertToDDMMYYYY, formatCamelCase } from '@utils/format';
 import React, { useState } from 'react';
@@ -16,6 +16,8 @@ import { COLORS } from '@common/GlobalStyle';
 import TextRenderHorizontal from '@components/UI/TextRenderHorizontal';
 import { getStatusItemDarkColor } from '@utils/getColorsStatus';
 import { StatusItem } from '@model/Item/Item';
+import CardDetailCow from '@screens/MilkBatchManagementScreen/components/CreateMilkBatch/components/CardDetailCow/CardDetailCow';
+import CardCow from '@components/CardCow/CardCow';
 
 type RootStackParamList = {
   InjectionScreen: { vaccineInjectionId: number; taskId?: number }; // taskId made optional
@@ -112,6 +114,18 @@ const InjectionScreen = () => {
           paddingVertical: 20,
         }}
       >
+        <View style={{}}>
+          <Text style={[styles.title, { fontWeight: 'bold', fontSize: 22 }]}>
+            {t('injections.cow', { defaultValue: 'Cow' })}
+          </Text>
+          <View style={{ padding: 14 }}>
+            <CardCow cow={injections?.cowEntity || ({} as Cow)} />
+          </View>
+        </View>
+        <DividerUI />
+        <Text style={[styles.title, { fontWeight: 'bold', fontSize: 22 }]}>
+          {t('injections.injection_info', { defaultValue: 'Injection Infomation' })}
+        </Text>
         <View style={styles.containerTitle}>
           <Text style={styles.title}>
             {injections?.injectionDate ? convertToDDMMYYYY(injections?.injectionDate) : 'N/A'}
@@ -200,10 +214,17 @@ const InjectionScreen = () => {
                 })}
               </Text>
               <Text
-                style={{ fontSize: 16, fontWeight: '500' }}
+                style={{
+                  fontSize: 16,
+                  fontWeight: '500',
+                  color: '#fff',
+                  backgroundColor: COLORS.primary,
+                  padding: 8,
+                  borderRadius: 10,
+                }}
                 onPress={() => setModalVisible(true)}
               >
-                Export
+                {t('injections.export', { defaultValue: 'Export' })}
               </Text>
             </View>
             <DividerUI />
