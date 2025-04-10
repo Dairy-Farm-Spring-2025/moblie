@@ -431,7 +431,6 @@ const TaskScreen: React.FC = () => {
               }) && <Text style={styles.noTasksText}>{t('No tasks for this day')}</Text>}
             </View>
           )}
-          <View style={{ height: 400 }} />
         </ScrollView>
       </View>
     </Layout>

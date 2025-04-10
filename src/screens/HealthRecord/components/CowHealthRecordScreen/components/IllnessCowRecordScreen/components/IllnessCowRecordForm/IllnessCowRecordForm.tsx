@@ -97,8 +97,8 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
         title={t('illness.Illness Record', { defaultValue: 'Illness Record' })}
         subTitle={
           isEditing
-            ? t('illness.Edit the illness details', { defaultValue: 'Edit the illness details' })
-            : t('iness.View illness details', { defaultValue: 'View illness details' })
+            ? t('illness.Edit_the_illness_details', { defaultValue: 'Edit the illness details' })
+            : t('illness.View_illness_details', { defaultValue: 'View illness details' })
         }
         leftContent={(props: any) => <LeftContent {...props} icon='cards-heart' />}
       />
