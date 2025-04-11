@@ -53,7 +53,8 @@ const TaskDetailContent: React.FC<{
   const fromDate = new Date(task.fromDate.split('T')[0]);
   const toDate = new Date(task.toDate.split('T')[0]);
   console.log('fromDate', fromDate, 'toDate', toDate, 'currentDateStr', currentDateStr);
-  const isWithinCurrentDateRange = currentDateStr >= fromDate && currentDateStr <= toDate;
+  const isWithinCurrentDateRange = currentDateNow.split('T')[0] === selectedDate;
+  console.log('isWithinCurrentDateRange', isWithinCurrentDateRange);
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
