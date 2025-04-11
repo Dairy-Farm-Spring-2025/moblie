@@ -19,7 +19,10 @@ import { useMutation, useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { RootState } from '@core/store/store';
 import { COLORS } from '@common/GlobalStyle';
-import { OPTION_INJECTION_SITES, OPTIONS_ILLNESS_DETAIL_STATUS } from '@services/data/healthStatus';
+import {
+  OPTION_INJECTION_SITES,
+  OPTIONS_ILLNESS_DETAIL_STATUS,
+} from '@services/data/healthStatus';
 import { formatCamelCase } from '@utils/format';
 import { getAvatar } from '@utils/getImage';
 import { Alert } from 'react-native';
@@ -30,9 +33,14 @@ type RootStackParamList = {
   IllnessDetailForm: { illnessDetail: IllnessDetail };
 };
 
-type IllnessDetailFormRouteProp = RouteProp<RootStackParamList, 'IllnessDetailForm'>;
+type IllnessDetailFormRouteProp = RouteProp<
+  RootStackParamList,
+  'IllnessDetailForm'
+>;
 
-const fetchVeterinariansProfile = async (id: string): Promise<UserProfileData> => {
+const fetchVeterinariansProfile = async (
+  id: string
+): Promise<UserProfileData> => {
   const response = await apiClient.get(`/users/${id}`);
   return response.data;
 };
@@ -108,7 +116,6 @@ const IllnessDetailForm = () => {
       description: illnessDetail?.description,
       itemId: idItem,
       status: illnessDetail?.status,
-      veterinarianId: illnessDetail?.veterinarian?.id,
       dosage: illnessDetail?.dosage?.toString(),
       injectionSite: illnessDetail?.injectionSite,
     },
@@ -137,14 +144,23 @@ const IllnessDetailForm = () => {
 
   const { mutate } = useMutation(
     async (data: IllnessDetailPayload) =>
-      await apiClient.put(`illness-detail/${illnessDetail.illnessDetailId}`, data),
+      await apiClient.put(
+        `illness-detail/${illnessDetail.illnessDetailId}`,
+        data
+      ),
     {
       onSuccess: (response: any) => {
-        Alert.alert('Success', response.message || 'Illness detail updated successfully');
+        Alert.alert(
+          'Success',
+          response.message || 'Illness detail updated successfully'
+        );
         setIsEditMode(false); // Switch back to View Mode
       },
       onError: (error: any) => {
-        Alert.alert('Error', error.response?.data.message || 'Failed to update illness detail');
+        Alert.alert(
+          'Error',
+          error.response?.data.message || 'Failed to update illness detail'
+        );
       },
     }
   );
@@ -171,9 +187,13 @@ const IllnessDetailForm = () => {
     <ScrollView style={styles.container}>
       <CardComponent>
         <CardComponent.Title
-          title='Illness Detail'
-          subTitle={isEditMode ? 'Edit illness details' : 'View illness details'}
-          leftContent={(props: any) => <LeftContent {...props} icon='cards-heart' />}
+          title="Illness Detail"
+          subTitle={
+            isEditMode ? 'Edit illness details' : 'View illness details'
+          }
+          leftContent={(props: any) => (
+            <LeftContent {...props} icon="cards-heart" />
+          )}
         />
         <CardComponent.Content>
           {isEditMode ? (
@@ -183,14 +203,14 @@ const IllnessDetailForm = () => {
                 <View style={{ width: '48%' }}>
                   <FormItem
                     control={control}
-                    label='Date'
-                    name='date'
+                    label="Date"
+                    name="date"
                     render={() => (
                       <DateTimePicker
                         value={new Date(date)}
-                        mode='date'
+                        mode="date"
                         is24Hour={true}
-                        display='default'
+                        display="default"
                         onChange={handleStartDateChange}
                       />
                     )}
@@ -199,8 +219,8 @@ const IllnessDetailForm = () => {
                 <View style={{ width: '48%' }}>
                   <FormItem
                     control={control}
-                    label='Status'
-                    name='status'
+                    label="Status"
+                    name="status"
                     render={({ field: { onChange, value } }) => (
                       <CustomPicker
                         onValueChange={onChange}
@@ -216,8 +236,8 @@ const IllnessDetailForm = () => {
                 <View style={{ width: '48%' }}>
                   <FormItem
                     control={control}
-                    label='Injection Site'
-                    name='injectionSite'
+                    label="Injection Site"
+                    name="injectionSite"
                     render={({ field: { onChange, value } }) => (
                       <CustomPicker
                         onValueChange={onChange}
@@ -231,8 +251,8 @@ const IllnessDetailForm = () => {
                 <View style={{ width: '48%' }}>
                   <FormItem
                     control={control}
-                    label='Dosage'
-                    name='dosage'
+                    label="Dosage"
+                    name="dosage"
                     render={({ field: { onChange, onBlur, value } }) => (
                       <TextInputComponent.Number
                         error={errors.dosage ? errors.dosage.message : ''}
@@ -242,7 +262,7 @@ const IllnessDetailForm = () => {
                           onChange(numericValue);
                         }}
                         value={value as any}
-                        returnKeyType='done'
+                        returnKeyType="done"
                       />
                     )}
                   />
@@ -259,7 +279,9 @@ const IllnessDetailForm = () => {
                     subTitle={veterinarianProfile.roleId.name}
                     leftContent={() => (
                       <Avatar.Image
-                        source={{ uri: getAvatar(veterinarianProfile.profilePhoto) }}
+                        source={{
+                          uri: getAvatar(veterinarianProfile.profilePhoto),
+                        }}
                         size={45}
                       />
                     )}
@@ -268,8 +290,8 @@ const IllnessDetailForm = () => {
               )}
               <FormItem
                 control={control}
-                label='Item'
-                name='itemId'
+                label="Item"
+                name="itemId"
                 rules={{ required: 'Must not be empty' }}
                 render={({ field: { onChange, value } }) => (
                   <CustomPicker
@@ -292,15 +314,17 @@ const IllnessDetailForm = () => {
                   <CardComponent.Content>
                     <View style={styles.cardItem}>
                       <Text>Status: {itemDetail.status}</Text>
-                      <Text>Warehouse: {itemDetail.warehouseLocationEntity?.name}</Text>
+                      <Text>
+                        Warehouse: {itemDetail.warehouseLocationEntity?.name}
+                      </Text>
                     </View>
                   </CardComponent.Content>
                 </CardComponent>
               )}
               <FormItem
                 control={control}
-                label='Description'
-                name='description'
+                label="Description"
+                name="description"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextEditorComponent
                     onChange={onChange}
@@ -311,13 +335,13 @@ const IllnessDetailForm = () => {
               />
               <View style={styles.buttonRow}>
                 <Button
-                  mode='contained'
+                  mode="contained"
                   style={{ backgroundColor: getColorByRole() }}
                   onPress={handleSubmit(onSubmit)}
                 >
                   Submit
                 </Button>
-                <Button mode='outlined' onPress={handleEditToggle}>
+                <Button mode="outlined" onPress={handleEditToggle}>
                   Cancel
                 </Button>
               </View>
@@ -328,12 +352,14 @@ const IllnessDetailForm = () => {
               <View style={styles.infoRow}>
                 <View style={styles.labelContainer}>
                   <Ionicons
-                    name='calendar-outline'
+                    name="calendar-outline"
                     size={20}
                     color={textColor}
                     style={styles.icon}
                   />
-                  <Text style={[styles.textLabel, { color: textColor }]}>Date:</Text>
+                  <Text style={[styles.textLabel, { color: textColor }]}>
+                    Date:
+                  </Text>
                 </View>
                 <View style={[styles.tag, { backgroundColor: '#e8e8e8' }]}>
                   <Text style={[styles.tagText, { color: textColor }]}>
@@ -345,15 +371,20 @@ const IllnessDetailForm = () => {
               <View style={styles.infoRow}>
                 <View style={styles.labelContainer}>
                   <Ionicons
-                    name='checkmark-circle-outline'
+                    name="checkmark-circle-outline"
                     size={20}
                     color={textColor}
                     style={styles.icon}
                   />
-                  <Text style={[styles.textLabel, { color: textColor }]}>Status:</Text>
+                  <Text style={[styles.textLabel, { color: textColor }]}>
+                    Status:
+                  </Text>
                 </View>
                 <View
-                  style={[styles.tag, { backgroundColor: getStatusColor(illnessDetail.status) }]}
+                  style={[
+                    styles.tag,
+                    { backgroundColor: getStatusColor(illnessDetail.status) },
+                  ]}
                 >
                   <Text style={[styles.tagText, { color: '#fff' }]}>
                     {formatCamelCase(illnessDetail.status)}
@@ -364,12 +395,14 @@ const IllnessDetailForm = () => {
               <View style={styles.infoRow}>
                 <View style={styles.labelContainer}>
                   <Ionicons
-                    name='location-outline'
+                    name="location-outline"
                     size={20}
                     color={textColor}
                     style={styles.icon}
                   />
-                  <Text style={[styles.textLabel, { color: textColor }]}>Injection Site:</Text>
+                  <Text style={[styles.textLabel, { color: textColor }]}>
+                    Injection Site:
+                  </Text>
                 </View>
                 <View style={[styles.tag, { backgroundColor: '#e8e8e8' }]}>
                   <Text style={[styles.tagText, { color: textColor }]}>
@@ -380,11 +413,20 @@ const IllnessDetailForm = () => {
 
               <View style={styles.infoRow}>
                 <View style={styles.labelContainer}>
-                  <Ionicons name='medkit-outline' size={20} color={textColor} style={styles.icon} />
-                  <Text style={[styles.textLabel, { color: textColor }]}>Dosage:</Text>
+                  <Ionicons
+                    name="medkit-outline"
+                    size={20}
+                    color={textColor}
+                    style={styles.icon}
+                  />
+                  <Text style={[styles.textLabel, { color: textColor }]}>
+                    Dosage:
+                  </Text>
                 </View>
                 <View style={[styles.tag, { backgroundColor: '#e8e8e8' }]}>
-                  <Text style={[styles.tagText, { color: textColor }]}>{illnessDetail.dosage}</Text>
+                  <Text style={[styles.tagText, { color: textColor }]}>
+                    {illnessDetail.dosage}
+                  </Text>
                 </View>
               </View>
 
@@ -395,7 +437,9 @@ const IllnessDetailForm = () => {
                     subTitle={veterinarianProfile.roleId.name}
                     leftContent={() => (
                       <Avatar.Image
-                        source={{ uri: getAvatar(veterinarianProfile.profilePhoto) }}
+                        source={{
+                          uri: getAvatar(veterinarianProfile.profilePhoto),
+                        }}
                         size={45}
                       />
                     )}
@@ -405,15 +449,19 @@ const IllnessDetailForm = () => {
                 <View style={styles.infoRow}>
                   <View style={styles.labelContainer}>
                     <Ionicons
-                      name='person-outline'
+                      name="person-outline"
                       size={20}
                       color={textColor}
                       style={styles.icon}
                     />
-                    <Text style={[styles.textLabel, { color: textColor }]}>Veterinarian:</Text>
+                    <Text style={[styles.textLabel, { color: textColor }]}>
+                      Veterinarian:
+                    </Text>
                   </View>
                   <View style={[styles.tag, { backgroundColor: '#e8e8e8' }]}>
-                    <Text style={[styles.tagText, { color: textColor }]}>Not Assigned</Text>
+                    <Text style={[styles.tagText, { color: textColor }]}>
+                      Not Assigned
+                    </Text>
                   </View>
                 </View>
               )}
@@ -427,7 +475,10 @@ const IllnessDetailForm = () => {
                   <CardComponent.Content>
                     <View style={styles.cardItem}>
                       <Text>Status: {illnessDetail.vaccine.status}</Text>
-                      <Text>Warehouse: {illnessDetail.vaccine.warehouseLocationEntity?.name}</Text>
+                      <Text>
+                        Warehouse:{' '}
+                        {illnessDetail.vaccine.warehouseLocationEntity?.name}
+                      </Text>
                     </View>
                   </CardComponent.Content>
                 </CardComponent>
@@ -436,12 +487,14 @@ const IllnessDetailForm = () => {
               <View style={styles.infoRow}>
                 <View style={styles.labelContainer}>
                   <Ionicons
-                    name='document-text-outline'
+                    name="document-text-outline"
                     size={20}
                     color={textColor}
                     style={styles.icon}
                   />
-                  <Text style={[styles.textLabel, { color: textColor }]}>Description:</Text>
+                  <Text style={[styles.textLabel, { color: textColor }]}>
+                    Description:
+                  </Text>
                 </View>
               </View>
               <View style={styles.descriptionContainer}>
@@ -449,7 +502,7 @@ const IllnessDetailForm = () => {
               </View>
 
               <Button
-                mode='contained'
+                mode="contained"
                 style={{ backgroundColor: getColorByRole(), marginTop: 20 }}
                 onPress={handleEditToggle}
               >
