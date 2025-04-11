@@ -16,6 +16,8 @@ import { t } from 'i18next';
 import MilkBatchManagementScreen from '@screens/MilkBatchManagementScreen/MilkBatchManagementScreen';
 import DetailMilkBatch from '@screens/MilkBatchManagementScreen/components/DetailMilkBatch/DetailMilkBatch';
 import QrCodeScanCow from '@screens/MilkBatchManagementScreen/components/CreateMilkBatch/components/QrCodeScanCow/QrCodeScanCow';
+import DetailFormMilk from '@screens/MilkBatchManagementScreen/components/CreateMilkBatch/components/DetailFormMilk/DetailFormMilk';
+import CreateMilkBatch from '@screens/MilkBatchManagementScreen/components/CreateMilkBatch/CreateMilkBatch';
 
 const Stack = createNativeStackNavigator();
 
@@ -74,7 +76,11 @@ const TaskManagementRoute: React.FC = () => {
         component={IllnessCowRecordScreen}
         options={{ title: t('illness.Illness Cow Record', { defaultValue: 'Illness Cow Record' }) }}
       />
-      <Stack.Screen name='Materials' component={Materials} options={{ title: 'Materials' }} />
+      <Stack.Screen
+        name='Materials'
+        component={Materials}
+        options={{ title: t('materials.titleName', { defaultValue: 'Materials' }) }}
+      />
       <Stack.Screen
         name='AreaDetail'
         component={AreaDetailScreen}
@@ -95,6 +101,16 @@ const TaskManagementRoute: React.FC = () => {
         name='MilkBatchDetail'
         component={DetailMilkBatch}
         options={{ title: 'Milk Batch Details' }}
+      />
+      <Stack.Screen
+        name='DetailFormMilk'
+        component={DetailFormMilk}
+        options={{ title: 'Daily Milk Form' }}
+      />
+      <Stack.Screen
+        name='CreateMilkBatch'
+        component={CreateMilkBatch}
+        options={{ title: 'Create Milk Batch' }}
       />
       <Stack.Screen
         name='QrCodeScanCow'

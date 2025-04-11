@@ -198,6 +198,19 @@
     "title_illness_record": "Hồ sơ bệnh",
     "title_illness_cow_record": "Hồ sơ bệnh bò"
   },
+  "materials": {
+    "titleName": "Vật liệu",
+    "description": "Đây là các vật liệu từ kho như thức ăn chăn nuôi, thực phẩm.",
+    "loading": "Đang tải vật liệu...",
+    "noMaterials": "Không có vật liệu nào",
+    "title": "Vật liệu cho {{areaName}}",
+    "areaType": "Loại khu vực:",
+    "totalCows": "Tổng số bò:",
+    "cowTypes": "Loại bò:",
+    "export": "Xuất",
+    "success": "Thành công",
+    "failedToLoad": "Không thể tải vật liệu"
+  },
   "injections": {
     "title": "Tiêm phòng",
     "injection_info": "Thông tin tiêm phòng",
@@ -418,6 +431,12 @@
   "Edit": "Cập nhật",
   "Confirm": "Xác nhận",
   "Milking cow": "Bò đang vắt sữa",
+  "milkbatch": {
+    "cowStatusAlert": {
+      "title": "Trạng thái bò: {{status}}",
+      "message": "Bò này không phải là bò đang cho sữa. Bạn sẽ được chuyển hướng."
+    }
+  },
   "Dry cow": "Bò khô sữa",
   "Pregnant cow": "Bò mang thai",
   "Open cow": "Bò chưa mang thai",
