@@ -198,8 +198,7 @@ const TaskScreen: React.FC = () => {
     'description' | 'status' | 'area' | 'taskType' | 'assigner' | 'assignee' | 'priority' | 'shift'
   >('description');
   const [currentMonday, setCurrentMonday] = useState(() => {
-    const currentDateNow = getVietnamISOString();
-    const today = new Date(currentDateNow);
+    const today = new Date();
     console.log('today', today);
     const dayOfWeek = today.getDay();
     const monday = new Date(today);
@@ -207,8 +206,7 @@ const TaskScreen: React.FC = () => {
     return monday;
   });
   const [selectedDayIndex, setSelectedDayIndex] = useState(() => {
-    const currentDateNow = getVietnamISOString();
-    const today = new Date(currentDateNow);
+    const today = new Date();
     const dayOfWeek = today.getDay();
     return dayOfWeek === 0 ? 6 : dayOfWeek - 1;
   });
