@@ -13,8 +13,9 @@ import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { useQuery, useMutation } from 'react-query';
 import apiClient from '@config/axios/axios';
 import { Area } from '@model/Area/Area';
+import { useTranslation } from 'react-i18next';
 
-// Define the interface for each material item
+// Define interfaces (unchanged)
 interface MaterialItem {
   name: string;
   itemId: number;
@@ -22,13 +23,11 @@ interface MaterialItem {
   quantityNeeded: number;
 }
 
-// Define the cow type count structure
 interface CowTypeCount {
   Guernsey: number;
   'Holstein Friesian': number;
 }
 
-// Define the full API response structure
 interface ApiResponse {
   code: number;
   message: string;
@@ -46,14 +45,13 @@ type RootStackParamList = {
 
 type MaterialsRouteProp = RouteProp<RootStackParamList, 'Materials'>;
 
-// Fetch function for materials
+// Fetch functions (unchanged)
 const fetchMaterials = async (areaId: number): Promise<ApiResponse['data']> => {
   const response = await apiClient.get<ApiResponse>(`/feedmeals/calculate/${areaId}`);
   console.log('Fetched materials:', response.data);
   return response.data;
 };
 
-// Function to export a single material item
 const exportMaterial = async ({
   itemId,
   taskId,
@@ -76,15 +74,19 @@ const MaterialsContent: React.FC<{ data?: ApiResponse['data']; taskId: number; a
   taskId,
   area,
 }) => {
+  const { t } = useTranslation(); // Hook to access translations
   const navigation = useNavigation<any>();
   const [expandedItems, setExpandedItems] = useState<number[]>([]);
 
   const exportMutation = useMutation(exportMaterial, {
     onSuccess: (data, variables) => {
-      Alert.alert('Success', `Material with ID ${variables.itemId} exported successfully!`);
+      Alert.alert(
+        t('materials.success'),
+        `Material with ID ${variables.itemId} exported successfully!`
+      );
     },
     onError: (error: any) => {
-      Alert.alert('Error', error?.response?.data?.message || 'Failed to export material');
+      Alert.alert('Error', error?.response?.data?.message || t('materials.failedToLoad'));
     },
   });
 
@@ -101,7 +103,7 @@ const MaterialsContent: React.FC<{ data?: ApiResponse['data']; taskId: number; a
   if (!data) {
     return (
       <View style={styles.card}>
-        <Text style={styles.title}>Loading Materials...</Text>
+        <Text style={styles.title}>{t('materials.loading')}</Text>
       </View>
     );
   }
@@ -109,7 +111,7 @@ const MaterialsContent: React.FC<{ data?: ApiResponse['data']; taskId: number; a
   if (data.foodList.length === 0) {
     return (
       <View style={styles.card}>
-        <Text style={styles.title}>No Materials Available</Text>
+        <Text style={styles.title}>{t('materials.noMaterials')}</Text>
       </View>
     );
   }
@@ -117,11 +119,11 @@ const MaterialsContent: React.FC<{ data?: ApiResponse['data']; taskId: number; a
   return (
     <View style={styles.card}>
       <View style={styles.header}>
-        <Text style={styles.title}>Materials for {area.name}</Text>
+        <Text style={styles.title}>{t('materials.title', { areaName: area.name })}</Text>
       </View>
       <View style={styles.infoRow}>
         <View style={[styles.statusBadge, { backgroundColor: '#52c41a', marginBottom: 10 }]}>
-          <Text style={styles.statusText}>Success</Text>
+          <Text style={styles.statusText}>{t('materials.success')}</Text>
         </View>
       </View>
 
@@ -129,7 +131,7 @@ const MaterialsContent: React.FC<{ data?: ApiResponse['data']; taskId: number; a
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
           <Ionicons name='map-outline' size={20} color='#595959' style={styles.icon} />
-          <Text style={styles.textLabel}>Area Type:</Text>
+          <Text style={styles.textLabel}>{t('materials.areaType')}</Text>
         </View>
         <View style={styles.dataContainer}>
           <View style={styles.tag}>
@@ -142,7 +144,7 @@ const MaterialsContent: React.FC<{ data?: ApiResponse['data']; taskId: number; a
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
           <Ionicons name='paw-outline' size={20} color='#595959' style={styles.icon} />
-          <Text style={styles.textLabel}>Total Cows:</Text>
+          <Text style={styles.textLabel}>{t('materials.totalCows')}</Text>
         </View>
         <View style={styles.dataContainer}>
           <View style={styles.tag}>
@@ -153,7 +155,7 @@ const MaterialsContent: React.FC<{ data?: ApiResponse['data']; taskId: number; a
       <View style={styles.infoCol}>
         <View style={styles.labelContainer}>
           <Ionicons name='list-outline' size={20} color='#595959' style={styles.icon} />
-          <Text style={styles.textLabel}>Cow Types:</Text>
+          <Text style={styles.textLabel}>{t('materials.cowTypes')}</Text>
         </View>
         <View
           style={{
@@ -210,7 +212,7 @@ const MaterialsContent: React.FC<{ data?: ApiResponse['data']; taskId: number; a
                     disabled={exportMutation.isLoading}
                   >
                     <Ionicons name='download-outline' size={20} color='#007bff' />
-                    <Text style={styles.exportButtonText}>Export</Text>
+                    <Text style={styles.exportButtonText}>{t('materials.export')}</Text>
                   </TouchableOpacity>
                 </View>
               )}
@@ -225,6 +227,7 @@ const MaterialsContent: React.FC<{ data?: ApiResponse['data']; taskId: number; a
 };
 
 const Materials: React.FC = () => {
+  const { t } = useTranslation(); // Hook to access translations
   const route = useRoute<MaterialsRouteProp>();
   const [refreshing, setRefreshing] = useState(false);
 
@@ -234,7 +237,7 @@ const Materials: React.FC = () => {
   if (!area || taskId === undefined) {
     return (
       <View style={styles.container}>
-        <Text>Area or Task ID not provided</Text>
+        <Text>{t('materials.failedToLoad')}</Text>
       </View>
     );
   }
@@ -269,19 +272,19 @@ const Materials: React.FC = () => {
             refreshing={refreshing}
             onRefresh={onRefresh}
             tintColor='#007bff'
-            title='Refreshing materials...'
+            title={t('materials.loading')}
             titleColor='#007bff'
           />
         }
       >
         {isLoading ? (
           <View style={styles.card}>
-            <Text style={styles.title}>Loading Materials...</Text>
+            <Text style={styles.title}>{t('materials.loading')}</Text>
           </View>
         ) : isError ? (
           <View style={styles.card}>
             <Text style={styles.title}>
-              {(error as any)?.response?.data?.message || 'Failed to load materials'}
+              {(error as any)?.response?.data?.message || t('materials.failedToLoad')}
             </Text>
           </View>
         ) : (
@@ -292,6 +295,7 @@ const Materials: React.FC = () => {
   );
 };
 
+// Styles (unchanged)
 const styles = StyleSheet.create({
   container: {
     flex: 1,

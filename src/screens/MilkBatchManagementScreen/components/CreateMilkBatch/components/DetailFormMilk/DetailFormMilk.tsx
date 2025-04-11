@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { useQuery } from 'react-query';
@@ -17,6 +18,7 @@ import { Cow } from '@model/Cow/Cow';
 import { Ionicons } from '@expo/vector-icons';
 import { useListCowMilkStore } from '@core/store/ListCowDailyMilk/useListCowMilkStore';
 import { formatCamelCase } from '@utils/format';
+import { t } from 'i18next';
 
 type RootStackParamList = {
   DetailFormMilk: { cowId: number; volume: number };
@@ -47,6 +49,25 @@ const DetailFormMilk: React.FC = () => {
       setMilkVolume(volume.toString());
     }
   }, [volume]);
+
+  useEffect(() => {
+    console.log('Cow status:', cow?.cowStatus);
+    if (cow && cow.cowStatus !== 'milkingCow') {
+      Alert.alert(
+        t('milkbatch.cowStatusAlert.title', { status: cow?.cowStatus }),
+        t('milkbatch.cowStatusAlert.message'),
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              (navigation.navigate as any)('MilkBatchManagementScreen'); // Navigate to Home screen
+            },
+          },
+        ],
+        { cancelable: false }
+      );
+    }
+  }, [cow]);
 
   const handleSubmit = () => {
     if (!milkVolume.trim() || !cow) return;
