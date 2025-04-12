@@ -28,7 +28,7 @@ const handleLanguageDate = (lang: string) => {
 };
 
 const getWeekDates = (currentDate: Date) => {
-  const today = new Date(currentDate);
+  const today = new Date(currentDate.toISOString().split('T')[0]);
   const dayOfWeek = today.getDay();
   const monday = new Date(today);
   monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
@@ -38,6 +38,7 @@ const getWeekDates = (currentDate: Date) => {
     return date;
   });
 };
+
 const fetchTasksByDateRange = async ({
   fromDate,
   toDate,
@@ -50,54 +51,118 @@ const fetchTasksByDateRange = async ({
     toDate: toDate.toISOString().split('T')[0],
   };
   const response = await apiClient.post('/tasks/myTasks/by-date-range/mb', requestBody);
-  console.log('task', response.data);
   const tasksByDate = response.data || {};
-  const allTasks: Task[] = [];
-  Object.entries(tasksByDate).forEach(([_, tasks]: [string, any]) => {
-    if (Array.isArray(tasks) && tasks.length > 0) {
-      allTasks.push(...tasks);
-    }
-  });
+
+  // Map to store tasks by taskId
   const taskMap = new Map<number, Task>();
-  allTasks.forEach((task) => {
-    if (!taskMap.has(task.taskId)) {
-      taskMap.set(task.taskId, task);
-    } else {
-      const existingTask = taskMap.get(task.taskId)!;
-      if (!existingTask.reportTask && task.reportTask) {
-        existingTask.reportTask = task.reportTask;
-      }
+  // Map to store reportTask by taskId and date
+  const reportTaskMap = new Map<string, Task['reportTask']>();
+
+  // Process tasks and collect reportTask data
+  Object.entries(tasksByDate).forEach(([date, tasks]: [string, any]) => {
+    if (Array.isArray(tasks) && tasks.length > 0) {
+      tasks.forEach((task: Task) => {
+        // Store the task in taskMap (overwrite with latest task data, assuming core task data is consistent)
+        taskMap.set(task.taskId, { ...task, reportTask: null }); // Clear reportTask to avoid duplication
+        // Store reportTask for this specific date
+        if (task.reportTask) {
+          reportTaskMap.set(`${task.taskId}-${date}`, task.reportTask);
+        }
+      });
     }
   });
-  return Array.from(taskMap.values());
+
+  // Create final tasks array, adding reportTask for each applicable date
+  const allTasks: Task[] = [];
+  taskMap.forEach((task) => {
+    const taskFromDate = new Date(task.fromDate);
+    const taskToDate = task.toDate ? new Date(task.toDate) : taskFromDate;
+    // Generate tasks for each date in the task's range within the requested range
+    for (
+      let date = new Date(Math.max(taskFromDate.getTime(), fromDate.getTime()));
+      date <= new Date(Math.min(taskToDate.getTime(), toDate.getTime()));
+      date.setDate(date.getDate() + 1)
+    ) {
+      const dateStr = date.toISOString().split('T')[0];
+      const reportTask = reportTaskMap.get(`${task.taskId}-${dateStr}`) || null;
+      allTasks.push({
+        ...task,
+        reportTask,
+      });
+    }
+  });
+
+  return allTasks;
 };
 
 const getTasksForCell = (tasks: Task[], date: Date, shift: string) => {
-  const cellDate = new Date(date);
-  cellDate.setHours(0, 0, 0, 0);
-  return tasks.filter((task) => {
+  const cellDate = new Date(date.toISOString().split('T')[0]);
+  const cellDateStr = cellDate.toISOString().split('T')[0];
+  const taskMap = new Map<number, Task[]>();
+
+  // Step 1: Collect all matching tasks, grouped by taskId
+  tasks.forEach((task) => {
     const fromDate = new Date(task.fromDate);
-    fromDate.setHours(0, 0, 0, 0);
     const toDate = task.toDate ? new Date(task.toDate) : fromDate;
-    toDate.setHours(23, 59, 59, 999);
     const isDayShift = task.shift.toLowerCase().includes('day');
     const normalizedTaskShift = isDayShift ? 'Day' : 'Night';
     const isShiftMatch = normalizedTaskShift === shift;
     const isDateMatch = cellDate >= fromDate && cellDate <= toDate;
-    return isDateMatch && isShiftMatch;
+
+    console.log(
+      'taskID',
+      task.taskId,
+      'fromDate',
+      fromDate,
+      'toDate',
+      toDate,
+      'cellDate',
+      cellDate,
+      'isDateMatch',
+      isDateMatch,
+      'isShiftMatch',
+      isShiftMatch,
+      'reportTask',
+      task.reportTask
+    );
+
+    if (isDateMatch && isShiftMatch) {
+      // Group tasks by taskId
+      if (!taskMap.has(task.taskId)) {
+        taskMap.set(task.taskId, []);
+      }
+      taskMap.get(task.taskId)!.push(task);
+    }
   });
+
+  // Step 2: Select one task per taskId, prioritizing reportTask.date === cellDateStr
+  const uniqueTasks: Task[] = [];
+  taskMap.forEach((taskList, taskId) => {
+    // Find a task with reportTask.date matching cellDateStr
+    let selectedTask = taskList.find(
+      (task) => task.reportTask && task.reportTask.date === cellDateStr
+    );
+    // If no matching reportTask, use the first task with reportTask: null (or any task if none are null)
+    if (!selectedTask) {
+      selectedTask = taskList.find((task) => !task.reportTask) || taskList[0];
+    }
+    uniqueTasks.push(selectedTask);
+  });
+
+  return uniqueTasks;
 };
 
 const getTasksForDay = (tasks: Task[], date: Date) => {
-  const cellDate = new Date(date);
-  cellDate.setHours(0, 0, 0, 0);
-  return tasks.filter((task) => {
+  const cellDate = new Date(date.toISOString().split('T')[0]);
+  const uniqueTaskIds = new Set<number>();
+  tasks.forEach((task) => {
     const fromDate = new Date(task.fromDate);
-    fromDate.setHours(0, 0, 0, 0);
     const toDate = task.toDate ? new Date(task.toDate) : fromDate;
-    toDate.setHours(23, 59, 59, 999);
-    return cellDate >= fromDate && cellDate <= toDate;
-  }).length;
+    if (cellDate >= fromDate && cellDate <= toDate) {
+      uniqueTaskIds.add(task.taskId);
+    }
+  });
+  return uniqueTaskIds.size;
 };
 
 const NewTaskCard = ({
@@ -109,25 +174,25 @@ const NewTaskCard = ({
   onPress: () => void;
   selectedDate: Date;
 }) => {
-  const selectedDateNormalized = new Date(selectedDate);
-  selectedDateNormalized.setHours(0, 0, 0, 0);
-  const hasReportForSelectedDate =
-    task.reportTask &&
-    new Date(task.reportTask.date).setHours(0, 0, 0, 0) === selectedDateNormalized.getTime();
+  const selectedDateNormalized = selectedDate.toISOString().split('T')[0];
+  console.log('selectedDateNormalized', selectedDateNormalized);
+  console.log('task.reportTask.date:', task.reportTask && task.reportTask.date);
 
-  // Determine priority color
+  const hasReportForSelectedDate =
+    task.reportTask && task.reportTask.date === selectedDateNormalized;
+
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'critical':
-        return '#d9363e'; // Dark Red
+        return '#d9363e';
       case 'high':
-        return '#ff4d4f'; // Red
+        return '#ff4d4f';
       case 'medium':
-        return '#ffa940'; // Orange
+        return '#ffa940';
       case 'low':
-        return '#52c41a'; // Green
+        return '#52c41a';
       default:
-        return '#f8f9fa'; // Light Grey
+        return '#f8f9fa';
     }
   };
 
@@ -176,7 +241,7 @@ const NewTaskCard = ({
           {hasReportForSelectedDate
             ? task.reportTask && task.reportTask.status.toLowerCase() === 'closed'
               ? t('task_management.report_submitted', { defaultValue: 'Submitted' })
-              : task.reportTask && task.reportTask.status.toLowerCase() === 'processing'
+              : task.reportTask && task.reportTask.status.toLowerCase() === 'pending'
               ? t('task_management.report_processing', {
                   defaultValue: 'Already report waiting for review',
                 })
@@ -193,22 +258,15 @@ const NewTaskCard = ({
 const TaskScreen: React.FC = () => {
   const navigation = useNavigation();
   const { i18n } = useTranslation();
-  const [searchText, setSearchText] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState<
-    'description' | 'status' | 'area' | 'taskType' | 'assigner' | 'assignee' | 'priority' | 'shift'
-  >('description');
   const [currentMonday, setCurrentMonday] = useState(() => {
-    const currentDateNow = getVietnamISOString();
-    const today = new Date(currentDateNow);
-    console.log('today', today);
+    const today = new Date(getVietnamISOString().split('T')[0]);
     const dayOfWeek = today.getDay();
     const monday = new Date(today);
     monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
     return monday;
   });
   const [selectedDayIndex, setSelectedDayIndex] = useState(() => {
-    const currentDateNow = getVietnamISOString();
-    const today = new Date(currentDateNow);
+    const today = new Date(getVietnamISOString().split('T')[0]);
     const dayOfWeek = today.getDay();
     return dayOfWeek === 0 ? 6 : dayOfWeek - 1;
   });
@@ -242,30 +300,6 @@ const TaskScreen: React.FC = () => {
       setRefreshing(false);
     }
   };
-
-  const filteredTasks =
-    tasks?.filter((task) => {
-      switch (selectedFilter) {
-        case 'description':
-          return task.description.toLowerCase().includes(searchText.toLowerCase());
-        case 'status':
-          return task.status.toLowerCase().includes(searchText.toLowerCase());
-        case 'area':
-          return task.areaId.name.toLowerCase().includes(searchText.toLowerCase());
-        case 'taskType':
-          return task.taskTypeId.name.toLowerCase().includes(searchText.toLowerCase());
-        case 'assigner':
-          return task.assignerName.toLowerCase().includes(searchText.toLowerCase());
-        case 'assignee':
-          return task.assigneeName.toLowerCase().includes(searchText.toLowerCase());
-        case 'priority':
-          return task.priority.toLowerCase().includes(searchText.toLowerCase());
-        case 'shift':
-          return task.shift.toLowerCase().includes(searchText.toLowerCase());
-        default:
-          return false;
-      }
-    }) || [];
 
   const shifts = ['Day', 'Night'];
 
@@ -322,7 +356,7 @@ const TaskScreen: React.FC = () => {
           contentContainerStyle={styles.segmentContentContainer}
         >
           {weekDates.map((date, index) => {
-            const taskCount = filteredTasks ? getTasksForDay(filteredTasks, date) : 0;
+            const taskCount = tasks ? getTasksForDay(tasks, date) : 0;
             return (
               <TouchableOpacity
                 key={index}
@@ -379,11 +413,11 @@ const TaskScreen: React.FC = () => {
               {shifts
                 .filter((shift) => {
                   const tasksForCell = getTasksForCell(
-                    filteredTasks,
+                    tasks || [],
                     weekDates[selectedDayIndex],
                     shift
                   );
-                  return tasksForCell.length > 0; // Only include shifts with tasks
+                  return tasksForCell.length > 0;
                 })
                 .map((shift) => (
                   <View key={shift} style={styles.shiftSection}>
@@ -397,7 +431,7 @@ const TaskScreen: React.FC = () => {
                     <View style={styles.taskContainer}>
                       {(() => {
                         const tasksForCell = getTasksForCell(
-                          filteredTasks,
+                          tasks || [],
                           weekDates[selectedDayIndex],
                           shift
                         );
@@ -423,7 +457,7 @@ const TaskScreen: React.FC = () => {
                 ))}
               {shifts.every((shift) => {
                 const tasksForCell = getTasksForCell(
-                  filteredTasks,
+                  tasks || [],
                   weekDates[selectedDayIndex],
                   shift
                 );
