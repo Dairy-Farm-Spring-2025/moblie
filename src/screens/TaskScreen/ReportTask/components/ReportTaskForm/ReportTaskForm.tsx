@@ -11,7 +11,7 @@ import {
   Modal,
   TextInput,
   TouchableWithoutFeedback,
-  Keyboard, // Import Keyboard
+  Keyboard,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -25,14 +25,18 @@ type RootStackParamList = {
 };
 
 type ReportTaskFormRouteProp = RouteProp<RootStackParamList, 'ReportTaskForm'>;
+
 const ReportTaskForm: React.FC = () => {
   const navigation = useNavigation();
   const route = useRoute<ReportTaskFormRouteProp>();
   const { reportId } = route.params;
 
-  const [formData, setFormData] = useState<{ description: string; imagesFile: string | null }>({
+  const [formData, setFormData] = useState<{
+    description: string;
+    imagesFile: string[];
+  }>({
     description: '',
-    imagesFile: null,
+    imagesFile: [],
   });
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -40,7 +44,10 @@ const ReportTaskForm: React.FC = () => {
     if (Platform.OS !== 'web') {
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert(t('Permission Denied', 'Sorry, we need camera permissions to take pictures!'));
+        Alert.alert(
+          t('Permission Denied'),
+          t('Sorry, we need camera permissions to take pictures!')
+        );
         return false;
       }
     }
@@ -58,7 +65,10 @@ const ReportTaskForm: React.FC = () => {
     if (!result.canceled) {
       const selectedImage = result.assets[0].uri;
       console.log('Image picked:', selectedImage);
-      setFormData((prev) => ({ ...prev, imagesFile: selectedImage }));
+      setFormData((prev) => ({
+        ...prev,
+        imagesFile: [...prev.imagesFile, selectedImage],
+      }));
       setModalVisible(false);
     } else {
       console.log('Image picking canceled');
@@ -79,11 +89,21 @@ const ReportTaskForm: React.FC = () => {
     if (!result.canceled) {
       const capturedImage = result.assets[0].uri;
       console.log('Picture taken:', capturedImage);
-      setFormData((prev) => ({ ...prev, imagesFile: capturedImage }));
+      setFormData((prev) => ({
+        ...prev,
+        imagesFile: [...prev.imagesFile, capturedImage],
+      }));
       setModalVisible(false);
     } else {
       console.log('Picture taking canceled');
     }
+  };
+
+  const removeImage = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      imagesFile: prev.imagesFile.filter((_, i) => i !== index),
+    }));
   };
 
   const reportTaskFormMutation = useMutation(
@@ -111,22 +131,25 @@ const ReportTaskForm: React.FC = () => {
       Alert.alert('Error', 'Please enter a description.');
       return;
     }
-    if (!formData.imagesFile) {
-      Alert.alert('Error', 'Please upload or capture an image.');
+    if (formData.imagesFile.length === 0) {
+      Alert.alert('Error', 'Please upload or capture at least one image.');
       return;
     }
 
     const formDataToSend = new FormData();
     formDataToSend.append('description', formData.description);
-    const uriParts = formData.imagesFile.split('.');
-    const fileType = uriParts[uriParts.length - 1];
-    const fileData = {
-      uri: formData.imagesFile,
-      name: `image.reportTask.${fileType}`,
-      type: `image/${fileType}`,
-    };
-    console.log('Appending file:', fileData);
-    formDataToSend.append('imagesFile', fileData as any);
+
+    formData.imagesFile.forEach((imageUri, index) => {
+      const uriParts = imageUri.split('.');
+      const fileType = uriParts[uriParts.length - 1];
+      const fileData = {
+        uri: imageUri,
+        name: `image.reportTask.${index}.${fileType}`,
+        type: `image/${fileType}`,
+      };
+      console.log('Appending file:', fileData);
+      formDataToSend.append('imagesFile', fileData as any);
+    });
 
     reportTaskFormMutation.mutate(formDataToSend);
   };
@@ -151,14 +174,21 @@ const ReportTaskForm: React.FC = () => {
           </View>
 
           <View style={styles.imageContainer}>
-            <Text style={styles.label}>{t('Uploaded/Captured Image')}</Text>
+            <Text style={styles.label}>{t('Uploaded/Captured Images')}</Text>
             <TouchableOpacity style={styles.uploadButton} onPress={() => setModalVisible(true)}>
               <Ionicons name='camera-outline' size={24} color='#fff' />
               <Text style={styles.uploadButtonText}>{t('Add Image')}</Text>
             </TouchableOpacity>
-            {formData.imagesFile && (
-              <Image source={{ uri: formData.imagesFile }} style={styles.imagePreviewItem} />
-            )}
+            <ScrollView horizontal style={styles.imagePreviewContainer}>
+              {formData.imagesFile.map((imageUri, index) => (
+                <View key={index} style={styles.imagePreviewWrapper}>
+                  <Image source={{ uri: imageUri }} style={styles.imagePreviewItem} />
+                  <TouchableOpacity style={styles.removeButton} onPress={() => removeImage(index)}>
+                    <Ionicons name='close-circle' size={24} color='red' />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </ScrollView>
           </View>
 
           <TouchableOpacity
@@ -205,7 +235,6 @@ const ReportTaskForm: React.FC = () => {
   );
 };
 
-// Styles remain the same
 const styles = StyleSheet.create({
   card: {
     width: '100%',
@@ -258,12 +287,24 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 8,
   },
+  imagePreviewContainer: {
+    flexDirection: 'row',
+    marginTop: 10,
+  },
+  imagePreviewWrapper: {
+    position: 'relative',
+    marginRight: 10,
+  },
   imagePreviewItem: {
     width: 100,
     height: 100,
     borderRadius: 8,
-    marginTop: 10,
     resizeMode: 'cover',
+  },
+  removeButton: {
+    position: 'absolute',
+    top: -10,
+    right: -10,
   },
   submitButton: {
     backgroundColor: '#52c41a',

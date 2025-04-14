@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
-    fontSize: 34,
+    fontSize: 30,
     fontWeight: '700',
     color: '#1a1a1a',
     flexShrink: 1,

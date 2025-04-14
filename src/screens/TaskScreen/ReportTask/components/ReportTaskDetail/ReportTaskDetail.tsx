@@ -72,7 +72,11 @@ const ReportTaskDetailContent: React.FC<{
     );
   }
 
-  const showReportButton = report.description === null || report.description === undefined;
+  const showReportButton =
+    (report.description === null || report.description === undefined) &&
+    report.reportImages.length < 1;
+
+  console.log('report', report.reportImages.length < 1);
 
   return (
     <View style={styles.card}>
@@ -229,7 +233,10 @@ const ReportTaskDetail: React.FC = () => {
         deleteUrls: data.deleteUrls,
       };
       // Append the "request" object as a JSON string
-      formDataToSend.append('request', JSON.stringify(request));
+      // formDataToSend.append('request', JSON.stringify(request));
+      formDataToSend.append('description', request.description);
+      formDataToSend.append('deleteUrls', request.deleteUrls as any);
+      formDataToSend.append('newImage', data.newImage as any);
 
       // Append the new image under "newImages" if it exists
       if (data.newImage) {
@@ -297,13 +304,7 @@ const ReportTaskDetail: React.FC = () => {
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor='#007bff'
-            title='Refreshing report...'
-            titleColor='#007bff'
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor='#007bff' />
         }
       >
         {selectedSegment === 'detail' ? (
