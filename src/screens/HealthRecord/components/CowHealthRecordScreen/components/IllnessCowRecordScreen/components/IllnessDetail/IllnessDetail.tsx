@@ -20,7 +20,7 @@ interface IllnessDetailProps {
 }
 
 const IllnessDetailRecord = ({ illness, refetch }: IllnessDetailProps) => {
-  const { userId } = useSelector((state: RootState) => state.auth);
+  const { userId, roleName } = useSelector((state: RootState) => state.auth);
 
   const navigator = useNavigation();
   const timelineData = illness.illnessDetails.map((element: IllnessDetail) => ({
@@ -75,18 +75,35 @@ const IllnessDetailRecord = ({ illness, refetch }: IllnessDetailProps) => {
         <CardComponent style={styles.card}>
           <View
             style={{
+              paddingHorizontal: 14,
+              paddingVertical: 10,
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
             }}
           >
             <Text style={{ fontWeight: '600', fontSize: 16 }}>{formatType(rowData.title)}</Text>
-            <IconButton
-              icon={'delete-outline'}
-              size={20}
-              iconColor='red'
-              onPress={() => deleteItemDetail(data.illnessDetailId)}
-            />
+            {roleName.toLowerCase() !== 'worker' ? (
+              <IconButton
+                icon={'delete-outline'}
+                size={20}
+                iconColor='red'
+                onPress={() => deleteItemDetail(data.illnessDetailId)}
+              />
+            ) : (
+              <IconButton
+                icon={'information-outline'}
+                size={20}
+                iconColor='blue'
+                onPress={() =>
+                  (navigator as any).navigate('IllnessDetailForm', {
+                    illnessDetail: data,
+                    illnessId: illness.illnessId,
+                    refetch: refetch,
+                  })
+                }
+              />
+            )}
           </View>
           <CardComponent.Content>
             <View
@@ -138,14 +155,16 @@ const IllnessDetailRecord = ({ illness, refetch }: IllnessDetailProps) => {
           } as any
         }
       />
-      <FloatingButton
-        onPress={() =>
-          (navigator as any).navigate('IllnessDetailPlanForm', {
-            illnessId: illness.illnessId,
-            refetch: refetch,
-          })
-        }
-      />
+      {roleName.toLowerCase() !== 'worker' && (
+        <FloatingButton
+          onPress={() =>
+            (navigator as any).navigate('IllnessDetailPlanForm', {
+              illnessId: illness.illnessId,
+              refetch: refetch,
+            })
+          }
+        />
+      )}
     </View>
   );
 };

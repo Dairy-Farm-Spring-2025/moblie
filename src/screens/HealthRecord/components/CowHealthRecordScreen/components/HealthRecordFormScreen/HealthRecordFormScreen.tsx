@@ -4,6 +4,7 @@ import CustomPicker from '@components/CustomPicker/CustomPicker';
 import FormItem from '@components/Form/FormItem';
 import TextInputComponent from '@components/Input/TextInput/TextInputComponent';
 import apiClient from '@config/axios/axios';
+import { RootState } from '@core/store/store';
 import { HealthRecord, HealthRecordForm } from '@model/HealthRecord/HealthRecord';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { COW_STATUS } from '@services/data/cowStatus';
@@ -23,6 +24,7 @@ import {
 } from 'react-native';
 import RenderHTML from 'react-native-render-html';
 import { useMutation } from 'react-query';
+import { useSelector } from 'react-redux';
 
 type RootStackParamList = {
   HealthRecordFormScreen: {
@@ -35,6 +37,7 @@ type HealthRecordFormScreenRouteProp = RouteProp<RootStackParamList, 'HealthReco
 
 const HealthRecordFormScreen = () => {
   const route = useRoute<HealthRecordFormScreenRouteProp>();
+  const { roleName } = useSelector((state: RootState) => state.auth);
   const navigation = useNavigation();
   const { healthRecord, fromScreen } = route.params;
   const [isEditing, setIsEditing] = React.useState(false);
@@ -558,7 +561,7 @@ const HealthRecordFormScreen = () => {
                   </View>
                 </View>
                 <View style={styles.buttonContainer}>
-                  {!isEditing && (
+                  {!isEditing && roleName.toLowerCase() !== 'worker' && (
                     <ButtonComponent type='warning' onPress={() => setIsEditing(true)}>
                       {t('Edit')}
                     </ButtonComponent>
