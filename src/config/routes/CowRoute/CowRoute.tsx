@@ -100,7 +100,7 @@ const CowRoute: React.FC = () => {
       <Stack.Screen
         name='HealthRecordScreen'
         component={HealthRecordScreen}
-        options={{ title: 'Health Record' }}
+        options={{ title: t('healthRecord.title', { defaultValue: 'Health Record' }) }}
       />
       <Stack.Screen
         name='QrScanCow' // Renamed to avoid confusion with QrCodeScanCow

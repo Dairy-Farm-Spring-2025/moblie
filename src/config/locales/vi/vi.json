@@ -440,8 +440,9 @@
     "now": "bây giờ"
   },
   "healthRecord": {
+    "title": "Tình trạng sức khỏe của bò",
     "createSuccess": "Tạo mới thành công",
-    "subTitle": "Nhập các thông tin yêu cầu",
+    "subTitle": "Xem thông tin sức khỏe",
     "status": "Trạng thái",
     "chestCircumference": "Vòng ngực (mét)",
     "bodyLength": "Chiều dài cơ thể (mét)",
