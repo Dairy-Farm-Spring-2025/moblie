@@ -18,6 +18,8 @@ import { getStatusItemDarkColor } from '@utils/getColorsStatus';
 import { StatusItem } from '@model/Item/Item';
 import CardDetailCow from '@screens/MilkBatchManagementScreen/components/CreateMilkBatch/components/CardDetailCow/CardDetailCow';
 import CardCow from '@components/CardCow/CardCow';
+import { useSelector } from 'react-redux';
+import { RootState } from '@core/store/store';
 
 type RootStackParamList = {
   InjectionScreen: { vaccineInjectionId: number; taskId?: number }; // taskId made optional
@@ -58,6 +60,7 @@ const exportMaterial = async ({
 const InjectionScreen = () => {
   const route = useRoute<InjectionScreenRouteProp>();
   const { vaccineInjectionId, taskId } = route.params;
+  const { roleName } = useSelector((state: RootState) => state.auth);
   const navigation = useNavigation();
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -213,19 +216,21 @@ const InjectionScreen = () => {
                   defaultValue: 'Vaccine Item',
                 })}
               </Text>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: '500',
-                  color: '#fff',
-                  backgroundColor: COLORS.primary,
-                  padding: 8,
-                  borderRadius: 10,
-                }}
-                onPress={() => setModalVisible(true)}
-              >
-                {t('injections.export', { defaultValue: 'Export' })}
-              </Text>
+              {roleName.toLowerCase() !== 'worker' && (
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: '500',
+                    color: '#fff',
+                    backgroundColor: COLORS.primary,
+                    padding: 8,
+                    borderRadius: 10,
+                  }}
+                  onPress={() => setModalVisible(true)}
+                >
+                  {t('injections.export', { defaultValue: 'Export' })}
+                </Text>
+              )}
             </View>
             <DividerUI />
             <View
@@ -280,9 +285,9 @@ const InjectionScreen = () => {
           onDismiss={() => setModalVisible(false)}
           contentContainerStyle={styles.modalContainer}
         >
-          <Title>Export Material</Title>
+          <Title>{t('injections.export_item', { defaultValue: 'Export Item' })}</Title>
           <TextInput
-            label='Quantity'
+            label={t('injections.export_quantity', { defaultValue: 'Quantity' })}
             value={quantity}
             onChangeText={setQuantity}
             keyboardType='numeric'
@@ -290,10 +295,10 @@ const InjectionScreen = () => {
           />
           <View style={styles.modalButtons}>
             <Button mode='outlined' onPress={() => setModalVisible(false)}>
-              Cancel
+              {t('injections.cancel', { defaultValue: 'Cancel' })}
             </Button>
             <Button mode='contained' onPress={handleExport} loading={exportMutation.isLoading}>
-              Export
+              {t('injections.confirm', { defaultValue: 'Confirm' })}
             </Button>
           </View>
         </Modal>

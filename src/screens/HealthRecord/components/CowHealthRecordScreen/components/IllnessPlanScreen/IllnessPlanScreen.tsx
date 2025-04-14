@@ -22,6 +22,8 @@ import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import TextEditorComponent from '@components/Input/TextEditor/TextEditorComponent';
 import { IllnessCow } from '@model/Cow/Cow';
+import TitleNameCows from '@components/TitleNameCows/TitleNameCows';
+import { getVietnamISOString } from '@utils/format';
 
 type RootStackParamList = {
   IllnessPlanScreen: { illness: IllnessCow };
@@ -44,7 +46,7 @@ const IllnessPlanScreen = () => {
     {
       dosage: 0,
       injectionSite: InjectionSite.leftArm,
-      date: '2025-04-08',
+      date: getVietnamISOString().split('T')[0],
       itemId: 0,
       description: '',
       illnessId: illness.illnessId,
@@ -92,7 +94,7 @@ const IllnessPlanScreen = () => {
       {
         dosage: 0,
         injectionSite: InjectionSite.leftArm,
-        date: '2025-04-08',
+        date: getVietnamISOString().split('T')[0],
         itemId: 0,
         description: '',
         illnessId: illness.illnessId,
@@ -287,11 +289,11 @@ const IllnessPlanScreen = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
     >
+      <TitleNameCows
+        title={`${t('illness_plan.treatment_plan', { defaultValue: 'Treatment Plan' })} - `}
+        cowName={illness.cowEntity.name}
+      />
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* <Text style={styles.title}>
-          {t('illness_plan.title', { defaultValue: 'Create Illness Plan' })}
-        </Text> */}
-
         <FlatList
           data={plans}
           renderItem={renderPlan}

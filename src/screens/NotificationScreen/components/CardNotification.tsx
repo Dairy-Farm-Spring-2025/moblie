@@ -10,6 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useMutation, useQueryClient } from 'react-query';
 import apiClient from '@config/axios/axios';
 import { format, differenceInMinutes, isToday } from 'date-fns';
+import { vi } from 'date-fns/locale';
 interface CardNotificationProps {
   item: Notification;
 }
@@ -109,7 +110,7 @@ const CardNotification = ({ item }: CardNotificationProps) => {
                         return `${minutesDiff} ${t('now', { defaultValue: 'now' })}`;
                       }
                     })()
-                  : format(new Date(item.notification.dateTime), 'EEE hh:mm a')}
+                  : format(new Date(item.notification.dateTime), 'EEE hh:mm a', { locale: vi })}
               </Text>
             </View>
           </View>

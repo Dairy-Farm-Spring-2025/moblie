@@ -106,16 +106,17 @@ const AreaDetailScreen = () => {
       title={
         <View>
           <Text style={styles.cowText}>
-            <Text style={styles.bold}>{t('Name')}:</Text> {item.name}
+            <Text style={styles.bold}>{t('cowDetails.typeName')}:</Text> {item.name}
           </Text>
           <Text style={styles.cowText}>
-            <Text style={styles.bold}>{t('Status')}:</Text> {formatCamelCase(item.cowStatus)}
+            <Text style={styles.bold}>{t('cowDetails.status')}:</Text>{' '}
+            {formatCamelCase(item.cowStatus)}
           </Text>
           <Text style={styles.cowText}>
-            <Text style={styles.bold}>{t('Type')}:</Text> {item.cowType}
+            <Text style={styles.bold}>{t('cowDetails.type')}:</Text> {item.cowType}
           </Text>
           <Text style={styles.cowText}>
-            <Text style={styles.bold}>{t('Pen')}:</Text> {item.penName}
+            <Text style={styles.bold}>{t('cowDetails.inPen')}:</Text> {item.penName}
           </Text>
         </View>
       }
@@ -127,7 +128,7 @@ const AreaDetailScreen = () => {
     >
       <View style={styles.cowContent}>
         <Divider style={styles.divider} />
-        <Text style={styles.sectionTitle}>{t('Feed Meals')}</Text>
+        <Text style={styles.sectionTitle}>{t('feed.title', { defaultValue: 'Feed Meals' })}</Text>
         <FlatList
           data={item.feedMeals}
           renderItem={renderFeedMeal}
@@ -190,7 +191,9 @@ const AreaDetailScreen = () => {
       {/* Cows in Area */}
       <Card style={styles.card}>
         <Card.Content>
-          <Text style={styles.sectionTitle}>🐄 {t('Cows in Area')}</Text>
+          <Text style={styles.sectionTitle}>
+            🐄 {t('area.Cows_in_Area', { defaultValue: 'Cows in Area' })}
+          </Text>
           {cows && cows.length > 0 ? (
             <FlatList
               data={cows}
@@ -199,7 +202,9 @@ const AreaDetailScreen = () => {
               scrollEnabled={false}
             />
           ) : (
-            <Text style={styles.text}>{t('No cows found in this area')}</Text>
+            <Text style={styles.text}>
+              {t('area.No_cows_found_in_this_area', { defaultValue: 'No cows found in this area' })}
+            </Text>
           )}
         </Card.Content>
       </Card>

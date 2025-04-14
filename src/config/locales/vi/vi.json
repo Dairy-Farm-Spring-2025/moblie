@@ -186,7 +186,25 @@
   },
   "illness_detail": {
     "veterinarians": "Thú y",
-    "item": "Vật phẩm"
+    "item": "Vật phẩm",
+    "date": "Ngày",
+    "status": "Trạng thái",
+    "injection_site": "Vị trí tiêm",
+    "dosage": "Liều lượng",
+    "description": "Mô tả",
+    "edit": "Chỉnh sửa",
+    "submit": "Gửi",
+    "cancel": "Hủy",
+    "title": "Chi tiết bệnh",
+    "edit_subtitle": "Chỉnh sửa chi tiết bệnh",
+    "view_subtitle": "Xem chi tiết bệnh",
+    "not_assigned": "Chưa được phân công",
+    "quantity": "Số lượng",
+    "warehouse": "Kho",
+    "required": "Không được để trống",
+    "you": "Bạn",
+    "success_message": "Cập nhật chi tiết bệnh thành công",
+    "error_message": "Cập nhật chi tiết bệnh thất bại"
   },
   "illness": {
     "title": "Bệnh",
@@ -224,10 +242,15 @@
     "vaccineItem": "Vắc-xin",
     "quantity": "Trữ lượng",
     "cow": "Bò",
-    "export": "Xuất hàng"
+    "export": "Xuất hàng",
+    "export_item": "Xuất kho",
+    "export_quantity": "Số lượng",
+    "confirm": "Xác nhận",
+    "cancel": "Hủy"
   },
   "vaccine_cycle": {
     "title": "Chu kỳ tiêm vắc-xin",
+    "detail": "Chu kỳ tiêm vắc-xin chi tiết",
     "unnamedCycle": "Chu kỳ không tên",
     "unknown": "Không xác định",
     "noDescription": "Không có mô tả",
@@ -473,6 +496,7 @@
   "illness_plan": {
     "title": "Tạo Kế Hoạch Điều Trị",
     "plan": "Kế hoạch",
+    "treatment_plan": "Kế hoạch điều trị",
     "dosage": "Liều lượng (mL hoặc mg)",
     "dosage_placeholder": "Nhập liều lượng",
     "dosage_error": "Liều lượng phải lớn hơn 0",
@@ -490,5 +514,11 @@
     "submit_error": "Lỗi khi gửi kế hoạch. Vui lòng thử lại.",
     "loading": "Đang tải vắc-xin...",
     "error": "Lỗi tải vắc-xin"
+  },
+  "area": {
+    "title": "Các Khu Vực",
+    "detail": "Chi tiết khu vực",
+    "Cows_in_Area": "Bò trong khu vực",
+    "No_cows_found_in_this_area": "Không tìm thấy bò trong khu vực này"
   }
 }

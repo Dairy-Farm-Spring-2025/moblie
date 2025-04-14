@@ -32,7 +32,7 @@ const fetchProfile = async (): Promise<User> => {
 };
 
 const HomeScreen: React.FC = () => {
-  const user = useSelector((state: RootState) => state.auth);
+  // const user = useSelector((state: RootState) => state.auth);
   const { data: profileData, isLoading } = useQuery<User>('users/profile', fetchProfile);
   const navigation = useNavigation<NavigationProp>();
 
@@ -175,7 +175,7 @@ const HomeScreen: React.FC = () => {
       <View style={styles.headerContainer}>
         <View style={styles.welcomeContainer}>
           <Text style={styles.welcomeText}>{t('home.welcome')}</Text>
-          <Text style={[styles.welcomeText, { color: COLORS.primary }]}>
+          <Text style={[styles.welcomeText, { color: primaryColor }]}>
             {profileData?.name || ''}
           </Text>
         </View>

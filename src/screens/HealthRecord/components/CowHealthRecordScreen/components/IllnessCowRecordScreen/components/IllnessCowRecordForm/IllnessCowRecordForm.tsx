@@ -36,7 +36,7 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
     switch (roleName) {
       case 'veterinarians':
         return COLORS.veterinarian.primary;
-      case 'workers':
+      case 'worker':
         return COLORS.worker.primary;
       default:
         return COLORS.worker.primary;
@@ -133,13 +133,15 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
             <View>
               <RenderHtmlComponent htmlContent={illness.symptoms} />
             </View>
-            <Button
-              mode='contained'
-              style={[styles.editButton, { backgroundColor: `${getColorByrole()}` }]}
-              onPress={() => setIsEditing(true)}
-            >
-              Edit
-            </Button>
+            {roleName.toLowerCase() !== 'worker' && (
+              <Button
+                mode='contained'
+                style={[styles.editButton, { backgroundColor: `${getColorByrole()}` }]}
+                onPress={() => setIsEditing(true)}
+              >
+                Edit
+              </Button>
+            )}
           </View>
         ) : (
           // Editable form

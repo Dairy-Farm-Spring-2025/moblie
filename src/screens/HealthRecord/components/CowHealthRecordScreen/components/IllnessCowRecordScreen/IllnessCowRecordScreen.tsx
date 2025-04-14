@@ -11,6 +11,8 @@ import TitleNameCows from '@components/TitleNameCows/TitleNameCows';
 import FloatingButton from '@components/FloatingButton/FloatingButton';
 import IllnessReportForm from './components/IllnessReportForm/IllnessReportForm';
 import { t } from 'i18next';
+import { useSelector } from 'react-redux';
+import { RootState } from '@core/store/store';
 type RootStackParamList = {
   IllnessCowRecordScreen: { illnessId: number };
 };
@@ -22,6 +24,7 @@ const fetchIllness = async (illnessId: number): Promise<IllnessCow> => {
 };
 const IllnessCowRecordScreen = () => {
   const [selectedSegment, setSelectedSegment] = useState('illness-record');
+  const { roleName } = useSelector((state: RootState) => state.auth);
   const route = useRoute<IllnessCowRecordScreenRouteProp>();
   const { illnessId } = route.params;
 
@@ -88,11 +91,13 @@ const IllnessCowRecordScreen = () => {
       ) : (
         <IllnessDetailRecord illness={illness as IllnessCow} refetch={refetch} />
       )}
-      <FloatingButton
-        onPress={() => {
-          handlePress(illness);
-        }}
-      />
+      {roleName.toLowerCase() !== 'worker' && (
+        <FloatingButton
+          onPress={() => {
+            handlePress(illness);
+          }}
+        />
+      )}
     </View>
   );
 };

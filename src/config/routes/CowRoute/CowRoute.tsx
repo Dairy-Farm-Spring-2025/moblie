@@ -55,12 +55,12 @@ const CowRoute: React.FC = () => {
       <Stack.Screen
         name='AreaManagementScreen'
         component={AreaManagementScreen}
-        options={{ title: 'Area Management' }}
+        options={{ title: t('area.title', { defaultValue: 'Area Management' }) }}
       />
       <Stack.Screen
         name='AreaDetail'
         component={AreaDetailScreen}
-        options={{ title: 'Area Details' }}
+        options={{ title: t('area.detail', { defaultValue: 'Area Detail' }) }}
       />
       <Stack.Screen
         name='PenManagementScreen'
@@ -125,7 +125,7 @@ const CowRoute: React.FC = () => {
       <Stack.Screen
         name='IllnessCowRecordScreen'
         component={IllnessCowRecordScreen}
-        options={{ title: 'Illness Cow Record' }}
+        options={{ title: t('illness.Illness Cow Record', { defaultValue: 'Illness Cow Record' }) }}
       />
       <Stack.Screen
         name='IllnessDetailForm'
@@ -183,7 +183,9 @@ const CowRoute: React.FC = () => {
         name='VaccineCycleDetail'
         component={VaccineCycleDetailScreen}
         options={{
-          title: 'Vaccine Cycle Detail',
+          title: t('vaccine_cycle.detail', {
+            defaultValue: 'Vaccine Cycle Detail',
+          }),
         }}
       />
       <Stack.Screen
@@ -207,7 +209,7 @@ const CowRoute: React.FC = () => {
       <Stack.Screen
         name='IllnessPlanScreen'
         component={IllnessPlanScreen}
-        options={{ title: 'Illness Plan' }}
+        options={{ title: t('illness_plan.title', { defaultValue: 'Illness Plan' }) }}
       />
     </Stack.Navigator>
   );
