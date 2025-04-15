@@ -9,6 +9,10 @@ import {
   Image,
   Alert,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  Keyboard,
 } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { login } from '@core/store/authSlice';
@@ -27,10 +31,8 @@ const SignInScreen: React.FC = () => {
   const [passwordError, setPasswordError] = useState('');
   const dispatch: AppDispatch = useDispatch();
 
-  // Đảm bảo redirectUri khớp với mạng LAN
-  const redirectUri = 'exp://192.168.2.12:8081/--/oauth2/callback'; // Hardcode cho LAN
+  const redirectUri = 'exp://192.168.2.12:8081/--/oauth2/callback';
 
-  // Real-time email validation
   const handleEmailChange = (text: string) => {
     setEmail(text);
     if (!text) {
@@ -42,7 +44,6 @@ const SignInScreen: React.FC = () => {
     }
   };
 
-  // Real-time password validation
   const handlePasswordChange = (text: string) => {
     setPassword(text);
     if (!text) {
@@ -88,7 +89,6 @@ const SignInScreen: React.FC = () => {
     }
   };
 
-  // Handle Google Sign-In
   const handleNavigateGoogle = async () => {
     const baseUrl = 'https://api.dairyfarmfpt.website/oauth2/authorize/google';
     const googleAuthUrl =
@@ -100,7 +100,7 @@ const SignInScreen: React.FC = () => {
       `&state=platform=mobile`;
 
     try {
-      console.log('Opening URL:', googleAuthUrl); // Debug URL
+      console.log('Opening URL:', googleAuthUrl);
       const supported = await ExpoLinking.canOpenURL(googleAuthUrl);
       if (supported) {
         await ExpoLinking.openURL(googleAuthUrl);
@@ -113,7 +113,6 @@ const SignInScreen: React.FC = () => {
     }
   };
 
-  // Handle deep link redirect
   useEffect(() => {
     const handleDeepLink = (event: { url: string }) => {
       const url = event.url;
@@ -139,9 +138,6 @@ const SignInScreen: React.FC = () => {
             })
           );
           Alert.alert('Success', `Welcome, ${userName || 'User'}`);
-        } else {
-          // Alert.alert('Error', 'Missing tokens in redirect URL');
-          // console.error('Query params:', queryParams);
         }
       } catch (error) {
         Alert.alert('Error', 'Failed to process redirect URL');
@@ -158,62 +154,72 @@ const SignInScreen: React.FC = () => {
   }, [dispatch]);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Dairy Farm Management</Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+    >
+      <Pressable style={{ flex: 1 }} onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
+          <Text style={styles.title}>Dairy Farm Management</Text>
 
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={[styles.input, emailError ? styles.inputError : null]}
-          placeholder='Email'
-          placeholderTextColor='#777'
-          keyboardType='email-address'
-          value={email}
-          onChangeText={handleEmailChange}
-        />
-        {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
-      </View>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={[styles.input, emailError ? styles.inputError : null]}
+              placeholder='Email'
+              placeholderTextColor='#777'
+              keyboardType='email-address'
+              value={email}
+              onChangeText={handleEmailChange}
+            />
+            {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
+          </View>
 
-      <View style={styles.inputContainer}>
-        <View style={[styles.passwordContainer, passwordError ? styles.inputError : null]}>
-          <TextInput
-            style={styles.passwordInput}
-            placeholder='Password'
-            placeholderTextColor='#777'
-            secureTextEntry={!showPassword}
-            value={password}
-            onChangeText={handlePasswordChange}
-          />
-          <TouchableOpacity style={styles.eyeIcon} onPress={() => setShowPassword(!showPassword)}>
-            <FontAwesome name={showPassword ? 'eye-slash' : 'eye'} size={24} color='#777' />
+          <View style={styles.inputContainer}>
+            <View style={[styles.passwordContainer, passwordError ? styles.inputError : null]}>
+              <TextInput
+                style={styles.passwordInput}
+                placeholder='Password'
+                placeholderTextColor='#777'
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={handlePasswordChange}
+              />
+              <TouchableOpacity
+                style={styles.eyeIcon}
+                onPress={() => setShowPassword(!showPassword)}
+              >
+                <FontAwesome name={showPassword ? 'eye-slash' : 'eye'} size={24} color='#777' />
+              </TouchableOpacity>
+            </View>
+            {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
+          </View>
+
+          <TouchableOpacity style={styles.signInButton} onPress={handleSignIn} disabled={loading}>
+            {loading ? (
+              <ActivityIndicator color='#fff' />
+            ) : (
+              <Text style={styles.signInButtonText}>{t('Sign In')}</Text>
+            )}
+          </TouchableOpacity>
+
+          <Text style={styles.orText}>{t('OR')}</Text>
+
+          <TouchableOpacity onPress={handleNavigateGoogle} style={styles.googleButton}>
+            <Image
+              source={{
+                uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png',
+              }}
+              style={styles.googleIcon}
+            />
+            <Text style={styles.googleButtonText}>{t('Sign In with Google')}</Text>
           </TouchableOpacity>
         </View>
-        {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
-      </View>
-
-      <TouchableOpacity style={styles.signInButton} onPress={handleSignIn} disabled={loading}>
-        {loading ? (
-          <ActivityIndicator color='#fff' />
-        ) : (
-          <Text style={styles.signInButtonText}>{t('Sign In')}</Text>
-        )}
-      </TouchableOpacity>
-
-      <Text style={styles.orText}>{t('OR')}</Text>
-
-      <TouchableOpacity onPress={handleNavigateGoogle} style={styles.googleButton}>
-        <Image
-          source={{
-            uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png',
-          }}
-          style={styles.googleIcon}
-        />
-        <Text style={styles.googleButtonText}>{t('Sign In with Google')}</Text>
-      </TouchableOpacity>
-    </View>
+      </Pressable>
+    </KeyboardAvoidingView>
   );
 };
 
-// Styles giữ nguyên như bạn đã cung cấp
 const styles = StyleSheet.create({
   container: {
     flex: 1,
