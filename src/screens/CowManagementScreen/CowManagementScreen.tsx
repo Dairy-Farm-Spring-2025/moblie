@@ -8,6 +8,8 @@ import apiClient from '@config/axios/axios';
 import { Cow } from '@model/Cow/Cow';
 import SearchInput from '@components/Input/Search/SearchInput';
 import CardCow from '@components/CardCow/CardCow';
+import LoadingScreen from '@components/LoadingScreen/LoadingScreen';
+import { t } from 'i18next';
 
 // Fetch cows data from API
 const fetchCows = async (): Promise<Cow[]> => {
@@ -134,7 +136,7 @@ const CowManagementScreen: React.FC = () => {
 
       {/* Cow List with RecyclerListView */}
       {isLoading ? (
-        <Text>Loading...</Text>
+        <LoadingScreen message={t('cow_management.loading')} fullScreen={true} color='#007bff' />
       ) : isError ? (
         <Text>{(error as Error).message}</Text>
       ) : (
@@ -162,9 +164,6 @@ const CowManagementScreen: React.FC = () => {
           </View>
         )
       )}
-
-      {/* Floating Action Button */}
-      {/* <FloatingButton onPress={() => (navigation.navigate as any)('CreateCowScreen')} /> */}
     </View>
   );
 };

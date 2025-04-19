@@ -13,6 +13,7 @@ import { Text, Tooltip } from 'react-native-paper';
 import { useQuery } from 'react-query';
 import { getIconByAreaType } from '@utils/icon/areaIcon';
 import { t } from 'i18next';
+import LoadingScreen from '@components/LoadingScreen/LoadingScreen';
 const fetchAreas = async (): Promise<Area[]> => {
   const response = await apiClient.get('/areas'); // Replace with your endpoint
   return response.data;
@@ -47,7 +48,11 @@ const AreaManagementScreen = () => {
         }}
       />
       {isLoading ? (
-        <Text>Loading...</Text>
+        <LoadingScreen
+          message={t('loading', { defaultValue: 'Loading...' })}
+          fullScreen={true}
+          color='#007bff'
+        />
       ) : isError ? (
         <Text>{(error as Error).message}</Text>
       ) : (

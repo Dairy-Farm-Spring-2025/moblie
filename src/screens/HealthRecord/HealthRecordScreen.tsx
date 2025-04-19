@@ -1,5 +1,6 @@
 import FloatingButton from '@components/FloatingButton/FloatingButton';
 import SearchInput from '@components/Input/Search/SearchInput';
+import LoadingScreen from '@components/LoadingScreen/LoadingScreen';
 import DividerUI from '@components/UI/DividerUI';
 import TagUI from '@components/UI/TagUI';
 import apiClient from '@config/axios/axios';
@@ -140,7 +141,13 @@ const HealthRecordScreen = () => {
   );
 
   if (isLoading) {
-    return <ActivityIndicator />;
+    return (
+      <LoadingScreen
+        message={t('loading', { defaultValue: 'Loading...' })}
+        fullScreen={true}
+        color='#007bff'
+      />
+    );
   }
   if (isError) {
     return <Text>{(error as Error).message}</Text>;

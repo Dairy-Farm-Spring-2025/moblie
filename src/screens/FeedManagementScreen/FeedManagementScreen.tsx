@@ -9,6 +9,8 @@ import SearchInput from '@components/Input/Search/SearchInput';
 import apiClient from '@config/axios/axios';
 import { FeedMeals } from '@model/Feed/Feed';
 import CardFeed from './components/CardFeed/CardFeed';
+import LoadingScreen from '@components/LoadingScreen/LoadingScreen';
+import { t } from 'i18next';
 
 const fetchFeed = async (): Promise<FeedMeals[]> => {
   const response = await apiClient.get('/feedmeals');
@@ -54,7 +56,11 @@ const FeedManagementScreen = () => {
   }, [queryClient]);
 
   return isLoading ? (
-    <ActivityIndicator />
+    <LoadingScreen
+      message={t('loading', { defaultValue: 'Loading...' })}
+      fullScreen={true}
+      color='#007bff'
+    />
   ) : (
     <ContainerComponent>
       <SearchInput

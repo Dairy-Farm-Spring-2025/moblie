@@ -7,6 +7,7 @@ import { Area } from '@model/Area/Area';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { formatCamelCase, formatType } from '@utils/format';
 import { t } from 'i18next';
+import LoadingScreen from '@components/LoadingScreen/LoadingScreen';
 
 type RootStackParamList = {
   AreaDetail: { areaId: number };
@@ -76,7 +77,13 @@ const AreaDetailScreen = () => {
   };
 
   if (isAreaLoading || isCowsLoading) {
-    return <Text style={styles.loadingText}>{t('Loading area details')}...</Text>;
+    return (
+      <LoadingScreen
+        message={t('loading', { defaultValue: 'Loading...' })}
+        fullScreen={true}
+        color='#007bff'
+      />
+    );
   }
 
   if (isAreaError || !area || isCowsError) {

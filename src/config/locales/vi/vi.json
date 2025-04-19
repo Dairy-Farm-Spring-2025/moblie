@@ -60,7 +60,8 @@
     "cows": "Bò",
     "create": "Tạo",
     "health": "Sức khỏe",
-    "report": "Báo cáo"
+    "report": "Báo cáo",
+    "loading": "Đang tải dữ liệu"
   },
   "card_cow": {
     "no_cow_data": "Không có dữ liệu bò",
@@ -474,6 +475,7 @@
   "Poor": "Kém",
   "Recovering": "Đang hồi phục",
   "Update health record success": "Cập nhật hồ sơ sức khỏe thành công",
+  "viewCowDetail": "Xem chi tiết bò",
   "scanQR": {
     "title": "Quét QR",
     "reportIllness": "Báo cáo bệnh",
@@ -521,5 +523,6 @@
     "detail": "Chi tiết khu vực",
     "Cows_in_Area": "Bò trong khu vực",
     "No_cows_found_in_this_area": "Không tìm thấy bò trong khu vực này"
-  }
+  },
+  "Cow_Management": "Danh sách bò"
 }
