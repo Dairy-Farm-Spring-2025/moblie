@@ -44,9 +44,13 @@ const CowRoute: React.FC = () => {
       <Stack.Screen
         name='CowManagementScreen'
         component={CowManagementScreen}
-        options={{ title: 'Cow Management' }}
+        options={{ title: t('Cow_Management', { defaultValue: 'Cow Management' }) }}
       />
-      <Stack.Screen name='CowDetails' component={DetailCow} options={{ title: 'Cow Details' }} />
+      <Stack.Screen
+        name='CowDetails'
+        component={DetailCow}
+        options={{ title: t('viewCowDetail', { defaultValue: 'Cow Details' }) }}
+      />
       <Stack.Screen
         name='CreateCowScreen'
         component={CreateCow}
