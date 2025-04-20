@@ -110,7 +110,10 @@
     "typeDescription": "Mô tả",
     "timestamps": "Thời gian",
     "yes": "Có",
-    "no": "Không"
+    "no": "Không",
+    "monthlyMilkChart": "Sản lượng sữa hàng tháng trong năm {{year}}",
+    "noMilkData": "Không có dữ liệu sữa",
+    "selectYear": "Chọn năm..."
   },
   "feed": {
     "title": "Bữa ăn",
@@ -303,7 +306,8 @@
     "Not_Reviewed": "Chưa có",
     "Not_Checkin": "Chưa check-in",
     "IsCheckin_But_Not_Report": "Đã Check-in, chưa báo cáo!",
-    "report_processing": "Báo cáo đang được xử lý!"
+    "report_processing": "Báo cáo đang được xử lý!",
+    "timeline_health_record": "Tiền sử bệnh"
   },
   "Select_a_Field": "Chọn công việc",
   "Close": "Đóng",
@@ -383,6 +387,7 @@
     "titleCreate": "Tạo đơn",
     "title": "Quản lý đơn",
     "applicationType": "Loại đơn",
+    "select_type": "Chọn loại...",
     "titleFormItem": "Tiêu đề",
     "content": "Nội dung",
     "fromDate": "Từ ngày",
@@ -429,7 +434,13 @@
     "view": "Xem",
     "view_illness": "Xem bệnh",
     "view_illness_detail": "Xem chi tiết bệnh",
-    "view_vaccine_injection": "Xem tiêm vaccine"
+    "view_vaccine_injection": "Xem tiêm vaccine",
+    "confirm": "Xác nhận",
+    "cancel": "Hủy",
+    "equipment": "Dụng cụ",
+    "no_equipment": "Không có dụng cụ",
+    "required_quantity": "Số lượng",
+    "note": "Ghi chú"
   },
   "notification": {
     "title": "Thông báo",
@@ -475,6 +486,9 @@
   "Poor": "Kém",
   "Recovering": "Đang hồi phục",
   "Update health record success": "Cập nhật hồ sơ sức khỏe thành công",
+  "Health Record": "Hồ sơ sức khỏe",
+  "Illness": "Bệnh",
+  "Injections": "Tiêm Phòng",
   "viewCowDetail": "Xem chi tiết bò",
   "scanQR": {
     "title": "Quét QR",

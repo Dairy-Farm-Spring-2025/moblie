@@ -119,7 +119,11 @@ const CowRoute: React.FC = () => {
       <Stack.Screen
         name='CowHealthInforScreen'
         component={CowHealthInforScreen}
-        options={{ title: 'Timeline Health Record' }}
+        options={{
+          title: t('task_management.timeline_health_record', {
+            defaultValue: 'Timeline Health Record',
+          }),
+        }}
       />
       <Stack.Screen
         name='HealthRecordFormScreen'
