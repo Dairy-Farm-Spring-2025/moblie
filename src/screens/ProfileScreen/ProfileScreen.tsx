@@ -6,9 +6,7 @@ import {
   TouchableOpacity,
   Modal,
   ActivityIndicator,
-  ScrollView,
   Image,
-  Dimensions,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { AppDispatch, RootState } from '@core/store/store';
@@ -54,7 +52,10 @@ const ProfileScreen: React.FC = () => {
 
   const mutation = useMutation(
     async (formData: FormData) => {
-      const response = await apiClient.put('/users/update', formData);
+      const response = await apiClient.put('/users/update', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
       return response.data;
     },
     {
@@ -62,11 +63,13 @@ const ProfileScreen: React.FC = () => {
         refetch(); // Refetch profile data after successful update
         Alert.alert(t('profile.update_success'), t('profile.update_success'));
       },
-      onError: (error: any) =>
+      onError: (error: any) => {
+        console.log('error', error.response.data);
         Alert.alert(
           t('profile.update_error'),
           error.response?.data?.message || t('profile.update_error')
-        ),
+        );
+      },
     }
   );
 

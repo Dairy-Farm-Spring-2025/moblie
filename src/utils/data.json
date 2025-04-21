@@ -1,0 +1,34 @@
+{
+  "data": [
+    {
+      "address": "ẤP 1A, AN THẠNH, BẾN LỨC, LONG AN",
+      "address_entities": {
+        "province": "HỒ CHÍ MINH",
+        "district": "BÌNH TÂN",
+        "ward": "BÌNH HƯNG HÒA A",
+        "street": "58A ĐƯỜNG 1C"
+      },
+      "address_prob": "98.79",
+      "dob": "25/08/2003",
+      "dob_prob": "99.99",
+      "doe": "25/08/2028",
+      "doe_prob": "98.82",
+      "home": "THẠNH ĐỨC, GÒ DẦU, TÂY NINH",
+      "home_prob": "98.39",
+      "id": "080203005916",
+      "id_prob": "99.15",
+      "name": "HUỲNH NGUYỄN MINH TÂN",
+      "name_prob": "99.36",
+      "nationality": "VIỆT NAM",
+      "nationality_prob": "97.05",
+      "number_of_name_lines": "1",
+      "overall_score": "98.16",
+      "sex": "NAM",
+      "sex_prob": "98.20",
+      "type": "chip_front",
+      "type_new": "cccd_chip_front"
+    }
+  ],
+  "errorCode": 0,
+  "errorMessage": ""
+}

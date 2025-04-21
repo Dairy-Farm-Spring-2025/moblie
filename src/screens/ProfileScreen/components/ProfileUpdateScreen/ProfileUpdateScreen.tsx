@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Alert, ScrollView } from 'react-native';
-import { TextInput, Button, Text, Card } from 'react-native-paper';
+import { View, StyleSheet, Alert, ScrollView, TouchableOpacity } from 'react-native';
+import { TextInput, Button, Text, Card, HelperText } from 'react-native-paper';
 import { useMutation } from 'react-query';
 import apiClient from '@config/axios/axios';
 import CustomPicker, { Option } from '@components/CustomPicker/CustomPicker';
@@ -9,6 +9,10 @@ import { t } from 'i18next';
 import { profileApi } from '@services/Profile/profileApi';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { User } from '@model/User/User';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { MaterialIcons } from '@expo/vector-icons';
+import IdentityCardUpdate from './components/IdentityCardUpdate/IdentityCardUpdate';
+import { initData } from '@utils/dataIdentity';
 
 interface FormDataType {
   name: string;
@@ -19,8 +23,8 @@ interface FormDataType {
 }
 
 const genderOptions: Option[] = [
-  { label: t('profile.male', { defaultValue: 'Male' }), value: 'male' },
-  { label: t('profile.female', { defaultValue: 'Female' }), value: 'female' },
+  { label: `${t('profile.male')}`, value: 'male' },
+  { label: `${t('profile.female')}`, value: 'female' },
 ];
 
 type RootStackParamList = {
@@ -35,17 +39,38 @@ const ProfileUpdateScreen: React.FC = () => {
   const navigation = useNavigation();
   const [name, setName] = useState<string>('');
   const [phoneNumber, setPhoneNumber] = useState<string>('');
+  const [phoneError, setPhoneError] = useState<string>('');
   const [street, setStreet] = useState<string>('');
   const [ward, setWard] = useState<string>('');
   const [district, setDistrict] = useState<string>('');
   const [province, setProvince] = useState<string>('');
-  console.log('user', user);
   const [dob, setDob] = useState<string>(''); // Stored as DD-MM-YYYY
-  const [gender, setGender] = useState<string>(user.gender?.toLowerCase() || 'male');
+  const [gender, setGender] = useState<string>(user.gender! || ''); // Initialize as empty
   const [provinceOptions, setProvinceOptions] = useState<Option[]>([]);
   const [districtOptions, setDistrictOptions] = useState<Option[]>([]);
   const [wardOptions, setWardOptions] = useState<Option[]>([]);
-  const [isEditing, setIsEditing] = useState<boolean>(false); // Toggle edit mode
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+
+  // Validate phone number (exactly 10 digits)
+  const validatePhoneNumber = (value: string): boolean => {
+    const cleanedValue = value.replace(/\D/g, '');
+    const isValid = /^\d{10}$/.test(cleanedValue);
+    if (!isValid && value !== '') {
+      setPhoneError(
+        t('profile.phoneError', { defaultValue: 'Phone number must be exactly 10 digits' })
+      );
+    } else {
+      setPhoneError('');
+    }
+    return isValid;
+  };
+
+  // Handle phone number input
+  const handlePhoneChange = (text: string) => {
+    const cleanedText = text.replace(/\D/g, '').slice(0, 10);
+    setPhoneNumber(cleanedText);
+    validatePhoneNumber(cleanedText);
+  };
 
   // Format DOB to DD-MM-YYYY for input
   const formatDob = (text: string) => {
@@ -60,13 +85,13 @@ const ProfileUpdateScreen: React.FC = () => {
   // Parse YYYY-MM-DD to DD-MM-YYYY for display
   const parseDobToDisplayFormat = (dob: string): string => {
     const [year, month, day] = dob.split('-');
-    return `${day}-${month}-${year}`; // Convert to DD-MM-YYYY
+    return `${day}-${month}-${year}`;
   };
 
   // Parse DD-MM-YYYY to YYYY-MM-DD for API
   const parseDobToApiFormat = (dob: string): string => {
     const [day, month, year] = dob.split('-');
-    return `${year}-${month}-${day}`; // Convert to YYYY-MM-DD
+    return `${year}-${month}-${day}`;
   };
 
   const handleDobChange = (text: string) => {
@@ -79,17 +104,32 @@ const ProfileUpdateScreen: React.FC = () => {
     if (user) {
       setName(user.name || '');
       setPhoneNumber(user.phoneNumber || '');
-      setGender(user.gender!.toLowerCase() || 'male');
-      if (user.dob) setDob(parseDobToDisplayFormat(user.dob)); // Convert YYYY-MM-DD to DD-MM-YYYY
+      validatePhoneNumber(user.phoneNumber || '');
 
-      // Parse address
+      // Normalize and validate gender
+      const normalizedGender = user.gender ? user.gender.toLowerCase() : '';
+      const validGender = genderOptions.some((opt) => opt.value === normalizedGender)
+        ? normalizedGender
+        : ''; // Default to empty string if invalid
+      setGender(validGender);
+      console.log(
+        'Initial user.gender:',
+        user.gender,
+        'Normalized gender:',
+        normalizedGender,
+        'Set gender:',
+        validGender
+      );
+
+      if (user.dob) setDob(parseDobToDisplayFormat(user.dob));
+
       if (user.address) {
         const addressParts = user.address.split(', ');
         if (addressParts.length === 5) {
-          setStreet(addressParts[0]); // e.g., "97/2"
-          setWard(addressParts[1]); // e.g., "An Thạnh"
-          setDistrict(addressParts[2]); // e.g., "Bến Lức"
-          setProvince(addressParts[3]); // e.g., "Long An"
+          setStreet(addressParts[0]);
+          setWard(addressParts[1]);
+          setDistrict(addressParts[2]);
+          setProvince(addressParts[3]);
         }
       }
     }
@@ -106,9 +146,8 @@ const ProfileUpdateScreen: React.FC = () => {
         }));
         setProvinceOptions(provinces);
 
-        // Set initial province value after fetching options
         if (user.address) {
-          const provinceName = user.address.split(', ')[3]; // e.g., "Long An"
+          const provinceName = user.address.split(', ')[3];
           const matchedProvince = provinces.find((p: any) => p.label === provinceName);
           if (matchedProvince) setProvince(matchedProvince.value);
         }
@@ -142,9 +181,8 @@ const ProfileUpdateScreen: React.FC = () => {
         }));
         setDistrictOptions(districts);
 
-        // Set initial district value after fetching options
         if (user.address && province) {
-          const districtName = user.address.split(', ')[2]; // e.g., "Bến Lức"
+          const districtName = user.address.split(', ')[2];
           const matchedDistrict = districts.find((d: any) => d.label === districtName);
           if (matchedDistrict) setDistrict(matchedDistrict.value);
         }
@@ -176,9 +214,8 @@ const ProfileUpdateScreen: React.FC = () => {
         }));
         setWardOptions(wards);
 
-        // Set initial ward value after fetching options
         if (user.address && district) {
-          const wardName = user.address.split(', ')[1]; // e.g., "An Thạnh"
+          const wardName = user.address.split(', ')[1];
           const matchedWard = wards.find((w: any) => w.label === wardName);
           if (matchedWard) setWard(matchedWard.value);
         }
@@ -230,10 +267,39 @@ const ProfileUpdateScreen: React.FC = () => {
   );
 
   const handleUpdateProfile = async (): Promise<void> => {
+    // Validate required fields
     if (!name || !phoneNumber || !street || !ward || !district || !province || !dob || !gender) {
       Alert.alert(
         t('profile.error', { defaultValue: 'Error' }),
         t('profile.fillAllFields', { defaultValue: 'Please fill all fields' })
+      );
+      return;
+    }
+
+    // Validate phone number
+    if (!validatePhoneNumber(phoneNumber)) {
+      Alert.alert(
+        t('profile.error', { defaultValue: 'Error' }),
+        t('profile.phoneError', { defaultValue: 'Phone number must be exactly 10 digits' })
+      );
+      return;
+    }
+
+    // Validate DOB format
+    const dobRegex = /^(\d{2})-(\d{2})-(\d{4})$/;
+    if (!dobRegex.test(dob)) {
+      Alert.alert(
+        t('profile.error', { defaultValue: 'Error' }),
+        t('profile.dobInvalid', { defaultValue: 'Date of Birth must be in DD-MM-YYYY format' })
+      );
+      return;
+    }
+
+    // Validate gender
+    if (!genderOptions.some((opt) => opt.value === gender)) {
+      Alert.alert(
+        t('profile.error', { defaultValue: 'Error' }),
+        t('profile.genderInvalid', { defaultValue: 'Please select a valid gender' })
       );
       return;
     }
@@ -265,9 +331,21 @@ const ProfileUpdateScreen: React.FC = () => {
       <Card style={styles.card}>
         <Card.Content>
           {/* Personal Info */}
-          <Text style={styles.sectionTitle}>
-            {t('profile.personalInfo', { defaultValue: 'Personal Information' })}
-          </Text>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>
+              {t('profile.personalInfo', { defaultValue: 'Personal Information' })}
+            </Text>
+            {!isEditing ? (
+              <TouchableOpacity onPress={() => setIsEditing(!isEditing)}>
+                <FontAwesome6 name='edit' size={24} color='black' />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={() => setIsEditing(!isEditing)}>
+                <MaterialIcons name='done' size={24} color='black' />
+              </TouchableOpacity>
+            )}
+          </View>
+          <IdentityCardUpdate />
           <TextInput
             label={t('profile.fullName', { defaultValue: 'Full Name' })}
             value={name}
@@ -279,12 +357,16 @@ const ProfileUpdateScreen: React.FC = () => {
           <TextInput
             label={t('profile.phoneNumber', { defaultValue: 'Phone Number' })}
             value={phoneNumber}
-            onChangeText={setPhoneNumber}
+            onChangeText={handlePhoneChange}
             keyboardType='phone-pad'
             style={styles.input}
             mode='outlined'
             disabled={!isEditing}
+            maxLength={10}
           />
+          <HelperText type='error' visible={!!phoneError}>
+            {phoneError}
+          </HelperText>
           <TextInput
             label={t('profile.dob', { defaultValue: 'Date of Birth' })}
             value={dob}
@@ -296,16 +378,9 @@ const ProfileUpdateScreen: React.FC = () => {
             maxLength={10}
             disabled={!isEditing}
           />
-          <CustomPicker
-            options={genderOptions}
-            selectedValue={gender}
-            onValueChange={setGender}
-            title={t('profile.selectGender', { defaultValue: 'Select Gender' })}
-            readOnly={!isEditing}
-          />
 
           {/* Address */}
-          <Text style={styles.sectionTitle}>
+          {/* <Text style={styles.sectionTitle}>
             {t('profile.address', { defaultValue: 'Address' })}
           </Text>
           <View style={styles.addressContainer}>
@@ -338,7 +413,7 @@ const ProfileUpdateScreen: React.FC = () => {
               mode='outlined'
               disabled={!isEditing}
             />
-          </View>
+          </View> */}
 
           {/* Edit/Update Buttons */}
           {!isEditing ? (
@@ -351,7 +426,7 @@ const ProfileUpdateScreen: React.FC = () => {
               onPress={handleUpdateProfile}
               style={styles.button}
               loading={mutation.isLoading}
-              disabled={mutation.isLoading}
+              disabled={mutation.isLoading || !!phoneError}
             >
               {t('profile.updateButton', { defaultValue: 'Update Profile' })}
             </Button>
@@ -365,15 +440,20 @@ const ProfileUpdateScreen: React.FC = () => {
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
-    paddingVertical: 20,
-    paddingHorizontal: 15,
     backgroundColor: '#f5f5f5',
   },
   card: {
     marginTop: 20,
     borderRadius: 10,
     elevation: 3,
+    marginHorizontal: 10,
     backgroundColor: '#fff',
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 4,
   },
   sectionTitle: {
     fontSize: 18,
