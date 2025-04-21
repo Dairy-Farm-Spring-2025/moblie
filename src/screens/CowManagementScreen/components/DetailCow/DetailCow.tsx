@@ -4,13 +4,15 @@ import apiClient from '@config/axios/axios';
 import { Cow } from '@model/Cow/Cow';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { formatCamelCase } from '@utils/format';
-import React from 'react';
-import { Dimensions, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useQuery } from 'react-query';
 import { LogBox } from 'react-native';
 import TitleNameCows from '@components/TitleNameCows/TitleNameCows';
 import RenderHTML from 'react-native-render-html';
 import { t } from 'i18next';
+import { SegmentedButtons } from 'react-native-paper';
+import CowDetailsWithMilkChart from './components/CowDetailsWithMilkChart';
 
 LogBox.ignoreLogs([
   'TRenderEngineProvider: Support for defaultProps will be removed',
@@ -30,6 +32,7 @@ const fetchCowDetails = async (cowId: number): Promise<Cow> => {
 };
 
 const DetailCow: React.FC = () => {
+  const [selectedSegment, setSelectedSegment] = useState('list');
   const route = useRoute<DetailCowRouteProp>();
   const navigator = useNavigation();
   const { cowId } = route.params;
@@ -55,149 +58,163 @@ const DetailCow: React.FC = () => {
 
   const screenWidth = Dimensions.get('window').width;
 
-  return (
-    <View style={{ flex: 1 }}>
-      <TitleNameCows title={t('cowDetails.title')} cowName={cow.name} />
-      <ScrollView style={styles.container}>
-        {/* Thông tin chi tiết */}
-        <View style={styles.card}>
-          <Text style={styles.title}>{cow.name}</Text>
+  const renderCowDetails = () => (
+    <>
+      <View style={styles.card}>
+        <Text style={styles.title}>{cow.name}</Text>
+        <Text style={styles.text}>
+          🐄 <Text style={styles.bold}>{t('cowDetails.status')}: </Text>
+          {formatCamelCase(cow.cowStatus)}
+        </Text>
+        <Text style={styles.text}>
+          📅 <Text style={styles.bold}>{t('cowDetails.dateOfBirth')}: </Text> {cow.dateOfBirth}
+        </Text>
+        <Text style={styles.text}>
+          📅 <Text style={styles.bold}>{t('cowDetails.dateEntered')}: </Text> {cow.dateOfEnter}
+        </Text>
+        {cow.dateOfOut && (
           <Text style={styles.text}>
-            🐄 <Text style={styles.bold}>{t('cowDetails.status')}: </Text>
-            {formatCamelCase(cow.cowStatus)}
+            📅 <Text style={styles.bold}>{t('cowDetails.dateOut')}: </Text> {cow.dateOfOut}
           </Text>
+        )}
+        <Text style={styles.text}>
+          📍 <Text style={styles.bold}>{t('cowDetails.origin')}: </Text>
+          {formatCamelCase(cow.cowOrigin)}
+        </Text>
+        <Text style={styles.text}>
+          ⚧ <Text style={styles.bold}>{t('cowDetails.gender')}: </Text>
+          {formatCamelCase(cow.gender)}
+        </Text>
+        <Text style={styles.text}>
+          🏡 <Text style={styles.bold}>{t('cowDetails.inPen')}: </Text>
+          {cow.inPen ? t('cowDetails.inPenYes') : t('cowDetails.inPenNo')}
+        </Text>
+        <Text style={styles.text}>
+          🛠 <Text style={styles.bold}>{t('cowDetails.type')}: </Text>
+          {formatCamelCase(cow.cowType.name)}
+        </Text>
+        <View style={{ flexDirection: 'column' }}>
           <Text style={styles.text}>
-            📅 <Text style={styles.bold}>{t('cowDetails.dateOfBirth')}: </Text> {cow.dateOfBirth}
+            📖 <Text style={styles.bold}>{t('cowDetails.description')}: </Text>
           </Text>
-          <Text style={styles.text}>
-            📅 <Text style={styles.bold}>{t('cowDetails.dateEntered')}: </Text> {cow.dateOfEnter}
-          </Text>
-          {cow.dateOfOut && (
-            <Text style={styles.text}>
-              📅 <Text style={styles.bold}>{t('cowDetails.dateOut')}: </Text> {cow.dateOfOut}
-            </Text>
-          )}
-          <Text style={styles.text}>
-            📍 <Text style={styles.bold}>{t('cowDetails.origin')}: </Text>
-            {formatCamelCase(cow.cowOrigin)}
-          </Text>
-          <Text style={styles.text}>
-            ⚧ <Text style={styles.bold}>{t('cowDetails.gender')}: </Text>
-            {formatCamelCase(cow.gender)}
-          </Text>
-          <Text style={styles.text}>
-            🏡 <Text style={styles.bold}>{t('cowDetails.inPen')}: </Text>
-            {cow.inPen ? t('cowDetails.inPenYes') : t('cowDetails.inPenNo')}
-          </Text>
-          <Text style={styles.text}>
-            🛠 <Text style={styles.bold}>{t('cowDetails.type')}: </Text>
-            {formatCamelCase(cow.cowType.name)}
-          </Text>
-          <View style={{ flexDirection: 'column' }}>
-            <Text style={styles.text}>
-              📖 <Text style={styles.bold}>{t('cowDetails.description')}: </Text>
-            </Text>
-            <View style={{ paddingHorizontal: 20 }}>
-              <RenderHTML source={{ html: cow.description ? cow.description : '' }} />
-            </View>
+          <View style={{ paddingHorizontal: 20 }}>
+            <RenderHTML source={{ html: cow.description ? cow.description : '' }} />
           </View>
         </View>
+      </View>
 
-        {/* Thông tin chuồng bò */}
-        {cow.inPen && (
-          <View style={styles.card}>
-            <Text style={styles.sectionTitle}>{t('cowDetails.penInfo')} </Text>
-            <Text style={styles.text}>
-              🔹 <Text style={styles.bold}>{t('cowDetails.penName')}: </Text>
-              {formatCamelCase(cow.penResponse.name)}
-            </Text>
-            <Text style={styles.text}>
-              🔹 <Text style={styles.bold}>{t('cowDetails.penStatus')}: </Text>
-              {formatCamelCase(cow.penResponse.penStatus)}
-            </Text>
-            <Text style={styles.text}>
-              🔹 <Text style={styles.bold}>{t('cowDetails.penDescription')}: </Text>
-              {cow.penResponse.description}
-            </Text>
-            <Text style={styles.text}>
-              📅 <Text style={styles.bold}>{t('cowDetails.createdAt')}: </Text>
-              {new Date(cow.penResponse.createdAt).toLocaleString()}
-            </Text>
-            <Text style={styles.text}>
-              📅 <Text style={styles.bold}>{t('cowDetails.updatedAt')}: </Text>
-              {new Date(cow.penResponse.updatedAt).toLocaleString()}
-            </Text>
-          </View>
-        )}
-
-        {/* Thông tin khu vực */}
-        {cow.inPen && (
-          <View style={styles.card}>
-            <Text style={styles.sectionTitle}>{t('cowDetails.areaInfo')}</Text>
-            <Text style={styles.text}>
-              🔹 <Text style={styles.bold}>{t('cowDetails.areaName')}: </Text>
-              {formatCamelCase(cow.penResponse.area.name)}
-            </Text>
-            <View style={{ flexDirection: 'column' }}>
-              <Text style={styles.text}>
-                🔹 <Text style={styles.bold}>{t('cowDetails.areaDescription')}: </Text>
-              </Text>
-              <View style={{ paddingHorizontal: 20 }}>
-                <RenderHTML source={{ html: cow.penResponse.area.description }} />
-              </View>
-            </View>
-            <Text style={styles.text}>
-              🔹 <Text style={styles.bold}>{t('cowDetails.areaType')}: </Text>
-              {formatCamelCase(cow.penResponse.area.areaType)}
-            </Text>
-            <Text style={styles.text}>
-              📅 <Text style={styles.bold}>{t('cowDetails.createdAt')}: </Text>
-              {new Date(cow.penResponse.area.createdAt).toLocaleString()}
-            </Text>
-            <Text style={styles.text}>
-              📅 <Text style={styles.bold}>{t('cowDetails.updatedAt')}: </Text>
-              {new Date(cow.penResponse.area.updatedAt).toLocaleString()}
-            </Text>
-          </View>
-        )}
-
-        {/* Thông tin loại bò */}
+      {cow.inPen && (
         <View style={styles.card}>
-          <Text style={styles.sectionTitle}>{t('cowDetails.cowTypeDetails')}</Text>
+          <Text style={styles.sectionTitle}>{t('cowDetails.penInfo')} </Text>
           <Text style={styles.text}>
-            🔹 <Text style={styles.bold}>{t('cowDetails.typeName')}: </Text>
-            {formatCamelCase(cow.cowType.name)}
+            🔹 <Text style={styles.bold}>{t('cowDetails.penName')}: </Text>
+            {formatCamelCase(cow.penResponse.name)}
           </Text>
           <Text style={styles.text}>
-            🔹 <Text style={styles.bold}>{t('cowDetails.typeStatus')}: </Text>
-            {formatCamelCase(cow.cowType.status)}
+            🔹 <Text style={styles.bold}>{t('cowDetails.penStatus')}: </Text>
+            {formatCamelCase(cow.penResponse.penStatus)}
           </Text>
           <Text style={styles.text}>
-            🔹 <Text style={styles.bold}>{t('cowDetails.typeDescription')}: </Text>
-            {cow.cowType.description}
+            🔹 <Text style={styles.bold}>{t('cowDetails.penDescription')}: </Text>
+            {cow.penResponse.description}
           </Text>
           <Text style={styles.text}>
             📅 <Text style={styles.bold}>{t('cowDetails.createdAt')}: </Text>
-            {new Date(cow.cowType.createdAt).toLocaleString()}
+            {new Date(cow.penResponse.createdAt).toLocaleString()}
           </Text>
           <Text style={styles.text}>
             📅 <Text style={styles.bold}>{t('cowDetails.updatedAt')}: </Text>
-            {new Date(cow.cowType.updatedAt).toLocaleString()}
+            {new Date(cow.penResponse.updatedAt).toLocaleString()}
           </Text>
         </View>
+      )}
 
-        {/* Thời gian tạo/cập nhật */}
+      {cow.inPen && (
         <View style={styles.card}>
-          <Text style={styles.sectionTitle}>{t('cowDetails.timestamps')}</Text>
+          <Text style={styles.sectionTitle}>{t('cowDetails.areaInfo')}</Text>
           <Text style={styles.text}>
-            🕒 <Text style={styles.bold}>{t('cowDetails.createdAt')}: </Text>
-            {new Date(cow.createdAt).toLocaleString()}
+            🔹 <Text style={styles.bold}>{t('cowDetails.areaName')}: </Text>
+            {formatCamelCase(cow.penResponse.area.name)}
+          </Text>
+          <View style={{ flexDirection: 'column' }}>
+            <Text style={styles.text}>
+              🔹 <Text style={styles.bold}>{t('cowDetails.areaDescription')}: </Text>
+            </Text>
+            <View style={{ paddingHorizontal: 20 }}>
+              <RenderHTML source={{ html: cow.penResponse.area.description }} />
+            </View>
+          </View>
+          <Text style={styles.text}>
+            🔹 <Text style={styles.bold}>{t('cowDetails.areaType')}: </Text>
+            {formatCamelCase(cow.penResponse.area.areaType)}
           </Text>
           <Text style={styles.text}>
-            🕒 <Text style={styles.bold}>{t('cowDetails.updatedAt')}: </Text>
-            {new Date(cow.updatedAt).toLocaleString()}
+            📅 <Text style={styles.bold}>{t('cowDetails.createdAt')}: </Text>
+            {new Date(cow.penResponse.area.createdAt).toLocaleString()}
+          </Text>
+          <Text style={styles.text}>
+            📅 <Text style={styles.bold}>{t('cowDetails.updatedAt')}: </Text>
+            {new Date(cow.penResponse.area.updatedAt).toLocaleString()}
           </Text>
         </View>
+      )}
+
+      <View style={styles.card}>
+        <Text style={styles.sectionTitle}>{t('cowDetails.cowTypeDetails')}</Text>
+        <Text style={styles.text}>
+          🔹 <Text style={styles.bold}>{t('cowDetails.typeName')}: </Text>
+          {formatCamelCase(cow.cowType.name)}
+        </Text>
+        <Text style={styles.text}>
+          🔹 <Text style={styles.bold}>{t('cowDetails.typeStatus')}: </Text>
+          {formatCamelCase(cow.cowType.status)}
+        </Text>
+        <Text style={styles.text}>
+          🔹 <Text style={styles.bold}>{t('cowDetails.typeDescription')}: </Text>
+          {cow.cowType.description}
+        </Text>
+        <Text style={styles.text}>
+          📅 <Text style={styles.bold}>{t('cowDetails.createdAt')}: </Text>
+          {new Date(cow.cowType.createdAt).toLocaleString()}
+        </Text>
+        <Text style={styles.text}>
+          📅 <Text style={styles.bold}>{t('cowDetails.updatedAt')}: </Text>
+          {new Date(cow.cowType.updatedAt).toLocaleString()}
+        </Text>
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.sectionTitle}>{t('cowDetails.timestamps')}</Text>
+        <Text style={styles.text}>
+          🕒 <Text style={styles.bold}>{t('cowDetails.createdAt')}: </Text>
+          {new Date(cow.createdAt).toLocaleString()}
+        </Text>
+        <Text style={styles.text}>
+          🕒 <Text style={styles.bold}>{t('cowDetails.updatedAt')}: </Text>
+          {new Date(cow.updatedAt).toLocaleString()}
+        </Text>
+      </View>
+    </>
+  );
+
+  return (
+    <View style={{ flex: 1 }}>
+      <TitleNameCows title={t('cowDetails.title')} cowName={cow.name} />
+      <SegmentedButtons
+        style={styles.segmentedButtons}
+        value={selectedSegment}
+        onValueChange={setSelectedSegment}
+        buttons={[
+          { value: 'list', label: t('cow_management.cows'), icon: 'cow' },
+          { value: 'milkReport', label: t('cow_management.report'), icon: 'chart-bar' },
+        ]}
+      />
+      <ScrollView style={styles.container}>
+        {selectedSegment === 'milkReport' ? (
+          <CowDetailsWithMilkChart cowId={cowId} />
+        ) : (
+          renderCowDetails()
+        )}
       </ScrollView>
       <FloatingButton onPress={handleNavigateHealthResponse} icon={'heart'} />
     </View>
@@ -211,6 +228,9 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 10,
     marginBottom: 15,
+  },
+  segmentedButtons: {
+    margin: 10,
   },
   card: {
     backgroundColor: 'white',

@@ -32,7 +32,7 @@ const QrScanRoute: React.FC = () => {
       <Stack.Screen
         name='CowHealthRecord'
         component={CowHealthRecord}
-        options={{ title: 'Cow Health Record' }}
+        options={{ title: t('Heath Record', { defaultValue: 'Health Record' }) }}
       />
       <Stack.Screen
         name='HealthRecordFormScreen'
@@ -43,7 +43,7 @@ const QrScanRoute: React.FC = () => {
         name='IllnessReportForm'
         component={IllnessReportForm}
         options={{
-          title: t('illness.title', {
+          title: t('illness.report', {
             defaultValue: 'Illness',
           }),
         }}
@@ -51,7 +51,11 @@ const QrScanRoute: React.FC = () => {
       <Stack.Screen
         name='IllnessReportScreen'
         component={IllnessReportScreen}
-        options={{ title: 'Illness Report' }}
+        options={{
+          title: t('illness.report', {
+            defaultValue: 'Illness',
+          }),
+        }}
       />
     </Stack.Navigator>
   );

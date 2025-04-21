@@ -61,7 +61,8 @@
     "recyclerlistview": "^4.2.3",
     "redux-persist": "^6.0.0",
     "zustand": "^5.0.3",
-    "expo-linking": "~7.0.5"
+    "expo-linking": "~7.0.5",
+    "lottie-react-native": "7.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

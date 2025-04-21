@@ -1,9 +1,19 @@
 import apiClient from '@config/axios/axios';
 import { User } from '@model/User/User';
 import { useNavigation } from '@react-navigation/native';
+import { getAvatar } from '@utils/getImage';
 import { t } from 'i18next';
 import React, { useState } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from 'react-native';
 import { TextInput, Button, Text, HelperText, Avatar, Divider } from 'react-native-paper';
 import { useMutation, useQuery } from 'react-query';
 
@@ -24,7 +34,7 @@ const ChangePasswordScreen = () => {
   const [secureTextNew, setSecureTextNew] = useState(true);
   const [secureTextConfirm, setSecureTextConfirm] = useState(true);
   const [loading, setLoading] = useState(false);
-  const navigation = useNavigation(); // Access the navigation object
+  const navigation = useNavigation();
 
   const {
     data: profileData,
@@ -46,6 +56,7 @@ const ChangePasswordScreen = () => {
       },
     }
   );
+
   const handleChangePassword = () => {
     if (!oldPassword || !newPassword || !confirmPassword) {
       return Alert.alert('Error', 'Please fill all fields');
@@ -72,106 +83,125 @@ const ChangePasswordScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.avatarContainer}>
-          {profileData?.profilePhoto ? (
-            <Avatar.Image
-              size={150}
-              source={{
-                uri: `http://34.124.196.11:8080/uploads/users/${profileData.profilePhoto}`,
-              }}
+    <KeyboardAvoidingView
+      style={styles.keyboardAvoidingContainer}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 20}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps='handled'>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.container}>
+            <View style={styles.header}>
+              <View style={styles.avatarContainer}>
+                {profileData?.profilePhoto ? (
+                  <Avatar.Image
+                    size={150}
+                    source={{
+                      uri: `${getAvatar(profileData?.profilePhoto)}`,
+                    }}
+                  />
+                ) : (
+                  <Avatar.Icon size={150} icon='account' />
+                )}
+                <Avatar.Icon size={40} icon='camera' style={styles.cameraIcon} />
+              </View>
+              <Text variant='headlineMedium' style={styles.fullName}>
+                {profileData?.name || 'N/A'}
+              </Text>
+              <Text variant='bodyMedium' style={styles.role}>
+                {profileData?.roleId?.name || 'No Role'}
+              </Text>
+            </View>
+            <Divider style={styles.divider} />
+            <Text style={styles.title}>{t('Change Your Password')}</Text>
+
+            <TextInput
+              label='Old Password'
+              value={oldPassword}
+              onChangeText={setOldPassword}
+              secureTextEntry={secureTextOld}
+              mode='outlined'
+              autoCapitalize='none'
+              autoCorrect={false}
+              right={
+                <TextInput.Icon
+                  icon={secureTextOld ? 'eye-off' : 'eye'}
+                  onPress={() => setSecureTextOld(!secureTextOld)}
+                />
+              }
+              style={styles.input}
             />
-          ) : (
-            <Avatar.Icon size={150} icon='account' />
-          )}
-          <Avatar.Icon size={40} icon='camera' style={styles.cameraIcon} />
-        </View>
-        <Text variant='headlineMedium' style={styles.fullName}>
-          {profileData?.name || 'N/A'}
-        </Text>
-        <Text variant='bodyMedium' style={styles.role}>
-          {profileData?.roleId?.name || 'No Role'}
-        </Text>
-      </View>
-      <Divider style={{ marginVertical: 10 }} />
-      <Text style={styles.title}>{t('Change Your Password')}</Text>
 
-      <TextInput
-        label='Old Password'
-        value={oldPassword}
-        onChangeText={setOldPassword}
-        secureTextEntry={secureTextOld}
-        mode='outlined'
-        autoCapitalize='none'
-        autoCorrect={false}
-        right={
-          <TextInput.Icon
-            icon={secureTextOld ? 'eye-off' : 'eye'}
-            onPress={() => setSecureTextOld(!secureTextOld)}
-          />
-        }
-        style={styles.input}
-      />
+            <TextInput
+              label='New Password'
+              value={newPassword}
+              onChangeText={setNewPassword}
+              secureTextEntry={secureTextNew}
+              mode='outlined'
+              autoCapitalize='none'
+              autoCorrect={false}
+              right={
+                <TextInput.Icon
+                  icon={secureTextNew ? 'eye-off' : 'eye'}
+                  onPress={() => setSecureTextNew(!secureTextNew)}
+                />
+              }
+              style={styles.input}
+            />
+            <HelperText type='error' visible={newPassword.length > 0 && newPassword.length < 6}>
+              {t('Password must be at least 6 characters')}
+            </HelperText>
 
-      <TextInput
-        label='New Password'
-        value={newPassword}
-        onChangeText={setNewPassword}
-        secureTextEntry={secureTextNew}
-        mode='outlined'
-        autoCapitalize='none'
-        autoCorrect={false}
-        right={
-          <TextInput.Icon
-            icon={secureTextNew ? 'eye-off' : 'eye'}
-            onPress={() => setSecureTextNew(!secureTextNew)}
-          />
-        }
-        style={styles.input}
-      />
-      <HelperText type='error' visible={newPassword.length > 0 && newPassword.length < 6}>
-        {t('Password must be at least 6 characters')}
-      </HelperText>
+            <TextInput
+              label='Confirm New Password'
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              secureTextEntry={secureTextConfirm}
+              mode='outlined'
+              autoCapitalize='none'
+              autoCorrect={false}
+              right={
+                <TextInput.Icon
+                  icon={secureTextConfirm ? 'eye-off' : 'eye'}
+                  onPress={() => setSecureTextConfirm(!secureTextConfirm)}
+                />
+              }
+              style={styles.input}
+            />
+            <HelperText
+              type='error'
+              visible={confirmPassword !== '' && confirmPassword !== newPassword}
+            >
+              {t('Passwords do not match')}
+            </HelperText>
 
-      <TextInput
-        label='Confirm New Password'
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        secureTextEntry={secureTextConfirm}
-        mode='outlined'
-        autoCapitalize='none'
-        autoCorrect={false}
-        right={
-          <TextInput.Icon
-            icon={secureTextConfirm ? 'eye-off' : 'eye'}
-            onPress={() => setSecureTextConfirm(!secureTextConfirm)}
-          />
-        }
-        style={styles.input}
-      />
-      <HelperText type='error' visible={confirmPassword !== '' && confirmPassword !== newPassword}>
-        {t('Passwords do not match')}
-      </HelperText>
-
-      <Button
-        mode='contained'
-        onPress={handleChangePassword}
-        style={styles.button}
-        loading={loading}
-        disabled={loading}
-      >
-        {t('Update Password')}
-      </Button>
-    </View>
+            <Button
+              mode='contained'
+              onPress={handleChangePassword}
+              style={styles.button}
+              loading={loading}
+              disabled={loading}
+            >
+              {t('Update Password')}
+            </Button>
+          </View>
+        </TouchableWithoutFeedback>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
+  keyboardAvoidingContainer: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 40, // Extra padding to ensure button is accessible
+  },
   container: {
     flex: 1,
     padding: 20,
-    justifyContent: 'center',
   },
   header: {
     alignItems: 'center',
@@ -194,6 +224,9 @@ const styles = StyleSheet.create({
   role: {
     color: '#666',
   },
+  divider: {
+    marginVertical: 10,
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -205,6 +238,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 20,
+    marginBottom: 20,
   },
 });
 

@@ -56,6 +56,10 @@ const MyApplicationScreen = () => {
         >
           {(error as any).message}
         </Text>
+      ) : application?.length === 0 ? (
+        <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+          <Text>{t('nodata')}</Text>
+        </View>
       ) : (
         <FlatList
           contentContainerStyle={{

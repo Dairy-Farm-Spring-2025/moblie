@@ -34,12 +34,18 @@ const VaccineCycleDetailScreen = () => {
     title: detail.name || t('injections.vaccineCycleDetail'),
     description: `
       <div>
-        <p>${t('injections.dosage')}: ${detail.dosage || 0} ${detail.dosageUnit || 'N/A'}</p>
-        <p>${t('injections.injectionSite')}: ${detail.injectionSite || 'N/A'}</p>
-        <p>${t('injections.numberPeriodic')}: ${detail.numberPeriodic || 0} ${
-      detail.unitPeriodic || 'N/A'
+        <p>${t('injections.dosage', { defaultValue: 'Dosage' })}: ${detail.dosage || 0} ${
+      detail.dosageUnit || 'N/A'
     }</p>
-        <p>${t('injections.vaccineItem')}: ${detail.itemEntity?.name || 'N/A'}</p>
+        <p>${t('injections.injectionSite', { defaultValue: 'Injection Site' })}: ${
+      detail.injectionSite || 'N/A'
+    }</p>
+        <p>${t('injections.numberPeriodic', { defaultValue: 'Number Periodic' })}: ${
+      detail.numberPeriodic || 0
+    } ${detail.unitPeriodic || 'N/A'}</p>
+        <p>${t('injections.vaccineItem', { defaultValue: 'Vaccine Item' })}: ${
+      detail.itemEntity?.name || 'N/A'
+    }</p>
       </div>
     `,
     lineColor: getVaccineTypeColor(detail.vaccineType),

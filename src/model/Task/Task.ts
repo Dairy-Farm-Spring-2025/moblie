@@ -9,12 +9,7 @@ export type Task = {
   fromDate: string;
   toDate: string; // Allow null
   areaId: Area; // Match API
-  taskTypeId: {
-    taskTypeId: number;
-    name: string;
-    roleId: { id: number; name: string }; // Include roleId
-    description: string; // Include description
-  };
+  taskTypeId: TaskType;
   assignerName: string; // Match API
   assigneeName: string; // Match API
   priority: string;
@@ -43,4 +38,45 @@ export type ReportTaskData = {
 export type ReportTaskImage = {
   reportTaskImageId: number;
   url: string;
+};
+
+export type WarehouseLocation = {
+  warehouseLocationId: number;
+  name: string;
+  description: string;
+  type: string;
+};
+
+export type Equipment = {
+  equipmentId: number;
+  name: string;
+  type: string;
+  status: string;
+  description: string;
+  quantity: number;
+  warehouseLocationEntity: WarehouseLocation;
+};
+
+export type UseEquipmentId = {
+  equipmentId: number;
+  taskTypeId: number;
+};
+
+export type UseEquipment = {
+  id: UseEquipmentId;
+  equipment: Equipment;
+  requiredQuantity: number;
+  note: string;
+};
+
+export type TaskType = {
+  taskTypeId: number;
+  name: string;
+  roleId: Role;
+  description: string;
+  useEquipments: UseEquipment[];
+};
+
+export type TaskTypeResponse = {
+  taskTypeId: TaskType;
 };

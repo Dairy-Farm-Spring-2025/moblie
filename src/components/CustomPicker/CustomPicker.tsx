@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { t } from 'i18next';
-import ButtonComponent from '@components/Button/ButtonComponent'; // Assuming you have a custom button
+import ButtonComponent from '@components/Button/ButtonComponent';
 
 export interface Option {
   label: string;
@@ -19,7 +19,7 @@ export interface Option {
 
 interface CustomPickerProps {
   options: Option[];
-  selectedValue: string;
+  selectedValue: string | undefined | null;
   onValueChange: (value: string) => void;
   title?: string;
   readOnly?: boolean;
@@ -35,24 +35,27 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
   title = t('application.select_type', { defaultValue: 'Select type...' }),
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [tempValue, setTempValue] = useState(selectedValue || '');
+  const [tempValue, setTempValue] = useState<string>('');
 
-  // Sync tempValue with selectedValue
+  // Find the selected option or null if no match
+  const selectedOption = options.find((opt) => opt.value === selectedValue) || null;
+
+  // Initialize and sync tempValue with selectedValue
   useEffect(() => {
-    setTempValue(selectedValue || '');
-  }, [selectedValue]);
-
-  const selectedOption =
-    options.find((opt) => opt.value === selectedValue) || null;
+    const initialValue =
+      selectedValue && options.some((opt) => opt.value === selectedValue) ? selectedValue : '';
+    setTempValue(initialValue);
+  }, [selectedValue, options]);
 
   const handleConfirm = () => {
-    console.log('Confirm - setting value:', tempValue);
     onValueChange(tempValue);
     setModalVisible(false);
   };
 
   const handleCancel = () => {
-    setTempValue(selectedValue || ''); // Reset to original value
+    const resetValue =
+      selectedValue && options.some((opt) => opt.value === selectedValue) ? selectedValue : '';
+    setTempValue(resetValue);
     setModalVisible(false);
   };
 
@@ -60,12 +63,7 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
     <>
       {readOnly ? (
         <View style={[styles.button, { backgroundColor: '#e5e7eb' }]}>
-          <Text
-            style={[
-              styles.buttonText,
-              !selectedOption && styles.placeholderText,
-            ]}
-          >
+          <Text style={[styles.buttonText, !selectedOption && styles.placeholderText]}>
             {selectedOption ? selectedOption.label : title}
           </Text>
         </View>
@@ -73,27 +71,21 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            setTempValue(selectedValue || '');
+            const initialValue =
+              selectedValue && options.some((opt) => opt.value === selectedValue)
+                ? selectedValue
+                : '';
+            setTempValue(initialValue);
             setModalVisible(true);
           }}
         >
-          <Text
-            style={[
-              styles.buttonText,
-              !selectedOption && styles.placeholderText,
-            ]}
-          >
+          <Text style={[styles.buttonText, !selectedOption && styles.placeholderText]}>
             {selectedOption ? selectedOption.label : title}
           </Text>
         </TouchableOpacity>
       )}
 
-      <Modal
-        visible={modalVisible}
-        transparent
-        animationType="slide"
-        onRequestClose={handleCancel}
-      >
+      <Modal visible={modalVisible} transparent animationType='slide' onRequestClose={handleCancel}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <View style={styles.pickerContainer}>
@@ -101,30 +93,19 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
                 selectedValue={tempValue}
                 onValueChange={(value) => setTempValue(value as string)}
                 style={styles.picker}
-                itemStyle={styles.pickerItem} // Consistent item styling
+                itemStyle={styles.pickerItem}
               >
+                <Picker.Item label={title} value='' />
                 {options.map((opt) => (
-                  <Picker.Item
-                    key={opt.value}
-                    label={opt.label}
-                    value={opt.value}
-                  />
+                  <Picker.Item key={opt.value} label={opt.label} value={opt.value} />
                 ))}
               </Picker>
             </View>
             <View style={styles.buttonContainer}>
-              <ButtonComponent
-                width={100}
-                type="primary"
-                onPress={handleConfirm}
-              >
+              <ButtonComponent width={100} type='primary' onPress={handleConfirm}>
                 {t('task_detail.confirm', { defaultValue: 'Confirm' })}
               </ButtonComponent>
-              <ButtonComponent
-                width={100}
-                type="secondary" // Assuming you have a secondary style
-                onPress={handleCancel}
-              >
+              <ButtonComponent width={100} type='secondary' onPress={handleCancel}>
                 {t('task_detail.cancel', { defaultValue: 'Cancel' })}
               </ButtonComponent>
             </View>
@@ -143,12 +124,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#fff',
     justifyContent: 'center',
-    minHeight: 48, // Consistent height across platforms
+    minHeight: 48,
   },
   buttonText: {
     fontSize: 16,
     color: '#000',
-    textAlign: 'left', // Android picker buttons often align left
+    textAlign: 'left',
   },
   placeholderText: {
     color: '#999',
@@ -163,7 +144,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     paddingVertical: 20,
-    minHeight: 250, // Limit height to half screen
+    minHeight: 250,
     width: '100%',
   },
   pickerContainer: {
@@ -172,8 +153,8 @@ const styles = StyleSheet.create({
   },
   picker: {
     width: '100%',
-    ...(Platform.OS === 'ios' && { height: 230 }), // Fixed height for iOS wheel
-    ...(Platform.OS === 'android' && { marginVertical: 10 }), // Spacing for Android dropdown
+    ...(Platform.OS === 'ios' && { height: 230 }),
+    ...(Platform.OS === 'android' && { marginVertical: 10 }),
   },
   pickerItem: {
     fontSize: 22,
@@ -183,11 +164,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingHorizontal: 20,
-    paddingBottom: Platform.OS === 'ios' ? 20 : 10, // Extra padding for iOS safe area
-  },
-  modalButton: {
-    flex: 1,
-    marginHorizontal: 5,
+    paddingBottom: Platform.OS === 'ios' ? 20 : 10,
   },
 });
 

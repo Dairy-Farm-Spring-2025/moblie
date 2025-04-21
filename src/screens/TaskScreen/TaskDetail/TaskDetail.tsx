@@ -37,24 +37,15 @@ const TaskDetailContent: React.FC<{
   const navigation = useNavigation();
 
   const handleToggleExpand = () => setIsExpanded(!isExpanded);
-  console.log('task', task.material?.vaccineInjection?.id);
 
-  // Check if a report exists for the selected date
-  console.log('task Date', task.reportTask?.date);
-  console.log('task Date', selectedDate);
   const hasReportForDate = task.reportTask && task.reportTask.date === selectedDate;
   // Check if task status is completed
   const isCompleted = task.status.toLowerCase() === 'completed';
   const isReported = task.reportTask && task.reportTask.status.toLowerCase() === 'closed';
   // Check if current date is within task duration
   const currentDateNow = getVietnamISOString();
-  console.log('currentDateNow', currentDateNow);
-  const currentDateStr = new Date(currentDateNow.split('T')[0]);
-  const fromDate = new Date(task.fromDate.split('T')[0]);
-  const toDate = new Date(task.toDate.split('T')[0]);
-  console.log('fromDate', fromDate, 'toDate', toDate, 'currentDateStr', currentDateStr);
+
   const isWithinCurrentDateRange = currentDateNow.split('T')[0] === selectedDate;
-  console.log('isWithinCurrentDateRange', isWithinCurrentDateRange);
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -79,32 +70,6 @@ const TaskDetailContent: React.FC<{
         return '#1890ff'; // Blue
       case 'pending':
         return '#ffa940'; // Orange
-      default:
-        return '#8c8c8c'; // Grey
-    }
-  };
-
-  // const getTaskType = (status: string) => {
-  //   switch (status.toLowerCase()) {
-  //     case 'Cho ăn':
-  //       return '#52c41a'; // Green
-  //     case 'in progress':
-  //       return '#1890ff'; // Blue
-  //     case 'pending':
-  //       return '#ffa940'; // Orange
-  //     default:
-  //       return '#8c8c8c'; // Grey
-  //   }
-  // };
-
-  const getShiftColor = (shift: string) => {
-    switch (shift.toLowerCase()) {
-      case 'day':
-      case 'dayshift':
-        return '#fadb14'; // Yellow
-      case 'night':
-      case 'nightshift':
-        return '#722ed1'; // Purple
       default:
         return '#8c8c8c'; // Grey
     }
@@ -164,11 +129,6 @@ const TaskDetailContent: React.FC<{
     (navigation.navigate as any)('AreaDetail', { areaId });
   };
 
-  console.log('isCheckingIn', isCheckingIn);
-  console.log('hasReportForDate', hasReportForDate);
-  console.log('isCompleted', isCompleted);
-  console.log('isWithinCurrentDateRange', isWithinCurrentDateRange);
-
   return (
     <View style={[styles.card, { borderLeftColor: priorityColor }]}>
       <View style={styles.header}>
@@ -182,7 +142,6 @@ const TaskDetailContent: React.FC<{
         </View>
         <View style={[styles.priorityBadge, { backgroundColor: priorityColor }]}>
           <Text style={[styles.priorityText, { color: '#fff' }]}>
-            {' '}
             {t(`task_management.${task.priority}`, { defaultValue: task.priority })}
           </Text>
         </View>
@@ -270,6 +229,36 @@ const TaskDetailContent: React.FC<{
           )}
         </View>
       </View>
+
+      {/* New Equipment Section */}
+      {task.taskTypeId.useEquipments && task.taskTypeId.useEquipments.length > 0 && (
+        <View style={{ flexDirection: 'column' }}>
+          <View style={styles.labelContainer}>
+            <MaterialIcons name='build' size={20} color={textColor} style={styles.icon} />
+            <Text style={[styles.textLabel, { color: textColor }]}>
+              {t('task_detail.equipment')}:
+            </Text>
+          </View>
+          <View style={styles.equipmentContainer}>
+            {task.taskTypeId.useEquipments.map((equip, index) => (
+              <View key={index} style={styles.equipmentItem}>
+                <View style={[styles.tag]}>
+                  <Text style={[styles.tagText, { color: textColor }]}>
+                    {equip.equipment.name} - {equip.requiredQuantity}
+                  </Text>
+                </View>
+                {equip.note && (
+                  <View style={[styles.tag]}>
+                    <Text style={[styles.tagText, { color: textColor }]}>
+                      {t('task_detail.note', { defaultValue: 'Note' })}: {equip.note}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            ))}
+          </View>
+        </View>
+      )}
 
       {task.completionNotes && (
         <View style={styles.infoRow}>
@@ -532,6 +521,17 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     textTransform: 'uppercase',
+  },
+  equipmentContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    backgroundColor: '#f0f2f5',
+    margin: 10,
+  },
+  equipmentItem: {
+    marginBottom: 14,
   },
   infoRow: {
     flexDirection: 'row',
