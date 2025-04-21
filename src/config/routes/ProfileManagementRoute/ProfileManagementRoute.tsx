@@ -3,6 +3,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ChangePasswordScreen from '@screens/ProfileScreen/components/ChangePasswordScreen/ChangePasswordScreen';
 import ProfileUpdateScreen from '@screens/ProfileScreen/components/ProfileUpdateScreen/ProfileUpdateScreen';
 import ProfileScreen from '@screens/ProfileScreen/ProfileScreen';
+import SplashScreens from '@screens/ProfileScreen/components/ProfileUpdateScreen/components/SplashScreens/SplashScreens';
+import UpdateUserInfoScan from '@screens/ProfileScreen/components/ProfileUpdateScreen/components/UpdateUserInfoScan/UpdateUserInfoScan';
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +25,16 @@ const ProfileManagementRoute: React.FC = () => {
         name='UpdateInfo'
         component={ProfileUpdateScreen}
         options={{ title: 'Profile Management' }}
+      />
+      <Stack.Screen
+        name='SplashScreens'
+        component={SplashScreens}
+        options={{ title: 'SplashScreens' }}
+      />
+      <Stack.Screen
+        name='UpdateUserInfoScan'
+        component={UpdateUserInfoScan}
+        options={{ title: 'UpdateUserInfoScan' }}
       />
     </Stack.Navigator>
   );

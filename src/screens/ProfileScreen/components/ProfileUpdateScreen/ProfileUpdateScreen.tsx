@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Alert, ScrollView, TouchableOpacity } from 'react-native';
-import { TextInput, Button, Text, Card, HelperText } from 'react-native-paper';
+import { TextInput, Button, Text, Card, HelperText, SegmentedButtons } from 'react-native-paper';
 import { useMutation } from 'react-query';
 import apiClient from '@config/axios/axios';
 import CustomPicker, { Option } from '@components/CustomPicker/CustomPicker';
@@ -11,7 +11,6 @@ import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { User } from '@model/User/User';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { MaterialIcons } from '@expo/vector-icons';
-import IdentityCardUpdate from './components/IdentityCardUpdate/IdentityCardUpdate';
 import { initData } from '@utils/dataIdentity';
 
 interface FormDataType {
@@ -23,8 +22,8 @@ interface FormDataType {
 }
 
 const genderOptions: Option[] = [
-  { label: `${t('profile.male')}`, value: 'male' },
-  { label: `${t('profile.female')}`, value: 'female' },
+  { label: 'male', value: 'male' },
+  { label: 'female', value: 'female' },
 ];
 
 type RootStackParamList = {
@@ -36,6 +35,7 @@ type ProfileUpdateScreenRouteProp = RouteProp<RootStackParamList, 'ProfileUpdate
 const ProfileUpdateScreen: React.FC = () => {
   const route = useRoute<ProfileUpdateScreenRouteProp>();
   const user = route.params.profile;
+  const [selectedSegment, setSelectedSegment] = React.useState<string>('detail');
   const navigation = useNavigation();
   const [name, setName] = useState<string>('');
   const [phoneNumber, setPhoneNumber] = useState<string>('');
@@ -341,11 +341,10 @@ const ProfileUpdateScreen: React.FC = () => {
               </TouchableOpacity>
             ) : (
               <TouchableOpacity onPress={() => setIsEditing(!isEditing)}>
-                <MaterialIcons name='done' size={24} color='black' />
+                <MaterialIcons name='close' size={24} color='black' />
               </TouchableOpacity>
             )}
           </View>
-          <IdentityCardUpdate />
           <TextInput
             label={t('profile.fullName', { defaultValue: 'Full Name' })}
             value={name}
@@ -354,19 +353,6 @@ const ProfileUpdateScreen: React.FC = () => {
             mode='outlined'
             disabled={!isEditing}
           />
-          <TextInput
-            label={t('profile.phoneNumber', { defaultValue: 'Phone Number' })}
-            value={phoneNumber}
-            onChangeText={handlePhoneChange}
-            keyboardType='phone-pad'
-            style={styles.input}
-            mode='outlined'
-            disabled={!isEditing}
-            maxLength={10}
-          />
-          <HelperText type='error' visible={!!phoneError}>
-            {phoneError}
-          </HelperText>
           <TextInput
             label={t('profile.dob', { defaultValue: 'Date of Birth' })}
             value={dob}
@@ -378,9 +364,29 @@ const ProfileUpdateScreen: React.FC = () => {
             maxLength={10}
             disabled={!isEditing}
           />
+          <TextInput
+            label={t('profile.phoneNumber', { defaultValue: 'Phone Number' })}
+            value={phoneNumber}
+            onChangeText={handlePhoneChange}
+            keyboardType='phone-pad'
+            style={styles.input_general}
+            mode='outlined'
+            disabled={!isEditing}
+            maxLength={10}
+          />
+          <HelperText type='error' visible={!!phoneError}>
+            {phoneError}
+          </HelperText>
+          <CustomPicker
+            options={genderOptions}
+            selectedValue={gender}
+            onValueChange={setGender}
+            title={t('profile.gender', { defaultValue: 'Gender' })}
+            readOnly={!isEditing}
+          />
 
           {/* Address */}
-          {/* <Text style={styles.sectionTitle}>
+          <Text style={styles.sectionTitle}>
             {t('profile.address', { defaultValue: 'Address' })}
           </Text>
           <View style={styles.addressContainer}>
@@ -413,13 +419,22 @@ const ProfileUpdateScreen: React.FC = () => {
               mode='outlined'
               disabled={!isEditing}
             />
-          </View> */}
+          </View>
 
           {/* Edit/Update Buttons */}
           {!isEditing ? (
-            <Button mode='contained' onPress={() => setIsEditing(true)} style={styles.button}>
-              {t('profile.editButton', { defaultValue: 'Edit Profile' })}
-            </Button>
+            <View>
+              <Button mode='contained' onPress={() => setIsEditing(true)} style={styles.button}>
+                {t('profile.editButton', { defaultValue: 'Edit Profile' })}
+              </Button>
+              <Button
+                mode='contained'
+                onPress={() => (navigation.navigate as any)('UpdateUserInfoScan')}
+                style={styles.button}
+              >
+                {t('profile.editButton', { defaultValue: 'Using Identity Card' })}
+              </Button>
+            </View>
           ) : (
             <Button
               mode='contained'
@@ -455,6 +470,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 4,
   },
+  segmentedButtons: {
+    margin: 10,
+  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -463,6 +481,9 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 15,
+    backgroundColor: '#fff',
+  },
+  input_general: {
     backgroundColor: '#fff',
   },
   button: {

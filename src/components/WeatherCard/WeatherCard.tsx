@@ -23,7 +23,7 @@ interface WeatherCardProps {
 }
 
 const fetchWeather = async (date: Date, lang: string): Promise<WeatherData> => {
-  const API_KEY = '2124cd937c4745e399753107250404';
+  const API_KEY = 'ca17c81acf994fbeb7f172133252104';
   const today = new Date();
   const formattedDate = format(date, 'yyyy-MM-dd');
   const location = '10.841254037526662,106.81040870930549';
