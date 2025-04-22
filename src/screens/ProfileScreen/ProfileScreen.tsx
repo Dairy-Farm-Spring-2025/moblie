@@ -282,13 +282,13 @@ const ProfileScreen: React.FC = () => {
           >
             {t('profile.change_password')}
           </Button>
-          <Button
+          {/* <Button
             mode='contained-tonal'
             onPress={() => (navigation.navigate as any)('SplashScreens')}
             style={styles.button}
           >
             SplashScreens
-          </Button>
+          </Button> */}
           <Button
             onPress={() => dispatch(logout())}
             mode='outlined'
