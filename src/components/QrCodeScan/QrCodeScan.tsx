@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { CameraType, CameraView, useCameraPermissions } from 'expo-camera';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused hook
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import apiClient from '@config/axios/axios';
 import { Cow } from '@model/Cow/Cow';
-import { useQuery } from 'react-query';
-import { useSelector } from 'react-redux';
-import { RootState } from '@core/store/store';
+import { set } from 'date-fns';
+import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
 
 type QrCodeScanProps = {
-  selectedField: string; // Nhận selectedField từ props
+  selectedField: string;
+  roleName: string;
 };
 
 const fetchCowDetails = async (cowId: number): Promise<Cow> => {
@@ -18,52 +17,33 @@ const fetchCowDetails = async (cowId: number): Promise<Cow> => {
   return response.data;
 };
 
-const QrCodeScan = ({ selectedField }: QrCodeScanProps) => {
+const QrCodeScan = ({ selectedField, roleName }: QrCodeScanProps) => {
   const [facing, setFacing] = useState<CameraType>('back');
-  const [isCameraActive, setIsCameraActive] = useState(false); // Set to false initially
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [isCameraReady, setIsCameraReady] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
-  const [scannedCowId, setScannedCowId] = useState<number | null>(null);
   const navigation = useNavigation();
-  const isFocused = useIsFocused(); // Hook to check if the screen is focused
-  const { roleName } = useSelector((state: RootState) => state.auth);
-
-  console.log(selectedField);
-
-  // Move useQuery to top level
-  const {
-    data: cow,
-    isLoading,
-    isError,
-  } = useQuery(['cow', scannedCowId], () => fetchCowDetails(scannedCowId!), {
-    enabled: !!scannedCowId, // Only fetch when we have a cowId
-    onSuccess: (data) => {
-      if (selectedField === 'report-illness' && !isLoading) {
-        console.log(roleName);
-        if (roleName.toLocaleLowerCase() === 'veterinarians') {
-          (navigation.navigate as any)('IllnessReportScreen', { cow: data });
-        } else {
-          (navigation.navigate as any)('IllnessReportForm', { cow: data });
-        }
-      }
-    },
-    onError: () => {
-      alert('Error fetching cow details');
-      (navigation.navigate as any)('Home');
-    },
-  });
+  const isFocused = useIsFocused();
+  const [hasScanned, setHasScanned] = useState(false);
 
   useEffect(() => {
+    console.log('Focus changed - isFocused:', isFocused);
+    console.log('Selected Field:', selectedField);
+    console.log('Role Name:', roleName);
     if (isFocused) {
-      setIsCameraActive(true); // Activate the camera when the screen is focused
+      setIsCameraActive(true);
+      setHasScanned(false); // Reset hasScanned when screen gains focus
+      console.log('Reset hasScanned to false');
     } else {
-      setIsCameraActive(false); // Deactivate the camera when the screen is blurred
+      setIsCameraActive(false);
+      setIsCameraReady(false);
+      setHasScanned(false); // Ensure reset when screen loses focus
     }
-  }, [isFocused]); // Re-run when the screen focus state changes
+  }, [isFocused]);
 
-  if (!permission) {
-    return <View />;
-  }
-
+  if (!permission) return <View />;
   if (!permission.granted) {
     return (
       <View style={styles.container}>
@@ -79,89 +59,128 @@ const QrCodeScan = ({ selectedField }: QrCodeScanProps) => {
     [key: string]: (navigate: any, cowId: number) => void;
   } = {
     'cow-detail': (navigate, cowId) => {
-      if (cowId) {
-        navigate('CowDetails', { cowId });
-      } else {
-        alert('Invalid QR code for Cow Details');
-        navigate('Home');
-      }
+      console.log('Navigating to CowDetails with cowId:', cowId);
+      navigate('CowDetails', { cowId });
     },
     'create-health-record': (navigate, cowId) => {
-      if (cowId) {
-        navigate('CowHealthRecord', { cowId });
-      } else {
-        alert('Invalid QR code for Health Record');
-        navigate('Home');
-      }
+      console.log('Navigating to CowHealthRecord with cowId:', cowId);
+      navigate('CowHealthRecord', { cowId });
     },
-    'report-illness': (navigate, cowId) => {
-      if (cowId) {
-        setScannedCowId(cowId); // Trigger the useQuery
-      } else {
-        alert('Invalid QR code for Health Record');
-        navigate('Home');
+    'report-illness': async (navigate, cowId) => {
+      try {
+        setIsLoading(true);
+        console.log('Fetching cow details for cowId:', cowId);
+        const cow = await fetchCowDetails(cowId);
+        console.log('Cow data fetched:', cow);
+        if (roleName.toLocaleLowerCase() === 'veterinarians') {
+          console.log('Navigating to IllnessReportScreen');
+          navigate('IllnessReportScreen', { cow });
+        } else {
+          console.log('Navigating to IllnessReportForm');
+          navigate('IllnessReportForm', { cow });
+        }
+      } catch (error) {
+        console.log('Error fetching cow details:', error);
+        setErrorMessage('Error fetching cow details');
+        setTimeout(() => {
+          navigate('Home');
+          setErrorMessage(null);
+        }, 2000);
+      } finally {
+        setIsLoading(false);
       }
     },
   };
 
-  const navigateScreenByField = ({
+  const navigateScreenByField = async ({
     selectedField,
     navigate,
-    scannedData,
+    cowId,
   }: {
     selectedField: string;
     navigate: any;
-    scannedData: string;
+    cowId: number;
   }) => {
-    // Extract cowId from scannedData
-    const cowIdMatch = scannedData.match(/\/cow-management\/(\d+)/);
-    const cowId = cowIdMatch ? Number(cowIdMatch[1]) : 0;
-
-    // Lấy hàm điều hướng từ navigationMap, mặc định trả về hàm báo lỗi nếu không tìm thấy
-    const navigateFn =
-      navigationMap[selectedField] ||
-      ((navigate) => {
-        alert('Unknown QR code format or unsupported field');
+    if (!cowId) {
+      console.log('Invalid cowId:', cowId);
+      setErrorMessage('Invalid QR code format');
+      setTimeout(() => {
         navigate('Home');
+        setErrorMessage(null);
+      }, 2000);
+      return;
+    }
+
+    const navigateFn = navigationMap[selectedField];
+    if (navigateFn) {
+      await navigateFn(navigate, cowId);
+    } else {
+      console.log('Unsupported selectedField:', selectedField);
+      setErrorMessage('Unsupported field');
+      setTimeout(() => {
+        navigate('Home');
+        setErrorMessage(null);
+      }, 2000);
+    }
+  };
+
+  const handleScanQRCode = async (scannedData: string) => {
+    if (!isCameraReady) {
+      console.log('Scan ignored - Camera not ready yet');
+      return;
+    }
+    if (hasScanned) {
+      console.log('Scan ignored - Already processed a scan');
+      return;
+    }
+
+    console.log('Scan Detected - Scanned Data:', scannedData);
+    const cowIdMatch = scannedData.match(/\/cow-management\/(\d+)/);
+    console.log('cowIdMatch:', cowIdMatch);
+    if (cowIdMatch) {
+      const cowId = Number(cowIdMatch[1]);
+      setHasScanned(true); // Prevent further scans
+      await navigateScreenByField({
+        selectedField,
+        navigate: navigation.navigate,
+        cowId,
       });
-
-    // Thực thi hàm điều hướng
-    navigateFn(navigate, cowId);
+    } else {
+      console.log('No cowId found in scanned data');
+      setErrorMessage('Invalid QR code format');
+      setTimeout(() => {
+        (navigation.navigate as any)('Home');
+        setErrorMessage(null);
+      }, 2000);
+    }
   };
 
-  const handleScanQRCode = (scannedData: string) => {
-    console.log('Scanned Data:', scannedData);
-    navigateScreenByField({
-      selectedField,
-      navigate: navigation.navigate,
-      scannedData,
-    });
-  };
-
-  function toggleCameraFacing() {
-    setFacing((current) => (current === 'back' ? 'front' : 'back'));
-  }
-
-  function handleCancel() {
+  const toggleCameraFacing = () => setFacing((current) => (current === 'back' ? 'front' : 'back'));
+  const handleCancel = () => {
     setIsCameraActive(false);
     (navigation.navigate as any)('Home');
-  }
+  };
 
-  return (
+  return isLoading ? (
+    <LoadingSplashScreen />
+  ) : (
     <View style={styles.container}>
       {isCameraActive && (
         <CameraView
           facing={facing}
           style={styles.camera}
-          barcodeScannerSettings={{
-            barcodeTypes: ['qr'],
-          }}
+          barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
           onBarcodeScanned={({ data }) => handleScanQRCode(data)}
+          onCameraReady={() => {
+            console.log('Camera is ready');
+            setIsCameraReady(true);
+          }}
         >
           <View style={styles.overlay} />
           <View style={styles.scanWindow}>
             <Text style={styles.scanText}>Scan within this area</Text>
           </View>
+          {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
               <Text style={styles.text}>Flip Camera</Text>
@@ -169,7 +188,6 @@ const QrCodeScan = ({ selectedField }: QrCodeScanProps) => {
           </View>
         </CameraView>
       )}
-
       <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
         <Text style={styles.buttonText}>Cancel</Text>
       </TouchableOpacity>
@@ -178,16 +196,8 @@ const QrCodeScan = ({ selectedField }: QrCodeScanProps) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
-  },
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  text: { fontSize: 24, fontWeight: 'bold', color: 'white' },
   buttonContainer: {
     position: 'absolute',
     bottom: 100,
@@ -201,19 +211,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
   },
-  message: {
-    color: 'white',
-    marginBottom: 20,
-    fontSize: 18,
-  },
-  camera: {
-    width: '100%',
-    height: '100%',
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 18,
-  },
+  message: { color: 'white', marginBottom: 20, fontSize: 18 },
+  camera: { width: '100%', height: '100%' },
+  buttonText: { color: 'white', fontSize: 18 },
   cancelButton: {
     position: 'absolute',
     top: 40,
@@ -235,11 +235,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.5)',
     borderRadius: 10,
   },
-  scanText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'white',
-  },
+  scanText: { fontSize: 18, fontWeight: 'bold', color: 'white' },
   overlay: {
     position: 'absolute',
     top: 0,
@@ -247,6 +243,17 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
+  },
+  errorText: {
+    position: 'absolute',
+    top: '20%',
+    alignSelf: 'center',
+    color: 'red',
+    fontSize: 18,
+    fontWeight: 'bold',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    padding: 10,
+    borderRadius: 5,
   },
 });
 

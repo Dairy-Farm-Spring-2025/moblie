@@ -5,7 +5,7 @@ import { t } from 'i18next';
 import { Ionicons } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
 
-const SplashScreens = () => {
+const LoadingSplashScreen = () => {
   const navigation = useNavigation();
   const animation = useRef<LottieView>(null);
   useEffect(() => {
@@ -45,4 +45,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SplashScreens;
+export default LoadingSplashScreen;

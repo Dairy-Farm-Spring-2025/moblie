@@ -52,6 +52,7 @@ const IllnessDetailForm = () => {
   const route = useRoute<IllnessDetailFormRouteProp>();
   const navigation = useNavigation();
   const { illnessDetail } = route.params;
+  console.log('illnessDetail', illnessDetail);
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [idItem, setIdItem] = useState(illnessDetail.vaccine.itemId);
@@ -135,8 +136,11 @@ const IllnessDetailForm = () => {
   };
 
   const { mutate } = useMutation(
-    async (data: IllnessDetailPayload) =>
-      await apiClient.put(`illness-detail/${illnessDetail.illnessDetailId}`, data),
+    async (data: IllnessDetailPayload) => {
+      const res = await apiClient.put(`/illness-detail/${illnessDetail.illnessDetailId}`, data);
+      console.log('res.data', res.data);
+      return res.data;
+    },
     {
       onSuccess: (response: any) => {
         Alert.alert(
@@ -149,6 +153,7 @@ const IllnessDetailForm = () => {
         setIsEditMode(false);
       },
       onError: (error: any) => {
+        console.error('Failed to update illness detail:', error.response);
         Alert.alert(
           t('illness_detail.error', { defaultValue: 'Error' }),
           error.response?.data.message ||
@@ -161,8 +166,9 @@ const IllnessDetailForm = () => {
   const onSubmit = async (values: IllnessDetailPayload) => {
     const payload: IllnessDetailPayload = {
       ...values,
-      date: dayjs(date).format('DD/MM/YYYY'),
+      date: dayjs(date).format('YYYY-MM-DD'),
     };
+    console.log('payload', payload);
     mutate(payload);
   };
 

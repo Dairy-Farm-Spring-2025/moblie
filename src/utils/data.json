@@ -1,34 +1,37 @@
 {
-  "data": [
-    {
-      "address": "ẤP 1A, AN THẠNH, BẾN LỨC, LONG AN",
-      "address_entities": {
-        "province": "HỒ CHÍ MINH",
-        "district": "BÌNH TÂN",
-        "ward": "BÌNH HƯNG HÒA A",
-        "street": "58A ĐƯỜNG 1C"
-      },
-      "address_prob": "98.79",
-      "dob": "25/08/2003",
-      "dob_prob": "99.99",
-      "doe": "25/08/2028",
-      "doe_prob": "98.82",
-      "home": "THẠNH ĐỨC, GÒ DẦU, TÂY NINH",
-      "home_prob": "98.39",
-      "id": "080203005916",
-      "id_prob": "99.15",
-      "name": "HUỲNH NGUYỄN MINH TÂN",
-      "name_prob": "99.36",
-      "nationality": "VIỆT NAM",
-      "nationality_prob": "97.05",
-      "number_of_name_lines": "1",
-      "overall_score": "98.16",
-      "sex": "NAM",
-      "sex_prob": "98.20",
-      "type": "chip_front",
-      "type_new": "cccd_chip_front"
+  "date": "2025-04-11",
+  "description": "Điều trị bệnh cho: G-0000-0001 - Vaccine: Hiprabovis 4",
+  "dosage": 10,
+  "illnessDetailId": 3,
+  "injectionSite": "leftArm",
+  "status": "treated",
+  "vaccine": {
+    "categoryEntity": { "categoryId": 5, "name": "Vắc-xin" },
+    "description": "Thành phần: IBR, BVD, PI3, BRSV (vắc xin sống giảm độc lực). Xuất xứ: Hipra, nhập khẩu.",
+    "itemId": 13,
+    "name": "Hiprabovis 4",
+    "status": "available",
+    "unit": "milliliter",
+    "warehouseLocationEntity": {
+      "description": "Khu vực D chứa vắc xin",
+      "name": "Phòng kho lưu trữ D",
+      "type": "vaccine",
+      "warehouseLocationId": 4
     }
-  ],
-  "errorCode": 0,
-  "errorMessage": ""
+  },
+  "veterinarian": {
+    "address": null,
+    "dob": null,
+    "email": "hnchinh2323@gmail.com",
+    "employeeNumber": "VE014",
+    "fcmTokenMobile": "f33f8ddd95132d1d2fa6b3ac4342ecc3fe2f06d1224fa662019abde91617dc6b",
+    "fcmTokenWeb": "",
+    "gender": "male",
+    "id": 21,
+    "name": "Ngọc Chính VET",
+    "phoneNumber": null,
+    "profilePhoto": "images/users/default.jpg",
+    "roleId": { "id": 3, "name": "Veterinarians" },
+    "status": "active"
+  }
 }

@@ -10,6 +10,8 @@ import HealthRecordFormScreen from '@screens/HealthRecord/components/CowHealthRe
 import IllnessReportForm from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/components/IllnessReportForm/IllnessReportForm';
 import { t } from 'i18next';
 import IllnessReportScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessReportScreen/IllnessReportScreen';
+import { useSelector } from 'react-redux';
+import { RootState } from '@core/store/store';
 
 const Stack = createNativeStackNavigator();
 type RootStackParamList = {
@@ -18,10 +20,12 @@ type RootStackParamList = {
 const QrScanRoute: React.FC = () => {
   const route = useRoute<RouteProp<RootStackParamList, 'QrCodeScan'>>();
   const selectedField = route.params?.selectedField; // L
+  const { roleName } = useSelector((state: RootState) => state.auth);
+
   return (
     <Stack.Navigator initialRouteName='QrCodeScan'>
       <Stack.Screen name='QrCodeScan' options={{ title: 'Qr Scan' }}>
-        {(props) => <QrCodeScan {...props} selectedField={selectedField} />}
+        {(props) => <QrCodeScan {...props} selectedField={selectedField} roleName={roleName} />}
       </Stack.Screen>
       <Stack.Screen name='CowDetails' component={DetailCow} options={{ title: 'Cow Details' }} />
       <Stack.Screen

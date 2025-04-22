@@ -8,6 +8,7 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { formatCamelCase, formatType } from '@utils/format';
 import { t } from 'i18next';
 import LoadingScreen from '@components/LoadingScreen/LoadingScreen';
+import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
 
 type RootStackParamList = {
   AreaDetail: { areaId: number };
@@ -77,13 +78,7 @@ const AreaDetailScreen = () => {
   };
 
   if (isAreaLoading || isCowsLoading) {
-    return (
-      <LoadingScreen
-        message={t('loading', { defaultValue: 'Loading...' })}
-        fullScreen={true}
-        color='#007bff'
-      />
-    );
+    return <LoadingSplashScreen />;
   }
 
   if (isAreaError || !area || isCowsError) {
