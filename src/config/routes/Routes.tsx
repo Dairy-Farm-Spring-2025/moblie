@@ -104,12 +104,12 @@ const NavigationWrapper = () => {
         }),
         value: 'report-illness',
       },
-      {
-        label: t('scanQR.vaccineInjection', {
-          defaultValue: 'Create vaccine injection',
-        }),
-        value: 'create-vaccine-injection',
-      },
+      // {
+      //   label: t('scanQR.vaccineInjection', {
+      //     defaultValue: 'Create vaccine injection',
+      //   }),
+      //   value: 'create-vaccine-injection',
+      // },
     ],
     []
   );

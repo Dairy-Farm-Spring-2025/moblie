@@ -7,6 +7,7 @@ import LoadingScreen from '@components/LoadingScreen/LoadingScreen';
 import { VaccineCycle } from '@model/Cow/Cow';
 import { t } from 'i18next';
 import VaccineCycleCard from './components/VaccineCycleCard/VaccineCycleCard';
+import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
 
 const fetchVaccineCycles = async () => {
   const response = await apiClient.get('/vaccinecycles');
@@ -56,10 +57,6 @@ const VaccineCyclesManagementScreen: React.FC = () => {
     }
   };
 
-  if (isLoading) {
-    return <LoadingScreen message={t('vaccine_cycle.title')} fullScreen={true} color='#007bff' />;
-  }
-
   if (isError) {
     return (
       <View style={styles.errorContainer}>
@@ -76,7 +73,9 @@ const VaccineCyclesManagementScreen: React.FC = () => {
     cowType: t('card_cow.cow_type'),
   };
 
-  return (
+  return isLoading ? (
+    <LoadingSplashScreen />
+  ) : (
     <View style={styles.container}>
       <SearchInput
         value={searchText}

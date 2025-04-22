@@ -5,6 +5,7 @@ import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import { useQuery } from 'react-query';
 import { t } from 'i18next';
 import CustomPicker, { Option } from '@components/CustomPicker/CustomPicker';
+import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
 
 // Interface for Monthly Milk Data (based on API response structure)
 interface MonthlyMilk {
@@ -66,7 +67,7 @@ const CowDetailsWithMilkChart: React.FC<CowDetailsWithMilkChartProps> = ({
 
   // Loading state
   if (isMilkLoading) {
-    return <Text style={styles.loadingText}>{t('cowDetails.loading')}</Text>;
+    return <LoadingSplashScreen />;
   }
 
   // Error state

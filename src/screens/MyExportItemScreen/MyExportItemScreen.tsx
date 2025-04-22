@@ -7,6 +7,7 @@ import { useQuery } from 'react-query';
 import CardMyExportItem from './components/CardMyExportItem';
 import { ActivityIndicator } from 'react-native-paper';
 import { t } from 'i18next'; // Import t from i18next
+import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
 
 const fetchMyExportItem = async (): Promise<ExportItem[]> => {
   try {
@@ -24,11 +25,11 @@ const MyExportItemScreen = () => {
   );
   console.log('myNotificationData', myNotificationData);
 
-  return (
+  return isLoading ? (
+    <LoadingSplashScreen />
+  ) : (
     <ContainerComponent>
-      {isLoading ? (
-        <ActivityIndicator />
-      ) : myNotificationData!.length > 0 ? (
+      {myNotificationData!.length > 0 ? (
         <FlatList
           data={myNotificationData}
           style={{

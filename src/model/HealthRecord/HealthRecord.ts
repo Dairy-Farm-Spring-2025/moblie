@@ -50,10 +50,6 @@ export type IllnessPayload = {
 export type IllnessDetailPayload = {
   date: string;
   description: string;
-  status: StatusIllnessDetail;
-  veterinarianId: number;
-  itemId: number;
-  illnessId: number;
   dosage: string;
   injectionSite:
     | 'leftArm'
@@ -63,6 +59,8 @@ export type IllnessDetailPayload = {
     | 'buttock'
     | 'abdomen'
     | 'other';
+  status: StatusIllnessDetail;
+  itemId: number;
 };
 
 export type IllnessDetailPlan = {

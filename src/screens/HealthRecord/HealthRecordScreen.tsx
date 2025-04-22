@@ -7,6 +7,7 @@ import apiClient from '@config/axios/axios';
 import { RootState } from '@core/store/store';
 import { HealthRecord } from '@model/HealthRecord/HealthRecord';
 import { useNavigation } from '@react-navigation/native';
+import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
 import { formatType } from '@utils/format';
 import { t } from 'i18next';
 import React, { useCallback, useState } from 'react';
@@ -141,13 +142,7 @@ const HealthRecordScreen = () => {
   );
 
   if (isLoading) {
-    return (
-      <LoadingScreen
-        message={t('loading', { defaultValue: 'Loading...' })}
-        fullScreen={true}
-        color='#007bff'
-      />
-    );
+    return <LoadingSplashScreen />;
   }
   if (isError) {
     return <Text>{(error as Error).message}</Text>;

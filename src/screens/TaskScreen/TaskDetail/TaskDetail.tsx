@@ -35,6 +35,7 @@ const TaskDetailContent: React.FC<{
 }> = ({ task, selectedDate, onCheckIn, isCheckingIn }) => {
   const [isExpanded, setIsExpanded] = React.useState(false);
   const navigation = useNavigation();
+  console.log('task', task.material?.illnessDetail || 'null');
 
   const handleToggleExpand = () => setIsExpanded(!isExpanded);
 

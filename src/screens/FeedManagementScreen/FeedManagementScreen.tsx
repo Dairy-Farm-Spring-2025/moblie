@@ -11,6 +11,7 @@ import { FeedMeals } from '@model/Feed/Feed';
 import CardFeed from './components/CardFeed/CardFeed';
 import LoadingScreen from '@components/LoadingScreen/LoadingScreen';
 import { t } from 'i18next';
+import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
 
 const fetchFeed = async (): Promise<FeedMeals[]> => {
   const response = await apiClient.get('/feedmeals');
@@ -56,11 +57,7 @@ const FeedManagementScreen = () => {
   }, [queryClient]);
 
   return isLoading ? (
-    <LoadingScreen
-      message={t('loading', { defaultValue: 'Loading...' })}
-      fullScreen={true}
-      color='#007bff'
-    />
+    <LoadingSplashScreen />
   ) : (
     <ContainerComponent>
       <SearchInput

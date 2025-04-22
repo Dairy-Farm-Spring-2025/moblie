@@ -13,6 +13,7 @@ import RenderHTML from 'react-native-render-html';
 import { t } from 'i18next';
 import { SegmentedButtons } from 'react-native-paper';
 import CowDetailsWithMilkChart from './components/CowDetailsWithMilkChart';
+import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
 
 LogBox.ignoreLogs([
   'TRenderEngineProvider: Support for defaultProps will be removed',
@@ -49,7 +50,7 @@ const DetailCow: React.FC = () => {
   };
 
   if (isLoading) {
-    return <Text style={styles.loadingText}>{t('cowDetails.loading')}</Text>;
+    return <LoadingSplashScreen />;
   }
 
   if (isError || !cow) {

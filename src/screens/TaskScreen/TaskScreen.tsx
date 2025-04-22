@@ -19,6 +19,7 @@ import { formatCamelCase, getVietnamISOString } from '@utils/format';
 import WeatherCard from '@components/WeatherCard/WeatherCard';
 import { t } from 'i18next';
 import { useTranslation } from 'react-i18next';
+import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
 
 const handleLanguageDate = (lang: string) => {
   if (lang === 'vi') {
@@ -331,7 +332,7 @@ const TaskScreen: React.FC = () => {
   };
 
   if (isLoading && !tasks) {
-    return <LoadingScreen message='Fetching tasks...' fullScreen={true} color='#007bff' />;
+    return <LoadingSplashScreen />;
   }
 
   return (

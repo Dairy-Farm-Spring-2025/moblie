@@ -14,6 +14,7 @@ import { useQuery } from 'react-query';
 import { getIconByAreaType } from '@utils/icon/areaIcon';
 import { t } from 'i18next';
 import LoadingScreen from '@components/LoadingScreen/LoadingScreen';
+import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
 const fetchAreas = async (): Promise<Area[]> => {
   const response = await apiClient.get('/areas'); // Replace with your endpoint
   return response.data;
@@ -36,7 +37,9 @@ const AreaManagementScreen = () => {
     }
   });
 
-  return (
+  return isLoading ? (
+    <LoadingSplashScreen />
+  ) : (
     <ContainerComponent>
       <SearchInput
         filteredData={filteredArea as Area[]}
@@ -47,13 +50,7 @@ const AreaManagementScreen = () => {
           setSelectedFiltered: setSelectedFilter,
         }}
       />
-      {isLoading ? (
-        <LoadingScreen
-          message={t('loading', { defaultValue: 'Loading...' })}
-          fullScreen={true}
-          color='#007bff'
-        />
-      ) : isError ? (
+      {isError ? (
         <Text>{(error as Error).message}</Text>
       ) : (
         <FlatList

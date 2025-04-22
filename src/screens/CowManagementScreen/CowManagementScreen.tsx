@@ -10,6 +10,7 @@ import SearchInput from '@components/Input/Search/SearchInput';
 import CardCow from '@components/CardCow/CardCow';
 import LoadingScreen from '@components/LoadingScreen/LoadingScreen';
 import { t } from 'i18next';
+import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
 
 // Fetch cows data from API
 const fetchCows = async (): Promise<Cow[]> => {
@@ -106,7 +107,9 @@ const CowManagementScreen: React.FC = () => {
     (navigation.navigate as any)('CowDetails', { cowId });
   };
 
-  return (
+  return isLoading ? (
+    <LoadingSplashScreen />
+  ) : (
     <View style={styles.container}>
       {/* Segmented Buttons */}
       {/* <SegmentedButtons
@@ -135,9 +138,7 @@ const CowManagementScreen: React.FC = () => {
       </View>
 
       {/* Cow List with RecyclerListView */}
-      {isLoading ? (
-        <LoadingScreen message={t('cow_management.loading')} fullScreen={true} color='#007bff' />
-      ) : isError ? (
+      {isError ? (
         <Text>{(error as Error).message}</Text>
       ) : (
         selectedSegment === 'list' && (

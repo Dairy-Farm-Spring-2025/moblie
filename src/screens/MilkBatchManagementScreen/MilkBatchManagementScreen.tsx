@@ -20,6 +20,7 @@ import { useNavigation } from '@react-navigation/native';
 import FloatingButton from '@components/FloatingButton/FloatingButton';
 import { LineChart } from 'react-native-gifted-charts';
 import { t } from 'i18next';
+import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
 
 const fetchMilkBatch = async (): Promise<MilkBatch[]> => {
   try {
@@ -141,11 +142,11 @@ const MilkBatchManagementScreen: React.FC = () => {
     setModalVisible(true);
   };
 
-  return (
+  return isLoading ? (
+    <LoadingSplashScreen />
+  ) : (
     <View style={styles.container}>
-      {isLoading ? (
-        <ActivityIndicator size='large' color='#4CAF50' />
-      ) : isError ? (
+      {isError ? (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>Error loading data: {error?.message}</Text>
           <TouchableOpacity style={styles.refreshButton} onPress={handleRefresh}>
@@ -188,10 +189,10 @@ const MilkBatchManagementScreen: React.FC = () => {
               enablePanGesture={false}
               onDataPointClick={() => {
                 console.log('masoud');
-              }} // Handle data point click
-              showDataPoints // Show data points on the chart
-              dataPointsColor='#4CAF50' // Color of the data points
-              dataPointsRadius={6} // Size of the data points
+              }}
+              showDataPoints
+              dataPointsColor='#4CAF50'
+              dataPointsRadius={6}
             />
           </View>
 
