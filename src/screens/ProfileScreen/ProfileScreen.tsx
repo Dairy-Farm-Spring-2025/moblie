@@ -323,6 +323,7 @@ const ProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    height: '100%',
   },
   header: {
     alignItems: 'center',
@@ -346,6 +347,7 @@ const styles = StyleSheet.create({
   fullName: {
     marginTop: 10,
     fontWeight: 'bold',
+    fontSize: 22,
   },
   role: {
     color: '#666',
