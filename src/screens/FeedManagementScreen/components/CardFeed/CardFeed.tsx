@@ -39,11 +39,13 @@ const CardFeed = ({ item, navigation }: CardFeedProps) => {
             <Text>{item.name}</Text>
             <View style={styles.tagContainer}>
               <Tooltip enterTouchDelay={100} title={t('feed.cow_type')}>
-                <TagUI backgroundColor={useRoleColor()}>{item.cowTypeEntity.name}</TagUI>
+                <TagUI backgroundColor={useRoleColor()}>
+                  {item.cowTypeEntity.name}
+                </TagUI>
               </Tooltip>
               <Tooltip enterTouchDelay={100} title={t('feed.cow_status')}>
                 <TagUI backgroundColor={useRoleColor()}>
-                  {formatCamelCase(item.cowStatus ? item.cowStatus : 'N/A')}
+                  {t(formatCamelCase(item.cowStatus ? item.cowStatus : 'N/A'))}
                 </TagUI>
               </Tooltip>
             </View>
@@ -61,7 +63,10 @@ const CardFeed = ({ item, navigation }: CardFeedProps) => {
             {t('feed.food_nutrition')}:
           </Text>
           <View style={styles.content}>
-            <TextTitle title={t('feed.hay')} content={`${calculateTotalQuantity(filterHay)} kg`} />
+            <TextTitle
+              title={t('feed.hay')}
+              content={`${calculateTotalQuantity(filterHay)} kg`}
+            />
             <TextTitle
               title={t('feed.refined')}
               content={`${calculateTotalQuantity(filterRefined)} kg`}
@@ -81,10 +86,6 @@ const CardFeed = ({ item, navigation }: CardFeedProps) => {
               content={`${calculateTotalQuantity(item.feedMealDetails)} kg`}
             />
           </View>
-          <TextTitle
-            title={t('feed.shift')}
-            content={formatCamelCase(item.shift ? item.shift : 'N/A')}
-          />
         </View>
       </TouchableOpacity>
     </CardComponent>
@@ -109,6 +110,7 @@ const styles = StyleSheet.create({
   content: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    flexWrap: 'wrap',
     gap: 10,
   },
   contentContainer: {
