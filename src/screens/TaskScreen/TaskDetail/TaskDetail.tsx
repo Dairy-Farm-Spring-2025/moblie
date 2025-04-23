@@ -1,7 +1,18 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { AntDesign, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import {
+  AntDesign,
+  Ionicons,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from '@expo/vector-icons';
 import { Task } from '@model/Task/Task';
 import RenderHtmlComponent from '@components/RenderHTML/RenderHtmlComponent';
 import apiClient from '@config/axios/axios';
@@ -40,14 +51,17 @@ const TaskDetailContent: React.FC<{
 
   const handleToggleExpand = () => setIsExpanded(!isExpanded);
 
-  const hasReportForDate = (task.reportTask && task.reportTask.date === selectedDate) || isChecked;
+  const hasReportForDate =
+    (task.reportTask && task.reportTask.date === selectedDate) || isChecked;
   // Check if task status is completed
   const isCompleted = task.status.toLowerCase() === 'completed';
-  const isReported = task.reportTask && task.reportTask.status.toLowerCase() === 'closed';
+  const isReported =
+    task.reportTask && task.reportTask.status.toLowerCase() === 'closed';
   // Check if current date is within task duration
   const currentDateNow = getVietnamISOString();
 
-  const isWithinCurrentDateRange = currentDateNow.split('T')[0] === selectedDate;
+  const isWithinCurrentDateRange =
+    currentDateNow.split('T')[0] === selectedDate;
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -96,7 +110,10 @@ const TaskDetailContent: React.FC<{
   const handleViewMaterials = (screen: string) => {
     if (screen === 'feed') {
       console.log('feed', screen);
-      (navigation.navigate as any)('Materials', { area: task.areaId, taskId: task.taskId });
+      (navigation.navigate as any)('Materials', {
+        area: task.areaId,
+        taskId: task.taskId,
+      });
     } else {
       (navigation.navigate as any)('MilkBatchManagementScreen');
       console.log('milk', screen);
@@ -134,17 +151,30 @@ const TaskDetailContent: React.FC<{
   return (
     <View style={[styles.card, { borderLeftColor: priorityColor }]}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: textColor }]}>{task.taskTypeId.name}</Text>
+        <Text style={[styles.title, { color: textColor }]}>
+          {task.taskTypeId.name}
+        </Text>
       </View>
 
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
-          <AntDesign name='exclamationcircleo' size={21} color={textColor} style={styles.icon} />
-          <Text style={[styles.textLabel, { color: textColor }]}>{t('task_detail.priority')}:</Text>
+          <AntDesign
+            name="exclamationcircleo"
+            size={21}
+            color={textColor}
+            style={styles.icon}
+          />
+          <Text style={[styles.textLabel, { color: textColor }]}>
+            {t('task_detail.priority')}:
+          </Text>
         </View>
-        <View style={[styles.priorityBadge, { backgroundColor: priorityColor }]}>
+        <View
+          style={[styles.priorityBadge, { backgroundColor: priorityColor }]}
+        >
           <Text style={[styles.priorityText, { color: '#fff' }]}>
-            {t(`task_management.${task.priority}`, { defaultValue: task.priority })}
+            {t(`task_management.${task.priority}`, {
+              defaultValue: task.priority,
+            })}
           </Text>
         </View>
       </View>
@@ -152,24 +182,36 @@ const TaskDetailContent: React.FC<{
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
           <Ionicons
-            name='checkmark-circle-outline'
+            name="checkmark-circle-outline"
             size={20}
             color={textColor}
             style={styles.icon}
           />
-          <Text style={[styles.textLabel, { color: textColor }]}>{t('task_detail.status')}:</Text>
+          <Text style={[styles.textLabel, { color: textColor }]}>
+            {t('task_detail.status')}:
+          </Text>
         </View>
-        <View style={[styles.tag, { backgroundColor: getStatusColor(task.status) }]}>
+        <View
+          style={[styles.tag, { backgroundColor: getStatusColor(task.status) }]}
+        >
           <Text style={[styles.tagText, { color: '#fff' }]}>
-            {formatCamelCase(task.reportTask?.status!) || formatCamelCase(task.status)}
+            {t(formatCamelCase(task.reportTask?.status!)) ||
+              t(formatCamelCase(task.status))}
           </Text>
         </View>
       </View>
 
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
-          <Ionicons name='calendar-outline' size={20} color={textColor} style={styles.icon} />
-          <Text style={[styles.textLabel, { color: textColor }]}>{t('task_detail.date')}:</Text>
+          <Ionicons
+            name="calendar-outline"
+            size={20}
+            color={textColor}
+            style={styles.icon}
+          />
+          <Text style={[styles.textLabel, { color: textColor }]}>
+            {t('task_detail.date')}:
+          </Text>
         </View>
         <View style={[styles.tag, { backgroundColor: '#e8e8e8' }]}>
           <Text style={[styles.tagText, { color: textColor }]}>
@@ -181,34 +223,57 @@ const TaskDetailContent: React.FC<{
       {task.areaId && (
         <View style={styles.infoRow}>
           <View style={styles.labelContainer}>
-            <Ionicons name='location-outline' size={20} color={textColor} style={styles.icon} />
-            <Text style={[styles.textLabel, { color: textColor }]}>{t('task_detail.area')}:</Text>
+            <Ionicons
+              name="location-outline"
+              size={20}
+              color={textColor}
+              style={styles.icon}
+            />
+            <Text style={[styles.textLabel, { color: textColor }]}>
+              {t('task_detail.area')}:
+            </Text>
           </View>
           <TouchableOpacity
             onPress={() => navigateToAreaDetail(task.areaId.areaId)}
             style={[styles.tag, { backgroundColor: '#e8e8e8' }]}
           >
-            <Text style={[styles.tagText, { color: textColor }]}>{task.areaId.name}</Text>
+            <Text style={[styles.tagText, { color: textColor }]}>
+              {task.areaId.name}
+            </Text>
           </TouchableOpacity>
         </View>
       )}
 
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
-          <Ionicons name='person-outline' size={20} color={textColor} style={styles.icon} />
+          <Ionicons
+            name="person-outline"
+            size={20}
+            color={textColor}
+            style={styles.icon}
+          />
           <Text style={[styles.textLabel, { color: textColor }]}>
             {t('task_detail.assigned_by')}:
           </Text>
         </View>
         <View style={[styles.tag, { backgroundColor: '#e8e8e8' }]}>
-          <Text style={[styles.tagText, { color: textColor }]}>{task.assignerName}</Text>
+          <Text style={[styles.tagText, { color: textColor }]}>
+            {task.assignerName}
+          </Text>
         </View>
       </View>
 
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
-          <Ionicons name='time-outline' size={20} color={textColor} style={styles.icon} />
-          <Text style={[styles.textLabel, { color: textColor }]}>{t('task_detail.shift')}:</Text>
+          <Ionicons
+            name="time-outline"
+            size={20}
+            color={textColor}
+            style={styles.icon}
+          />
+          <Text style={[styles.textLabel, { color: textColor }]}>
+            {t('task_detail.shift')}:
+          </Text>
         </View>
         <View
           style={[
@@ -219,64 +284,91 @@ const TaskDetailContent: React.FC<{
             },
           ]}
         >
-          <Text style={[styles.tagText, { color: getShiftTextColor(task.shift) }]}>
+          <Text
+            style={[styles.tagText, { color: getShiftTextColor(task.shift) }]}
+          >
             {t(`task_management.${formatCamelCase(task.shift)}`, {
               defaultValue: formatCamelCase(task.shift),
             })}
           </Text>
           {task.shift.toLowerCase().includes('night') ? (
-            <MaterialCommunityIcons name='weather-night' size={20} style={styles.shiftIcon} />
+            <MaterialCommunityIcons
+              name="weather-night"
+              size={20}
+              style={styles.shiftIcon}
+            />
           ) : (
-            <MaterialIcons name='wb-sunny' size={20} style={styles.shiftIcon} />
+            <MaterialIcons name="wb-sunny" size={20} style={styles.shiftIcon} />
           )}
         </View>
       </View>
 
       {/* New Equipment Section */}
-      {task.taskTypeId.useEquipments && task.taskTypeId.useEquipments.length > 0 && (
-        <View style={{ flexDirection: 'column' }}>
-          <View style={styles.labelContainer}>
-            <MaterialIcons name='build' size={20} color={textColor} style={styles.icon} />
-            <Text style={[styles.textLabel, { color: textColor }]}>
-              {t('task_detail.equipment')}:
-            </Text>
-          </View>
-          <View style={styles.equipmentContainer}>
-            {task.taskTypeId.useEquipments.map((equip, index) => (
-              <View key={index} style={styles.equipmentItem}>
-                <View style={[styles.tag]}>
-                  <Text style={[styles.tagText, { color: textColor }]}>
-                    {equip.equipment.name} - {equip.requiredQuantity}
-                  </Text>
-                </View>
-                {equip.note && (
+      {task.taskTypeId.useEquipments &&
+        task.taskTypeId.useEquipments.length > 0 && (
+          <View style={{ flexDirection: 'column' }}>
+            <View style={styles.labelContainer}>
+              <MaterialIcons
+                name="build"
+                size={20}
+                color={textColor}
+                style={styles.icon}
+              />
+              <Text style={[styles.textLabel, { color: textColor }]}>
+                {t('task_detail.equipment')}:
+              </Text>
+            </View>
+            <View style={styles.equipmentContainer}>
+              {task.taskTypeId.useEquipments.map((equip, index) => (
+                <View key={index} style={styles.equipmentItem}>
                   <View style={[styles.tag]}>
                     <Text style={[styles.tagText, { color: textColor }]}>
-                      {t('task_detail.note', { defaultValue: 'Note' })}: {equip.note}
+                      {equip.equipment.name} - {equip.requiredQuantity}
                     </Text>
                   </View>
-                )}
-              </View>
-            ))}
+                  {equip.note && (
+                    <View style={[styles.tag]}>
+                      <Text style={[styles.tagText, { color: textColor }]}>
+                        {t('task_detail.note', { defaultValue: 'Note' })}:{' '}
+                        {equip.note}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+              ))}
+            </View>
           </View>
-        </View>
-      )}
+        )}
 
       {task.completionNotes && (
         <View style={styles.infoRow}>
           <View style={styles.labelContainer}>
-            <Ionicons name='chatbubble-outline' size={20} color={textColor} style={styles.icon} />
-            <Text style={[styles.textLabel, { color: textColor }]}>{t('task_detail.notes')}:</Text>
+            <Ionicons
+              name="chatbubble-outline"
+              size={20}
+              color={textColor}
+              style={styles.icon}
+            />
+            <Text style={[styles.textLabel, { color: textColor }]}>
+              {t('task_detail.notes')}:
+            </Text>
           </View>
           <View style={[styles.tag, { backgroundColor: '#e8e8e8' }]}>
-            <Text style={[styles.tagText, { color: textColor }]}>{task.completionNotes}</Text>
+            <Text style={[styles.tagText, { color: textColor }]}>
+              {task.completionNotes}
+            </Text>
           </View>
         </View>
       )}
 
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
-          <Ionicons name='document-text-outline' size={20} color={textColor} style={styles.icon} />
+          <Ionicons
+            name="document-text-outline"
+            size={20}
+            color={textColor}
+            style={styles.icon}
+          />
           <Text style={[styles.textLabel, { color: textColor }]}>
             {t('task_detail.description')}:
           </Text>
@@ -284,11 +376,21 @@ const TaskDetailContent: React.FC<{
       </View>
       <View style={styles.descriptionContainerWrapper}>
         {isExpanded ? (
-          <View style={[styles.descriptionContainerExpanded, { backgroundColor: '#fafafa' }]}>
+          <View
+            style={[
+              styles.descriptionContainerExpanded,
+              { backgroundColor: '#fafafa' },
+            ]}
+          >
             <RenderHtmlComponent htmlContent={task.description} />
           </View>
         ) : (
-          <View style={[styles.descriptionContainerCollapsed, { backgroundColor: '#fafafa' }]}>
+          <View
+            style={[
+              styles.descriptionContainerCollapsed,
+              { backgroundColor: '#fafafa' },
+            ]}
+          >
             <ScrollView
               style={{ maxHeight: 200 }}
               contentContainerStyle={{ padding: 15 }}
@@ -299,7 +401,10 @@ const TaskDetailContent: React.FC<{
           </View>
         )}
         {task.description.length > 40 && (
-          <TouchableOpacity style={styles.expandButton} onPress={handleToggleExpand}>
+          <TouchableOpacity
+            style={styles.expandButton}
+            onPress={handleToggleExpand}
+          >
             <Text style={[styles.expandText, { color: textColor }]}>
               {isExpanded ? 'Show less' : 'Show more'}
             </Text>
@@ -314,7 +419,7 @@ const TaskDetailContent: React.FC<{
           <View style={styles.infoRow}>
             <View style={styles.labelContainer}>
               <Ionicons
-                name='document-text-outline'
+                name="document-text-outline"
                 size={20}
                 color={textColor}
                 style={styles.icon}
@@ -323,7 +428,10 @@ const TaskDetailContent: React.FC<{
                 {t('task_detail.view_materials')}:
               </Text>
             </View>
-            <TouchableOpacity onPress={() => handleViewMaterials('feed')} disabled={isCheckingIn}>
+            <TouchableOpacity
+              onPress={() => handleViewMaterials('feed')}
+              disabled={isCheckingIn}
+            >
               <Text style={styles.materials}>
                 {t('task_detail.view', { defaultValue: 'View' })}
               </Text>
@@ -337,7 +445,7 @@ const TaskDetailContent: React.FC<{
           <View style={styles.infoRow}>
             <View style={styles.labelContainer}>
               <Ionicons
-                name='document-text-outline'
+                name="document-text-outline"
                 size={20}
                 color={textColor}
                 style={styles.icon}
@@ -346,7 +454,10 @@ const TaskDetailContent: React.FC<{
                 {t('task_detail.view_materials')}:
               </Text>
             </View>
-            <TouchableOpacity onPress={() => handleViewMaterials('milk')} disabled={isCheckingIn}>
+            <TouchableOpacity
+              onPress={() => handleViewMaterials('milk')}
+              disabled={isCheckingIn}
+            >
               <Text style={styles.materials}>
                 {t('task_detail.view', { defaultValue: 'View' })}
               </Text>
@@ -362,7 +473,7 @@ const TaskDetailContent: React.FC<{
           <View style={styles.infoRow}>
             <View style={styles.labelContainer}>
               <Ionicons
-                name='document-text-outline'
+                name="document-text-outline"
                 size={20}
                 color={textColor}
                 style={styles.icon}
@@ -377,7 +488,9 @@ const TaskDetailContent: React.FC<{
                 onPress={() => handleNavigateScreen('illness')}
                 disabled={isCheckingIn}
               >
-                <Text style={styles.materials}>{t('task_detail.view_illness')}</Text>
+                <Text style={styles.materials}>
+                  {t('task_detail.view_illness')}
+                </Text>
               </TouchableOpacity>
             )}
 
@@ -387,7 +500,9 @@ const TaskDetailContent: React.FC<{
                 onPress={() => handleNavigateScreen('illnessDetail')}
                 disabled={isCheckingIn}
               >
-                <Text style={styles.materials}>{t('task_detail.view_illness_detail')}</Text>
+                <Text style={styles.materials}>
+                  {t('task_detail.view_illness_detail')}
+                </Text>
               </TouchableOpacity>
             )}
 
@@ -397,21 +512,30 @@ const TaskDetailContent: React.FC<{
                 onPress={() => handleNavigateScreen('vaccineInjection')}
                 disabled={isCheckingIn}
               >
-                <Text style={styles.materials}>{t('task_detail.view_vaccine_injection')}</Text>
+                <Text style={styles.materials}>
+                  {t('task_detail.view_vaccine_injection')}
+                </Text>
               </TouchableOpacity>
             )}
           </View>
         )}
 
-      <View style={[styles.buttonsContainer, isCompleted && styles.centeredButtonContainer]}>
-        {!isCompleted && !hasReportForDate && (
-          //  isWithinCurrentDateRange &&
+      <View
+        style={[
+          styles.buttonsContainer,
+          isCompleted && styles.centeredButtonContainer,
+        ]}
+      >
+        {!isCompleted && !hasReportForDate && isWithinCurrentDateRange && (
           <TouchableOpacity
-            style={[styles.checkInButton, isCheckingIn && styles.checkInButtonDisabled]}
+            style={[
+              styles.checkInButton,
+              isCheckingIn && styles.checkInButtonDisabled,
+            ]}
             onPress={onCheckIn}
             disabled={isCheckingIn}
           >
-            <Ionicons name='checkmark-done' size={24} color='#fff' />
+            <Ionicons name="checkmark-done" size={24} color="#fff" />
             <Text style={styles.checkInButtonText}>
               {isCheckingIn ? 'Checking in...' : 'Check-in'}
             </Text>
@@ -425,23 +549,32 @@ const TaskDetailContent: React.FC<{
 const TaskDetail: React.FC = () => {
   const route = useRoute<TaskDetailRouteProp>();
   const { task, selectedDate } = route.params;
-  const [selectedSegment, setSelectedSegment] = React.useState<string>('detail');
+  const [selectedSegment, setSelectedSegment] =
+    React.useState<string>('detail');
   const queryClient = useQueryClient();
   // Local state to hold the task, updated after check-in
-  const [isChecked, setIsChecked] = React.useState<boolean>(task.reportTask !== null);
+  const [isChecked, setIsChecked] = React.useState<boolean>(
+    task.reportTask !== null
+  );
 
   const checkInMutation = useMutation<unknown, ApiError, string | number>(
-    (taskId: string | number) => apiClient.post(`/reportTask/joinTask/${taskId}`),
+    (taskId: string | number) =>
+      apiClient.post(`/reportTask/joinTask/${taskId}`),
     {
       onSuccess: (response: any) => {
-        Alert.alert('Success', response.data?.message || 'Task checked in successfully!');
+        Alert.alert(
+          'Success',
+          response.data?.message || 'Task checked in successfully!'
+        );
         setIsChecked(true);
         queryClient.invalidateQueries('tasks');
       },
       onError: (err) => {
         Alert.alert(
           'Error',
-          err.response?.data.message || err.message || 'Failed to check in task. Please try again.'
+          err.response?.data.message ||
+            err.message ||
+            'Failed to check in task. Please try again.'
         );
       },
     }
@@ -477,7 +610,11 @@ const TaskDetail: React.FC = () => {
           />
         </ScrollView>
       ) : (
-        <ReportTask date={selectedDate} task={task} reportTask={task.reportTask} />
+        <ReportTask
+          date={selectedDate}
+          task={task}
+          reportTask={task.reportTask}
+        />
       )}
     </View>
   );

@@ -19,7 +19,10 @@ import { useMutation, useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { RootState } from '@core/store/store';
 import { COLORS } from '@common/GlobalStyle';
-import { OPTION_INJECTION_SITES, OPTIONS_ILLNESS_DETAIL_STATUS } from '@services/data/healthStatus';
+import {
+  OPTION_INJECTION_SITES,
+  OPTIONS_ILLNESS_DETAIL_STATUS,
+} from '@services/data/healthStatus';
 import { formatCamelCase } from '@utils/format';
 import { getAvatar } from '@utils/getImage';
 import { Alert } from 'react-native';
@@ -31,9 +34,14 @@ type RootStackParamList = {
   IllnessDetailForm: { illnessDetail: IllnessDetail };
 };
 
-type IllnessDetailFormRouteProp = RouteProp<RootStackParamList, 'IllnessDetailForm'>;
+type IllnessDetailFormRouteProp = RouteProp<
+  RootStackParamList,
+  'IllnessDetailForm'
+>;
 
-const fetchVeterinariansProfile = async (id: string): Promise<UserProfileData> => {
+const fetchVeterinariansProfile = async (
+  id: string
+): Promise<UserProfileData> => {
   const response = await apiClient.get(`/users/${id}`);
   return response.data;
 };
@@ -137,7 +145,10 @@ const IllnessDetailForm = () => {
 
   const { mutate } = useMutation(
     async (data: IllnessDetailPayload) => {
-      const res = await apiClient.put(`/illness-detail/${illnessDetail.illnessDetailId}`, data);
+      const res = await apiClient.put(
+        `/illness-detail/${illnessDetail.illnessDetailId}`,
+        data
+      );
       console.log('res.data', res.data);
       return res.data;
     },
@@ -157,7 +168,9 @@ const IllnessDetailForm = () => {
         Alert.alert(
           t('illness_detail.error', { defaultValue: 'Error' }),
           error.response?.data.message ||
-            t('illness_detail.error_message', { defaultValue: 'Failed to update illness detail' })
+            t('illness_detail.error_message', {
+              defaultValue: 'Failed to update illness detail',
+            })
         );
       },
     }
@@ -178,7 +191,9 @@ const IllnessDetailForm = () => {
 
   const handleShowName = () => {
     return veterinarianProfile?.id === userId
-      ? `${veterinarianProfile?.name} (${t('illness_detail.you', { defaultValue: 'You' })})`
+      ? `${veterinarianProfile?.name} (${t('illness_detail.you', {
+          defaultValue: 'You',
+        })})`
       : veterinarianProfile?.name;
   };
 
@@ -189,10 +204,16 @@ const IllnessDetailForm = () => {
           title={t('illness_detail.title', { defaultValue: 'Illness Detail' })}
           subTitle={
             isEditMode
-              ? t('illness_detail.edit_subtitle', { defaultValue: 'Edit illness details' })
-              : t('illness_detail.view_subtitle', { defaultValue: 'View illness details' })
+              ? t('illness_detail.edit_subtitle', {
+                  defaultValue: 'Edit illness details',
+                })
+              : t('illness_detail.view_subtitle', {
+                  defaultValue: 'View illness details',
+                })
           }
-          leftContent={(props: any) => <LeftContent {...props} icon='cards-heart' />}
+          leftContent={(props: any) => (
+            <LeftContent {...props} icon="cards-heart" />
+          )}
         />
         <CardComponent.Content>
           {isEditMode ? (
@@ -203,13 +224,13 @@ const IllnessDetailForm = () => {
                   <FormItem
                     control={control}
                     label={t('illness_detail.date', { defaultValue: 'Date' })}
-                    name='date'
+                    name="date"
                     render={() => (
                       <DateTimePicker
                         value={new Date(date)}
-                        mode='date'
+                        mode="date"
                         is24Hour={true}
-                        display='default'
+                        display="default"
                         onChange={handleStartDateChange}
                       />
                     )}
@@ -218,8 +239,10 @@ const IllnessDetailForm = () => {
                 <View style={{ width: '48%' }}>
                   <FormItem
                     control={control}
-                    label={t('illness_detail.status', { defaultValue: 'Status' })}
-                    name='status'
+                    label={t('illness_detail.status', {
+                      defaultValue: 'Status',
+                    })}
+                    name="status"
                     render={({ field: { onChange, value } }) => (
                       <CustomPicker
                         onValueChange={onChange}
@@ -235,8 +258,10 @@ const IllnessDetailForm = () => {
                 <View style={{ width: '48%' }}>
                   <FormItem
                     control={control}
-                    label={t('illness_detail.injection_site', { defaultValue: 'Injection Site' })}
-                    name='injectionSite'
+                    label={t('illness_detail.injection_site', {
+                      defaultValue: 'Injection Site',
+                    })}
+                    name="injectionSite"
                     render={({ field: { onChange, value } }) => (
                       <CustomPicker
                         onValueChange={onChange}
@@ -250,8 +275,10 @@ const IllnessDetailForm = () => {
                 <View style={{ width: '48%' }}>
                   <FormItem
                     control={control}
-                    label={t('illness_detail.dosage', { defaultValue: 'Dosage' })}
-                    name='dosage'
+                    label={t('illness_detail.dosage', {
+                      defaultValue: 'Dosage',
+                    })}
+                    name="dosage"
                     render={({ field: { onChange, onBlur, value } }) => (
                       <TextInputComponent.Number
                         error={errors.dosage ? errors.dosage.message : ''}
@@ -261,7 +288,7 @@ const IllnessDetailForm = () => {
                           onChange(numericValue);
                         }}
                         value={value as any}
-                        returnKeyType='done'
+                        returnKeyType="done"
                       />
                     )}
                   />
@@ -286,9 +313,11 @@ const IllnessDetailForm = () => {
               <FormItem
                 control={control}
                 label={t('illness_detail.item', { defaultValue: 'Item' })}
-                name='itemId'
+                name="itemId"
                 rules={{
-                  required: t('illness_detail.required', { defaultValue: 'Must not be empty' }),
+                  required: t('illness_detail.required', {
+                    defaultValue: 'Must not be empty',
+                  }),
                 }}
                 render={({ field: { onChange, value } }) => (
                   <CustomPicker
@@ -298,7 +327,10 @@ const IllnessDetailForm = () => {
                     }}
                     selectedValue={value}
                     options={optionsItemVaccine}
-                    title={itemDetail?.name || t('illness_detail.na', { defaultValue: 'N/A' })}
+                    title={
+                      itemDetail?.name ||
+                      t('illness_detail.na', { defaultValue: 'N/A' })
+                    }
                   />
                 )}
               />
@@ -306,19 +338,21 @@ const IllnessDetailForm = () => {
                 <CardComponent style={styles.card}>
                   <CardComponent.Title
                     title={itemDetail.name}
-                    subTitle={`${t('illness_detail.quantity', { defaultValue: 'Quantity' })}: ${
-                      itemDetail.quantity
-                    } (${itemDetail.unit})`}
+                    subTitle={`${t('illness_detail.quantity', {
+                      defaultValue: 'Quantity',
+                    })}: ${itemDetail.quantity} (${itemDetail.unit})`}
                   />
                   <CardComponent.Content>
                     <View style={styles.cardItem}>
                       <Text>
-                        {t('illness_detail.status', { defaultValue: 'Status' })}:{' '}
-                        {itemDetail.status}
+                        {t('illness_detail.status', { defaultValue: 'Status' })}
+                        : {itemDetail.status}
                       </Text>
                       <Text>
-                        {t('illness_detail.warehouse', { defaultValue: 'Warehouse' })}:{' '}
-                        {itemDetail.warehouseLocationEntity?.name}
+                        {t('illness_detail.warehouse', {
+                          defaultValue: 'Warehouse',
+                        })}
+                        : {itemDetail.warehouseLocationEntity?.name}
                       </Text>
                     </View>
                   </CardComponent.Content>
@@ -326,8 +360,10 @@ const IllnessDetailForm = () => {
               )}
               <FormItem
                 control={control}
-                label={t('illness_detail.description', { defaultValue: 'Description' })}
-                name='description'
+                label={t('illness_detail.description', {
+                  defaultValue: 'Description',
+                })}
+                name="description"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextEditorComponent
                     onChange={onChange}
@@ -338,13 +374,13 @@ const IllnessDetailForm = () => {
               />
               <View style={styles.buttonRow}>
                 <Button
-                  mode='contained'
+                  mode="contained"
                   style={{ backgroundColor: getColorByRole() }}
                   onPress={handleSubmit(onSubmit)}
                 >
                   {t('illness_detail.submit', { defaultValue: 'Submit' })}
                 </Button>
-                <Button mode='outlined' onPress={handleEditToggle}>
+                <Button mode="outlined" onPress={handleEditToggle}>
                   {t('illness_detail.cancel', { defaultValue: 'Cancel' })}
                 </Button>
               </View>
@@ -355,7 +391,7 @@ const IllnessDetailForm = () => {
               <View style={styles.infoRow}>
                 <View style={styles.labelContainer}>
                   <Ionicons
-                    name='calendar-outline'
+                    name="calendar-outline"
                     size={20}
                     color={textColor}
                     style={styles.icon}
@@ -374,7 +410,7 @@ const IllnessDetailForm = () => {
               <View style={styles.infoRow}>
                 <View style={styles.labelContainer}>
                   <Ionicons
-                    name='checkmark-circle-outline'
+                    name="checkmark-circle-outline"
                     size={20}
                     color={textColor}
                     style={styles.icon}
@@ -384,10 +420,13 @@ const IllnessDetailForm = () => {
                   </Text>
                 </View>
                 <View
-                  style={[styles.tag, { backgroundColor: getStatusColor(illnessDetail.status) }]}
+                  style={[
+                    styles.tag,
+                    { backgroundColor: getStatusColor(illnessDetail.status) },
+                  ]}
                 >
                   <Text style={[styles.tagText, { color: '#fff' }]}>
-                    {formatCamelCase(illnessDetail.status)}
+                    {t(formatCamelCase(illnessDetail.status))}
                   </Text>
                 </View>
               </View>
@@ -395,31 +434,41 @@ const IllnessDetailForm = () => {
               <View style={styles.infoRow}>
                 <View style={styles.labelContainer}>
                   <Ionicons
-                    name='location-outline'
+                    name="location-outline"
                     size={20}
                     color={textColor}
                     style={styles.icon}
                   />
                   <Text style={[styles.textLabel, { color: textColor }]}>
-                    {t('illness_detail.injection_site', { defaultValue: 'Injection Site' })}:
+                    {t('illness_detail.injection_site', {
+                      defaultValue: 'Injection Site',
+                    })}
+                    :
                   </Text>
                 </View>
                 <View style={[styles.tag, { backgroundColor: '#e8e8e8' }]}>
                   <Text style={[styles.tagText, { color: textColor }]}>
-                    {formatCamelCase(illnessDetail.injectionSite)}
+                    {t(formatCamelCase(illnessDetail.injectionSite))}
                   </Text>
                 </View>
               </View>
 
               <View style={styles.infoRow}>
                 <View style={styles.labelContainer}>
-                  <Ionicons name='medkit-outline' size={20} color={textColor} style={styles.icon} />
+                  <Ionicons
+                    name="medkit-outline"
+                    size={20}
+                    color={textColor}
+                    style={styles.icon}
+                  />
                   <Text style={[styles.textLabel, { color: textColor }]}>
                     {t('illness_detail.dosage', { defaultValue: 'Dosage' })}:
                   </Text>
                 </View>
                 <View style={[styles.tag, { backgroundColor: '#e8e8e8' }]}>
-                  <Text style={[styles.tagText, { color: textColor }]}>{illnessDetail.dosage}</Text>
+                  <Text style={[styles.tagText, { color: textColor }]}>
+                    {illnessDetail.dosage}
+                  </Text>
                 </View>
               </View>
 
@@ -427,7 +476,9 @@ const IllnessDetailForm = () => {
                 <CardComponent style={styles.card}>
                   <CardComponent.Title
                     title={handleShowName()}
-                    subTitle={veterinarianProfile.roleId.name}
+                    subTitle={t(
+                      formatCamelCase(veterinarianProfile.roleId.name)
+                    )}
                     leftContent={() => (
                       <Avatar.Image
                         source={{
@@ -442,18 +493,23 @@ const IllnessDetailForm = () => {
                 <View style={styles.infoRow}>
                   <View style={styles.labelContainer}>
                     <Ionicons
-                      name='person-outline'
+                      name="person-outline"
                       size={20}
                       color={textColor}
                       style={styles.icon}
                     />
                     <Text style={[styles.textLabel, { color: textColor }]}>
-                      {t('illness_detail.veterinarians', { defaultValue: 'Veterinarians' })}:
+                      {t('illness_detail.veterinarians', {
+                        defaultValue: 'Veterinarians',
+                      })}
+                      :
                     </Text>
                   </View>
                   <View style={[styles.tag, { backgroundColor: '#e8e8e8' }]}>
                     <Text style={[styles.tagText, { color: textColor }]}>
-                      {t('illness_detail.not_assigned', { defaultValue: 'Not Assigned' })}
+                      {t('illness_detail.not_assigned', {
+                        defaultValue: 'Not Assigned',
+                      })}
                     </Text>
                   </View>
                 </View>
@@ -463,19 +519,25 @@ const IllnessDetailForm = () => {
                 <CardComponent style={styles.card}>
                   <CardComponent.Title
                     title={illnessDetail.vaccine.name}
-                    subTitle={`${t('illness_detail.quantity', { defaultValue: 'Quantity' })}: ${
+                    subTitle={`${t('illness_detail.quantity', {
+                      defaultValue: 'Quantity',
+                    })}: ${
                       illnessDetail.vaccine.quantity
+                        ? illnessDetail.vaccine.quantity
+                        : 'N/A'
                     } (${illnessDetail.vaccine.unit})`}
                   />
                   <CardComponent.Content>
                     <View style={styles.cardItem}>
                       <Text>
-                        {t('illness_detail.status', { defaultValue: 'Status' })}:{' '}
-                        {illnessDetail.vaccine.status}
+                        {t('illness_detail.status', { defaultValue: 'Status' })}
+                        : {t(formatCamelCase(illnessDetail.vaccine.status))}
                       </Text>
                       <Text>
-                        {t('illness_detail.warehouse', { defaultValue: 'Warehouse' })}:{' '}
-                        {illnessDetail.vaccine.warehouseLocationEntity?.name}
+                        {t('illness_detail.warehouse', {
+                          defaultValue: 'Warehouse',
+                        })}
+                        : {illnessDetail.vaccine.warehouseLocationEntity?.name}
                       </Text>
                     </View>
                   </CardComponent.Content>
@@ -485,13 +547,16 @@ const IllnessDetailForm = () => {
               <View style={styles.infoRow}>
                 <View style={styles.labelContainer}>
                   <Ionicons
-                    name='document-text-outline'
+                    name="document-text-outline"
                     size={20}
                     color={textColor}
                     style={styles.icon}
                   />
                   <Text style={[styles.textLabel, { color: textColor }]}>
-                    {t('illness_detail.description', { defaultValue: 'Description' })}:
+                    {t('illness_detail.description', {
+                      defaultValue: 'Description',
+                    })}
+                    :
                   </Text>
                 </View>
               </View>
@@ -501,7 +566,7 @@ const IllnessDetailForm = () => {
 
               {roleName.toLowerCase() !== 'worker' && (
                 <Button
-                  mode='contained'
+                  mode="contained"
                   style={{ backgroundColor: getColorByRole(), marginTop: 20 }}
                   onPress={handleEditToggle}
                 >
