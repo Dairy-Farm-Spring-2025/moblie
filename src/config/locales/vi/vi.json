@@ -61,6 +61,81 @@
     "overall_score": "Độ chính xác",
     "type": "Loại thẻ"
   },
+  "farm_layout": {
+    "title": "Sơ đồ trang trại"
+  },
+  "cow_details": {
+    "title": "Chi tiết bò"
+  },
+  "create_cow": {
+    "title": "Thêm bò"
+  },
+  "area_management": {
+    "title": "Quản lý khu vực"
+  },
+  "area_detail": {
+    "title": "Chi tiết khu vực"
+  },
+  "pen_management": {
+    "title": "Quản lý chuồng"
+  },
+  "pen_details": {
+    "title": "Chi tiết chuồng"
+  },
+  "milk_batch_management": {
+    "title": "Quản lý lô sữa"
+  },
+  "milk_batch_detail": {
+    "title": "Chi tiết lô sữa"
+  },
+  "qr_scan_cow_milk": {
+    "title": "Quét mã bò cho lô sữa"
+  },
+  "daily_milk_form": {
+    "title": "Biểu mẫu sữa hàng ngày"
+  },
+  "create_milk_batch": {
+    "title": "Tạo lô sữa"
+  },
+  "health_record": {
+    "title": "Hồ sơ sức khỏe"
+  },
+  "qr_scan_cow_general": {
+    "title": "Quét mã bò chung"
+  },
+  "cow_health_record": {
+    "title": "Hồ sơ sức khỏe bò"
+  },
+  "timeline_health_record": {
+    "title": "Dòng thời gian hồ sơ sức khỏe"
+  },
+  "health_record_form": {
+    "title": "Biểu mẫu hồ sơ sức khỏe"
+  },
+  "illness_cow_record": {
+    "title": "Hồ sơ bệnh bò"
+  },
+  "illness_detail_plan": {
+    "title": "Kế hoạch chi tiết bệnh"
+  },
+  "feed_management": {
+    "title": "Quản lý thức ăn"
+  },
+  "feed_detail": {
+    "title": "Chi tiết thức ăn"
+  },
+  "injection": {
+    "title": "Tiêm phòng"
+  },
+  "vaccine_cycle_detail": {
+    "title": "Chi tiết chu kỳ vắc-xin"
+  },
+  "application_view": {
+    "title": "Xem đơn đăng ký"
+  },
+  "application_create": {
+    "title": "Tạo đơn đăng ký"
+  },
   "greeting": "Xin chào, {{name}}!",
   "loading": "Đang tải...",
   "error": "Đã xảy ra lỗi",
