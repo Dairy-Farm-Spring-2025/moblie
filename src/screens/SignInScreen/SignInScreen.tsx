@@ -21,6 +21,7 @@ import { validateEmail } from '@utils/validation';
 import { FontAwesome } from '@expo/vector-icons';
 import { t } from 'i18next';
 import * as ExpoLinking from 'expo-linking';
+import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
 
 const SignInScreen: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -152,6 +153,10 @@ const SignInScreen: React.FC = () => {
 
     return () => subscription.remove();
   }, [dispatch]);
+
+  if (loading) {
+    return <LoadingSplashScreen />;
+  }
 
   return (
     <KeyboardAvoidingView
