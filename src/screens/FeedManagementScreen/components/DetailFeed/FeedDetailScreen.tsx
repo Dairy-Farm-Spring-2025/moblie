@@ -82,9 +82,11 @@ const FeedDetailScreen = () => {
           ]}
         >
           {t('feed.cow_type')}:{' '}
-          {feed?.cowTypeEntity
-            ? formatCamelCase(feed?.cowTypeEntity.name)
-            : 'N/A'}
+          <Text style={{ fontWeight: '600' }}>
+            {feed?.cowTypeEntity
+              ? formatCamelCase(feed?.cowTypeEntity.name)
+              : 'N/A'}
+          </Text>
         </Text>
         <Text
           style={[
@@ -95,7 +97,9 @@ const FeedDetailScreen = () => {
           ]}
         >
           {t('feed.cow_status')}:{' '}
-          {feed?.cowStatus ? formatCamelCase(feed?.cowStatus) : 'N/A'}
+          <Text style={{ fontWeight: '600' }}>
+            {feed?.cowStatus ? t(formatCamelCase(feed?.cowStatus)) : 'N/A'}
+          </Text>
         </Text>
         <Text
           style={[
@@ -106,7 +110,9 @@ const FeedDetailScreen = () => {
           ]}
         >
           {t('feed.quantity')}:{' '}
-          {feed ? calculateTotalQuantity(feed.feedMealDetails) : 0} (kg)
+          <Text style={{ fontWeight: '600' }}>
+            {feed ? calculateTotalQuantity(feed.feedMealDetails) : 0} (kg)
+          </Text>
         </Text>
         <DividerUI />
         <Text
