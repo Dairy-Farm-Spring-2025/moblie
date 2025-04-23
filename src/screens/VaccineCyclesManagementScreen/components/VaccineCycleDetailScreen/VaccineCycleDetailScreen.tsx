@@ -29,8 +29,8 @@ const VaccineCycleDetailScreen = () => {
     }
   };
 
-  const timelineData = cycle.vaccineCycleDetails.map((detail) => ({
-    time: detail.firstInjectionMonth || 'N/A',
+  const timelineData = cycle.vaccineCycleDetails.map((detail, index) => ({
+    time: `${index + 1}` || 'N/A',
     title: detail.name || t('injections.vaccineCycleDetail'),
     description: `
       <div>
@@ -45,6 +45,9 @@ const VaccineCycleDetailScreen = () => {
     } ${detail.unitPeriodic || 'N/A'}</p>
         <p>${t('injections.vaccineItem', { defaultValue: 'Vaccine Item' })}: ${
       detail.itemEntity?.name || 'N/A'
+    }</p>
+    <p>${t('injections.firstInjectionMonth', { defaultValue: 'First Injection Month' })}: ${
+      detail.firstInjectionMonth || 'N/A'
     }</p>
       </div>
     `,

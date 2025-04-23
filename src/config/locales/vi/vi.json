@@ -232,7 +232,7 @@
     "home": "Trang chủ",
     "task": "Công việc",
     "notification": "Thông báo",
-    "profile": "Thông tin"
+    "profile": "Tôi"
   },
   "Task": "Công việc",
   "Milking": "Vắt sữa",
@@ -438,7 +438,7 @@
     "Day": "Ngày",
     "Night": "Đêm",
     "Status": "Trạng thái",
-    "report_submitted": "Đã báo cáo thành công",
+    "report_submitted": "Đã báo cáo thành công!",
     "not_submitted": "Chưa báo cáo",
     "shift": "Ca",
     "Day Shift": "Ca ngày",
