@@ -82,7 +82,9 @@ const FeedDetailScreen = () => {
           ]}
         >
           {t('feed.cow_type')}:{' '}
-          {feed?.cowTypeEntity ? formatCamelCase(feed?.cowTypeEntity.name) : 'N/A'}
+          {feed?.cowTypeEntity
+            ? formatCamelCase(feed?.cowTypeEntity.name)
+            : 'N/A'}
         </Text>
         <Text
           style={[
@@ -92,7 +94,8 @@ const FeedDetailScreen = () => {
             },
           ]}
         >
-          {t('feed.cow_status')}: {feed?.cowStatus ? formatCamelCase(feed?.cowStatus) : 'N/A'}
+          {t('feed.cow_status')}:{' '}
+          {feed?.cowStatus ? formatCamelCase(feed?.cowStatus) : 'N/A'}
         </Text>
         <Text
           style={[
@@ -102,7 +105,8 @@ const FeedDetailScreen = () => {
             },
           ]}
         >
-          {t('feed.quantity')}: {feed ? calculateTotalQuantity(feed.feedMealDetails) : 0} (kg)
+          {t('feed.quantity')}:{' '}
+          {feed ? calculateTotalQuantity(feed.feedMealDetails) : 0} (kg)
         </Text>
         <DividerUI />
         <Text
@@ -125,16 +129,19 @@ const FeedDetailScreen = () => {
         }}
       >
         <CardComponent>
-          <TableFeed items={hay} feed='hay' />
+          <TableFeed items={hay} feed="hay" />
         </CardComponent>
+        <DividerUI />
         <CardComponent>
-          <TableFeed items={refined} feed='refined' />
+          <TableFeed items={refined} feed="refined" />
         </CardComponent>
+        <DividerUI />
         <CardComponent>
-          <TableFeed items={silage} feed='silage' />
+          <TableFeed items={silage} feed="silage" />
         </CardComponent>
+        <DividerUI />
         <CardComponent>
-          <TableFeed items={mineral} feed='mineral' />
+          <TableFeed items={mineral} feed="mineral" />
         </CardComponent>
       </ContainerComponent>
     </ContainerComponent.ScrollView>
