@@ -18,6 +18,7 @@ import { Alert, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
 import { useQuery } from 'react-query';
 import TableFeed from './components/TableFeed';
+import { COLORS } from '@common/GlobalStyle';
 type RootStackParamList = {
   FeedDetail: { feedId: number };
 };
@@ -72,7 +73,7 @@ const FeedDetailScreen = () => {
           : 'N/A'}
       </Text> */}
       <View style={styles.titleContainer}>
-        <Text style={styles.textName}>{feed?.name}</Text>
+        <Text style={styles.textName}>🍔 {feed?.name}</Text>
         <Text
           style={[
             styles.textBold,
@@ -81,10 +82,12 @@ const FeedDetailScreen = () => {
             },
           ]}
         >
-          {t('feed.cow_type')}:{' '}
-          {feed?.cowTypeEntity
-            ? formatCamelCase(feed?.cowTypeEntity.name)
-            : 'N/A'}
+          🐮 {t('feed.cow_type')}:{' '}
+          <Text style={{ fontWeight: '600' }}>
+            {feed?.cowTypeEntity
+              ? formatCamelCase(feed?.cowTypeEntity.name)
+              : 'N/A'}
+          </Text>
         </Text>
         <Text
           style={[
@@ -94,8 +97,10 @@ const FeedDetailScreen = () => {
             },
           ]}
         >
-          {t('feed.cow_status')}:{' '}
-          {feed?.cowStatus ? formatCamelCase(feed?.cowStatus) : 'N/A'}
+          🐄 {t('feed.cow_status')}:{' '}
+          <Text style={{ fontWeight: '600' }}>
+            {feed?.cowStatus ? t(formatCamelCase(feed?.cowStatus)) : 'N/A'}
+          </Text>
         </Text>
         <Text
           style={[
@@ -105,8 +110,10 @@ const FeedDetailScreen = () => {
             },
           ]}
         >
-          {t('feed.quantity')}:{' '}
-          {feed ? calculateTotalQuantity(feed.feedMealDetails) : 0} (kg)
+          📦 {t('feed.quantity')}:{' '}
+          <Text style={{ fontWeight: '600' }}>
+            {feed ? calculateTotalQuantity(feed.feedMealDetails) : 0} (kg)
+          </Text>
         </Text>
         <DividerUI />
         <Text
@@ -162,6 +169,7 @@ const styles = StyleSheet.create({
   textName: {
     fontSize: 25,
     fontWeight: '700',
+    color: COLORS.primary,
   },
   titleContainer: {
     marginTop: 10,

@@ -82,19 +82,21 @@ const IllnessDetailRecord = ({ illness, refetch }: IllnessDetailProps) => {
               alignItems: 'center',
             }}
           >
-            <Text style={{ fontWeight: '600', fontSize: 16 }}>{formatType(rowData.title)}</Text>
+            <Text style={{ fontWeight: '600', fontSize: 16 }}>
+              {t(formatType(rowData.title))}
+            </Text>
             {roleName.toLowerCase() !== 'worker' ? (
               <IconButton
                 icon={'delete-outline'}
                 size={20}
-                iconColor='red'
+                iconColor="red"
                 onPress={() => deleteItemDetail(data.illnessDetailId)}
               />
             ) : (
               <IconButton
                 icon={'information-outline'}
                 size={20}
-                iconColor='blue'
+                iconColor="blue"
                 onPress={() =>
                   (navigator as any).navigate('IllnessDetailForm', {
                     illnessDetail: data,
@@ -134,18 +136,19 @@ const IllnessDetailRecord = ({ illness, refetch }: IllnessDetailProps) => {
     <View style={{ flex: 1 }}>
       <Timeline
         data={timelineData.sort(
-          (a: any, b: any) => new Date(b?.time)?.getTime() - new Date(a?.time)?.getTime()
+          (a: any, b: any) =>
+            new Date(b?.time)?.getTime() - new Date(a?.time)?.getTime()
         )}
         renderDetail={renderItem}
-        innerCircle='icon'
+        innerCircle="icon"
         circleSize={25}
         timeContainerStyle={{ minWidth: 72, marginTop: 5 }}
         timeStyle={{
           color: 'grey',
           fontStyle: 'italic',
         }}
-        circleColor='green'
-        lineColor='#C0C0C0'
+        circleColor="green"
+        lineColor="#C0C0C0"
         lineWidth={1}
         options={
           {

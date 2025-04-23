@@ -1,9 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator, Dimensions } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+  Dimensions,
+} from 'react-native';
 import { SegmentedButtons } from 'react-native-paper';
 import { useQuery } from 'react-query';
 import { useNavigation } from '@react-navigation/native';
-import { RecyclerListView, DataProvider, LayoutProvider } from 'recyclerlistview';
+import {
+  RecyclerListView,
+  DataProvider,
+  LayoutProvider,
+} from 'recyclerlistview';
 import apiClient from '@config/axios/axios';
 import { Cow } from '@model/Cow/Cow';
 import SearchInput from '@components/Input/Search/SearchInput';
@@ -21,17 +31,25 @@ const fetchCows = async (): Promise<Cow[]> => {
 const CowManagementScreen: React.FC = () => {
   const [selectedSegment, setSelectedSegment] = useState('list');
   const [searchText, setSearchText] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState<'name' | 'origin' | 'type' | 'pen' | 'area'>(
-    'name'
-  );
+  const [selectedFilter, setSelectedFilter] = useState<
+    'name' | 'origin' | 'type' | 'pen' | 'area'
+  >('name');
   const [displayedCows, setDisplayedCows] = useState<Cow[]>([]);
-  const [dataProvider, setDataProvider] = useState(new DataProvider((r1, r2) => r1 !== r2));
+  const [dataProvider, setDataProvider] = useState(
+    new DataProvider((r1, r2) => r1 !== r2)
+  );
   const [page, setPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false); // State for pull-to-refresh
   const itemsPerPage = 20;
 
-  const { data: cows, isLoading, isError, error, refetch } = useQuery<Cow[]>('cows', fetchCows);
+  const {
+    data: cows,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery<Cow[]>('cows', fetchCows);
   const navigation = useNavigation();
 
   // Filter cows based on selected filter and search text
@@ -41,13 +59,21 @@ const CowManagementScreen: React.FC = () => {
         if (selectedFilter === 'name') {
           return cow.name?.toLowerCase().includes(searchText.toLowerCase());
         } else if (selectedFilter === 'origin') {
-          return cow.cowOrigin?.toLowerCase().includes(searchText.toLowerCase());
+          return cow.cowOrigin
+            ?.toLowerCase()
+            .includes(searchText.toLowerCase());
         } else if (selectedFilter === 'type') {
-          return cow.cowType?.name.toLowerCase().includes(searchText.toLowerCase());
+          return cow.cowType?.name
+            .toLowerCase()
+            .includes(searchText.toLowerCase());
         } else if (selectedFilter === 'pen') {
-          return cow.penResponse?.name.toLowerCase().includes(searchText.toLowerCase());
+          return cow.penResponse?.name
+            .toLowerCase()
+            .includes(searchText.toLowerCase());
         } else if (selectedFilter === 'area') {
-          return cow.penResponse?.area.name.toLowerCase().includes(searchText.toLowerCase());
+          return cow.penResponse?.area.name
+            .toLowerCase()
+            .includes(searchText.toLowerCase());
         }
         return false;
       }) || []
@@ -145,7 +171,12 @@ const CowManagementScreen: React.FC = () => {
           <View style={{ flex: 1 }}>
             {displayedCows.length > 0 ? (
               <>
-                {refreshing && <ActivityIndicator size='large' style={styles.refreshIndicator} />}
+                {refreshing && (
+                  <ActivityIndicator
+                    size="large"
+                    style={styles.refreshIndicator}
+                  />
+                )}
                 <RecyclerListView
                   layoutProvider={layoutProvider}
                   dataProvider={dataProvider}
@@ -156,11 +187,13 @@ const CowManagementScreen: React.FC = () => {
                   scrollViewProps={{ scrollEventThrottle: 16 }} // Throttle scroll events
                   style={{ flex: 1 }}
                   contentContainerStyle={{ paddingHorizontal: 10 }}
-                  renderFooter={() => (loadingMore ? <ActivityIndicator size='large' /> : null)}
+                  renderFooter={() =>
+                    loadingMore ? <ActivityIndicator size="large" /> : null
+                  }
                 />
               </>
             ) : (
-              <Text>No cows found</Text>
+              <Text>{t('No cows found')}</Text>
             )}
           </View>
         )

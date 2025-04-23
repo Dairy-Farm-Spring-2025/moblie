@@ -21,12 +21,12 @@ const TableFeed = ({ items, feed }: TableFeedProps) => {
     <View>
       <Text style={styles.textName}>
         {feed === 'hay'
-          ? t('feed.hay')
+          ? `🌾 ${t('feed.hay')}`
           : feed === 'refined'
-          ? t('feed.refined')
+          ? `🌽 ${t('feed.refined')}`
           : feed === 'mineral'
-          ? t('feed.mineral')
-          : t('feed.silage')}
+          ? `🧂 ${t('feed.mineral')}`
+          : `🌿 ${t('feed.silage')}`}
       </Text>
       <TableComponent>
         <TableComponent.Header>

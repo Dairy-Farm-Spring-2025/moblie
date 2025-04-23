@@ -96,7 +96,10 @@ const TaskDetailContent: React.FC<{
   const handleViewMaterials = (screen: string) => {
     if (screen === 'feed') {
       console.log('feed', screen);
-      (navigation.navigate as any)('Materials', { area: task.areaId, taskId: task.taskId });
+      (navigation.navigate as any)('Materials', {
+        area: task.areaId,
+        taskId: task.taskId,
+      });
     } else {
       (navigation.navigate as any)('MilkBatchManagementScreen');
       console.log('milk', screen);
@@ -144,7 +147,9 @@ const TaskDetailContent: React.FC<{
         </View>
         <View style={[styles.priorityBadge, { backgroundColor: priorityColor }]}>
           <Text style={[styles.priorityText, { color: '#fff' }]}>
-            {t(`task_management.${task.priority}`, { defaultValue: task.priority })}
+            {t(`task_management.${task.priority}`, {
+              defaultValue: task.priority,
+            })}
           </Text>
         </View>
       </View>
@@ -161,7 +166,7 @@ const TaskDetailContent: React.FC<{
         </View>
         <View style={[styles.tag, { backgroundColor: getStatusColor(task.status) }]}>
           <Text style={[styles.tagText, { color: '#fff' }]}>
-            {formatCamelCase(task.reportTask?.status!) || formatCamelCase(task.status)}
+            {t(formatCamelCase(task.reportTask?.status!)) || t(formatCamelCase(task.status))}
           </Text>
         </View>
       </View>

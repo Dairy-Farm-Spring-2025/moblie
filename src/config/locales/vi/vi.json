@@ -125,7 +125,8 @@
     "title": "Chi tiết thức ăn"
   },
   "injection": {
-    "title": "Tiêm phòng"
+    "title": "Tiêm phòng",
+    "category": "Danh mục"
   },
   "vaccine_cycle_detail": {
     "title": "Chi tiết chu kỳ vắc-xin"
@@ -218,7 +219,7 @@
     "shift": "Ca",
     "hay": "Bữa ăn cỏ khô",
     "refined": "Bữa ăn tinh",
-    "silage": "Bưa ăn ủ chua",
+    "silage": "Bữa ăn ủ chua",
     "mineral": "Bữa ăn khoáng chất",
     "food_nutrition": "Thành phần dinh dưỡng",
     "title_detail": "Chi tiết bữa ăn",
@@ -226,6 +227,12 @@
     "name": "Tên",
     "storage": "Nhà kho",
     "feedMeal": "Bữa ăn"
+  },
+  "tab": {
+    "home": "Trang chủ",
+    "task": "Công việc",
+    "notification": "Thông báo",
+    "profile": "Thông tin"
   },
   "Task": "Công việc",
   "Milking": "Vắt sữa",
@@ -392,7 +399,9 @@
     "export_item": "Xuất kho",
     "export_quantity": "Số lượng",
     "confirm": "Xác nhận",
-    "cancel": "Hủy"
+    "cancel": "Hủy",
+    "category": "Danh mục",
+    "description": "Mô tả"
   },
   "vaccine_cycle": {
     "title": "Chu kỳ tiêm vắc-xin",
@@ -604,7 +613,9 @@
     "heartRate": "Nhịp tim (BPM)",
     "respiratoryRate": "Nhịp thở (lần/phút)",
     "ruminateActivity": "Hoạt động nhai lại (lần/ngày)",
-    "description": "Mô tả"
+    "description": "Mô tả",
+    "administeredBy": "Được quản lý bởi",
+    "user": "Người gửi"
   },
   "Edit": "Cập nhật",
   "Confirm": "Xác nhận",
@@ -706,5 +717,22 @@
   "close": "Đóng",
   "no_milk_batches_found": "Không tìm thấy lô sữa",
   "error_loading_data": "Lỗi khi tải dữ liệu",
-  "refresh": "Làm mới"
+  "refresh": "Làm mới",
+  "Report": "Báo cáo",
+  "Closed": "Đã đóng",
+  "Enter task description": "Nhập mô tả công việc",
+  "Uploaded/Captured Images": "Hình ảnh tải lên/chụp",
+  "Submit Report": "Gửi báo cáo",
+  "Occupied": "Đã vào chuồng",
+  "Cow Housing": "Khu vực cho bò",
+  "Quarantine": "Khu vực cách ly",
+  "Exist": "Tồn tại",
+  "Not Exist": "Không tồn tại",
+  "Cured": "Đã khỏi",
+  "Treated": "Đã điều trị",
+  "Observed": "Đã theo dõi",
+  "Ongoing": "Đang theo dõi",
+  "Deceased": "Đã chết",
+  "Veterinarians": "Thú y",
+  "No health records": "Không có ghi nhận sức khỏe"
 }
