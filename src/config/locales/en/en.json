@@ -162,5 +162,27 @@
     "loading": "Loading notifications...",
     "error": "Failed to load notifications",
     "noNotifications": "No notifications found"
-  }
+  },
+  "shift": "Shift",
+  "milk_date": "Milk Date",
+  "volume": "Volume",
+  "liters": "liters",
+  "worker": "Worker",
+  "cow": "Cow",
+  "milk_batch_id": "Milk Batch ID",
+  "total_volume": "Total Volume",
+  "date": "Date",
+  "expiry_date": "Expiry Date",
+  "status": "Status",
+  "daily_milks": "Daily Milks",
+  "total_liters": "Total Liters",
+  "avg_volume_batch": "Avg. Volume/Batch",
+  "total_batches": "Total Batches",
+  "milk_volume_trend": "Milk Volume Trend",
+  "view_details": "View Details",
+  "milk_batch_details": "Milk Batch Details",
+  "close": "Close",
+  "no_milk_batches_found": "No milk batches found",
+  "error_loading_data": "Error loading data",
+  "refresh": "Refresh"
 }

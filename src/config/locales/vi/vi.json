@@ -682,5 +682,26 @@
     "Cows_in_Area": "Bò trong khu vực",
     "No_cows_found_in_this_area": "Không tìm thấy bò trong khu vực này"
   },
-  "Cow_Management": "Danh sách bò"
+  "Cow_Management": "Danh sách bò",
+  "shift": "Ca",
+  "milk_date": "Ngày vắt sữa",
+  "volume": "Thể tích",
+  "worker": "Công nhân",
+  "cow": "Bò",
+  "milk_batch_id": "ID lô sữa",
+  "total_volume": "Tổng thể tích",
+  "date": "Ngày",
+  "expiry_date": "Ngày hết hạn",
+  "status": "Trạng thái",
+  "daily_milks": "Sữa hàng ngày",
+  "total_liters": "Tổng số lít",
+  "avg_volume_batch": "Thể tích trung bình/Lô",
+  "total_batches": "Tổng số lô",
+  "milk_volume_trend": "Xu hướng thể tích sữa",
+  "view_details": "Xem chi tiết",
+  "milk_batch_details": "Chi tiết lô sữa",
+  "close": "Đóng",
+  "no_milk_batches_found": "Không tìm thấy lô sữa",
+  "error_loading_data": "Lỗi khi tải dữ liệu",
+  "refresh": "Làm mới"
 }
