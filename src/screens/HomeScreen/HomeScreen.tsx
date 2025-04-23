@@ -203,6 +203,7 @@ const HomeScreen: React.FC = () => {
         renderSectionHeader={renderSectionHeader}
         contentContainerStyle={styles.sectionList}
         stickySectionHeadersEnabled={false}
+        showsVerticalScrollIndicator={false}
       />
     </Layout>
   );
@@ -221,7 +222,7 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   welcomeText: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   avatarContainer: {
