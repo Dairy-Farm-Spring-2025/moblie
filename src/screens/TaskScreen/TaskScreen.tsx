@@ -242,7 +242,7 @@ const NewTaskCard = ({
           {hasReportForSelectedDate
             ? task.reportTask && task.reportTask.status.toLowerCase() === 'closed'
               ? t('task_management.report_submitted', { defaultValue: 'Submitted' })
-              : task.reportTask && task.reportTask.status.toLowerCase() === 'pending'
+              : task.reportTask && task.reportTask.status.toLowerCase() !== 'pending'
               ? t('task_management.report_processing', {
                   defaultValue: 'Already report waiting for review',
                 })

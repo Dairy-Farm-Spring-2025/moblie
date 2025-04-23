@@ -404,8 +404,7 @@ const TaskDetailContent: React.FC<{
         )}
 
       <View style={[styles.buttonsContainer, isCompleted && styles.centeredButtonContainer]}>
-        {!isCompleted && !hasReportForDate && (
-          //  isWithinCurrentDateRange &&
+        {!isCompleted && !hasReportForDate && isWithinCurrentDateRange && (
           <TouchableOpacity
             style={[styles.checkInButton, isCheckingIn && styles.checkInButtonDisabled]}
             onPress={onCheckIn}
