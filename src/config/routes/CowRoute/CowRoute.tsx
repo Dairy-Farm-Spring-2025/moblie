@@ -54,7 +54,7 @@ const CowRoute: React.FC = () => {
       <Stack.Screen
         name='CreateCowScreen'
         component={CreateCow}
-        options={{ title: 'Create Cow' }}
+        options={{ title: t('create_cow.title', { defaultValue: 'Create Cow' }) }}
       />
       <Stack.Screen
         name='AreaManagementScreen'
@@ -69,37 +69,41 @@ const CowRoute: React.FC = () => {
       <Stack.Screen
         name='PenManagementScreen'
         component={PenManagementScreen}
-        options={{ title: 'Pen Management' }}
+        options={{ title: t('pen_management.title', { defaultValue: 'Pen Management' }) }}
       />
       <Stack.Screen
         name='PenDetailScreen'
         component={PenDetailScreen}
-        options={{ title: 'Pen Details' }}
+        options={{ title: t('pen_details.title', { defaultValue: 'Pen Details' }) }}
       />
       <Stack.Screen
         name='MilkBatchManagementScreen'
         component={MilkBatchManagementScreen}
-        options={{ title: 'Milk Batch Management' }}
+        options={{
+          title: t('milk_batch_management.title', { defaultValue: 'Milk Batch Management' }),
+        }}
       />
       <Stack.Screen
         name='MilkBatchDetail'
         component={DetailMilkBatch}
-        options={{ title: 'Milk Batch Details' }}
+        options={{ title: t('milk_batch_detail.title', { defaultValue: 'Milk Batch Detail' }) }}
       />
       <Stack.Screen
         name='QrCodeScanCow'
         component={QrCodeScanCow}
-        options={{ title: 'Scan Cow for Milk Batch' }}
+        options={{
+          title: t('qr_scan_cow_milk.title', { defaultValue: 'Scan Cow for Milk Batch' }),
+        }}
       />
       <Stack.Screen
         name='DetailFormMilk'
         component={DetailFormMilk}
-        options={{ title: 'Daily Milk Form' }}
+        options={{ title: t('daily_milk_form.title', { defaultValue: 'Daily Milk Form' }) }}
       />
       <Stack.Screen
         name='CreateMilkBatch'
         component={CreateMilkBatch}
-        options={{ title: 'Create Milk Batch' }}
+        options={{ title: t('create_milk_batch.title', { defaultValue: 'Create Milk Batch' }) }}
       />
       <Stack.Screen
         name='HealthRecordScreen'
@@ -109,12 +113,12 @@ const CowRoute: React.FC = () => {
       <Stack.Screen
         name='QrScanCow' // Renamed to avoid confusion with QrCodeScanCow
         component={QrScanCow}
-        options={{ title: 'General Scan Cow' }}
+        options={{ title: t('qr_scan_cow_general.title', { defaultValue: 'General Scan Cow' }) }}
       />
       <Stack.Screen
         name='CowHealthRecord'
         component={CowHealthRecord}
-        options={{ title: 'Cow Health Record' }}
+        options={{ title: t('cow_health_record.title', { defaultValue: 'Cow Health Record' }) }}
       />
       <Stack.Screen
         name='CowHealthInforScreen'
@@ -128,7 +132,7 @@ const CowRoute: React.FC = () => {
       <Stack.Screen
         name='HealthRecordFormScreen'
         component={HealthRecordFormScreen}
-        options={{ title: 'Health Record Form' }}
+        options={{ title: t('health_record_form.title', { defaultValue: 'Health Record Form' }) }}
       />
       <Stack.Screen
         name='IllnessCowRecordScreen'
@@ -138,27 +142,27 @@ const CowRoute: React.FC = () => {
       <Stack.Screen
         name='IllnessDetailForm'
         component={IllnessDetailForm}
-        options={{ title: 'Illness Detail' }}
+        options={{ title: t('illness_detail.title', { defaultValue: 'Illness Detail Form' }) }}
       />
       <Stack.Screen
         name='IllnessDetailPlanForm'
         component={IllnessDetailPlanForm}
-        options={{ title: 'Illness Detail Plan' }}
+        options={{ title: t('illness_detail_plan.title', { defaultValue: 'Illness Detail Plan' }) }}
       />
       <Stack.Screen
         name='FeedManagementScreen'
         component={FeedManagementScreen}
-        options={{ title: t('feed.title') }}
+        options={{ title: t('feed.title', { defaultValue: 'Feed Management' }) }}
       />
       <Stack.Screen
         name='FeedDetailScreen'
         component={FeedDetailScreen}
-        options={{ title: t('feed.title_detail') }}
+        options={{ title: t('feed.title_detail', { defaultValue: 'Feed Detail' }) }}
       />
       <Stack.Screen
         name='MyExportItemScreen'
         component={MyExportItemScreen}
-        options={{ title: t('export_item.title') }}
+        options={{ title: t('export_item.title', { defaultValue: 'Export Item' }) }}
       />
       <Stack.Screen
         name='IllnessReportForm'

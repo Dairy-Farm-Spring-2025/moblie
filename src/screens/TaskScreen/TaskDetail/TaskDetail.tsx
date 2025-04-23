@@ -32,14 +32,15 @@ const TaskDetailContent: React.FC<{
   selectedDate: string;
   onCheckIn: () => void;
   isCheckingIn: boolean;
-}> = ({ task, selectedDate, onCheckIn, isCheckingIn }) => {
+  isChecked: boolean;
+}> = ({ task, selectedDate, onCheckIn, isCheckingIn, isChecked }) => {
   const [isExpanded, setIsExpanded] = React.useState(false);
   const navigation = useNavigation();
   console.log('task', task.material?.illnessDetail || 'null');
 
   const handleToggleExpand = () => setIsExpanded(!isExpanded);
 
-  const hasReportForDate = task.reportTask && task.reportTask.date === selectedDate;
+  const hasReportForDate = (task.reportTask && task.reportTask.date === selectedDate) || isChecked;
   // Check if task status is completed
   const isCompleted = task.status.toLowerCase() === 'completed';
   const isReported = task.reportTask && task.reportTask.status.toLowerCase() === 'closed';
@@ -403,7 +404,8 @@ const TaskDetailContent: React.FC<{
         )}
 
       <View style={[styles.buttonsContainer, isCompleted && styles.centeredButtonContainer]}>
-        {!isCompleted && !hasReportForDate && isWithinCurrentDateRange && (
+        {!isCompleted && !hasReportForDate && (
+          //  isWithinCurrentDateRange &&
           <TouchableOpacity
             style={[styles.checkInButton, isCheckingIn && styles.checkInButtonDisabled]}
             onPress={onCheckIn}
@@ -425,12 +427,15 @@ const TaskDetail: React.FC = () => {
   const { task, selectedDate } = route.params;
   const [selectedSegment, setSelectedSegment] = React.useState<string>('detail');
   const queryClient = useQueryClient();
+  // Local state to hold the task, updated after check-in
+  const [isChecked, setIsChecked] = React.useState<boolean>(task.reportTask !== null);
 
   const checkInMutation = useMutation<unknown, ApiError, string | number>(
     (taskId: string | number) => apiClient.post(`/reportTask/joinTask/${taskId}`),
     {
       onSuccess: (response: any) => {
         Alert.alert('Success', response.data?.message || 'Task checked in successfully!');
+        setIsChecked(true);
         queryClient.invalidateQueries('tasks');
       },
       onError: (err) => {
@@ -468,6 +473,7 @@ const TaskDetail: React.FC = () => {
             selectedDate={selectedDate}
             onCheckIn={handleCheckIn}
             isCheckingIn={checkInMutation.isLoading}
+            isChecked={isChecked}
           />
         </ScrollView>
       ) : (

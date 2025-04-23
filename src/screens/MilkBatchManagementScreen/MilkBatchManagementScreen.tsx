@@ -1,6 +1,3 @@
-import apiClient from '@config/axios/axios';
-import { DailyMilk } from '@model/Milk/DailyMilk/DailyMilk';
-import { MilkBatch } from '@model/Milk/MilkBatch/MilkBatch';
 import React, { useState, useCallback } from 'react';
 import {
   View,
@@ -17,9 +14,12 @@ import { useQuery } from 'react-query';
 import { Ionicons } from '@expo/vector-icons';
 import { format } from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
-import FloatingButton from '@components/FloatingButton/FloatingButton';
 import { LineChart } from 'react-native-gifted-charts';
 import { t } from 'i18next';
+import apiClient from '@config/axios/axios';
+import { DailyMilk } from '@model/Milk/DailyMilk/DailyMilk';
+import { MilkBatch } from '@model/Milk/MilkBatch/MilkBatch';
+import FloatingButton from '@components/FloatingButton/FloatingButton';
 import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
 
 const fetchMilkBatch = async (): Promise<MilkBatch[]> => {
@@ -30,6 +30,7 @@ const fetchMilkBatch = async (): Promise<MilkBatch[]> => {
     throw new Error(error?.message || 'An error occurred while fetching the data');
   }
 };
+
 const MilkBatchManagementScreen: React.FC = () => {
   const navigation = useNavigation();
   const {
@@ -61,21 +62,36 @@ const MilkBatchManagementScreen: React.FC = () => {
   const renderDailyMilk = useCallback(
     ({ item }: { item: DailyMilk }) => (
       <View style={styles.dailyMilkCard}>
-        <Text style={styles.dailyMilkText}>
-          {t('Shift')}: {item.shift}
-        </Text>
-        <Text style={styles.dailyMilkText}>
-          {t('Milk Date')}: {format(new Date(item.milkDate), 'dd/MM/yyyy')}
-        </Text>
-        <Text style={styles.dailyMilkText}>
-          {t('Volume')}: {item.volume} {t('liters')}
-        </Text>
-        <Text style={styles.dailyMilkText}>
-          {t('Worker')}: {item.worker.name}
-        </Text>
-        <Text style={styles.dailyMilkText}>
-          {t('Cow')}: {item.cow.name}
-        </Text>
+        <View style={styles.dailyMilkRow}>
+          <Ionicons name='time-outline' size={16} color='#4CAF50' />
+          <Text style={styles.dailyMilkText}>
+            {t('shift')}: {item.shift}
+          </Text>
+        </View>
+        <View style={styles.dailyMilkRow}>
+          <Ionicons name='calendar-outline' size={16} color='#4CAF50' />
+          <Text style={styles.dailyMilkText}>
+            {t('milk_date')}: {format(new Date(item.milkDate), 'dd/MM/yyyy')}
+          </Text>
+        </View>
+        <View style={styles.dailyMilkRow}>
+          <Ionicons name='water-outline' size={16} color='#4CAF50' />
+          <Text style={styles.dailyMilkText}>
+            {t('volume')}: {item.volume} {t('liters')}
+          </Text>
+        </View>
+        <View style={styles.dailyMilkRow}>
+          <Ionicons name='person-outline' size={16} color='#4CAF50' />
+          <Text style={styles.dailyMilkText}>
+            {t('worker')}: {item.worker.name}
+          </Text>
+        </View>
+        <View style={styles.dailyMilkRow}>
+          <Ionicons name='paw-outline' size={16} color='#4CAF50' />
+          <Text style={styles.dailyMilkText}>
+            {t('cow')}: {item.cow.name}
+          </Text>
+        </View>
       </View>
     ),
     []
@@ -84,34 +100,57 @@ const MilkBatchManagementScreen: React.FC = () => {
   const renderMilkBatchItem = useCallback(
     ({ item }: { item: MilkBatch }) => (
       <View style={styles.milkBatchCard}>
-        <TouchableOpacity onPress={() => toggleMilkBatchDetails(item)}>
-          <Text style={styles.milkBatchTitle}>
-            {t('Milk Batch ID')}: {item.milkBatchId}
-          </Text>
-          <Text>
-            {t('Total Volume')}: {item.totalVolume} {t('liters')}
-          </Text>
-          <Text>
-            {t('Date')}: {format(new Date(item.date), 'dd/MM/yyyy')}
-          </Text>
-          <Text>
-            {t('Expiry Date')}: {format(new Date(item.expiryDate), 'dd/MM/yyyy')}
-          </Text>
-          <Text>
-            {t('Status')}: {item.status}
-          </Text>
+        <TouchableOpacity
+          style={styles.milkBatchHeader}
+          onPress={() => toggleMilkBatchDetails(item)}
+        >
+          <View style={styles.milkBatchHeaderContent}>
+            <Text style={styles.milkBatchTitle}>
+              {t('milk_batch_id')}: {item.milkBatchId}
+            </Text>
+            <Text style={styles.milkBatchSubtitle}>
+              {t('total_volume')}: {item.totalVolume} {t('liters')}
+            </Text>
+            <Text style={styles.milkBatchSubtitle}>
+              {t('date')}: {format(new Date(item.date), 'dd/MM/yyyy')}
+            </Text>
+            <Text style={styles.milkBatchSubtitle}>
+              {t('expiry_date')}: {format(new Date(item.expiryDate), 'dd/MM/yyyy')}
+            </Text>
+            <View
+              style={[
+                styles.statusBadge,
+                { backgroundColor: item.status === 'inventory' ? '#4CAF50' : '#E53935' },
+              ]}
+            >
+              <Text style={styles.statusText}>{item.status}</Text>
+            </View>
+          </View>
+          <Ionicons
+            name={
+              selectedMilkBatch?.milkBatchId === item.milkBatchId ? 'chevron-up' : 'chevron-down'
+            }
+            size={24}
+            color='#4CAF50'
+          />
         </TouchableOpacity>
-
         {selectedMilkBatch?.milkBatchId === item.milkBatchId && (
-          <>
-            <Text style={styles.sectionTitle}>{t('Daily Milks')}:</Text>
+          <View style={styles.dailyMilkContainer}>
+            <Text style={styles.sectionTitle}>{t('daily_milks')}</Text>
             <FlatList
               data={item.dailyMilks}
               renderItem={renderDailyMilk}
               keyExtractor={(dailyMilk) => dailyMilk.dailyMilkId.toString()}
+              scrollEnabled={false}
             />
-          </>
+          </View>
         )}
+        <TouchableOpacity
+          style={styles.detailsButton}
+          onPress={() => handleMilkBatchPress(item.milkBatchId)}
+        >
+          <Text style={styles.detailsButtonText}>{t('view_details')}</Text>
+        </TouchableOpacity>
       </View>
     ),
     [selectedMilkBatch, renderDailyMilk]
@@ -123,21 +162,20 @@ const MilkBatchManagementScreen: React.FC = () => {
   const averageVolumePerBatch =
     numberOfBatches > 0 ? (totalLiters / numberOfBatches).toFixed(2) : 0;
 
-  // Prepare data for the line chart with additional metadata
+  // Prepare data for the line chart
   const sortedMilkBatches = milkBatchData
     ? [...milkBatchData].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     : [];
   const chartData = sortedMilkBatches.map((batch) => ({
     value: batch.totalVolume,
     label: format(new Date(batch.date), 'dd/MM'),
-    dataPointText: `${batch.totalVolume}L`, // Optional: Display text on the data point
-    customData: batch, // Store the full batch object for use in onDataPointClick
+    dataPointText: `${batch.totalVolume}L`,
+    customData: batch,
   }));
 
   // Handle data point click
-  const handleDataPointClick = (item: any, index: number) => {
+  const handleDataPointClick = (item: any) => {
     const batch = item.customData as MilkBatch;
-    console.log('Data point clicked:', batch);
     setSelectedBatchDetails(batch);
     setModalVisible(true);
   };
@@ -146,111 +184,134 @@ const MilkBatchManagementScreen: React.FC = () => {
     <LoadingSplashScreen />
   ) : (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>{t('milk_batch_management.title')}</Text>
+        <TouchableOpacity onPress={handleRefresh}>
+          <Ionicons name='refresh' size={24} color='#4CAF50' />
+        </TouchableOpacity>
+      </View>
       {isError ? (
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Error loading data: {error?.message}</Text>
+          <Text style={styles.errorText}>
+            {t('error_loading_data')}: {error?.message}
+          </Text>
           <TouchableOpacity style={styles.refreshButton} onPress={handleRefresh}>
-            <Ionicons name='refresh' size={20} color='white' />
-            <Text style={styles.refreshButtonText}>Refresh</Text>
+            <Ionicons name='refresh' size={20} color='#fff' />
+            <Text style={styles.refreshButtonText}>{t('refresh')}</Text>
           </TouchableOpacity>
         </View>
       ) : Array.isArray(milkBatchData) && milkBatchData.length > 0 ? (
-        <ScrollView>
-          {/* Three Cards for Key Metrics */}
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {/* Metric Cards */}
           <View style={styles.cardsContainer}>
-            <View style={styles.card}>
-              <Ionicons name='water-outline' size={30} color='#4CAF50' />
-              <Text style={styles.cardTitle}>Total Liters</Text>
+            <View style={styles.metricCard}>
+              <Ionicons name='water-outline' size={28} color='#4CAF50' />
+              <Text style={styles.cardTitle}>{t('total_liters')}</Text>
               <Text style={styles.cardValue}>{totalLiters} L</Text>
             </View>
-            <View style={styles.card}>
-              <Ionicons name='stats-chart-outline' size={30} color='#4CAF50' />
-              <Text style={styles.cardTitle}>{t('Avg. Volume/Batch')}</Text>
+            <View style={styles.metricCard}>
+              <Ionicons name='stats-chart-outline' size={28} color='#4CAF50' />
+              <Text style={styles.cardTitle}>{t('avg_volume_batch')}</Text>
               <Text style={styles.cardValue}>{averageVolumePerBatch} L</Text>
             </View>
-            <View style={styles.card}>
-              <Ionicons name='cube-outline' size={30} color='#4CAF50' />
-              <Text style={styles.cardTitle}>{t('Total Batches')}</Text>
+            <View style={styles.metricCard}>
+              <Ionicons name='cube-outline' size={28} color='#4CAF50' />
+              <Text style={styles.cardTitle}>{t('total_batches')}</Text>
               <Text style={styles.cardValue}>{numberOfBatches}</Text>
             </View>
           </View>
 
-          {/* Line Chart for Milk Volume Trend */}
-          <View style={styles.chartContainer}>
-            <Text style={styles.chartTitle}>{t('Milk Volume Trend')} (liters)</Text>
+          {/* Line Chart */}
+          <View style={styles.chartCard}>
+            <Text style={styles.chartTitle}>{t('milk_volume_trend')}</Text>
             <LineChart
               data={chartData}
               width={Dimensions.get('window').width - 40}
-              height={220}
+              height={200}
               isAnimated={true}
               color='#4CAF50'
-              thickness={2}
-              yAxisTextStyle={{ color: '#333' }}
-              enablePanGesture={false}
-              onDataPointClick={() => {
-                console.log('masoud');
-              }}
+              thickness={3}
+              yAxisTextStyle={styles.chartText}
+              xAxisLabelTextStyle={styles.chartText}
               showDataPoints
               dataPointsColor='#4CAF50'
               dataPointsRadius={6}
+              textColor='#333'
+              textFontSize={12}
+              onDataPointClick={handleDataPointClick}
             />
           </View>
 
-          {/* Modal for Milk Batch Details */}
-          <Modal
-            animationType='fade'
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => setModalVisible(false)}
-          >
-            <View style={styles.modalOverlay}>
-              <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>{t('Milk Batch Details')}</Text>
-                {selectedBatchDetails && (
-                  <>
-                    <Text style={styles.modalText}>
-                      <Text style={styles.bold}>{t('Milk Batch ID')}:</Text>{' '}
-                      {selectedBatchDetails.milkBatchId}
-                    </Text>
-                    <Text style={styles.modalText}>
-                      <Text style={styles.bold}>{t('Total Volume')}:</Text>{' '}
-                      {selectedBatchDetails.totalVolume} {t('liters')}
-                    </Text>
-                    <Text style={styles.modalText}>
-                      <Text style={styles.bold}>{t('Date')}:</Text>{' '}
-                      {format(new Date(selectedBatchDetails.date), 'dd/MM/yyyy')}
-                    </Text>
-                    <Text style={styles.modalText}>
-                      <Text style={styles.bold}>{t('Expiry Date')}:</Text>{' '}
-                      {format(new Date(selectedBatchDetails.expiryDate), 'dd/MM/yyyy')}
-                    </Text>
-                    <Text style={styles.modalText}>
-                      <Text style={styles.bold}>{t('Status')}:</Text> {selectedBatchDetails.status}
-                    </Text>
-                  </>
-                )}
-                <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
-                  <Text style={styles.closeButtonText}>{t('Close')}</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
-
-          {/* List of Milk Batches */}
-          <FlatList
-            data={milkBatchData}
-            renderItem={renderMilkBatchItem}
-            keyExtractor={(milkBatch) => milkBatch.milkBatchId.toString()}
-            scrollEnabled={false}
-          />
+          {/* Milk Batch List */}
+          <ScrollView>
+            <FlatList
+              data={milkBatchData}
+              renderItem={renderMilkBatchItem}
+              keyExtractor={(milkBatch) => milkBatch.milkBatchId.toString()}
+              scrollEnabled={false}
+              contentContainerStyle={styles.batchList}
+            />
+          </ScrollView>
         </ScrollView>
       ) : (
-        <View style={styles.noMilkBatchesContainer}>
-          <Text>{t('No milk batches found')}</Text>
+        <View style={styles.noDataContainer}>
+          <Text style={styles.noDataText}>{t('no_milk_batches_found')}</Text>
         </View>
       )}
+
+      {/* Modal for Batch Details */}
+      <Modal
+        animationType='slide'
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>{t('Milk Batch Details')}</Text>
+            {selectedBatchDetails && (
+              <>
+                <View style={styles.modalRow}>
+                  <Text style={styles.modalLabel}>{t('Milk Batch ID')}:</Text>
+                  <Text style={styles.modalValue}>{selectedBatchDetails.milkBatchId}</Text>
+                </View>
+                <View style={styles.modalRow}>
+                  <Text style={styles.modalLabel}>{t('Total Volume')}:</Text>
+                  <Text style={styles.modalValue}>
+                    {selectedBatchDetails.totalVolume} {t('liters')}
+                  </Text>
+                </View>
+                <View style={styles.modalRow}>
+                  <Text style={styles.modalLabel}>{t('date')}:</Text>
+                  <Text style={styles.modalValue}>
+                    {format(new Date(selectedBatchDetails.date), 'dd/MM/yyyy')}
+                  </Text>
+                </View>
+                <View style={styles.modalRow}>
+                  <Text style={styles.modalLabel}>{t('Expiry Date')}:</Text>
+                  <Text style={styles.modalValue}>
+                    {format(new Date(selectedBatchDetails.expiryDate), 'dd/MM/yyyy')}
+                  </Text>
+                </View>
+                <View style={styles.modalRow}>
+                  <Text style={styles.modalLabel}>{t('status')}:</Text>
+                  <Text style={styles.modalValue}>{selectedBatchDetails.status}</Text>
+                </View>
+              </>
+            )}
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.modalCloseButtonText}>{t('close')}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       <FloatingButton
         onPress={() => (navigation.navigate as any)('QrCodeScanCow', { screens: 'DetailFormMilk' })}
+        style={styles.floatingButton}
       />
     </View>
   );
@@ -259,98 +320,31 @@ const MilkBatchManagementScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#F7F9FC',
+    paddingHorizontal: 16,
+    paddingTop: 16,
   },
-  noMilkBatchesContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-  },
-  cardsContainer: {
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  card: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 10,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 1 },
-    shadowRadius: 4,
-    elevation: 3,
-    width: (Dimensions.get('window').width - 60) / 3,
+    marginBottom: 16,
   },
-  cardTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-    marginTop: 5,
-  },
-  cardValue: {
-    fontSize: 18,
+  headerTitle: {
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#4CAF50',
-    marginTop: 5,
-  },
-  chartContainer: {
-    marginBottom: 20,
-    alignItems: 'center',
-  },
-  chartTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#333',
-  },
-  milkBatchCard: {
-    backgroundColor: '#fff',
-    marginBottom: 15,
-    padding: 15,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 1 },
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  milkBatchTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: '#3E5C6D',
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginVertical: 10,
-    color: '#333',
-  },
-  dailyMilkCard: {
-    backgroundColor: '#fafafa',
-    padding: 10,
-    marginVertical: 5,
-    borderRadius: 8,
-    borderLeftWidth: 5,
-    borderLeftColor: '#4CAF50',
-  },
-  dailyMilkText: {
-    fontSize: 14,
-    marginBottom: 5,
-    color: '#333',
+    color: '#2D3748',
   },
   errorContainer: {
-    alignItems: 'center',
+    flex: 1,
     justifyContent: 'center',
-    marginTop: 20,
+    alignItems: 'center',
   },
   errorText: {
     fontSize: 16,
-    color: '#E53935',
-    marginBottom: 10,
+    color: '#E53E3E',
+    marginBottom: 16,
+    textAlign: 'center',
   },
   refreshButton: {
     flexDirection: 'row',
@@ -358,12 +352,158 @@ const styles = StyleSheet.create({
     backgroundColor: '#4CAF50',
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 5,
+    borderRadius: 8,
   },
   refreshButtonText: {
-    color: 'white',
+    color: '#fff',
     fontSize: 16,
+    fontWeight: '600',
     marginLeft: 8,
+  },
+  cardsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  metricCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 12,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 3,
+    width: (Dimensions.get('window').width - 48) / 3,
+  },
+  cardTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#4A5568',
+    marginTop: 8,
+  },
+  cardValue: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#4CAF50',
+    marginTop: 4,
+  },
+  chartCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  chartTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2D3748',
+    marginBottom: 12,
+  },
+  chartText: {
+    fontSize: 12,
+    color: '#4A5568',
+  },
+  batchList: {
+    paddingBottom: 80, // Space for floating button
+  },
+  milkBatchCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 3,
+    overflow: 'hidden',
+  },
+  milkBatchHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#F9FAFB',
+  },
+  milkBatchHeaderContent: {
+    flex: 1,
+  },
+  milkBatchTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2D3748',
+    marginBottom: 4,
+  },
+  milkBatchSubtitle: {
+    fontSize: 14,
+    color: '#4A5568',
+    marginBottom: 4,
+  },
+  statusBadge: {
+    alignSelf: 'flex-start',
+    paddingVertical: 4,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+  },
+  statusText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  dailyMilkContainer: {
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#E2E8F0',
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2D3748',
+    marginBottom: 12,
+  },
+  dailyMilkCard: {
+    backgroundColor: '#F9FAFB',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: '#4CAF50',
+  },
+  dailyMilkRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  dailyMilkText: {
+    fontSize: 14,
+    color: '#4A5568',
+    marginLeft: 8,
+  },
+  detailsButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 12,
+    alignItems: 'center',
+    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: 12,
+  },
+  detailsButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  noDataContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noDataText: {
+    fontSize: 16,
+    color: '#4A5568',
   },
   modalOverlay: {
     flex: 1,
@@ -372,38 +512,51 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
     padding: 20,
-    borderRadius: 10,
-    width: '80%',
-    alignItems: 'center',
+    width: '85%',
+    maxWidth: 400,
   },
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 15,
-    color: '#333',
+    color: '#2D3748',
+    marginBottom: 16,
+    textAlign: 'center',
   },
-  modalText: {
-    fontSize: 16,
-    color: '#555',
-    marginBottom: 10,
+  modalRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
   },
-  bold: {
-    fontWeight: 'bold',
-    color: '#222',
+  modalLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#4A5568',
+    flex: 1,
   },
-  closeButton: {
-    marginTop: 15,
+  modalValue: {
+    fontSize: 14,
+    color: '#2D3748',
+    flex: 1,
+    textAlign: 'right',
+  },
+  modalCloseButton: {
     backgroundColor: '#4CAF50',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 16,
   },
-  closeButtonText: {
-    color: 'white',
+  modalCloseButtonText: {
     fontSize: 16,
     fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  floatingButton: {
+    bottom: 32,
+    right: 16,
   },
 });
 
