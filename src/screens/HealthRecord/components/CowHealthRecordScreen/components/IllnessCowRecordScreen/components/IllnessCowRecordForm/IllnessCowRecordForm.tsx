@@ -12,7 +12,7 @@ import { useMutation } from 'react-query';
 import apiClient from '@config/axios/axios';
 import { useNavigation } from '@react-navigation/native';
 import { Button, Text } from 'react-native-paper';
-import { convertToDDMMYYYY } from '@utils/format';
+import { convertToDDMMYYYY, formatCamelCase } from '@utils/format';
 import RenderHtmlComponent from '@components/RenderHTML/RenderHtmlComponent';
 import { Ionicons } from '@expo/vector-icons'; // Import Ionicons from @expo/vector-icons
 import { useSelector } from 'react-redux';
@@ -27,7 +27,9 @@ interface IllnessCowRecordFormProps {
 const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
   const navigation = useNavigation();
   const [isEditing, setIsEditing] = useState(false); // Toggle for edit mode
-  const [startDate, setStartDate] = useState(new Date(illness.startDate)?.toISOString());
+  const [startDate, setStartDate] = useState(
+    new Date(illness.startDate)?.toISOString()
+  );
   const [symptoms, setSymptoms] = useState(illness.symptoms);
   const [endDate, setEndDate] = useState();
 
@@ -86,7 +88,9 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
     mutate(payload);
   };
 
-  const formattedStartDate = convertToDDMMYYYY(new Date(startDate).toISOString().split('T')[0]);
+  const formattedStartDate = convertToDDMMYYYY(
+    new Date(startDate).toISOString().split('T')[0]
+  );
   const formattedEndDate = endDate
     ? convertToDDMMYYYY(new Date(endDate).toISOString().split('T')[0])
     : 'N/A';
@@ -97,17 +101,27 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
         title={t('illness.Illness Record', { defaultValue: 'Illness Record' })}
         subTitle={
           isEditing
-            ? t('illness.Edit_the_illness_details', { defaultValue: 'Edit the illness details' })
-            : t('illness.View_illness_details', { defaultValue: 'View illness details' })
+            ? t('illness.Edit_the_illness_details', {
+                defaultValue: 'Edit the illness details',
+              })
+            : t('illness.View_illness_details', {
+                defaultValue: 'View illness details',
+              })
         }
-        leftContent={(props: any) => <LeftContent {...props} icon='cards-heart' />}
+        leftContent={(props: any) => (
+          <LeftContent {...props} icon="cards-heart" />
+        )}
       />
       <CardComponent.Content>
         {!isEditing ? (
           // Read-only view
           <View>
-            <Text style={styles.label}>{t('Severity', { defaultValue: 'Severity' })}:</Text>
-            <Text style={styles.value}>{illness.severity || 'N/A'}</Text>
+            <Text style={styles.label}>
+              {t('Severity', { defaultValue: 'Severity' })}:
+            </Text>
+            <Text style={styles.value}>
+              {t(formatCamelCase(illness.severity)) || 'N/A'}
+            </Text>
 
             <View style={styles.dateContainer}>
               <View>
@@ -115,7 +129,7 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
                 <Text style={styles.value}>{formattedStartDate}</Text>
               </View>
               <View>
-                <Ionicons name='arrow-forward' size={20} color='#000' />
+                <Ionicons name="arrow-forward" size={20} color="#000" />
                 {/* Replaced faArrowRight with arrow-forward */}
               </View>
               <View>
@@ -135,8 +149,11 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
             </View>
             {roleName.toLowerCase() !== 'worker' && (
               <Button
-                mode='contained'
-                style={[styles.editButton, { backgroundColor: `${getColorByrole()}` }]}
+                mode="contained"
+                style={[
+                  styles.editButton,
+                  { backgroundColor: `${getColorByrole()}` },
+                ]}
                 onPress={() => setIsEditing(true)}
               >
                 Edit
@@ -149,7 +166,7 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
             <FormItem
               control={control}
               label={t('Severity', { defaultValue: 'Severity' })}
-              name='severity'
+              name="severity"
               render={({ field: { onChange, onBlur, value } }) => (
                 <CustomPicker
                   onValueChange={onChange}
@@ -172,14 +189,16 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
 
               <View style={{ width: '48%' }}>
                 <Text style={styles.label}>{t('Start Date')}</Text>
-                <Text style={styles.value}>{endDate ? formattedEndDate : 'N/A'}</Text>
+                <Text style={styles.value}>
+                  {endDate ? formattedEndDate : 'N/A'}
+                </Text>
               </View>
             </View>
 
             <FormItem
               control={control}
               label={t('Prognosis')}
-              name='prognosis'
+              name="prognosis"
               rules={{ required: 'Must not be empty' }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextEditorComponent
@@ -193,16 +212,22 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
             <FormItem
               control={control}
               label={t('Symptoms')}
-              name='symptoms'
-              render={({ field: { value } }) => <Text style={styles.textView}>{symptoms}</Text>}
+              name="symptoms"
+              render={({ field: { value } }) => (
+                <Text style={styles.textView}>{symptoms}</Text>
+              )}
             />
 
             <View style={styles.buttonContainer}>
-              <Button mode='contained' style={styles.submitButton} onPress={handleSubmit(onSubmit)}>
+              <Button
+                mode="contained"
+                style={styles.submitButton}
+                onPress={handleSubmit(onSubmit)}
+              >
                 {t('Save')}
               </Button>
               <Button
-                mode='outlined'
+                mode="outlined"
                 style={styles.cancelButton}
                 onPress={() => setIsEditing(false)}
               >

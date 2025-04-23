@@ -35,15 +35,19 @@ const CardCow: React.FC<CardCowProps> = ({ cow, onPress, width }) => {
               gap: 5,
             }}
           >
-            <Text style={styles.cardTitle}>{cow.name || t('card_cow.unnamed')}</Text>
+            <Text style={styles.cardTitle}>
+              {cow.name || t('card_cow.unnamed')}
+            </Text>
             {cow.gender === Gender.MALE ? (
-              <Ionicons name='male' size={15} color='blue' />
+              <Ionicons name="male" size={15} color="blue" />
             ) : (
-              <Ionicons name='female' color='red' size={15} />
+              <Ionicons name="female" color="red" size={15} />
             )}
           </View>
           <Tooltip title={t('card_cow.cow_type')}>
-            <Text style={[styles.cardType, { backgroundColor: useRoleColor() }]}>
+            <Text
+              style={[styles.cardType, { backgroundColor: useRoleColor() }]}
+            >
               {cow.cowType?.name || 'N/A'}
             </Text>
           </Tooltip>
@@ -53,7 +57,11 @@ const CardCow: React.FC<CardCowProps> = ({ cow, onPress, width }) => {
           {cow?.penResponse && (
             <TextRenderHorizontal
               title={t('card_cow.pen', { defaultValue: 'Pen' })}
-              content={cow?.penResponse ? formatCamelCase(cow?.penResponse?.name) : 'N/A'}
+              content={
+                cow?.penResponse
+                  ? formatCamelCase(cow?.penResponse?.name)
+                  : 'N/A'
+              }
             />
           )}
           <TextRenderHorizontal

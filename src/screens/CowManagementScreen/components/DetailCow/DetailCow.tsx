@@ -38,7 +38,11 @@ const DetailCow: React.FC = () => {
   const navigator = useNavigation();
   const { cowId } = route.params;
 
-  const { data: cow, isLoading, isError } = useQuery(['cow', cowId], () => fetchCowDetails(cowId));
+  const {
+    data: cow,
+    isLoading,
+    isError,
+  } = useQuery(['cow', cowId], () => fetchCowDetails(cowId));
 
   console.log(cow?.inPen);
 
@@ -65,26 +69,29 @@ const DetailCow: React.FC = () => {
         <Text style={styles.title}>{cow.name}</Text>
         <Text style={styles.text}>
           🐄 <Text style={styles.bold}>{t('cowDetails.status')}: </Text>
-          {formatCamelCase(cow.cowStatus)}
+          {t(formatCamelCase(cow.cowStatus))}
         </Text>
         <Text style={styles.text}>
-          📅 <Text style={styles.bold}>{t('cowDetails.dateOfBirth')}: </Text> {cow.dateOfBirth}
+          📅 <Text style={styles.bold}>{t('cowDetails.dateOfBirth')}: </Text>{' '}
+          {cow.dateOfBirth}
         </Text>
         <Text style={styles.text}>
-          📅 <Text style={styles.bold}>{t('cowDetails.dateEntered')}: </Text> {cow.dateOfEnter}
+          📅 <Text style={styles.bold}>{t('cowDetails.dateEntered')}: </Text>{' '}
+          {cow.dateOfEnter}
         </Text>
         {cow.dateOfOut && (
           <Text style={styles.text}>
-            📅 <Text style={styles.bold}>{t('cowDetails.dateOut')}: </Text> {cow.dateOfOut}
+            📅 <Text style={styles.bold}>{t('cowDetails.dateOut')}: </Text>{' '}
+            {cow.dateOfOut}
           </Text>
         )}
         <Text style={styles.text}>
           📍 <Text style={styles.bold}>{t('cowDetails.origin')}: </Text>
-          {formatCamelCase(cow.cowOrigin)}
+          {t(formatCamelCase(cow.cowOrigin))}
         </Text>
         <Text style={styles.text}>
           ⚧ <Text style={styles.bold}>{t('cowDetails.gender')}: </Text>
-          {formatCamelCase(cow.gender)}
+          {t(formatCamelCase(cow.gender))}
         </Text>
         <Text style={styles.text}>
           🏡 <Text style={styles.bold}>{t('cowDetails.inPen')}: </Text>
@@ -99,7 +106,9 @@ const DetailCow: React.FC = () => {
             📖 <Text style={styles.bold}>{t('cowDetails.description')}: </Text>
           </Text>
           <View style={{ paddingHorizontal: 20 }}>
-            <RenderHTML source={{ html: cow.description ? cow.description : '' }} />
+            <RenderHTML
+              source={{ html: cow.description ? cow.description : '' }}
+            />
           </View>
         </View>
       </View>
@@ -113,10 +122,11 @@ const DetailCow: React.FC = () => {
           </Text>
           <Text style={styles.text}>
             🔹 <Text style={styles.bold}>{t('cowDetails.penStatus')}: </Text>
-            {formatCamelCase(cow.penResponse.penStatus)}
+            {t(formatCamelCase(cow.penResponse.penStatus))}
           </Text>
           <Text style={styles.text}>
-            🔹 <Text style={styles.bold}>{t('cowDetails.penDescription')}: </Text>
+            🔹{' '}
+            <Text style={styles.bold}>{t('cowDetails.penDescription')}: </Text>
             {cow.penResponse.description}
           </Text>
           <Text style={styles.text}>
@@ -139,7 +149,10 @@ const DetailCow: React.FC = () => {
           </Text>
           <View style={{ flexDirection: 'column' }}>
             <Text style={styles.text}>
-              🔹 <Text style={styles.bold}>{t('cowDetails.areaDescription')}: </Text>
+              🔹{' '}
+              <Text style={styles.bold}>
+                {t('cowDetails.areaDescription')}:{' '}
+              </Text>
             </Text>
             <View style={{ paddingHorizontal: 20 }}>
               <RenderHTML source={{ html: cow.penResponse.area.description }} />
@@ -147,7 +160,7 @@ const DetailCow: React.FC = () => {
           </View>
           <Text style={styles.text}>
             🔹 <Text style={styles.bold}>{t('cowDetails.areaType')}: </Text>
-            {formatCamelCase(cow.penResponse.area.areaType)}
+            {t(formatCamelCase(cow.penResponse.area.areaType))}
           </Text>
           <Text style={styles.text}>
             📅 <Text style={styles.bold}>{t('cowDetails.createdAt')}: </Text>
@@ -161,17 +174,20 @@ const DetailCow: React.FC = () => {
       )}
 
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>{t('cowDetails.cowTypeDetails')}</Text>
+        <Text style={styles.sectionTitle}>
+          {t('cowDetails.cowTypeDetails')}
+        </Text>
         <Text style={styles.text}>
           🔹 <Text style={styles.bold}>{t('cowDetails.typeName')}: </Text>
           {formatCamelCase(cow.cowType.name)}
         </Text>
         <Text style={styles.text}>
           🔹 <Text style={styles.bold}>{t('cowDetails.typeStatus')}: </Text>
-          {formatCamelCase(cow.cowType.status)}
+          {t(formatCamelCase(cow.cowType.status))}
         </Text>
         <Text style={styles.text}>
-          🔹 <Text style={styles.bold}>{t('cowDetails.typeDescription')}: </Text>
+          🔹{' '}
+          <Text style={styles.bold}>{t('cowDetails.typeDescription')}: </Text>
           {cow.cowType.description}
         </Text>
         <Text style={styles.text}>
@@ -207,7 +223,11 @@ const DetailCow: React.FC = () => {
         onValueChange={setSelectedSegment}
         buttons={[
           { value: 'list', label: t('cow_management.cows'), icon: 'cow' },
-          { value: 'milkReport', label: t('cow_management.report'), icon: 'chart-bar' },
+          {
+            value: 'milkReport',
+            label: t('cow_management.report'),
+            icon: 'chart-bar',
+          },
         ]}
       />
       <ScrollView style={styles.container}>
@@ -243,6 +263,8 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 5,
     marginBottom: 15,
+    flexDirection: 'column',
+    gap: 5,
   },
   title: {
     fontSize: 24,
