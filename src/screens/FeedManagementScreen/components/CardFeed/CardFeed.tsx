@@ -36,7 +36,11 @@ const CardFeed = ({ item, navigation }: CardFeedProps) => {
       <TouchableOpacity style={styles.cardWrapper} onPress={navigation}>
         <View style={styles.titleContainer}>
           <View style={styles.title}>
-            <Text>{item.name}</Text>
+            <Text
+              style={{ fontSize: 20, fontWeight: '700', color: COLORS.primary }}
+            >
+              {item.name}
+            </Text>
             <View style={styles.tagContainer}>
               <Tooltip enterTouchDelay={100} title={t('feed.cow_type')}>
                 <TagUI backgroundColor={useRoleColor()}>
