@@ -3,9 +3,8 @@ import CardComponent from '@components/Card/CardComponent';
 import DividerUI from '@components/UI/DividerUI';
 import TagUI from '@components/UI/TagUI';
 import TextTitle from '@components/UI/TextTitle';
-import { RootState } from '@core/store/store';
+import { Ionicons } from '@expo/vector-icons';
 import { FeedMeals } from '@model/Feed/Feed';
-import { useNavigation } from '@react-navigation/native';
 import {
   calculateTotalQuantity,
   filteredHay,
@@ -19,7 +18,6 @@ import { t } from 'i18next';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Text, Tooltip } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 interface CardFeedProps {
   item: FeedMeals;
@@ -39,7 +37,7 @@ const CardFeed = ({ item, navigation }: CardFeedProps) => {
             <Text
               style={{ fontSize: 20, fontWeight: '700', color: COLORS.primary }}
             >
-              {item.name}
+              🍔 {item.name}
             </Text>
             <View style={styles.tagContainer}>
               <Tooltip enterTouchDelay={100} title={t('feed.cow_type')}>

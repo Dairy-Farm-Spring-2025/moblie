@@ -27,7 +27,7 @@ type RootStackParamList = {
   Login: undefined;
   Task: undefined;
   QRScan: undefined;
-  Welcome: undefined;
+  Welcome?: undefined; // Optional if not used in the Tab.Navigator
 };
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -38,7 +38,9 @@ const fetchNotification = async (): Promise<Notification[]> => {
     const response = await apiClient.get('/notifications/myNotification');
     return response.data;
   } catch (error: any) {
-    throw new Error(error?.message || 'An error occurred while fetching the data');
+    throw new Error(
+      error?.message || 'An error occurred while fetching the data'
+    );
   }
 };
 
@@ -80,7 +82,9 @@ const NavigationWrapper = () => {
     fetchNotification
   );
   const navigation = useNavigation();
-  const { isAuthenticated, roleName } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated, roleName } = useSelector(
+    (state: RootState) => state.auth
+  );
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [selectedField, setSelectedField] = useState<string | null>(null);
 
@@ -170,12 +174,37 @@ const NavigationWrapper = () => {
           unmountOnBlur: true,
           tabBarActiveTintColor: roleColors.primary,
           tabBarInactiveTintColor: roleColors.inactive,
+          tabBarLabel: ({ focused }) => {
+            const routeName = route.name as keyof RootStackParamList;
+            const label = {
+              Home: t('tab.home', { defaultValue: 'Home' }),
+              Task: t('tab.task', { defaultValue: 'Task' }),
+              Notification: t('tab.notification', {
+                defaultValue: 'Notification',
+              }),
+              Profile: t('tab.profile', { defaultValue: 'Profile' }),
+              QRScan: t('tab.qrscan', { defaultValue: 'QR Scan' }),
+              Welcome: t('tab.welcome', { defaultValue: 'Welcome' }),
+              Login: t('tab.login', { defaultValue: 'Login' }),
+            }[routeName];
+
+            return (
+              <Text
+                style={{
+                  color: focused ? roleColors.primary : roleColors.inactive,
+                  fontSize: 12,
+                }}
+              >
+                {label}
+              </Text>
+            );
+          },
         })}
       >
-        <Tab.Screen name='Home' component={CowRoute} key={'Home'} />
-        <Tab.Screen name='Task' component={TaskManagementRoute} key={'Task'} />
+        <Tab.Screen name="Home" component={CowRoute} key={'Home'} />
+        <Tab.Screen name="Task" component={TaskManagementRoute} key={'Task'} />
         <Tab.Screen
-          name='QRScan'
+          name="QRScan"
           component={QrScanRoute}
           options={{
             tabBarLabel: '',
@@ -184,25 +213,32 @@ const NavigationWrapper = () => {
             tabBarIcon: ({ size, focused }) => (
               <Ionicons
                 style={{ marginTop: 1 }}
-                name='qr-code'
+                name="qr-code"
                 size={size + 4}
                 color={focused ? '#fff' : '#f8f8f8'}
               />
             ),
             tabBarButton: (props) => (
-              <CustomTabBarButton {...props} roleColors={roleColors} onPress={handleQrScanPress} />
+              <CustomTabBarButton
+                {...props}
+                roleColors={roleColors}
+                onPress={handleQrScanPress}
+              />
             ),
           }}
         />
         <Tab.Screen
-          name='Notification'
+          name="Notification"
           key={'Notification'}
           component={NotificationScreen}
           options={{
             tabBarBadge:
               myNotificationData &&
-              myNotificationData?.filter((element) => element.read === false)?.length > 0
-                ? myNotificationData?.filter((element) => element.read === false)?.length
+              myNotificationData?.filter((element) => element.read === false)
+                ?.length > 0
+                ? myNotificationData?.filter(
+                    (element) => element.read === false
+                  )?.length
                 : undefined,
             tabBarBadgeStyle: {
               backgroundColor: 'red',
@@ -213,13 +249,17 @@ const NavigationWrapper = () => {
             },
           }}
         />
-        <Tab.Screen name='Profile' key={'Profile'} component={ProfileManagementRoute} />
+        <Tab.Screen
+          name="Profile"
+          key={'Profile'}
+          component={ProfileManagementRoute}
+        />
       </Tab.Navigator>
 
       <Modal
         visible={isDrawerVisible}
         transparent={true}
-        animationType='slide'
+        animationType="slide"
         onRequestClose={() => setIsDrawerVisible(false)}
       >
         <View style={styles.modalContainer}>
@@ -238,7 +278,9 @@ const NavigationWrapper = () => {
                 style={styles.closeButton}
                 onPress={() => setIsDrawerVisible(false)}
               >
-                <Text style={styles.closeButtonText}>{t('Close', { defaultValue: 'Close' })}</Text>
+                <Text style={styles.closeButtonText}>
+                  {t('Close', { defaultValue: 'Close' })}
+                </Text>
               </TouchableOpacity>
             </View>
             {optionsScan.map((element) => (
@@ -256,7 +298,7 @@ const NavigationWrapper = () => {
     </>
   ) : (
     <Stack.Navigator>
-      <Stack.Screen name='Login' component={SignInScreen} />
+      <Stack.Screen name="Login" component={SignInScreen} />
     </Stack.Navigator>
   );
 };
