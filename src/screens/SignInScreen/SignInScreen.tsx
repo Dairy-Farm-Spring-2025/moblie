@@ -20,7 +20,8 @@ import { AppDispatch } from '@core/store/store';
 import { validateEmail } from '@utils/validation';
 import { FontAwesome } from '@expo/vector-icons';
 import { t } from 'i18next';
-import * as ExpoLinking from 'expo-linking';
+import * as WebBrowser from 'expo-web-browser';
+import * as Linking from 'expo-linking';
 import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
 
 const SignInScreen: React.FC = () => {
@@ -32,6 +33,7 @@ const SignInScreen: React.FC = () => {
   const [passwordError, setPasswordError] = useState('');
   const dispatch: AppDispatch = useDispatch();
 
+  // Redirect URI for OAuth (must match Google OAuth client configuration)
   const redirectUri = 'exp://192.168.2.12:8081/--/oauth2/callback';
 
   const handleEmailChange = (text: string) => {
@@ -101,26 +103,14 @@ const SignInScreen: React.FC = () => {
       `&state=platform=mobile`;
 
     try {
-      console.log('Opening URL:', googleAuthUrl);
-      const supported = await ExpoLinking.canOpenURL(googleAuthUrl);
-      if (supported) {
-        await ExpoLinking.openURL(googleAuthUrl);
-      } else {
-        Alert.alert('Error', "Can't open this URL");
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Failed to initiate Google Sign-In');
-      console.error('Error:', error);
-    }
-  };
-
-  useEffect(() => {
-    const handleDeepLink = (event: { url: string }) => {
-      const url = event.url;
-      console.log('Deep link received:', url);
-
-      try {
-        const { queryParams } = ExpoLinking.parse(url);
+      console.log('Opening Google Auth URL:', googleAuthUrl);
+      const result = await WebBrowser.openAuthSessionAsync(googleAuthUrl, redirectUri);
+      const redirect = Linking.createURL('/oauth2/callback');
+      console.log('redirect', redirect);
+      if (result.type === 'success' && result.url) {
+        console.log('Redirect URL:', result.url);
+        // Parse the redirect URL to extract query parameters
+        const { queryParams } = require('expo-linking').parse(result.url);
         const accessToken = queryParams?.access_token;
         const refreshToken = queryParams?.refresh_token;
         const userId = queryParams?.userId;
@@ -139,20 +129,19 @@ const SignInScreen: React.FC = () => {
             })
           );
           Alert.alert('Success', `Welcome, ${userName || 'User'}`);
+        } else {
+          Alert.alert('Error', 'Failed to retrieve authentication tokens');
         }
-      } catch (error) {
-        Alert.alert('Error', 'Failed to process redirect URL');
-        console.error('Deep link error:', error);
+      } else if (result.type === 'cancel' || result.type === 'dismiss') {
+        Alert.alert('Cancelled', 'Google Sign-In was cancelled');
+      } else {
+        Alert.alert('Error', 'Failed to complete Google Sign-In');
       }
-    };
-
-    const subscription = ExpoLinking.addEventListener('url', handleDeepLink);
-    ExpoLinking.getInitialURL().then((url) => {
-      if (url) handleDeepLink({ url });
-    });
-
-    return () => subscription.remove();
-  }, [dispatch]);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to initiate Google Sign-In');
+      console.error('Google Sign-In Error:', error);
+    }
+  };
 
   if (loading) {
     return <LoadingSplashScreen />;

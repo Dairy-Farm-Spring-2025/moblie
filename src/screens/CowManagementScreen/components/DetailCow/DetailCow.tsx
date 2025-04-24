@@ -38,11 +38,7 @@ const DetailCow: React.FC = () => {
   const navigator = useNavigation();
   const { cowId } = route.params;
 
-  const {
-    data: cow,
-    isLoading,
-    isError,
-  } = useQuery(['cow', cowId], () => fetchCowDetails(cowId));
+  const { data: cow, isLoading, isError } = useQuery(['cow', cowId], () => fetchCowDetails(cowId));
 
   console.log(cow?.inPen);
 
@@ -72,17 +68,14 @@ const DetailCow: React.FC = () => {
           {t(formatCamelCase(cow.cowStatus))}
         </Text>
         <Text style={styles.text}>
-          📅 <Text style={styles.bold}>{t('cowDetails.dateOfBirth')}: </Text>{' '}
-          {cow.dateOfBirth}
+          📅 <Text style={styles.bold}>{t('cowDetails.dateOfBirth')}: </Text> {cow.dateOfBirth}
         </Text>
         <Text style={styles.text}>
-          📅 <Text style={styles.bold}>{t('cowDetails.dateEntered')}: </Text>{' '}
-          {cow.dateOfEnter}
+          📅 <Text style={styles.bold}>{t('cowDetails.dateEntered')}: </Text> {cow.dateOfEnter}
         </Text>
         {cow.dateOfOut && (
           <Text style={styles.text}>
-            📅 <Text style={styles.bold}>{t('cowDetails.dateOut')}: </Text>{' '}
-            {cow.dateOfOut}
+            📅 <Text style={styles.bold}>{t('cowDetails.dateOut')}: </Text> {cow.dateOfOut}
           </Text>
         )}
         <Text style={styles.text}>
@@ -105,10 +98,8 @@ const DetailCow: React.FC = () => {
           <Text style={styles.text}>
             📖 <Text style={styles.bold}>{t('cowDetails.description')}: </Text>
           </Text>
-          <View style={{ paddingHorizontal: 20 }}>
-            <RenderHTML
-              source={{ html: cow.description ? cow.description : '' }}
-            />
+          <View style={{ paddingHorizontal: 26 }}>
+            <RenderHTML source={{ html: cow.description ? cow.description : '' }} />
           </View>
         </View>
       </View>
@@ -124,11 +115,13 @@ const DetailCow: React.FC = () => {
             🔹 <Text style={styles.bold}>{t('cowDetails.penStatus')}: </Text>
             {t(formatCamelCase(cow.penResponse.penStatus))}
           </Text>
-          <Text style={styles.text}>
-            🔹{' '}
-            <Text style={styles.bold}>{t('cowDetails.penDescription')}: </Text>
-            {cow.penResponse.description}
-          </Text>
+          <View style={styles.text}>
+            <Text style={styles.text}>
+              🔹
+              <Text style={styles.bold}>{t('cowDetails.typeDescription')}: </Text>
+            </Text>
+            <Text style={{ paddingHorizontal: 20 }}>{cow.penResponse.description}</Text>
+          </View>
           <Text style={styles.text}>
             📅 <Text style={styles.bold}>{t('cowDetails.createdAt')}: </Text>
             {new Date(cow.penResponse.createdAt).toLocaleString()}
@@ -149,12 +142,9 @@ const DetailCow: React.FC = () => {
           </Text>
           <View style={{ flexDirection: 'column' }}>
             <Text style={styles.text}>
-              🔹{' '}
-              <Text style={styles.bold}>
-                {t('cowDetails.areaDescription')}:{' '}
-              </Text>
+              🔹 <Text style={styles.bold}>{t('cowDetails.areaDescription')}: </Text>
             </Text>
-            <View style={{ paddingHorizontal: 20 }}>
+            <View style={{ paddingHorizontal: 26 }}>
               <RenderHTML source={{ html: cow.penResponse.area.description }} />
             </View>
           </View>
@@ -174,9 +164,7 @@ const DetailCow: React.FC = () => {
       )}
 
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>
-          {t('cowDetails.cowTypeDetails')}
-        </Text>
+        <Text style={styles.sectionTitle}>{t('cowDetails.cowTypeDetails')}</Text>
         <Text style={styles.text}>
           🔹 <Text style={styles.bold}>{t('cowDetails.typeName')}: </Text>
           {formatCamelCase(cow.cowType.name)}
@@ -185,11 +173,13 @@ const DetailCow: React.FC = () => {
           🔹 <Text style={styles.bold}>{t('cowDetails.typeStatus')}: </Text>
           {t(formatCamelCase(cow.cowType.status))}
         </Text>
-        <Text style={styles.text}>
-          🔹{' '}
-          <Text style={styles.bold}>{t('cowDetails.typeDescription')}: </Text>
-          {cow.cowType.description}
-        </Text>
+        <View style={styles.text}>
+          <Text style={styles.text}>
+            🔹
+            <Text style={styles.bold}>{t('cowDetails.typeDescription')}: </Text>
+          </Text>
+          <Text style={{ paddingHorizontal: 20 }}>{cow.cowType.description}</Text>
+        </View>
         <Text style={styles.text}>
           📅 <Text style={styles.bold}>{t('cowDetails.createdAt')}: </Text>
           {new Date(cow.cowType.createdAt).toLocaleString()}

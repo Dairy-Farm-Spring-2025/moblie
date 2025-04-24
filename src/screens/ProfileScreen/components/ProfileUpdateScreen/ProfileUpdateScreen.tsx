@@ -22,8 +22,8 @@ interface FormDataType {
 }
 
 const genderOptions: Option[] = [
-  { label: 'male', value: 'male' },
-  { label: 'female', value: 'female' },
+  { label: t('male', { defaultValue: 'Male' }), value: 'male' },
+  { label: t('female', { defaultValue: 'Female' }), value: 'female' },
 ];
 
 type RootStackParamList = {
@@ -40,7 +40,7 @@ const ProfileUpdateScreen: React.FC = () => {
   const [name, setName] = useState<string>('');
   const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [phoneError, setPhoneError] = useState<string>('');
-  const [street, setStreet] = useState<string>('');
+  const [street, setStreet] = useState<string>(user.address!.split(', ')[0] || '');
   const [ward, setWard] = useState<string>('');
   const [district, setDistrict] = useState<string>('');
   const [province, setProvince] = useState<string>('');
@@ -148,7 +148,10 @@ const ProfileUpdateScreen: React.FC = () => {
 
         if (user.address) {
           const provinceName = user.address.split(', ')[3];
-          const matchedProvince = provinces.find((p: any) => p.label === provinceName);
+          console.log('provinceName', provinceName);
+          const matchedProvince = provinces.find(
+            (p: any) => p.label.toLowerCase() === provinceName.toLowerCase()
+          );
           if (matchedProvince) setProvince(matchedProvince.value);
         }
       } catch (error) {
@@ -183,7 +186,9 @@ const ProfileUpdateScreen: React.FC = () => {
 
         if (user.address && province) {
           const districtName = user.address.split(', ')[2];
-          const matchedDistrict = districts.find((d: any) => d.label === districtName);
+          const matchedDistrict = districts.find(
+            (d: any) => d.label.toLowerCase() === districtName.toLowerCase()
+          );
           if (matchedDistrict) setDistrict(matchedDistrict.value);
         }
       } catch (error) {
@@ -216,7 +221,9 @@ const ProfileUpdateScreen: React.FC = () => {
 
         if (user.address && district) {
           const wardName = user.address.split(', ')[1];
-          const matchedWard = wards.find((w: any) => w.label === wardName);
+          const matchedWard = wards.find(
+            (w: any) => w.label.toLowerCase() === wardName.toLowerCase()
+          );
           if (matchedWard) setWard(matchedWard.value);
         }
       } catch (error) {
