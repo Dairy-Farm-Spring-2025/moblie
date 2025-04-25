@@ -45,7 +45,7 @@ const ProfileUpdateScreen: React.FC = () => {
   const [district, setDistrict] = useState<string>('');
   const [province, setProvince] = useState<string>('');
   const [dob, setDob] = useState<string>(''); // Stored as DD-MM-YYYY
-  const [gender, setGender] = useState<string>(user.gender! || ''); // Initialize as empty
+  const [gender, setGender] = useState<string>(user.gender || ''); // Initialize as empty
   const [provinceOptions, setProvinceOptions] = useState<Option[]>([]);
   const [districtOptions, setDistrictOptions] = useState<Option[]>([]);
   const [wardOptions, setWardOptions] = useState<Option[]>([]);
@@ -431,15 +431,12 @@ const ProfileUpdateScreen: React.FC = () => {
           {/* Edit/Update Buttons */}
           {!isEditing ? (
             <View>
-              <Button mode='contained' onPress={() => setIsEditing(true)} style={styles.button}>
-                {t('profile.editButton', { defaultValue: 'Edit Profile' })}
-              </Button>
               <Button
                 mode='contained'
                 onPress={() => (navigation.navigate as any)('UpdateUserInfoScan')}
                 style={styles.button}
               >
-                {t('profile.editButton', { defaultValue: 'Using Identity Card' })}
+                {t('profile.identityCardButton', { defaultValue: 'Using Identity Card' })}
               </Button>
             </View>
           ) : (

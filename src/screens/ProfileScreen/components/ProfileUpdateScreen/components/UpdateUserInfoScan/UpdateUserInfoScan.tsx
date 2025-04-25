@@ -236,7 +236,7 @@ const UpdateUserInfoScan = () => {
           <View style={styles.scrollContainer}>
             <View style={styles.card}>
               <Text style={styles.title}>
-                {t('update_scan.title', { defaultValue: 'Update User Info - Scan' })}
+                {t('update_scan.title', { defaultValue: 'Update User Info' })}
               </Text>
               <Text style={styles.subtitle}>
                 {t('update_scan.message', {
@@ -252,7 +252,7 @@ const UpdateUserInfoScan = () => {
                   style={styles.input}
                   value={phoneNumber}
                   onChangeText={handlePhoneChange}
-                  placeholder={t('profile.phone_placeholder', {
+                  placeholder={t('update_scan.phone_placeholder', {
                     defaultValue: 'Enter your phone number',
                   })}
                   keyboardType='phone-pad'
@@ -387,7 +387,7 @@ const UpdateUserInfoScan = () => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>
-              {t('profile.scan_options_title', { defaultValue: 'Select an Option' })}
+              {t('update_scan.scan_options_title', { defaultValue: 'Select an Option' })}
             </Text>
             <TouchableOpacity style={styles.modalButton} onPress={takePicture}>
               <Text style={styles.buttonText}>
