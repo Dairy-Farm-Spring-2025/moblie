@@ -6,15 +6,19 @@ import {
   TouchableOpacity,
   Modal,
   ActivityIndicator,
-  ScrollView,
   TextInput,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Platform,
 } from 'react-native';
-import { Card, Text } from 'react-native-paper';
+import { Button, Card, Text } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import { useMutation } from 'react-query';
-import { LinearGradient } from 'expo-linear-gradient';
 import apiClient from '@config/axios/axios';
 import { t } from 'i18next';
+import { ScrollView } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 
 interface IdentityCardData {
   id: string;
@@ -38,12 +42,14 @@ interface FormDataType {
 }
 
 const UpdateUserInfoScan = () => {
+  const navigate = useNavigation();
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [optionsModalVisible, setOptionsModalVisible] = useState<boolean>(false);
   const [cardData, setCardData] = useState<IdentityCardData | null>(null);
   const [scannedData, setScannedData] = useState<IdentityCardData | null>(null);
-  const [phoneNumber, setPhoneNumber] = useState<string>(''); // State for phone number
-  const [phoneError, setPhoneError] = useState<string>(''); // State for phone number validation error
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
+  const [phoneError, setPhoneError] = useState<string>('');
+  const [isPhoneValid, setIsPhoneValid] = useState<boolean>(false);
 
   // Normalize gender for translation and API
   const normalizeGender = (sex: string): string => {
@@ -71,7 +77,7 @@ const UpdateUserInfoScan = () => {
 
   const handlePhoneChange = (value: string) => {
     setPhoneNumber(value);
-    validatePhoneNumber(value);
+    setIsPhoneValid(validatePhoneNumber(value));
   };
 
   // Mutation for scanning identity card
@@ -204,18 +210,9 @@ const UpdateUserInfoScan = () => {
     }
   };
 
-  const handleConfirm = () => {
-    setCardData(scannedData);
-    setOptionsModalVisible(false);
-    Alert.alert(
-      t('profile.identity_scan_success', { defaultValue: 'Identity card scanned successfully' }),
-      t('profile.identity_scan_success_message', { defaultValue: 'Data extracted successfully' })
-    );
-  };
-
   const handleUpdateProfile = () => {
     if (!scannedData) return;
-    if (!validatePhoneNumber(phoneNumber)) return;
+    if (!isPhoneValid) return;
 
     const formData: FormDataType = {
       name: scannedData.name,
@@ -229,85 +226,161 @@ const UpdateUserInfoScan = () => {
   };
 
   return (
-    <LinearGradient colors={['#007AFF', '#52c41a']} style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.card}>
-          <Text style={styles.title}>
-            {t('update_scan.title', { defaultValue: 'Update User Info - Scan' })}
-          </Text>
-          <Text style={styles.subtitle}>
-            {t('update_scan.message', {
-              defaultValue: 'Scan your identity card to update your information.',
-            })}
-          </Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView>
+          <View style={styles.scrollContainer}>
+            <View style={styles.card}>
+              <Text style={styles.title}>
+                {t('update_scan.title', { defaultValue: 'Update User Info - Scan' })}
+              </Text>
+              <Text style={styles.subtitle}>
+                {t('update_scan.message', {
+                  defaultValue: 'Scan your identity card to update your information.',
+                })}
+              </Text>
 
-          <TouchableOpacity style={styles.scanButton} onPress={() => setModalVisible(true)}>
-            <Text style={styles.buttonText}>
-              {t('update_scan.scan', { defaultValue: 'Start Scan' })}
-            </Text>
-          </TouchableOpacity>
+              <View style={styles.formGroup}>
+                <Text style={styles.label}>
+                  {t('profile.phoneNumber', { defaultValue: 'Phone Number' })}
+                </Text>
+                <TextInput
+                  style={styles.input}
+                  value={phoneNumber}
+                  onChangeText={handlePhoneChange}
+                  placeholder={t('profile.phone_placeholder', {
+                    defaultValue: 'Enter your phone number',
+                  })}
+                  keyboardType='phone-pad'
+                  maxLength={10}
+                />
+                {phoneError && <Text style={styles.errorText}>{phoneError}</Text>}
+                <Text style={styles.noteText}>
+                  {t('profile.phone_required', {
+                    defaultValue: 'Please enter a valid phone number to proceed with the scan.',
+                  })}
+                </Text>
+              </View>
 
-          {cardData && (
-            <Card style={styles.dataCard}>
-              <Card.Content style={styles.cardContent}>
-                <ScrollView contentContainerStyle={styles.dataContainer}>
-                  <Text style={styles.dataText}>
-                    {t('profile.id', { defaultValue: 'ID' })}: {cardData.id}
-                  </Text>
-                  <Text style={styles.dataText}>
-                    {t('profile.name', { defaultValue: 'Name' })}: {cardData.name}
-                  </Text>
-                  <Text style={styles.dataText}>
-                    {t('profile.date_of_birth', { defaultValue: 'Date of Birth' })}: {cardData.dob}
-                  </Text>
-                  <Text style={styles.dataText}>
-                    {t('profile.gender', { defaultValue: 'Gender' })}:{' '}
-                    {t(`profile.${normalizeGender(cardData.sex)}`)}
-                  </Text>
-                  <Text style={styles.dataText}>
-                    {t('profile.nationality', { defaultValue: 'Nationality' })}:{' '}
-                    {cardData.nationality}
-                  </Text>
-                  <Text style={styles.dataText}>
-                    {t('profile.home', { defaultValue: 'Home' })}: {cardData.home}
-                  </Text>
-                  <Text style={styles.dataText}>
-                    {t('profile.address', { defaultValue: 'Address' })}: {cardData.address}
-                  </Text>
-                  <Text style={styles.dataText}>
-                    {t('profile.date_of_expiry', { defaultValue: 'Date of Expiry' })}:{' '}
-                    {cardData.doe}
-                  </Text>
-                  <Text style={styles.dataText}>
-                    {t('profile.overall_score', { defaultValue: 'Overall Score' })}:{' '}
-                    {cardData.overall_score}
-                  </Text>
-                  <Text style={styles.dataText}>
-                    {t('profile.type', { defaultValue: 'Type' })}: {cardData.type}
-                  </Text>
-                </ScrollView>
-              </Card.Content>
-            </Card>
-          )}
+              <TouchableOpacity
+                style={[styles.scanButton, !isPhoneValid && { opacity: 0.5 }]}
+                onPress={() => {
+                  if (isPhoneValid) {
+                    setModalVisible(true);
+                  }
+                }}
+              >
+                <Text style={styles.buttonText}>
+                  {t('update_scan.scan', { defaultValue: 'Start Scan' })}
+                </Text>
+              </TouchableOpacity>
 
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>
-              {t('profile.phoneNumber', { defaultValue: 'Phone Number' })}
-            </Text>
-            <TextInput
-              style={styles.input}
-              value={phoneNumber}
-              onChangeText={handlePhoneChange}
-              placeholder={t('profile.phone_placeholder', {
-                defaultValue: 'Enter your phone number',
-              })}
-              keyboardType='phone-pad'
-              maxLength={10}
-            />
-            {phoneError && <Text style={styles.errorText}>{phoneError}</Text>}
+              {cardData && (
+                <Card style={styles.dataCard}>
+                  <Card.Content style={styles.cardContent}>
+                    <View style={styles.cardHeader}>
+                      <Text style={styles.cardTitle}>
+                        {t('profile.identity_card', { defaultValue: 'Identity Card' })}
+                      </Text>
+                    </View>
+                    <View style={styles.section}>
+                      <Text style={styles.sectionTitle}>
+                        {t('profile.personal_info', { defaultValue: 'Personal Information' })}
+                      </Text>
+                      <View style={styles.dataRow}>
+                        <Text style={styles.labelText}>
+                          {t('profile.id', { defaultValue: 'ID' })}:
+                        </Text>
+                        <Text style={styles.valueText}>{cardData.id}</Text>
+                      </View>
+                      <View style={styles.dataRow}>
+                        <Text style={styles.labelText}>
+                          {t('profile.name', { defaultValue: 'Name' })}:
+                        </Text>
+                        <Text style={styles.valueText}>{cardData.name}</Text>
+                      </View>
+                      <View style={styles.dataRow}>
+                        <Text style={styles.labelText}>
+                          {t('profile.date_of_birth', { defaultValue: 'Date of Birth' })}:
+                        </Text>
+                        <Text style={styles.valueText}>{cardData.dob}</Text>
+                      </View>
+                      <View style={styles.dataRow}>
+                        <Text style={styles.labelText}>
+                          {t('profile.gender', { defaultValue: 'Gender' })}:
+                        </Text>
+                        <Text style={styles.valueText}>
+                          {t(`profile.${normalizeGender(cardData.sex)}`)}
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={styles.section}>
+                      <Text style={styles.sectionTitle}>
+                        {t('profile.address_info', { defaultValue: 'Address Information' })}
+                      </Text>
+                      <View style={styles.dataRow}>
+                        <Text style={styles.labelText}>
+                          {t('profile.home', { defaultValue: 'Home' })}:
+                        </Text>
+                        <Text style={styles.valueText}>{cardData.home}</Text>
+                      </View>
+                      <View style={styles.dataRow}>
+                        <Text style={styles.labelText}>
+                          {t('profile.address', { defaultValue: 'Address' })}:
+                        </Text>
+                        <Text style={styles.valueText}>{cardData.address}</Text>
+                      </View>
+                    </View>
+                    <View style={styles.section}>
+                      <Text style={styles.sectionTitle}>
+                        {t('profile.other_info', { defaultValue: 'Other Information' })}
+                      </Text>
+                      <View style={styles.dataRow}>
+                        <Text style={styles.labelText}>
+                          {t('profile.nationality', { defaultValue: 'Nationality' })}:
+                        </Text>
+                        <Text style={styles.valueText}>{cardData.nationality}</Text>
+                      </View>
+                      <View style={styles.dataRow}>
+                        <Text style={styles.labelText}>
+                          {t('profile.date_of_expiry', { defaultValue: 'Date of Expiry' })}:
+                        </Text>
+                        <Text style={styles.valueText}>{cardData.doe}</Text>
+                      </View>
+                      <View style={styles.dataRow}>
+                        <Text style={styles.labelText}>
+                          {t('profile.overall_score', { defaultValue: 'Overall Score' })}:
+                        </Text>
+                        <Text style={styles.valueText}>{cardData.overall_score}</Text>
+                      </View>
+                      <View style={styles.dataRow}>
+                        <Text style={styles.labelText}>
+                          {t('profile.type', { defaultValue: 'Type' })}:
+                        </Text>
+                        <Text style={styles.valueText}>
+                          {cardData.type.toLowerCase() === 'chip_front'
+                            ? t('profile.chip_front', { defaultValue: 'Chip Front' })
+                            : t('profile.chip_back', { defaultValue: 'Chip Back' })}
+                        </Text>
+                      </View>
+                    </View>
+                  </Card.Content>
+                  <Button
+                    mode='contained'
+                    onPress={() => (navigate.navigate as any)('ProfileManagementScreen')}
+                  >
+                    {t('profile.update', { defaultValue: 'Update' })}
+                  </Button>
+                </Card>
+              )}
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </TouchableWithoutFeedback>
 
       {/* Modal for image selection */}
       <Modal visible={modalVisible} transparent animationType='slide'>
@@ -364,16 +437,17 @@ const UpdateUserInfoScan = () => {
 
       {(scanMutation.isLoading || updateMutation.isLoading) && (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size='large' color='#fff' />
+          <ActivityIndicator size='large' color='#007AFF' />
         </View>
       )}
-    </LinearGradient>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f4f4f4', // Solid neutral background
   },
   scrollContainer: {
     flexGrow: 1,
@@ -387,6 +461,10 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     padding: 20,
     elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   title: {
     fontSize: 28,
@@ -400,31 +478,6 @@ const styles = StyleSheet.create({
     color: '#666',
     marginBottom: 20,
     textAlign: 'center',
-  },
-  scanButton: {
-    backgroundColor: '#52c41a',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 25,
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  dataCard: {
-    width: '100%',
-    borderRadius: 10,
-    marginBottom: 20,
-  },
-  cardContent: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  dataContainer: {
-    padding: 4,
-  },
-  dataText: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: '#333',
   },
   formGroup: {
     marginBottom: 20,
@@ -448,6 +501,74 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#FF3B30',
     marginTop: 5,
+  },
+  noteText: {
+    fontSize: 12,
+    color: '#666',
+    marginTop: 5,
+  },
+  scanButton: {
+    backgroundColor: '#52c41a',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  dataCard: {
+    width: '100%',
+    maxWidth: 340,
+    alignSelf: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    marginBottom: 20,
+    overflow: 'hidden',
+  },
+  cardContent: {
+    padding: 12,
+  },
+  cardHeader: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+    paddingBottom: 8,
+    marginBottom: 8,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1f2937',
+    textAlign: 'center',
+  },
+  section: {
+    marginBottom: 15,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 5,
+  },
+  dataRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 3,
+  },
+  labelText: {
+    fontSize: 14,
+    color: '#666',
+    width: 120,
+  },
+  valueText: {
+    fontSize: 14,
+    color: '#333',
+    flex: 1,
   },
   modalContainer: {
     flex: 1,

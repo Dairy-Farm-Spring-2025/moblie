@@ -59,7 +59,9 @@
     "home": "Quê quán",
     "date_of_expiry": "Ngày hết hạn",
     "overall_score": "Độ chính xác",
-    "type": "Loại thẻ"
+    "type": "Loại thẻ",
+    "chip_front": "Mặt trước",
+    "chip_back": "Mặt sau"
   },
   "farm_layout": {
     "title": "Sơ đồ trang trại"
@@ -428,6 +430,8 @@
     "descriptionFilter": "mô tả",
     "cowTypeFilter": "loại bò"
   },
+  "male": "Nam",
+  "female": "Nữ",
   "task_management": {
     "title": "Quản lý công việc",
     "tasks": "Công việc",
