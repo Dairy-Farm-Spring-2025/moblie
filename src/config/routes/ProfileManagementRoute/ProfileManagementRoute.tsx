@@ -5,6 +5,7 @@ import ProfileUpdateScreen from '@screens/ProfileScreen/components/ProfileUpdate
 import ProfileScreen from '@screens/ProfileScreen/ProfileScreen';
 import SplashScreens from '@screens/ProfileScreen/components/ProfileUpdateScreen/components/SplashScreens/SplashScreens';
 import UpdateUserInfoScan from '@screens/ProfileScreen/components/ProfileUpdateScreen/components/UpdateUserInfoScan/UpdateUserInfoScan';
+import { t } from 'i18next';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,12 +20,14 @@ const ProfileManagementRoute: React.FC = () => {
       <Stack.Screen
         name='ChangePassword'
         component={ChangePasswordScreen}
-        options={{ title: 'Profile Management' }}
+        options={{ title: t('profile_management_route.Change_Password') }}
       />
       <Stack.Screen
         name='UpdateInfo'
         component={ProfileUpdateScreen}
-        options={{ title: 'Profile Management' }}
+        options={{
+          title: t('profile_management_route.Update_Profile', { defaultValue: 'Update User Info' }),
+        }}
       />
       <Stack.Screen
         name='SplashScreens'
@@ -34,7 +37,9 @@ const ProfileManagementRoute: React.FC = () => {
       <Stack.Screen
         name='UpdateUserInfoScan'
         component={UpdateUserInfoScan}
-        options={{ title: 'UpdateUserInfoScan' }}
+        options={{
+          title: t('profile_management_route.Update_Profile', { defaultValue: 'Update User Info' }),
+        }}
       />
     </Stack.Navigator>
   );
