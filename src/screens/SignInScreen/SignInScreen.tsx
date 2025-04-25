@@ -116,6 +116,7 @@ const SignInScreen: React.FC = () => {
         const userId = queryParams?.userId;
         const userName = queryParams?.userName;
         const roleName = queryParams?.roleName;
+        console.log('Parsed Query Params:', queryParams);
 
         if (accessToken && refreshToken) {
           dispatch(
