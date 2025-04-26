@@ -1,5 +1,11 @@
 import React from 'react';
-import { Keyboard, StyleSheet, TextInput, TextInputProps } from 'react-native';
+import {
+  Keyboard,
+  KeyboardTypeOptions,
+  StyleSheet,
+  TextInput,
+  TextInputProps,
+} from 'react-native';
 
 interface TextInputComponentProps extends TextInputProps {
   value?: string;
@@ -8,6 +14,7 @@ interface TextInputComponentProps extends TextInputProps {
   onBlur?: () => void;
   error: any;
   readOnly?: boolean;
+  keyboardType?: KeyboardTypeOptions;
 }
 
 const TextInputComponent = ({
@@ -42,6 +49,7 @@ const Number = ({
   returnKeyType,
   error = '',
   onBlur,
+  keyboardType = 'numeric',
   readOnly = false,
   ...props
 }: TextInputComponentProps) => {
@@ -56,7 +64,7 @@ const Number = ({
       onChangeText={onChangeText}
       returnKeyType={returnKeyType}
       onBlur={onBlur}
-      keyboardType="numeric"
+      keyboardType={keyboardType}
       readOnly={readOnly}
       onSubmitEditing={Keyboard.dismiss}
       {...props}

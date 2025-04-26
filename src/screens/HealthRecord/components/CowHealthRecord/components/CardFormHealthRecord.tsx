@@ -1,3 +1,4 @@
+import { COLORS } from '@common/GlobalStyle';
 import CardComponent, { LeftContent } from '@components/Card/CardComponent';
 import CustomPicker from '@components/CustomPicker/CustomPicker';
 import FormItem from '@components/Form/FormItem';
@@ -61,7 +62,29 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
     }
   );
   const onSubmit = async (data: HealthRecordForm) => {
-    mutate(data);
+    const formattedData = {
+      ...data,
+      size: parseFloat((data.size as any)?.toString().replace(',', '.')),
+      chestCircumference: parseFloat(
+        (data.chestCircumference as any)?.toString().replace(',', '.')
+      ),
+      bodyLength: parseFloat(
+        (data.bodyLength as any)?.toString().replace(',', '.')
+      ),
+      bodyTemperature: parseFloat(
+        (data.bodyTemperature as any)?.toString().replace(',', '.')
+      ),
+      heartRate: parseFloat(
+        (data.heartRate as any)?.toString().replace(',', '.')
+      ),
+      respiratoryRate: parseFloat(
+        (data.respiratoryRate as any)?.toString().replace(',', '.')
+      ),
+      ruminateActivity: parseFloat(
+        (data.ruminateActivity as any)?.toString().replace(',', '.')
+      ),
+    };
+    mutate(formattedData);
   };
   return (
     <CardComponent>
@@ -116,14 +139,16 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
               control={control}
               label={`📐 ${t('Size (meter)')}`}
               rules={{
-                required: 'Size is required',
+                required: {
+                  message: t('Required'),
+                },
                 pattern: {
-                  value: /^[0-9]*$/,
-                  message: 'Only numbers are allowed',
+                  value: /^[0-9]+([.,][0-9]{1,4})?$/,
+                  message: t('Only numbers are allowed'),
                 },
                 min: {
                   value: 1,
-                  message: 'Size must be greater than 0',
+                  message: t('Value must be greater than 0'),
                 },
               }}
               error={errors?.size?.message}
@@ -131,15 +156,16 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                 <TextInputComponent.Number
                   error={errors.size ? errors.size.message : ''}
                   placeholder={t('Enter...')}
-                  maxLength={3}
+                  maxLength={5}
                   onBlur={onBlur}
                   onChangeText={(text) => {
-                    const numericValue = text.replace(/[^0-9]/g, '');
+                    const numericValue = text.replace(/[^0-9.,]/g, '');
                     onChange(numericValue);
                   }}
                   value={value as any}
                   returnKeyType="done" // Adds "Done" on the keyboard
                   onSubmitEditing={Keyboard.dismiss}
+                  keyboardType="decimal-pad"
                 />
               )}
             />
@@ -154,15 +180,15 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                 })}`}
                 rules={{
                   required: {
-                    message: 'Required',
+                    message: t('Required'),
                   },
                   pattern: {
-                    value: /^[0-9]*$/,
-                    message: 'Only numbers are allowed',
+                    value: /^[0-9]+([.,][0-9]{1,4})?$/,
+                    message: t('Only numbers are allowed'),
                   },
                   min: {
                     value: 1,
-                    message: 'Chest Circumference must be greater than 0',
+                    message: t('Value must be greater than 0'),
                   },
                 }}
                 error={errors?.chestCircumference?.message}
@@ -170,10 +196,11 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                   <TextInputComponent.Number
                     error={errors.size ? errors.size.message : ''}
                     placeholder={t('Enter...')}
-                    maxLength={3}
+                    maxLength={5}
                     onBlur={onBlur}
+                    keyboardType="decimal-pad"
                     onChangeText={(text) => {
-                      const numericValue = text.replace(/[^0-9]/g, '');
+                      const numericValue = text.replace(/[^0-9.,]/g, '');
                       onChange(numericValue);
                     }}
                     value={value as any}
@@ -192,15 +219,15 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                 })}`}
                 rules={{
                   required: {
-                    message: 'Required',
+                    message: t('Required'),
                   },
                   pattern: {
-                    value: /^[0-9]*$/,
-                    message: 'Only numbers are allowed',
+                    value: /^[0-9]+([.,][0-9]{1,4})?$/,
+                    message: t('Only numbers are allowed'),
                   },
                   min: {
                     value: 1,
-                    message: 'Chest Circumference must be greater than 0',
+                    message: t('Value must be greater than 0'),
                   },
                 }}
                 error={errors?.bodyLength?.message}
@@ -208,10 +235,11 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                   <TextInputComponent.Number
                     error={errors.bodyLength ? errors.bodyLength.message : ''}
                     placeholder={t('Enter...')}
-                    maxLength={3}
+                    maxLength={5}
                     onBlur={onBlur}
+                    keyboardType="decimal-pad"
                     onChangeText={(text) => {
-                      const numericValue = text.replace(/[^0-9]/g, '');
+                      const numericValue = text.replace(/[^0-9.,]/g, '');
                       onChange(numericValue);
                     }}
                     value={value as any}
@@ -230,15 +258,15 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                 })}`}
                 rules={{
                   required: {
-                    message: 'Required',
+                    message: t('Required'),
                   },
                   pattern: {
-                    value: /^[0-9]*$/,
-                    message: 'Only numbers are allowed',
+                    value: /^[0-9]+([.,][0-9]{1,4})?$/,
+                    message: t('Only numbers are allowed'),
                   },
                   min: {
                     value: 1,
-                    message: 'Chest Circumference must be greater than 0',
+                    message: t('Value must be greater than 0'),
                   },
                 }}
                 error={errors?.bodyTemperature?.message}
@@ -250,10 +278,11 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                         : ''
                     }
                     placeholder={t('Enter...')}
-                    maxLength={3}
+                    maxLength={5}
                     onBlur={onBlur}
+                    keyboardType="decimal-pad"
                     onChangeText={(text) => {
-                      const numericValue = text.replace(/[^0-9]/g, '');
+                      const numericValue = text.replace(/[^0-9.,]/g, '');
                       onChange(numericValue);
                     }}
                     value={value as any}
@@ -272,15 +301,15 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                 })}`}
                 rules={{
                   required: {
-                    message: 'Required',
+                    message: t('Required'),
                   },
                   pattern: {
-                    value: /^[0-9]*$/,
-                    message: 'Only numbers are allowed',
+                    value: /^[0-9]+([.,][0-9]{1,4})?$/,
+                    message: t('Only numbers are allowed'),
                   },
                   min: {
                     value: 1,
-                    message: 'Heart Rate must be greater than 0',
+                    message: t('Value must be greater than 0'),
                   },
                 }}
                 error={errors?.heartRate?.message}
@@ -288,10 +317,11 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                   <TextInputComponent.Number
                     error={errors.heartRate ? errors.heartRate.message : ''}
                     placeholder={t('Enter...')}
-                    maxLength={3}
+                    maxLength={5}
                     onBlur={onBlur}
+                    keyboardType="decimal-pad"
                     onChangeText={(text) => {
-                      const numericValue = text.replace(/[^0-9]/g, '');
+                      const numericValue = text.replace(/[^0-9.,]/g, '');
                       onChange(numericValue);
                     }}
                     value={value as any}
@@ -310,15 +340,15 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                 })}`}
                 rules={{
                   required: {
-                    message: 'Required',
+                    message: t('Required'),
                   },
                   pattern: {
-                    value: /^[0-9]*$/,
-                    message: 'Only numbers are allowed',
+                    value: /^[0-9]+([.,][0-9]{1,4})?$/,
+                    message: t('Only numbers are allowed'),
                   },
                   min: {
                     value: 1,
-                    message: 'Respiratory Rate must be greater than 0',
+                    message: t('Value must be greater than 0'),
                   },
                 }}
                 error={errors?.respiratoryRate?.message}
@@ -330,10 +360,11 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                         : ''
                     }
                     placeholder={t('Enter...')}
-                    maxLength={3}
+                    maxLength={5}
                     onBlur={onBlur}
+                    keyboardType="decimal-pad"
                     onChangeText={(text) => {
-                      const numericValue = text.replace(/[^0-9]/g, '');
+                      const numericValue = text.replace(/[^0-9.,]/g, '');
                       onChange(numericValue);
                     }}
                     value={value as any}
@@ -352,15 +383,15 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                 })}`}
                 rules={{
                   required: {
-                    message: 'Required',
+                    message: t('Required'),
                   },
                   pattern: {
-                    value: /^[0-9]*$/,
-                    message: 'Only numbers are allowed',
+                    value: /^[0-9]+([.,][0-9]{1,4})?$/,
+                    message: t('Only numbers are allowed'),
                   },
                   min: {
                     value: 1,
-                    message: 'Ruminate Activity must be greater than 0',
+                    message: t('Value must be greater than 0'),
                   },
                 }}
                 error={errors?.ruminateActivity?.message}
@@ -372,10 +403,11 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                         : ''
                     }
                     placeholder={t('Enter...')}
-                    maxLength={3}
+                    maxLength={5}
                     onBlur={onBlur}
+                    keyboardType="decimal-pad"
                     onChangeText={(text) => {
-                      const numericValue = text.replace(/[^0-9]/g, '');
+                      const numericValue = text.replace(/[^0-9.,]/g, '');
                       onChange(numericValue);
                     }}
                     value={value as any}
@@ -395,7 +427,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
               })}
               rules={{
                 required: {
-                  message: 'Required',
+                  message: t('Required'),
                 },
               }}
               error={errors?.description?.message}
@@ -416,7 +448,13 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
               )}
             />
           </View>
-          <Button mode="contained" onPress={handleSubmit(onSubmit)}>
+          <Button
+            mode="contained"
+            style={{
+              backgroundColor: COLORS.primary,
+            }}
+            onPress={handleSubmit(onSubmit)}
+          >
             {t('Submit')}
           </Button>
         </View>
