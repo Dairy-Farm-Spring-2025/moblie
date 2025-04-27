@@ -580,7 +580,8 @@
     "viewMore": "Xem thêm",
     "viewLess": "Thu nhỏ",
     "closeComment": "Đóng bình luận",
-    "noComment": "Không có bình luận"
+    "noComment": "Không có bình luận",
+    "licenseTitle": "Chính sách tạo đơn"
   },
   "validateForm": {
     "required": "Yêu cầu nhập đầy đủ"
@@ -759,5 +760,9 @@
   "Ongoing": "Đang theo dõi",
   "Deceased": "Đã chết",
   "Veterinarians": "Thú y",
-  "No health records": "Không có ghi nhận sức khỏe"
+  "No health records": "Không có ghi nhận sức khỏe",
+  "Only numbers are allowed": "Chỉ được nhập số",
+  "Required": "Yêu cầu",
+  "Value must be greater than 0": "Giá trị cần lớn hơn 0",
+  "Submit": "Gửi"
 }
