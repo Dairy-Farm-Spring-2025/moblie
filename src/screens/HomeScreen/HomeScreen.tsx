@@ -59,12 +59,12 @@ const HomeScreen: React.FC = () => {
       icon: <FontAwesome5 name="chart-area" size={SIZE_ICON} color="#000" />,
       screen: 'AreaManagementScreen',
     },
-    // {
-    //   id: 'PenManagementScreen',
-    //   title: t('home.pen'),
-    //   icon: <MaterialIcons name='warehouse' size={SIZE_ICON} color='#000' />, // Replaced faSliders with sliders
-    //   screen: 'PenManagementScreen',
-    // },
+    {
+      id: 'PenManagementScreen',
+      title: t('home.pen'),
+      icon: <MaterialIcons name="warehouse" size={SIZE_ICON} color="#000" />, // Replaced faSliders with sliders
+      screen: 'PenManagementScreen',
+    },
     {
       id: 'MilkBatch',
       title: t('home.milk_batch'),
@@ -169,7 +169,7 @@ const HomeScreen: React.FC = () => {
   };
 
   const renderItem = ({ item }: { item: any[] }) => (
-    <View style={styles.row}>
+    <View style={[styles.row]}>
       {item.map((card) => (
         <TouchableOpacity
           key={card.id}
@@ -179,6 +179,7 @@ const HomeScreen: React.FC = () => {
               borderWidth: 2,
               borderColor: backgroundColor,
               backgroundColor: `${backgroundColor}45`, // Adding opacity to the background
+              width: item.length === 1 ? '100%' : '48%',
             },
           ]}
           onPress={() => card.screen && navigation.navigate(card.screen)}
