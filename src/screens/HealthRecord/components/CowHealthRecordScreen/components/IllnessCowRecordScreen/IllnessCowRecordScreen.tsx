@@ -52,7 +52,7 @@ const IllnessCowRecordScreen = () => {
           color: 'red',
         }}
       >
-        Failed to load cow details
+        {t('Failed to load cow details')}
       </Text>
     );
   }

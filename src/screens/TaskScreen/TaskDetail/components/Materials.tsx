@@ -14,8 +14,9 @@ import { useQuery, useMutation } from 'react-query';
 import apiClient from '@config/axios/axios';
 import { Area } from '@model/Area/Area';
 import { useTranslation } from 'react-i18next';
+import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
 
-// Define interfaces (unchanged)
+// Define interfaces
 interface MaterialItem {
   name: string;
   itemId: number;
@@ -39,32 +40,34 @@ interface ApiResponse {
   };
 }
 
+interface ExportItem {
+  itemId: number;
+  quantity: number;
+}
+
 type RootStackParamList = {
   Materials: { area: Area; taskId: number };
 };
 
 type MaterialsRouteProp = RouteProp<RootStackParamList, 'Materials'>;
 
-// Fetch functions (unchanged)
+// Fetch functions
 const fetchMaterials = async (areaId: number): Promise<ApiResponse['data']> => {
   const response = await apiClient.get<ApiResponse>(`/feedmeals/calculate/${areaId}`);
   console.log('Fetched materials:', response.data);
   return response.data;
 };
 
-const exportMaterial = async ({
-  itemId,
+const exportMaterials = async ({
   taskId,
-  quantity,
+  exportItems,
 }: {
-  itemId: number;
   taskId: number;
-  quantity: number;
+  exportItems: ExportItem[];
 }) => {
-  const response = await apiClient.post('/export_items/create', {
-    quantity,
-    itemId,
+  const response = await apiClient.post('/export_items/create/multi', {
     taskId,
+    exportItems,
   });
   return response.data;
 };
@@ -74,29 +77,54 @@ const MaterialsContent: React.FC<{ data?: ApiResponse['data']; taskId: number; a
   taskId,
   area,
 }) => {
-  const { t } = useTranslation(); // Hook to access translations
+  const { t } = useTranslation();
   const navigation = useNavigation<any>();
   const [expandedItems, setExpandedItems] = useState<number[]>([]);
 
-  const exportMutation = useMutation(exportMaterial, {
-    onSuccess: (data, variables) => {
-      Alert.alert(
-        t('materials.success'),
-        `Material with ID ${variables.itemId} exported successfully!`
-      );
+  const exportMutation = useMutation(exportMaterials, {
+    onSuccess: () => {
+      Alert.alert(t('materials.success'), t('materials.batchExportSuccess'));
     },
     onError: (error: any) => {
-      Alert.alert('Error', error?.response?.data?.message || t('materials.failedToLoad'));
+      Alert.alert(
+        t('Error', { defaultValue: 'Error' }),
+        error?.response?.data?.message || t('materials.failedToExport')
+      );
     },
   });
-
-  const handleExport = (itemId: number, quantity: number) => {
-    exportMutation.mutate({ itemId, taskId, quantity });
-  };
 
   const toggleExpand = (itemId: number) => {
     setExpandedItems((prev) =>
       prev.includes(itemId) ? prev.filter((id) => id !== itemId) : [...prev, itemId]
+    );
+  };
+
+  const handleExport = () => {
+    if (!data || data.foodList.length === 0) {
+      Alert.alert(t('materials.warning'), t('materials.noItemsAvailable'));
+      return;
+    }
+
+    const exportItems: ExportItem[] = data.foodList.map((item) => ({
+      itemId: item.itemId,
+      quantity: item.quantityNeeded,
+    }));
+
+    Alert.alert(
+      t('materials.confirmExport'),
+      t('materials.confirmExportMessage', { count: exportItems.length }),
+      [
+        {
+          text: t('materials.cancel'),
+          style: 'cancel',
+        },
+        {
+          text: t('materials.confirm'),
+          onPress: () => {
+            exportMutation.mutate({ taskId, exportItems });
+          },
+        },
+      ]
     );
   };
 
@@ -178,6 +206,16 @@ const MaterialsContent: React.FC<{ data?: ApiResponse['data']; taskId: number; a
       </View>
       <View style={styles.separator} />
 
+      {/* Batch Export Button */}
+      <TouchableOpacity
+        style={[styles.batchExportButton, data.foodList.length === 0 && styles.disabledButton]}
+        onPress={handleExport}
+        disabled={exportMutation.isLoading || data.foodList.length === 0}
+      >
+        <Ionicons name='download-outline' size={20} color='#fff' />
+        <Text style={styles.batchExportButtonText}>{t('materials.exportAll')}</Text>
+      </TouchableOpacity>
+
       {/* Material Items List */}
       {data.foodList.map((item, index) => {
         const isExpanded = expandedItems.includes(item.itemId);
@@ -185,7 +223,7 @@ const MaterialsContent: React.FC<{ data?: ApiResponse['data']; taskId: number; a
         return (
           <React.Fragment key={item.itemId}>
             <View style={styles.itemContainer}>
-              <TouchableOpacity style={styles.infoRow} onPress={() => toggleExpand(item.itemId)}>
+              <View style={styles.infoRow}>
                 <View style={styles.labelContainer}>
                   <Ionicons name='cube-outline' size={20} color='#595959' style={styles.icon} />
                   <Text style={styles.textLabel}>{item.name}:</Text>
@@ -196,26 +234,8 @@ const MaterialsContent: React.FC<{ data?: ApiResponse['data']; taskId: number; a
                       {item.quantityNeeded} {item.unit}
                     </Text>
                   </View>
-                  <Ionicons
-                    name={isExpanded ? 'chevron-up' : 'chevron-down'}
-                    size={20}
-                    color='#595959'
-                  />
                 </View>
-              </TouchableOpacity>
-
-              {isExpanded && (
-                <View style={styles.dropdownContainer}>
-                  <TouchableOpacity
-                    style={styles.exportButton}
-                    onPress={() => handleExport(item.itemId, item.quantityNeeded)}
-                    disabled={exportMutation.isLoading}
-                  >
-                    <Ionicons name='download-outline' size={20} color='#007bff' />
-                    <Text style={styles.exportButtonText}>{t('materials.export')}</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
+              </View>
             </View>
 
             {index < data.foodList.length - 1 && <View style={styles.separator} />}
@@ -227,7 +247,7 @@ const MaterialsContent: React.FC<{ data?: ApiResponse['data']; taskId: number; a
 };
 
 const Materials: React.FC = () => {
-  const { t } = useTranslation(); // Hook to access translations
+  const { t } = useTranslation();
   const route = useRoute<MaterialsRouteProp>();
   const [refreshing, setRefreshing] = useState(false);
 
@@ -235,11 +255,7 @@ const Materials: React.FC = () => {
   const taskId = route.params?.taskId;
 
   if (!area || taskId === undefined) {
-    return (
-      <View style={styles.container}>
-        <Text>{t('materials.failedToLoad')}</Text>
-      </View>
-    );
+    return <LoadingSplashScreen />;
   }
 
   const { data, isLoading, isError, error, refetch } = useQuery(
@@ -278,9 +294,7 @@ const Materials: React.FC = () => {
         }
       >
         {isLoading ? (
-          <View style={styles.card}>
-            <Text style={styles.title}>{t('materials.loading')}</Text>
-          </View>
+          <LoadingSplashScreen />
         ) : isError ? (
           <View style={styles.card}>
             <Text style={styles.title}>
@@ -295,7 +309,7 @@ const Materials: React.FC = () => {
   );
 };
 
-// Styles (unchanged)
+// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -399,19 +413,28 @@ const styles = StyleSheet.create({
     marginRight: 30,
     alignItems: 'center',
   },
-  exportButton: {
+  dropdownText: {
+    fontSize: 14,
+    color: '#595959',
+  },
+  batchExportButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#e6f0ff',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    backgroundColor: '#007bff',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 8,
+    marginBottom: 20,
+    justifyContent: 'center',
   },
-  exportButtonText: {
-    color: '#007bff',
-    fontSize: 14,
-    fontWeight: '500',
-    marginLeft: 5,
+  disabledButton: {
+    backgroundColor: '#cccccc',
+  },
+  batchExportButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 10,
   },
 });
 
