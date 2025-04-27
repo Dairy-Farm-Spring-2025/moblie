@@ -6,6 +6,7 @@ import apiClient from '@config/axios/axios';
 import { Cow } from '@model/Cow/Cow';
 import { set } from 'date-fns';
 import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
+import { t } from 'i18next';
 
 type QrCodeScanProps = {
   selectedField: string;
@@ -178,18 +179,18 @@ const QrCodeScan = ({ selectedField, roleName }: QrCodeScanProps) => {
         >
           <View style={styles.overlay} />
           <View style={styles.scanWindow}>
-            <Text style={styles.scanText}>Scan within this area</Text>
+            <Text style={styles.scanText}>{t('scanQR.scan_text')}</Text>
           </View>
           {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-              <Text style={styles.text}>Flip Camera</Text>
+              <Text style={styles.text}>{t('scanQR.flip_camera')}</Text>
             </TouchableOpacity>
           </View>
         </CameraView>
       )}
       <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
-        <Text style={styles.buttonText}>Cancel</Text>
+        <Text style={styles.buttonText}>{t('scanQR.cancel')}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -201,8 +202,8 @@ const styles = StyleSheet.create({
   buttonContainer: {
     position: 'absolute',
     bottom: 100,
-    left: '45%',
-    transform: [{ translateX: -75 }],
+    left: '50%',
+    transform: [{ translateX: -130 }],
   },
   button: {
     backgroundColor: '#007BFF',
