@@ -172,7 +172,7 @@
     "health_record": "Hồ sơ sức khỏe",
     "farm_layout": "Bố trí trang trại",
     "dairy_management": "Quản lý chăn nuôi bò sữa",
-    "vet": "Bác sĩ thú y",
+    "vet": "Bác sĩ Thú Y",
     "worker": "Công nhân"
   },
   "cow_management": {
@@ -669,12 +669,16 @@
   "Illness": "Bệnh",
   "Injections": "Tiêm Phòng",
   "viewCowDetail": "Xem chi tiết bò",
+  "scanQRCode": "Quét Mã QR",
   "scanQR": {
     "title": "Quét QR",
     "reportIllness": "Báo cáo bệnh",
     "createHealthRecord": "Khám định kỳ",
     "viewCowDetail": "Xem chi tiết bò",
-    "vaccineInjection": "Tiêm vaccine"
+    "vaccineInjection": "Tiêm vaccine",
+    "scan_text": "Quét QR trong ô này",
+    "flip_camera": "Lật Ngược Camera",
+    "cancel": "Hủy"
   },
   "weather": {
     "title": "Thời Tiết",

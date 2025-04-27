@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { CameraType, CameraView, useCameraPermissions } from 'expo-camera';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { t } from 'i18next';
 
 type QrCodeScanCowProps = {
   params: {
@@ -62,19 +63,19 @@ const QrCodeScanCow = () => {
 
         {/* Scanning area window */}
         <View style={styles.scanWindow}>
-          <Text style={styles.scanText}>Scan within this area</Text>
+          <Text style={styles.scanText}>{t('scanQR.scan_text')}</Text>
         </View>
 
         {/* The camera view will have the "Flip Camera" button at the bottom */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-            <Text style={styles.text}>Flip Camera</Text>
+            <Text style={styles.text}>{t('scanQR.flip_camera')}</Text>
           </TouchableOpacity>
         </View>
       </CameraView>
 
       <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
-        <Text style={styles.buttonText}>Cancel</Text>
+        <Text style={styles.buttonText}>{t('scanQR.cancel')}</Text>
       </TouchableOpacity>
     </View>
   );
