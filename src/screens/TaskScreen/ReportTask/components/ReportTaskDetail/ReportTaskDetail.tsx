@@ -31,14 +31,10 @@ type RootStackParamList = {
   ReportTaskDetail: { report: ReportTaskData };
   ReportTaskForm: { reportId: number };
 };
-type ReportTaskDetailRouteProp = RouteProp<
-  RootStackParamList,
-  'ReportTaskDetail'
->;
+type ReportTaskDetailRouteProp = RouteProp<RootStackParamList, 'ReportTaskDetail'>;
 
 const fetchReportTask = async (reportId: number): Promise<ReportTaskData> => {
   const response = await apiClient.get(`/reportTask/${reportId}`);
-  console.log('Fetched report:', response.data);
   return response.data;
 };
 
@@ -47,7 +43,6 @@ const ReportTaskDetailContent: React.FC<{
   isUpdating: boolean;
 }> = ({ report, isUpdating }) => {
   const navigation = useNavigation<any>();
-  console.log('Report Images:', report?.reportImages);
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -80,93 +75,57 @@ const ReportTaskDetailContent: React.FC<{
     (report.description === null || report.description === undefined) &&
     report.reportImages.length < 1;
 
-  console.log('report', report.reportImages.length < 1);
-
   return (
     <View style={styles.card}>
       <View style={styles.header}>
         <Text style={styles.title}>
-          {t('task_management.Report', { defaultValue: 'Report' })} #
-          {report.reportTaskId}
+          {t('task_management.Report', { defaultValue: 'Report' })} #{report.reportTaskId}
         </Text>
-        <View
-          style={[
-            styles.statusBadge,
-            { backgroundColor: getStatusColor(report.status) },
-          ]}
-        >
-          <Text style={styles.statusText}>
-            {t(formatCamelCase(report.status))}
-          </Text>
+        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(report.status) }]}>
+          <Text style={styles.statusText}>{t(formatCamelCase(report.status))}</Text>
         </View>
       </View>
 
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
-          <Ionicons
-            name="calendar-outline"
-            size={20}
-            color="#595959"
-            style={styles.icon}
-          />
+          <Ionicons name='calendar-outline' size={20} color='#595959' style={styles.icon} />
           <Text style={styles.textLabel}>{t('Date')}:</Text>
         </View>
         <View style={styles.dataContainer}>
           <View style={styles.tag}>
-            <Text style={styles.tagText}>
-              {new Date(report.date).toLocaleDateString()}
-            </Text>
+            <Text style={styles.tagText}>{new Date(report.date).toLocaleDateString()}</Text>
           </View>
         </View>
       </View>
 
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
-          <Ionicons
-            name="time-outline"
-            size={20}
-            color="#595959"
-            style={styles.icon}
-          />
+          <Ionicons name='time-outline' size={20} color='#595959' style={styles.icon} />
           <Text style={styles.textLabel}>{t('Start Time')}:</Text>
         </View>
         <View style={styles.dataContainer}>
           <View style={styles.tag}>
-            <Text style={styles.tagText}>
-              {new Date(report.startTime).toLocaleTimeString()}
-            </Text>
+            <Text style={styles.tagText}>{new Date(report.startTime).toLocaleTimeString()}</Text>
           </View>
         </View>
       </View>
 
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
-          <Ionicons
-            name="time-outline"
-            size={20}
-            color="#595959"
-            style={styles.icon}
-          />
+          <Ionicons name='time-outline' size={20} color='#595959' style={styles.icon} />
           <Text style={styles.textLabel}>{t('End Time')}:</Text>
         </View>
         <View style={styles.dataContainer}>
           <View style={styles.tag}>
             <Text style={styles.tagText}>
-              {report.endTime
-                ? new Date(report.endTime).toLocaleTimeString()
-                : 'N/A'}
+              {report.endTime ? new Date(report.endTime).toLocaleTimeString() : 'N/A'}
             </Text>
           </View>
         </View>
       </View>
 
       <View style={styles.infoRow}>
-        <Ionicons
-          name="document-text-outline"
-          size={20}
-          color="#595959"
-          style={styles.icon}
-        />
+        <Ionicons name='document-text-outline' size={20} color='#595959' style={styles.icon} />
         <Text style={styles.textLabel}>{t('Description')}:</Text>
       </View>
       <View style={styles.contentContainer}>
@@ -174,12 +133,7 @@ const ReportTaskDetailContent: React.FC<{
       </View>
 
       <View style={styles.infoRow}>
-        <Ionicons
-          name="chatbubble-outline"
-          size={20}
-          color="#595959"
-          style={styles.icon}
-        />
+        <Ionicons name='chatbubble-outline' size={20} color='#595959' style={styles.icon} />
         <Text style={styles.textLabel}>{t('Comment')}:</Text>
       </View>
       <View style={styles.contentContainer}>
@@ -188,12 +142,7 @@ const ReportTaskDetailContent: React.FC<{
 
       <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
-          <Ionicons
-            name="person-outline"
-            size={20}
-            color="#595959"
-            style={styles.icon}
-          />
+          <Ionicons name='person-outline' size={20} color='#595959' style={styles.icon} />
           <Text style={styles.textLabel}>{t('Reviewer')}:</Text>
         </View>
         <View style={styles.dataContainer}>
@@ -212,12 +161,7 @@ const ReportTaskDetailContent: React.FC<{
       </View>
 
       <View style={styles.infoRow}>
-        <Ionicons
-          name="image-outline"
-          size={20}
-          color="#595959"
-          style={styles.icon}
-        />
+        <Ionicons name='image-outline' size={20} color='#595959' style={styles.icon} />
         <Text style={styles.textLabel}>{t('Images')}:</Text>
       </View>
       <View style={styles.contentContainer}>
@@ -238,11 +182,8 @@ const ReportTaskDetailContent: React.FC<{
 
       <View style={styles.buttonsContainer}>
         {showReportButton && (
-          <TouchableOpacity
-            style={styles.reportButton}
-            onPress={handleNavigateReportTask}
-          >
-            <Ionicons name="document-text-outline" size={24} color="#fff" />
+          <TouchableOpacity style={styles.reportButton} onPress={handleNavigateReportTask}>
+            <Ionicons name='document-text-outline' size={24} color='#fff' />
             <Text style={styles.reportButtonText}>{t('Report')}</Text>
           </TouchableOpacity>
         )}
@@ -282,11 +223,7 @@ const ReportTaskDetail: React.FC = () => {
   const isExpired = currentDate > reportDate;
 
   const updateReportMutation = useMutation(
-    async (data: {
-      description: string;
-      deleteUrls: string[];
-      newImage: FileData;
-    }) => {
+    async (data: { description: string; deleteUrls: string[]; newImage: FileData }) => {
       const formDataToSend = new FormData();
 
       // Construct the "request" object
@@ -305,55 +242,34 @@ const ReportTaskDetail: React.FC = () => {
         formDataToSend.append('newImages', data.newImage as any);
       }
 
-      console.log('Sending update request with FormData:', formDataToSend);
-      return apiClient.put(
-        `/reportTask/update/${report?.reportTaskId}`,
-        formDataToSend,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
+      return apiClient.put(`/reportTask/update/${report?.reportTaskId}`, formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
     },
     {
       onSuccess: () => {
         Alert.alert('Success', 'Report updated successfully!');
       },
       onError: (error: any) => {
-        console.error(
-          'Failed to update report:',
-          error.response?.data || error.message
-        );
+        console.error('Failed to update report:', error.response?.data || error.message);
         Alert.alert(
           'Error',
-          `Failed to update report: ${
-            error.response?.data?.message || error.message
-          }`
+          `Failed to update report: ${error.response?.data?.message || error.message}`
         );
       },
     }
   );
 
-  const handleUpdate = (
-    description: string,
-    deleteUrls: string[],
-    newImage: FileData
-  ) => {
-    console.log('handleUpdate called with:', {
-      description,
-      deleteUrls,
-      newImage,
-    });
+  const handleUpdate = (description: string, deleteUrls: string[], newImage: FileData) => {
     updateReportMutation.mutate({ description, deleteUrls, newImage });
   };
   const onRefresh = async () => {
     setRefreshing(true);
     try {
       await refetch();
-      console.log('Refreshed report:', report);
     } catch (err) {
-      console.error('Refresh failed:', err);
       Alert.alert('Error', 'Failed to refresh report data.');
     } finally {
       setRefreshing(false);
@@ -387,18 +303,11 @@ const ReportTaskDetail: React.FC = () => {
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor="#007bff"
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor='#007bff' />
         }
       >
         {selectedSegment === 'detail' ? (
-          <ReportTaskDetailContent
-            report={report}
-            isUpdating={updateReportMutation.isLoading}
-          />
+          <ReportTaskDetailContent report={report} isUpdating={updateReportMutation.isLoading} />
         ) : (
           <ReportTaskUpdateContent
             report={report!}

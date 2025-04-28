@@ -38,7 +38,6 @@ const CardNotification = ({ item }: CardNotificationProps) => {
       await apiClient.put(`notifications/${notificationId}/mark-read/${userId}`),
     {
       onSuccess: () => {
-        console.log('Success');
         queryClient.invalidateQueries('notifications/myNotification');
       },
       onError: (error: any) => {

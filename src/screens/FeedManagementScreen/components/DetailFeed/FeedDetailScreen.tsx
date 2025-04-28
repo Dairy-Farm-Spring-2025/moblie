@@ -26,8 +26,7 @@ type RootStackParamList = {
 type FeedDetailScreenProp = RouteProp<RootStackParamList, 'FeedDetail'>;
 
 const fetchFeed = async (id: number): Promise<FeedMeals> => {
-  const response = await apiClient.get(`/feedmeals/${id}`); // Replace with your endpoint
-  // console.log('Fetched feed:', response.data);
+  const response = await apiClient.get(`/feedmeals/${id}`);
   return response.data;
 };
 
@@ -84,9 +83,7 @@ const FeedDetailScreen = () => {
         >
           🐮 {t('feed.cow_type')}:{' '}
           <Text style={{ fontWeight: '600' }}>
-            {feed?.cowTypeEntity
-              ? formatCamelCase(feed?.cowTypeEntity.name)
-              : 'N/A'}
+            {feed?.cowTypeEntity ? formatCamelCase(feed?.cowTypeEntity.name) : 'N/A'}
           </Text>
         </Text>
         <Text
@@ -136,19 +133,19 @@ const FeedDetailScreen = () => {
         }}
       >
         <CardComponent>
-          <TableFeed items={hay} feed="hay" />
+          <TableFeed items={hay} feed='hay' />
         </CardComponent>
         <DividerUI />
         <CardComponent>
-          <TableFeed items={refined} feed="refined" />
+          <TableFeed items={refined} feed='refined' />
         </CardComponent>
         <DividerUI />
         <CardComponent>
-          <TableFeed items={silage} feed="silage" />
+          <TableFeed items={silage} feed='silage' />
         </CardComponent>
         <DividerUI />
         <CardComponent>
-          <TableFeed items={mineral} feed="mineral" />
+          <TableFeed items={mineral} feed='mineral' />
         </CardComponent>
       </ContainerComponent>
     </ContainerComponent.ScrollView>

@@ -110,23 +110,6 @@ const getTasksForCell = (tasks: Task[], date: Date, shift: string) => {
     const isShiftMatch = normalizedTaskShift === shift;
     const isDateMatch = cellDate >= fromDate && cellDate <= toDate;
 
-    console.log(
-      'taskID',
-      task.taskId,
-      'fromDate',
-      fromDate,
-      'toDate',
-      toDate,
-      'cellDate',
-      cellDate,
-      'isDateMatch',
-      isDateMatch,
-      'isShiftMatch',
-      isShiftMatch,
-      'reportTask',
-      task.reportTask
-    );
-
     if (isDateMatch && isShiftMatch) {
       // Group tasks by taskId
       if (!taskMap.has(task.taskId)) {
@@ -176,8 +159,6 @@ const NewTaskCard = ({
   selectedDate: Date;
 }) => {
   const selectedDateNormalized = selectedDate.toISOString().split('T')[0];
-  console.log('selectedDateNormalized', selectedDateNormalized);
-  console.log('task.reportTask.date:', task.reportTask && task.reportTask.date);
 
   const hasReportForSelectedDate =
     task.reportTask && task.reportTask.date === selectedDateNormalized;
@@ -324,7 +305,6 @@ const TaskScreen: React.FC = () => {
   });
 
   const handleTaskPress = (task: Task) => {
-    console.log('Task pressed:', task);
     (navigation.navigate as any)('TaskDetail', {
       task,
       selectedDate: weekDates[selectedDayIndex].toISOString().split('T')[0],

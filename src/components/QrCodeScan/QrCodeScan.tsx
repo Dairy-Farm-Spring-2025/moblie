@@ -30,13 +30,9 @@ const QrCodeScan = ({ selectedField, roleName }: QrCodeScanProps) => {
   const [hasScanned, setHasScanned] = useState(false);
 
   useEffect(() => {
-    console.log('Focus changed - isFocused:', isFocused);
-    console.log('Selected Field:', selectedField);
-    console.log('Role Name:', roleName);
     if (isFocused) {
       setIsCameraActive(true);
       setHasScanned(false); // Reset hasScanned when screen gains focus
-      console.log('Reset hasScanned to false');
     } else {
       setIsCameraActive(false);
       setIsCameraReady(false);
@@ -60,28 +56,21 @@ const QrCodeScan = ({ selectedField, roleName }: QrCodeScanProps) => {
     [key: string]: (navigate: any, cowId: number) => void;
   } = {
     'cow-detail': (navigate, cowId) => {
-      console.log('Navigating to CowDetails with cowId:', cowId);
       navigate('CowDetails', { cowId });
     },
     'create-health-record': (navigate, cowId) => {
-      console.log('Navigating to CowHealthRecord with cowId:', cowId);
       navigate('CowHealthRecord', { cowId });
     },
     'report-illness': async (navigate, cowId) => {
       try {
         setIsLoading(true);
-        console.log('Fetching cow details for cowId:', cowId);
         const cow = await fetchCowDetails(cowId);
-        console.log('Cow data fetched:', cow);
         if (roleName.toLocaleLowerCase() === 'veterinarians') {
-          console.log('Navigating to IllnessReportScreen');
           navigate('IllnessReportScreen', { cow });
         } else {
-          console.log('Navigating to IllnessReportForm');
           navigate('IllnessReportForm', { cow });
         }
       } catch (error) {
-        console.log('Error fetching cow details:', error);
         setErrorMessage('Error fetching cow details');
         setTimeout(() => {
           navigate('Home');
@@ -103,7 +92,6 @@ const QrCodeScan = ({ selectedField, roleName }: QrCodeScanProps) => {
     cowId: number;
   }) => {
     if (!cowId) {
-      console.log('Invalid cowId:', cowId);
       setErrorMessage('Invalid QR code format');
       setTimeout(() => {
         navigate('Home');
@@ -116,7 +104,6 @@ const QrCodeScan = ({ selectedField, roleName }: QrCodeScanProps) => {
     if (navigateFn) {
       await navigateFn(navigate, cowId);
     } else {
-      console.log('Unsupported selectedField:', selectedField);
       setErrorMessage('Unsupported field');
       setTimeout(() => {
         navigate('Home');
@@ -127,17 +114,13 @@ const QrCodeScan = ({ selectedField, roleName }: QrCodeScanProps) => {
 
   const handleScanQRCode = async (scannedData: string) => {
     if (!isCameraReady) {
-      console.log('Scan ignored - Camera not ready yet');
       return;
     }
     if (hasScanned) {
-      console.log('Scan ignored - Already processed a scan');
       return;
     }
 
-    console.log('Scan Detected - Scanned Data:', scannedData);
     const cowIdMatch = scannedData.match(/\/cow-management\/(\d+)/);
-    console.log('cowIdMatch:', cowIdMatch);
     if (cowIdMatch) {
       const cowId = Number(cowIdMatch[1]);
       setHasScanned(true); // Prevent further scans
@@ -147,7 +130,6 @@ const QrCodeScan = ({ selectedField, roleName }: QrCodeScanProps) => {
         cowId,
       });
     } else {
-      console.log('No cowId found in scanned data');
       setErrorMessage('Invalid QR code format');
       setTimeout(() => {
         (navigation.navigate as any)('Home');
@@ -173,7 +155,6 @@ const QrCodeScan = ({ selectedField, roleName }: QrCodeScanProps) => {
           barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
           onBarcodeScanned={({ data }) => handleScanQRCode(data)}
           onCameraReady={() => {
-            console.log('Camera is ready');
             setIsCameraReady(true);
           }}
         >

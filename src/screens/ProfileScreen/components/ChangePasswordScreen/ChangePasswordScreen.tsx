@@ -48,7 +48,6 @@ const ChangePasswordScreen = () => {
     {
       onSuccess: (response) => {
         Alert.alert('Success', 'Password changed successfully');
-        console.log(response);
         navigation.goBack();
       },
       onError: (error) => {

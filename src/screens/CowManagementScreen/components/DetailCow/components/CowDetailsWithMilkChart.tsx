@@ -21,7 +21,6 @@ interface CowDetailsWithMilkChartProps {
 // Fetch monthly milk records for a cow
 const fetchMonthlyMilkRecords = async (cowId: number, year: number): Promise<MonthlyMilk[]> => {
   const response = await apiClient.get(`/dailymilks/total/${cowId}/month?year=${year}`);
-  console.log('Fetched monthly milk records:', response.data);
   return response.data;
 };
 

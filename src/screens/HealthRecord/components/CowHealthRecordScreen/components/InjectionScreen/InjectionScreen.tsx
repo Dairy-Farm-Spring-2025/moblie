@@ -29,7 +29,6 @@ type InjectionScreenRouteProp = RouteProp<RootStackParamList, 'InjectionScreen'>
 
 const fetchVaccineInjections = async (id: number): Promise<InjectionCow> => {
   const response = await apiClient.get(`/vaccine-injections/${id}`);
-  console.log('vaccineInjections', response.data);
   return response.data;
 };
 

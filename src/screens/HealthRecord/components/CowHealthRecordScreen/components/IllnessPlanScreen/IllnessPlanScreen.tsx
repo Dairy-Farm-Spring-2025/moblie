@@ -206,7 +206,6 @@ const IllnessPlanScreen = () => {
     const requestBody: IllnessPlanRequest = { plans: formattedPlans };
     try {
       await apiClient.post('/illness-detail/create-plan', requestBody.plans);
-      console.log('Illness Plans Submitted:', requestBody.plans);
       navigation.goBack();
     } catch (error) {
       console.error('Error submitting illness plans:', error);

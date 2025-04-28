@@ -37,7 +37,6 @@ export async function registerForPushNotificationsAsync() {
   }
 
   token = (await Notifications.getDevicePushTokenAsync()).data;
-  console.log('Push Token retrieved:', token); // Debug log
 
   if (Platform.OS === 'android') {
     await Notifications.setNotificationChannelAsync('default', {
@@ -59,14 +58,11 @@ async function updateFCMToken(fcmToken) {
       fcmTokenWeb: '',
     });
 
-    console.log('Update FCM token response:', response);
-
     if (response.code !== 200) {
       throw new Error(`HTTP error! Status: ${response.code}`);
     }
 
     const result = response.message;
-    console.log('FCM token updated successfully:', result);
     return result;
   } catch (error) {
     console.error('Error updating FCM token:', error);
@@ -82,9 +78,8 @@ async function markNotificationAsRead(notificationId, userId) {
       `/notifications/${notificationId}/mark-read/${userId}`,
       {}
     );
-    console.log('Notification marked as read:', response.data);
   } catch (error) {
-    console.error('Error marking notification as read:', error);
+    Alert.error('Error marking notification as read:', error);
   }
 }
 
@@ -94,10 +89,7 @@ export function useNotifications({ navigation } = {}) {
   const userId = useSelector((state) => state.auth.userId);
 
   useEffect(() => {
-    console.log('useNotifications hook called with userId:', userId); // Debug log
-
     if (!userId) {
-      console.log('Skipping notification setup: userId missing');
       return;
     }
 
@@ -108,16 +100,13 @@ export function useNotifications({ navigation } = {}) {
     // Register for push notifications and get the push token
     registerForPushNotificationsAsync().then((token) => {
       if (token) {
-        console.log('Push Token:', token);
         updateFCMToken(token);
       } else {
-        console.log('Failed to retrieve push token');
       }
     });
 
     // Handle notifications received while the app is in the foreground
     notificationListener = Notifications.addNotificationReceivedListener((notification) => {
-      console.log('Notification received in foreground:', notification);
       Alert.alert(
         notification.request.content.title || 'New Notification',
         notification.request.content.body || 'You have a new notification'
@@ -126,21 +115,17 @@ export function useNotifications({ navigation } = {}) {
 
     // Handle notification interactions (e.g., when the user taps the notification)
     responseListener = Notifications.addNotificationResponseReceivedListener((response) => {
-      console.log('Notification tapped:', response);
       const data = response.notification.request.content.data;
       if (data.link) {
-        console.log('Navigating to link:', data.link);
         if (navigation) {
           navigation.navigate('Home', {
             screen: 'CowDetails',
             params: { link: data.link },
           });
         } else {
-          console.log('Navigation object is missing');
         }
       }
       if (data.notificationId && userId) {
-        console.log('Marking notification as read, ID:', data.notificationId);
         markNotificationAsRead(data.notificationId, userId);
       }
     });
@@ -150,21 +135,16 @@ export function useNotifications({ navigation } = {}) {
       if (nextAppState === 'active') {
         const initialNotification = await Notifications.getLastNotificationResponseAsync();
         if (initialNotification) {
-          console.log('Initial notification on app open:', initialNotification);
           const data = initialNotification.notification.request.content.data;
           if (data.link) {
-            console.log('Navigating to link from initial notification:', data.link);
             if (navigation) {
               navigation.navigate('Home', {
                 screen: 'CowDetails',
                 params: { link: data.link },
               });
-            } else {
-              console.log('Navigation object is missing');
             }
           }
           if (data.notificationId && userId) {
-            console.log('Marking notification as read, ID:', data.notificationId);
             markNotificationAsRead(data.notificationId, userId);
           }
         }

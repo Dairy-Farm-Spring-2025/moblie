@@ -50,11 +50,9 @@ const IllnessReportForm = () => {
       const res = await apiClient.post('/illness/report', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      console.log('res.data', res.data);
       return res.data;
     },
     onSuccess: (data) => {
-      console.log('Report submitted successfully:', data);
       setSuccessMessage('Report submitted successfully, redirecting...');
       setSymptoms('');
       setImages([]);
@@ -100,7 +98,6 @@ const IllnessReportForm = () => {
   };
 
   const pickImage = async (): Promise<void> => {
-    console.log('Picking image from gallery...');
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       aspect: [1, 1],
@@ -112,7 +109,6 @@ const IllnessReportForm = () => {
       const uriParts = selectedImage.split('.');
       const fileType = uriParts[uriParts.length - 1];
       const fileName = `image_illness_${Date.now()}.${fileType}`;
-      console.log('Image picked:', selectedImage);
       setImages((prev) => [
         ...prev,
         {
@@ -123,7 +119,7 @@ const IllnessReportForm = () => {
       ]);
       setModalVisible(false);
     } else {
-      console.log('Image picking canceled');
+      Alert.alert('Image picking canceled');
     }
   };
 
@@ -131,7 +127,6 @@ const IllnessReportForm = () => {
     const hasPermission = await requestCameraPermission();
     if (!hasPermission) return;
 
-    console.log('Taking picture...');
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [1, 1],
@@ -143,7 +138,6 @@ const IllnessReportForm = () => {
       const uriParts = capturedImage.split('.');
       const fileType = uriParts[uriParts.length - 1];
       const fileName = `image_illness_${Date.now()}.${fileType}`;
-      console.log('Picture taken:', capturedImage);
       setImages((prev) => [
         ...prev,
         {
@@ -154,7 +148,7 @@ const IllnessReportForm = () => {
       ]);
       setModalVisible(false);
     } else {
-      console.log('Picture taking canceled');
+      Alert.alert('Picture taking canceled');
     }
   };
 
@@ -178,8 +172,6 @@ const IllnessReportForm = () => {
         type: image.type,
       } as any);
     });
-
-    // console.log('Form data to send:', formData);
 
     mutation.mutate(formData);
   };

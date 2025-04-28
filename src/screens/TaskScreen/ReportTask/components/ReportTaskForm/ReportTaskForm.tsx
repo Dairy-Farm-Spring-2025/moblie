@@ -55,7 +55,6 @@ const ReportTaskForm: React.FC = () => {
   };
 
   const pickImage = async (): Promise<void> => {
-    console.log('Picking image from gallery...');
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       aspect: [1, 1],
@@ -64,14 +63,11 @@ const ReportTaskForm: React.FC = () => {
 
     if (!result.canceled) {
       const selectedImage = result.assets[0].uri;
-      console.log('Image picked:', selectedImage);
       setFormData((prev) => ({
         ...prev,
         imagesFile: [...prev.imagesFile, selectedImage],
       }));
       setModalVisible(false);
-    } else {
-      console.log('Image picking canceled');
     }
   };
 
@@ -79,7 +75,6 @@ const ReportTaskForm: React.FC = () => {
     const hasPermission = await requestCameraPermission();
     if (!hasPermission) return;
 
-    console.log('Taking picture...');
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [1, 1],
@@ -88,14 +83,11 @@ const ReportTaskForm: React.FC = () => {
 
     if (!result.canceled) {
       const capturedImage = result.assets[0].uri;
-      console.log('Picture taken:', capturedImage);
       setFormData((prev) => ({
         ...prev,
         imagesFile: [...prev.imagesFile, capturedImage],
       }));
       setModalVisible(false);
-    } else {
-      console.log('Picture taking canceled');
     }
   };
 
@@ -108,28 +100,20 @@ const ReportTaskForm: React.FC = () => {
 
   const reportTaskFormMutation = useMutation(
     (data: FormData) => {
-      console.log('Sending report task request with FormData:');
-      console.log(`URL: /reportTask/create/${reportId}`);
       return apiClient.post(`/reportTask/create/${reportId}`, data);
     },
     {
       onSuccess: (response) => {
-        console.log('Report task created successfully:', response.data);
         Alert.alert('Success', 'Task reported successfully!');
         navigation.goBack();
       },
       onError: (error: any) => {
-        console.error(
-          'Failed to create report task:',
-          error.response?.data || error.message
-        );
         Alert.alert('Error', `Failed to report task: ${error}`);
       },
     }
   );
 
   const handleSubmit = () => {
-    console.log('handleSubmit called with formData:', formData);
     if (!formData.description.trim()) {
       Alert.alert('Error', 'Please enter a description.');
       return;
@@ -150,7 +134,6 @@ const ReportTaskForm: React.FC = () => {
         name: `image.reportTask.${index}.${fileType}`,
         type: `image/${fileType}`,
       };
-      console.log('Appending file:', fileData);
       formDataToSend.append('imagesFile', fileData as any);
     });
 
@@ -170,9 +153,7 @@ const ReportTaskForm: React.FC = () => {
             <TextInput
               style={styles.input}
               value={formData.description}
-              onChangeText={(text) =>
-                setFormData((prev) => ({ ...prev, description: text }))
-              }
+              onChangeText={(text) => setFormData((prev) => ({ ...prev, description: text }))}
               placeholder={t('Enter task description')}
               multiline
             />
@@ -180,25 +161,16 @@ const ReportTaskForm: React.FC = () => {
 
           <View style={styles.imageContainer}>
             <Text style={styles.label}>{t('Uploaded/Captured Images')}</Text>
-            <TouchableOpacity
-              style={styles.uploadButton}
-              onPress={() => setModalVisible(true)}
-            >
-              <Ionicons name="camera-outline" size={24} color="#fff" />
+            <TouchableOpacity style={styles.uploadButton} onPress={() => setModalVisible(true)}>
+              <Ionicons name='camera-outline' size={24} color='#fff' />
               <Text style={styles.uploadButtonText}>{t('Add Image')}</Text>
             </TouchableOpacity>
             <ScrollView horizontal style={styles.imagePreviewContainer}>
               {formData.imagesFile.map((imageUri, index) => (
                 <View key={index} style={styles.imagePreviewWrapper}>
-                  <Image
-                    source={{ uri: imageUri }}
-                    style={styles.imagePreviewItem}
-                  />
-                  <TouchableOpacity
-                    style={styles.removeButton}
-                    onPress={() => removeImage(index)}
-                  >
-                    <Ionicons name="close-circle" size={24} color="red" />
+                  <Image source={{ uri: imageUri }} style={styles.imagePreviewItem} />
+                  <TouchableOpacity style={styles.removeButton} onPress={() => removeImage(index)}>
+                    <Ionicons name='close-circle' size={24} color='red' />
                   </TouchableOpacity>
                 </View>
               ))}
@@ -214,37 +186,25 @@ const ReportTaskForm: React.FC = () => {
             disabled={reportTaskFormMutation.isLoading}
           >
             <Text style={styles.submitButtonText}>
-              {reportTaskFormMutation.isLoading
-                ? 'Submitting...'
-                : t('Submit Report')}
+              {reportTaskFormMutation.isLoading ? 'Submitting...' : t('Submit Report')}
             </Text>
           </TouchableOpacity>
 
           <Modal
-            animationType="slide"
+            animationType='slide'
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => setModalVisible(false)}
           >
             <View style={styles.modalContainer}>
               <View style={styles.modalContent}>
-                <TouchableOpacity
-                  style={styles.modalButton}
-                  onPress={pickImage}
-                >
-                  <Ionicons name="image-outline" size={30} color="#007bff" />
-                  <Text style={styles.modalButtonText}>
-                    {t('Pick from Gallery')}
-                  </Text>
+                <TouchableOpacity style={styles.modalButton} onPress={pickImage}>
+                  <Ionicons name='image-outline' size={30} color='#007bff' />
+                  <Text style={styles.modalButtonText}>{t('Pick from Gallery')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.modalButton}
-                  onPress={takePicture}
-                >
-                  <Ionicons name="camera" size={30} color="#007bff" />
-                  <Text style={styles.modalButtonText}>
-                    {t('Take a Photo')}
-                  </Text>
+                <TouchableOpacity style={styles.modalButton} onPress={takePicture}>
+                  <Ionicons name='camera' size={30} color='#007bff' />
+                  <Text style={styles.modalButtonText}>{t('Take a Photo')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.modalButton, styles.cancelButton]}

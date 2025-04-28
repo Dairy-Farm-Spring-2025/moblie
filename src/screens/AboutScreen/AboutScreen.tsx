@@ -16,7 +16,6 @@ const AboutScreen: React.FC = () => {
 
       // Make an API request that should fail with 401
       const response = await apiClient.get('/protected-resource');
-      console.log('API Response:', response);
     } catch (error) {
       console.error('API Call Error:', error);
       Alert.alert('API Call Failed', 'Check console logs');

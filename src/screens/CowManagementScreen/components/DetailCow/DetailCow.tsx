@@ -40,8 +40,6 @@ const DetailCow: React.FC = () => {
 
   const { data: cow, isLoading, isError } = useQuery(['cow', cowId], () => fetchCowDetails(cowId));
 
-  console.log(cow?.inPen);
-
   const handleNavigateHealthResponse = () => {
     (navigator as any).navigate('CowHealthInforScreen', {
       healthResponses: cow?.healthInfoResponses,
