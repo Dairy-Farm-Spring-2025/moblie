@@ -41,11 +41,9 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
     },
   });
   const { mutate } = useMutation(
-    async (data: HealthRecordForm) =>
-      await apiClient.post('health-record', data),
+    async (data: HealthRecordForm) => await apiClient.post('health-record', data),
     {
       onSuccess: (response) => {
-        console.log(response);
         Alert.alert(
           t('Success'),
           response.data.message ||
@@ -68,21 +66,11 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
       chestCircumference: parseFloat(
         (data.chestCircumference as any)?.toString().replace(',', '.')
       ),
-      bodyLength: parseFloat(
-        (data.bodyLength as any)?.toString().replace(',', '.')
-      ),
-      bodyTemperature: parseFloat(
-        (data.bodyTemperature as any)?.toString().replace(',', '.')
-      ),
-      heartRate: parseFloat(
-        (data.heartRate as any)?.toString().replace(',', '.')
-      ),
-      respiratoryRate: parseFloat(
-        (data.respiratoryRate as any)?.toString().replace(',', '.')
-      ),
-      ruminateActivity: parseFloat(
-        (data.ruminateActivity as any)?.toString().replace(',', '.')
-      ),
+      bodyLength: parseFloat((data.bodyLength as any)?.toString().replace(',', '.')),
+      bodyTemperature: parseFloat((data.bodyTemperature as any)?.toString().replace(',', '.')),
+      heartRate: parseFloat((data.heartRate as any)?.toString().replace(',', '.')),
+      respiratoryRate: parseFloat((data.respiratoryRate as any)?.toString().replace(',', '.')),
+      ruminateActivity: parseFloat((data.ruminateActivity as any)?.toString().replace(',', '.')),
     };
     mutate(formattedData);
   };
@@ -93,16 +81,14 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
         subTitle={t('healthRecord.subTitle', {
           defaultValue: 'Fill information form',
         })}
-        leftContent={(props: any) => (
-          <LeftContent {...props} icon="cards-heart" />
-        )}
+        leftContent={(props: any) => <LeftContent {...props} icon='cards-heart' />}
       />
       <CardComponent.Content>
         <View style={styles.formContainer}>
           <View>
             <FormItem
               label={`🕰️ ${t('Period')}`}
-              name="period"
+              name='period'
               control={control}
               rules={{ required: 'Period is required' }}
               error={errors?.period?.message}
@@ -117,7 +103,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
           </View>
           <View>
             <FormItem
-              name="status"
+              name='status'
               control={control}
               rules={{ required: 'Status is required' }}
               label={`🐄 ${t('healthRecord.status', {
@@ -135,7 +121,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
           </View>
           <View>
             <FormItem
-              name="size"
+              name='size'
               control={control}
               label={`📐 ${t('Size (meter)')}`}
               rules={{
@@ -163,9 +149,9 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                     onChange(numericValue);
                   }}
                   value={value as any}
-                  returnKeyType="done" // Adds "Done" on the keyboard
+                  returnKeyType='done' // Adds "Done" on the keyboard
                   onSubmitEditing={Keyboard.dismiss}
-                  keyboardType="decimal-pad"
+                  keyboardType='decimal-pad'
                 />
               )}
             />
@@ -173,7 +159,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
           <View style={styles.containerField}>
             <View style={styles.containerForm}>
               <FormItem
-                name="chestCircumference"
+                name='chestCircumference'
                 control={control}
                 label={`🎯 ${t('healthRecord.chestCircumference', {
                   defaultValue: 'Chest Circumference',
@@ -198,13 +184,13 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                     placeholder={t('Enter...')}
                     maxLength={5}
                     onBlur={onBlur}
-                    keyboardType="decimal-pad"
+                    keyboardType='decimal-pad'
                     onChangeText={(text) => {
                       const numericValue = text.replace(/[^0-9.,]/g, '');
                       onChange(numericValue);
                     }}
                     value={value as any}
-                    returnKeyType="done" // Adds "Done" on the keyboard
+                    returnKeyType='done' // Adds "Done" on the keyboard
                     onSubmitEditing={Keyboard.dismiss}
                   />
                 )}
@@ -212,7 +198,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
             </View>
             <View style={styles.containerForm}>
               <FormItem
-                name="bodyLength"
+                name='bodyLength'
                 control={control}
                 label={`📐 ${t('healthRecord.bodyLength', {
                   defaultValue: 'Body Length',
@@ -237,13 +223,13 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                     placeholder={t('Enter...')}
                     maxLength={5}
                     onBlur={onBlur}
-                    keyboardType="decimal-pad"
+                    keyboardType='decimal-pad'
                     onChangeText={(text) => {
                       const numericValue = text.replace(/[^0-9.,]/g, '');
                       onChange(numericValue);
                     }}
                     value={value as any}
-                    returnKeyType="done" // Adds "Done" on the keyboard
+                    returnKeyType='done' // Adds "Done" on the keyboard
                     onSubmitEditing={Keyboard.dismiss}
                   />
                 )}
@@ -251,7 +237,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
             </View>
             <View style={styles.containerForm}>
               <FormItem
-                name="bodyTemperature"
+                name='bodyTemperature'
                 control={control}
                 label={`🌡️ ${t('healthRecord.bodyTemperature', {
                   defaultValue: 'Body Temperature',
@@ -272,21 +258,17 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                 error={errors?.bodyTemperature?.message}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInputComponent.Number
-                    error={
-                      errors.bodyTemperature
-                        ? errors.bodyTemperature.message
-                        : ''
-                    }
+                    error={errors.bodyTemperature ? errors.bodyTemperature.message : ''}
                     placeholder={t('Enter...')}
                     maxLength={5}
                     onBlur={onBlur}
-                    keyboardType="decimal-pad"
+                    keyboardType='decimal-pad'
                     onChangeText={(text) => {
                       const numericValue = text.replace(/[^0-9.,]/g, '');
                       onChange(numericValue);
                     }}
                     value={value as any}
-                    returnKeyType="done" // Adds "Done" on the keyboard
+                    returnKeyType='done' // Adds "Done" on the keyboard
                     onSubmitEditing={Keyboard.dismiss}
                   />
                 )}
@@ -294,7 +276,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
             </View>
             <View style={styles.containerForm}>
               <FormItem
-                name="heartRate"
+                name='heartRate'
                 control={control}
                 label={`❤️ ${t('healthRecord.heartRate', {
                   defaultValue: 'Heart Rate',
@@ -319,13 +301,13 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                     placeholder={t('Enter...')}
                     maxLength={5}
                     onBlur={onBlur}
-                    keyboardType="decimal-pad"
+                    keyboardType='decimal-pad'
                     onChangeText={(text) => {
                       const numericValue = text.replace(/[^0-9.,]/g, '');
                       onChange(numericValue);
                     }}
                     value={value as any}
-                    returnKeyType="done" // Adds "Done" on the keyboard
+                    returnKeyType='done' // Adds "Done" on the keyboard
                     onSubmitEditing={Keyboard.dismiss}
                   />
                 )}
@@ -333,7 +315,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
             </View>
             <View style={styles.containerForm}>
               <FormItem
-                name="respiratoryRate"
+                name='respiratoryRate'
                 control={control}
                 label={`🫁 ${t('healthRecord.respiratoryRate', {
                   defaultValue: 'Respiratory Rate',
@@ -354,21 +336,17 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                 error={errors?.respiratoryRate?.message}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInputComponent.Number
-                    error={
-                      errors.respiratoryRate
-                        ? errors.respiratoryRate.message
-                        : ''
-                    }
+                    error={errors.respiratoryRate ? errors.respiratoryRate.message : ''}
                     placeholder={t('Enter...')}
                     maxLength={5}
                     onBlur={onBlur}
-                    keyboardType="decimal-pad"
+                    keyboardType='decimal-pad'
                     onChangeText={(text) => {
                       const numericValue = text.replace(/[^0-9.,]/g, '');
                       onChange(numericValue);
                     }}
                     value={value as any}
-                    returnKeyType="done" // Adds "Done" on the keyboard
+                    returnKeyType='done' // Adds "Done" on the keyboard
                     onSubmitEditing={Keyboard.dismiss}
                   />
                 )}
@@ -376,7 +354,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
             </View>
             <View style={styles.containerForm}>
               <FormItem
-                name="ruminateActivity"
+                name='ruminateActivity'
                 control={control}
                 label={`🐮 ${t('healthRecord.ruminateActivity', {
                   defaultValue: 'Ruminate Activity',
@@ -397,21 +375,17 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
                 error={errors?.ruminateActivity?.message}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInputComponent.Number
-                    error={
-                      errors.ruminateActivity
-                        ? errors.ruminateActivity.message
-                        : ''
-                    }
+                    error={errors.ruminateActivity ? errors.ruminateActivity.message : ''}
                     placeholder={t('Enter...')}
                     maxLength={5}
                     onBlur={onBlur}
-                    keyboardType="decimal-pad"
+                    keyboardType='decimal-pad'
                     onChangeText={(text) => {
                       const numericValue = text.replace(/[^0-9.,]/g, '');
                       onChange(numericValue);
                     }}
                     value={value as any}
-                    returnKeyType="done" // Adds "Done" on the keyboard
+                    returnKeyType='done' // Adds "Done" on the keyboard
                     onSubmitEditing={Keyboard.dismiss}
                   />
                 )}
@@ -420,7 +394,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
           </View>
           <View>
             <FormItem
-              name="description"
+              name='description'
               control={control}
               label={t('healthRecord.description', {
                 defaultValue: 'Description',
@@ -449,7 +423,7 @@ const CardFormHealthRecord = ({ cowId }: CardFormHealthRecordProps) => {
             />
           </View>
           <Button
-            mode="contained"
+            mode='contained'
             style={{
               backgroundColor: COLORS.primary,
             }}

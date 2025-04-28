@@ -98,7 +98,6 @@ const IllnessReportScreen = () => {
       const res = await apiClient.post('/illness/create', formDataToSend, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      console.log('res.data', res.data);
       return res.data;
     },
     {
@@ -224,7 +223,6 @@ const IllnessReportScreen = () => {
   };
 
   const pickImage = async (): Promise<void> => {
-    console.log('Picking image from gallery...');
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       aspect: [1, 1],
@@ -236,7 +234,6 @@ const IllnessReportScreen = () => {
       const uriParts = selectedImage.split('.');
       const fileType = uriParts[uriParts.length - 1];
       const fileName = `image_illness_${Date.now()}.${fileType}`;
-      console.log('Image picked:', selectedImage);
       setImages((prev) => [
         ...prev,
         {
@@ -250,8 +247,6 @@ const IllnessReportScreen = () => {
       if (errors.images) {
         setErrors((prev) => ({ ...prev, images: '' }));
       }
-    } else {
-      console.log('Image picking canceled');
     }
   };
 
@@ -259,7 +254,6 @@ const IllnessReportScreen = () => {
     const hasPermission = await requestCameraPermission();
     if (!hasPermission) return;
 
-    console.log('Taking picture...');
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [1, 1],
@@ -271,7 +265,6 @@ const IllnessReportScreen = () => {
       const uriParts = capturedImage.split('.');
       const fileType = uriParts[uriParts.length - 1];
       const fileName = `image_illness_${Date.now()}.${fileType}`;
-      console.log('Picture taken:', capturedImage);
       setImages((prev) => [
         ...prev,
         {
@@ -284,8 +277,6 @@ const IllnessReportScreen = () => {
       if (errors.images) {
         setErrors((prev) => ({ ...prev, images: '' }));
       }
-    } else {
-      console.log('Picture taking canceled');
     }
   };
 
@@ -317,8 +308,6 @@ const IllnessReportScreen = () => {
       } as any);
     });
 
-    console.log('Form data to send:', formDataToSend);
-
     mutate(formDataToSend);
   };
 
@@ -335,7 +324,7 @@ const IllnessReportScreen = () => {
               {t('illness_report.report_illness', { defaultValue: 'Illness Report' })}
             </Text>
 
-            <CardCow cow={cow} onPress={() => console.log('Cow card pressed')} />
+            <CardCow cow={cow} onPress={() => {}} />
 
             <View style={styles.formGroup}>
               <Text style={styles.label}>

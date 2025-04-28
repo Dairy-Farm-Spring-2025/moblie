@@ -36,7 +36,6 @@ const TaskDetailContent: React.FC<{
 }> = ({ task, selectedDate, onCheckIn, isCheckingIn, isChecked }) => {
   const [isExpanded, setIsExpanded] = React.useState(false);
   const navigation = useNavigation();
-  console.log('task', task.material?.illnessDetail || 'null');
 
   const handleToggleExpand = () => setIsExpanded(!isExpanded);
 
@@ -95,14 +94,12 @@ const TaskDetailContent: React.FC<{
 
   const handleViewMaterials = (screen: string) => {
     if (screen === 'feed') {
-      console.log('feed', screen);
       (navigation.navigate as any)('Materials', {
         area: task.areaId,
         taskId: task.taskId,
       });
     } else {
       (navigation.navigate as any)('MilkBatchManagementScreen');
-      console.log('milk', screen);
     }
   };
 
@@ -126,7 +123,7 @@ const TaskDetailContent: React.FC<{
         });
         break;
       default:
-        console.log('Unknown screen type');
+        Alert.alert('Error', 'Invalid screen type');
     }
   };
 

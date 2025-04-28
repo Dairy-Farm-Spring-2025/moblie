@@ -54,7 +54,6 @@ type MaterialsRouteProp = RouteProp<RootStackParamList, 'Materials'>;
 // Fetch functions
 const fetchMaterials = async (areaId: number): Promise<ApiResponse['data']> => {
   const response = await apiClient.get<ApiResponse>(`/feedmeals/calculate/${areaId}`);
-  console.log('Fetched materials:', response.data);
   return response.data;
 };
 
@@ -271,9 +270,7 @@ const Materials: React.FC = () => {
     setRefreshing(true);
     try {
       await refetch();
-      console.log('Refreshed materials:', data);
     } catch (err) {
-      console.error('Refresh failed:', err);
     } finally {
       setRefreshing(false);
     }

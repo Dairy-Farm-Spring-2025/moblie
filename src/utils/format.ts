@@ -92,7 +92,6 @@ export const getVietnamDate = (): Date => {
       timeZone: 'Asia/Ho_Chi_Minh',
     });
     const vietnamDate = new Date(vietnamTimeString);
-    console.log('getVietnamDate:', { baseDate, vietnamTimeString, vietnamDate });
     return vietnamDate;
   } catch (error) {
     console.error('Error in getVietnamDate:', error);

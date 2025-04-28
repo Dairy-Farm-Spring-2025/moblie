@@ -64,7 +64,6 @@ const ProfileScreen: React.FC = () => {
         Alert.alert(t('profile.update_success'), t('profile.update_success'));
       },
       onError: (error: any) => {
-        console.log('error', error.response.data);
         Alert.alert(
           t('profile.update_error'),
           error.response?.data?.message || t('profile.update_error')

@@ -103,20 +103,15 @@ const SignInScreen: React.FC = () => {
       `&state=platform=mobile`;
 
     try {
-      console.log('Opening Google Auth URL:', googleAuthUrl);
       const result = await WebBrowser.openAuthSessionAsync(googleAuthUrl, redirectUri);
-      const redirect = Linking.createURL('/oauth2/callback');
-      console.log('redirect', redirect);
+      // const redirect = Linking.createURL('/oauth2/callback');
       if (result.type === 'success' && result.url) {
-        console.log('Redirect URL:', result.url);
-        // Parse the redirect URL to extract query parameters
         const { queryParams } = require('expo-linking').parse(result.url);
         const accessToken = queryParams?.access_token;
         const refreshToken = queryParams?.refresh_token;
         const userId = queryParams?.userId;
         const userName = queryParams?.userName;
         const roleName = queryParams?.roleName;
-        console.log('Parsed Query Params:', queryParams);
 
         if (accessToken && refreshToken) {
           dispatch(
@@ -140,7 +135,6 @@ const SignInScreen: React.FC = () => {
       }
     } catch (error) {
       Alert.alert('Error', 'Failed to initiate Google Sign-In');
-      console.error('Google Sign-In Error:', error);
     }
   };
 

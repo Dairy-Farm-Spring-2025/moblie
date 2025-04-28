@@ -1,5 +1,4 @@
 export const getIconByAreaType = (areaType: string) => {
-  console.log(areaType);
   switch (areaType) {
     case 'warehouse':
       return { name: 'storefront-outline', color: '#F4A261' }; // Warm orange

@@ -50,9 +50,7 @@ const fetchItems = async (): Promise<Item[]> => {
 
 const IllnessDetailForm = () => {
   const route = useRoute<IllnessDetailFormRouteProp>();
-  const navigation = useNavigation();
   const { illnessDetail } = route.params;
-  console.log('illnessDetail', illnessDetail);
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [idItem, setIdItem] = useState(illnessDetail.vaccine.itemId);
@@ -138,7 +136,6 @@ const IllnessDetailForm = () => {
   const { mutate } = useMutation(
     async (data: IllnessDetailPayload) => {
       const res = await apiClient.put(`/illness-detail/${illnessDetail.illnessDetailId}`, data);
-      console.log('res.data', res.data);
       return res.data;
     },
     {
@@ -170,7 +167,6 @@ const IllnessDetailForm = () => {
       ...values,
       date: dayjs(date).format('YYYY-MM-DD'),
     };
-    console.log('payload', payload);
     mutate(payload);
   };
 

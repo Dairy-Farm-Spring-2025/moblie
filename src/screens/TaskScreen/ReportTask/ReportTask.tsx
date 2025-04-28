@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Dimensions,
   RefreshControl,
+  Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import LoadingScreen from '@components/LoadingScreen/LoadingScreen';
@@ -25,22 +26,12 @@ interface ReportTaskProps {
   date: string;
 }
 
-const fetchReportTask = async (
-  date: string,
-  taskId: number
-): Promise<ReportTaskData> => {
-  const response = await apiClient.get(
-    `/reportTask/task/${taskId}/date?date=${date}`
-  );
-  console.log('Fetched report:', response.data);
+const fetchReportTask = async (date: string, taskId: number): Promise<ReportTaskData> => {
+  const response = await apiClient.get(`/reportTask/task/${taskId}/date?date=${date}`);
   return response.data || null; // Return null if no data
 };
 
-const ReportTask: React.FC<ReportTaskProps> = ({
-  reportTask: initialReportTask,
-  task,
-  date,
-}) => {
+const ReportTask: React.FC<ReportTaskProps> = ({ reportTask: initialReportTask, task, date }) => {
   const navigation = useNavigation<any>();
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -50,15 +41,11 @@ const ReportTask: React.FC<ReportTaskProps> = ({
     isError,
     error,
     refetch,
-  } = useQuery(
-    ['reportTask', task.taskId, date],
-    () => fetchReportTask(date, task.taskId),
-    {
-      initialData: initialReportTask,
-      staleTime: 0,
-      cacheTime: 5 * 60 * 1000,
-    }
-  );
+  } = useQuery(['reportTask', task.taskId, date], () => fetchReportTask(date, task.taskId), {
+    initialData: initialReportTask,
+    staleTime: 0,
+    cacheTime: 5 * 60 * 1000,
+  });
 
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
@@ -80,9 +67,8 @@ const ReportTask: React.FC<ReportTaskProps> = ({
     setRefreshing(true);
     try {
       await refetch();
-      console.log('Refresh successful, new data:', reportTask);
     } catch (err) {
-      console.error('Refresh failed:', err);
+      Alert.alert('Error', 'Failed to refresh report data.');
     } finally {
       setRefreshing(false);
     }
@@ -96,9 +82,9 @@ const ReportTask: React.FC<ReportTaskProps> = ({
         <RefreshControl
           refreshing={refreshing}
           onRefresh={onRefresh}
-          tintColor="#000"
-          title="Refreshing reports..."
-          titleColor="#333"
+          tintColor='#000'
+          title='Refreshing reports...'
+          titleColor='#333'
         />
       }
     >
@@ -109,7 +95,7 @@ const ReportTask: React.FC<ReportTaskProps> = ({
         <View style={styles.reportListContainer}>
           <Text style={styles.sectionTitle}>{t('Existing Reports')}</Text>
           {isLoading ? (
-            <LoadingScreen message="Loading report..." />
+            <LoadingScreen message='Loading report...' />
           ) : isError ? (
             <View style={styles.noDataContainer}>
               <Text style={styles.noDataText}>
@@ -136,28 +122,21 @@ const ReportTask: React.FC<ReportTaskProps> = ({
                     { backgroundColor: getStatusColor(reportTask.status) },
                   ]}
                 >
-                  <Text style={styles.statusText}>
-                    {t(formatCamelCase(reportTask.status))}
-                  </Text>
+                  <Text style={styles.statusText}>{t(formatCamelCase(reportTask.status))}</Text>
                 </View>
               </View>
               <Text style={styles.reportDate}>
                 {t('Date')}: {new Date(reportTask.date).toLocaleDateString()}
               </Text>
               <Text style={styles.reportTime}>
-                {t('Start Date')}:{' '}
-                {new Date(reportTask.startTime).toLocaleTimeString()}
+                {t('Start Date')}: {new Date(reportTask.startTime).toLocaleTimeString()}
                 {reportTask.endTime
-                  ? ` - ${t('End Date')}: ${new Date(
-                      reportTask.endTime
-                    ).toLocaleTimeString()}`
+                  ? ` - ${t('End Date')}: ${new Date(reportTask.endTime).toLocaleTimeString()}`
                   : ''}
               </Text>
               {reportTask.description && (
                 <View>
-                  <Text style={styles.reportDescription}>
-                    {t('Description')}:
-                  </Text>
+                  <Text style={styles.reportDescription}>{t('Description')}:</Text>
                   <View style={styles.reportHtmlContainer}>
                     <RenderHTML
                       contentWidth={Dimensions.get('window').width - 72}

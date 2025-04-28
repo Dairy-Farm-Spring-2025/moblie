@@ -20,21 +20,12 @@ interface FormItemProps extends ControllerProps {
   }) => React.ReactNode | any; // Custom render prop
 }
 
-const FormItem = ({
-  name,
-  control,
-  label,
-  rules,
-  error,
-  render,
-  ...props
-}: FormItemProps) => {
-  console.log(error);
+const FormItem = ({ name, control, label, rules, error, render, ...props }: FormItemProps) => {
   return (
     <View style={styles.container}>
       {/* Label */}
       <Tooltip title={`${label}`}>
-        <Text style={styles.label} numberOfLines={1} ellipsizeMode="tail">
+        <Text style={styles.label} numberOfLines={1} ellipsizeMode='tail'>
           <Text style={styles.required}>*</Text> {label}
         </Text>
       </Tooltip>
