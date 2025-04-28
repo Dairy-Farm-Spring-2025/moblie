@@ -93,6 +93,28 @@ const NavigationWrapper = () => {
         value: 'cow-detail',
       },
       {
+        label: t('scanQR.reportIllness', {
+          defaultValue: 'Report illness',
+        }),
+        value: 'report-illness',
+      },
+      // {
+      //   label: t('scanQR.vaccineInjection', {
+      //     defaultValue: 'Create vaccine injection',
+      //   }),
+      //   value: 'create-vaccine-injection',
+      // },
+    ],
+    []
+  );
+
+  const optionsScanVet = useMemo(
+    () => [
+      {
+        label: t('scanQR.viewCowDetail', { defaultValue: 'View cow detail' }),
+        value: 'cow-detail',
+      },
+      {
         label: t('scanQR.createHealthRecord', {
           defaultValue: 'Create health record',
         }),
@@ -268,15 +290,25 @@ const NavigationWrapper = () => {
                 <Text style={styles.closeButtonText}>{t('Close', { defaultValue: 'Close' })}</Text>
               </TouchableOpacity>
             </View>
-            {optionsScan.map((element) => (
-              <TouchableOpacity
-                style={styles.drawerItem}
-                key={element.value}
-                onPress={() => handleFieldSelect(element.value)}
-              >
-                <Text>{element.label}</Text>
-              </TouchableOpacity>
-            ))}
+            {roleName !== 'Worker'
+              ? optionsScanVet.map((element: any) => (
+                  <TouchableOpacity
+                    style={styles.drawerItem}
+                    key={element.value + element.label}
+                    onPress={() => handleFieldSelect(element.value)}
+                  >
+                    <Text>{element.label}</Text>
+                  </TouchableOpacity>
+                ))
+              : optionsScan.map((element: any) => (
+                  <TouchableOpacity
+                    style={styles.drawerItem}
+                    key={element.value + element.label}
+                    onPress={() => handleFieldSelect(element.value)}
+                  >
+                    <Text>{element.label}</Text>
+                  </TouchableOpacity>
+                ))}
           </View>
         </View>
       </Modal>

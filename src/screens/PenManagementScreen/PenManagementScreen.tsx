@@ -91,12 +91,12 @@ const PenManagementScreen = () => {
                     <View style={styles.cardContent}>
                       <Tooltip title='Pen Status'>
                         <TagUI backgroundColor='orange' fontSize={10}>
-                          {formatType(item.penStatus)}
+                          {formatType(t(`data.${item.penStatus}`))}
                         </TagUI>
                       </Tooltip>
                     </View>
                     <TextTitle
-                      title='Dimension'
+                      title={t('Dimension')}
                       content={`${item.area.penWidth}m x ${item.area.penLength}m`}
                     />
                   </View>

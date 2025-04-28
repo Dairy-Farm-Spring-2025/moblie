@@ -19,6 +19,55 @@
     "Change_Password": "Đổi mật khẩu",
     "Update_Profile": "Cập nhật hồ sơ"
   },
+  "data": {
+    "cowHousing": "Khu vực/chuồng nuôi bò",
+    "milkingParlor": "khu vắt sữa",
+    "warehouse": "kho chứa",
+    "calfPen": "chuồng bê con",
+    "heiferPen": "chuồng bò tơ",
+    "dryCowPen": "chuồng bò cạn sữa",
+    "lactatingCowPen": "chuồng bò đang cho sữa",
+    "maternityPen": "chuồng đẻ",
+    "isolationPen": "chuồng cách ly",
+    "holdingPen": "chuồng tạm giữ",
+    "occupied": "đang sử dụng",
+    "empty": "trống",
+    "reserved": "đã đặt trước",
+    "underMaintenance": "đang bảo trì",
+    "decommissioned": "ngừng sử dụng",
+    "inPlaning": "đang lên kế hoạch",
+    "quarantine": "Khu vực cách ly",
+    "cowStatus": {
+      "milkingCow": "bò đang vắt sữa",
+      "dryCow": "bò cạn sữa",
+      "pregnantCow": "bò mang thai",
+      "openCow": "bò chưa thụ thai",
+      "calvingCow": "bò sắp sinh",
+      "sickCow": "bò ốm",
+      "breedingCow": "bò phối giống",
+      "quarantinedCow": "bò cách ly",
+      "culling": "bò bị loại bỏ"
+    },
+    "injectionSite": {
+      "leftArm": "cơ vai trái",
+      "rightArm": "cơ vai phải",
+      "leftThigh": "cơ đùi trái",
+      "rightThigh": "cơ đùi phải",
+      "buttock": "vùng mông",
+      "abdomen": "vùng bụng",
+      "other": "khác"
+    },
+    "years": "năm",
+    "healthStatus": {
+      "good": "tốt",
+      "fair": "khá",
+      "poor": "kém",
+      "critical": "nguy kịch",
+      "recovering": "đang hồi phục"
+    }
+  },
+  "Weight": "Cân nặng",
+  "Size": "Kích thước",
   "profile": {
     "title": "Hồ sơ",
     "employee_id": "Mã số nhân viên",

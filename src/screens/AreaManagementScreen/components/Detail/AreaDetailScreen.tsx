@@ -108,17 +108,21 @@ const AreaDetailScreen = () => {
       title={
         <View>
           <Text style={styles.cowText}>
-            <Text style={styles.bold}>{t('cowDetails.typeName')}:</Text> {item.name}
+            <Text style={styles.bold}>{t('cowDetails.typeName')}: </Text> {item.name}
           </Text>
           <Text style={styles.cowText}>
-            <Text style={styles.bold}>{t('cowDetails.status')}:</Text>{' '}
-            {formatCamelCase(item.cowStatus)}
+            <Text style={styles.bold}>{t('cowDetails.status')}: </Text>
+            {formatCamelCase(
+              t(`data.cowStatus.${item.cowStatus}`, {
+                defaultValue: item.cowStatus,
+              })
+            )}
           </Text>
           <Text style={styles.cowText}>
-            <Text style={styles.bold}>{t('cowDetails.type')}:</Text> {item.cowType}
+            <Text style={styles.bold}>{t('cowDetails.type')}: </Text> {item.cowType}
           </Text>
           <Text style={styles.cowText}>
-            <Text style={styles.bold}>{t('cowDetails.inPen')}:</Text> {item.penName}
+            <Text style={styles.bold}>{t('cowDetails.inPen')}: </Text> {item.penName}
           </Text>
         </View>
       }
@@ -159,17 +163,18 @@ const AreaDetailScreen = () => {
         <Card.Content>
           <Text style={styles.title}>{area.name}</Text>
           <Text style={styles.text}>
-            📏 <Text style={styles.bold}>{t('Dimension')}:</Text> {area.width}m x {area.length}m
+            📏 <Text style={styles.bold}>{t('Dimension')}: </Text> {area.width}m x {area.length}m
           </Text>
           <Text style={styles.text}>
-            📏 <Text style={styles.bold}>{t('Pen Dimension')}:</Text> {area.penWidth}m x{' '}
+            📏 <Text style={styles.bold}>{t('Pen Dimension')}: </Text> {area.penWidth}m x
             {area.penLength}m
           </Text>
           <Text style={styles.text}>
-            📍 <Text style={styles.bold}>{t('Area Type')}:</Text> {formatType(area.areaType)}
+            📍 <Text style={styles.bold}>{t('Area Type')}: </Text>
+            {formatType(t(`data.${area.areaType}`))}
           </Text>
           <View style={{ flexDirection: 'column' }}>
-            <Text style={[styles.text, styles.bold]}>📖 {t('Description')}:</Text>
+            <Text style={[styles.text, styles.bold]}>📖 {t('Description')}: </Text>
             <Text>{area.description}</Text>
           </View>
         </Card.Content>

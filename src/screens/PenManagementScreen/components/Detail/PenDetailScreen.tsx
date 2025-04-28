@@ -46,17 +46,15 @@ const PenDetailScreen = () => {
       <View style={styles.card}>
         <Text style={styles.title}>{pen.name}</Text>
         <Text style={styles.text}>
-          📏 <Text style={styles.bold}>{t('Dimension')}:</Text> {pen.area.penWidth}m x{' '}
+          📏 <Text style={styles.bold}>{t('Dimension')}:</Text> {pen.area.penWidth}m x
           {pen.area.penLength}m
         </Text>
         <Text style={styles.text}>
-          📼 <Text style={styles.bold}>{t('Pen Type')}:</Text> {formatType(pen.penType)}
+          📌 <Text style={styles.bold}>{t('Status')}: </Text>
+          {formatType(t(`data.${pen.penStatus}`))}
         </Text>
         <Text style={styles.text}>
-          📌 <Text style={styles.bold}>{t('Status')}:</Text> {formatType(pen.penStatus)}
-        </Text>
-        <Text style={styles.text}>
-          📍 <Text style={styles.bold}>{t('Area')}:</Text> {formatType(pen.area.name)}
+          📍 <Text style={styles.bold}>{t('Area')}: </Text> {formatType(pen.area.name)}
         </Text>
         <View
           style={{

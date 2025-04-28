@@ -106,7 +106,9 @@ const HealthRecordScreen = () => {
               size={40}
               style={styles.statusIcon}
             />
-            <Text>{formatType(item.status)}</Text>
+            <Text>
+              {formatType(t(`data.healthStatus.${item.status}`, { defaultValue: item.status }))}
+            </Text>
           </View>
           {/* Cow Name and Period */}
           <View style={styles.containerItemContent}>
@@ -114,7 +116,9 @@ const HealthRecordScreen = () => {
               <Text variant='titleLarge' style={styles.cowName}>
                 {item.cowEntity?.name}
               </Text>
-              <TagUI>{formatType(item.period)}</TagUI>
+              <TagUI>
+                {formatType(t(`data.cowStatus.${item.period}`, { defaultValue: item.period }))}
+              </TagUI>
             </View>
             <Text variant='bodySmall' style={styles.reportTime}>
               {new Date(item.reportTime).toLocaleString()}
@@ -130,7 +134,7 @@ const HealthRecordScreen = () => {
           }}
         >
           <Text>
-            ⚖️ {t('Weight')} {item.weight} kg
+            ⚖️ {t('Weight')}: {item.weight} kg
           </Text>
           <Text>
             📏 {t('Size')}: {item.size} cm
@@ -205,7 +209,8 @@ const styles = StyleSheet.create({
   infoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    justifyContent: 'space-between',
+    gap: 58,
   },
   cowName: {
     fontWeight: 'bold',
