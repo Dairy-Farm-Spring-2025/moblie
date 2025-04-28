@@ -24,7 +24,9 @@ const QrCodeScanCow = () => {
   if (!permission.granted) {
     return (
       <View style={styles.container}>
-        <Text style={styles.message}>We need your permission to show the camera</Text>
+        <Text style={styles.message}>
+          We need your permission to show the camera
+        </Text>
         <TouchableOpacity onPress={requestPermission}>
           <Text style={styles.buttonText}>Grant Permission</Text>
         </TouchableOpacity>
@@ -74,7 +76,10 @@ const QrCodeScanCow = () => {
         </View>
       </CameraView>
 
-      <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
+      <TouchableOpacity
+        style={styles.cancelButton}
+        onPress={() => navigation.goBack()}
+      >
         <Text style={styles.buttonText}>{t('scanQR.cancel')}</Text>
       </TouchableOpacity>
     </View>

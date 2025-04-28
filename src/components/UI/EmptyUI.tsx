@@ -30,7 +30,7 @@ const EmptyUI = () => {
             fontSize: 17,
           }}
         >
-          {t('Date empty')}
+          {t('Empty')}
         </Text>
       </View>
     </View>
