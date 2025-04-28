@@ -69,7 +69,9 @@ const TaskManagementRoute: React.FC = () => {
       <Stack.Screen
         name='IllnessDetailForm'
         component={IllnessDetailForm}
-        options={{ title: 'Edit Illness Detail' }}
+        options={{
+          title: t('illness_detail.edit_subtitle', { defaultValue: 'Edit Illness Detail' }),
+        }}
       />
       <Stack.Screen
         name='IllnessCowRecordScreen'

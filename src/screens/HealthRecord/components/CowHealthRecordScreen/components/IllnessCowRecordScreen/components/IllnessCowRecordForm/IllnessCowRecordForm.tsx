@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { View, Alert, StyleSheet } from 'react-native';
+import {
+  View,
+  Alert,
+  StyleSheet,
+  Image,
+  Modal,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import FormItem from '@components/Form/FormItem';
@@ -14,11 +22,13 @@ import { useNavigation } from '@react-navigation/native';
 import { Button, Text } from 'react-native-paper';
 import { convertToDDMMYYYY, formatCamelCase } from '@utils/format';
 import RenderHtmlComponent from '@components/RenderHTML/RenderHtmlComponent';
-import { Ionicons } from '@expo/vector-icons'; // Import Ionicons from @expo/vector-icons
+import { Ionicons } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
 import { RootState } from '@core/store/store';
 import { COLORS } from '@common/GlobalStyle';
 import { t } from 'i18next';
+import { ScrollView } from 'react-native-gesture-handler';
+import { getIllnessImage } from '@utils/getImage';
 
 interface IllnessCowRecordFormProps {
   illness: IllnessCow;
@@ -26,12 +36,13 @@ interface IllnessCowRecordFormProps {
 
 const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
   const navigation = useNavigation();
-  const [isEditing, setIsEditing] = useState(false); // Toggle for edit mode
-  const [startDate, setStartDate] = useState(
-    new Date(illness.startDate)?.toISOString()
-  );
+  const [isEditing, setIsEditing] = useState(false);
+  const [startDate, setStartDate] = useState(new Date(illness.startDate)?.toISOString());
   const [symptoms, setSymptoms] = useState(illness.symptoms);
   const [endDate, setEndDate] = useState();
+  // State for modal and selected image
+  const [isImageModalVisible, setIsImageModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const { roleName } = useSelector((state: RootState) => state.auth);
   const getColorByrole = () => {
@@ -55,14 +66,14 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
       severity: illness.severity,
     },
   });
+
   const { mutate } = useMutation(
     async (data: IllnessPayload) =>
       await apiClient.put(`illness/prognosis/${illness.illnessId}`, data),
     {
       onSuccess: (response: any) => {
-        console.log(response);
         Alert.alert('Success', response.message);
-        setIsEditing(false); // Exit edit mode on success
+        setIsEditing(false);
         (navigation.navigate as any)('CowDetails', {
           cowId: illness?.cowEntity?.cowId,
         });
@@ -82,15 +93,17 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
   };
 
   const onSubmit = async (values: IllnessPayload) => {
-    const payload: IllnessPayload = {
-      ...values,
-    };
+    const payload: IllnessPayload = { ...values };
     mutate(payload);
   };
 
-  const formattedStartDate = convertToDDMMYYYY(
-    new Date(startDate).toISOString().split('T')[0]
-  );
+  // Handle image click to open modal
+  const handleImagePress = (imageUrl: string) => {
+    setSelectedImage(imageUrl);
+    setIsImageModalVisible(true);
+  };
+
+  const formattedStartDate = convertToDDMMYYYY(new Date(startDate).toISOString().split('T')[0]);
   const formattedEndDate = endDate
     ? convertToDDMMYYYY(new Date(endDate).toISOString().split('T')[0])
     : 'N/A';
@@ -108,20 +121,13 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
                 defaultValue: 'View illness details',
               })
         }
-        leftContent={(props: any) => (
-          <LeftContent {...props} icon="cards-heart" />
-        )}
+        leftContent={(props: any) => <LeftContent {...props} icon='cards-heart' />}
       />
       <CardComponent.Content>
         {!isEditing ? (
-          // Read-only view
           <View>
-            <Text style={styles.label}>
-              {t('Severity', { defaultValue: 'Severity' })}:
-            </Text>
-            <Text style={styles.value}>
-              {t(formatCamelCase(illness.severity)) || 'N/A'}
-            </Text>
+            <Text style={styles.label}>{t('Severity', { defaultValue: 'Severity' })}:</Text>
+            <Text style={styles.value}>{t(formatCamelCase(illness.severity)) || 'N/A'}</Text>
 
             <View style={styles.dateContainer}>
               <View>
@@ -129,8 +135,7 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
                 <Text style={styles.value}>{formattedStartDate}</Text>
               </View>
               <View>
-                <Ionicons name="arrow-forward" size={20} color="#000" />
-                {/* Replaced faArrowRight with arrow-forward */}
+                <Ionicons name='arrow-forward' size={20} color='#000' />
               </View>
               <View>
                 <Text style={styles.label}>{t('End Date')}:</Text>
@@ -147,26 +152,46 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
             <View>
               <RenderHtmlComponent htmlContent={illness.symptoms} />
             </View>
+
+            <Text style={styles.label}>{t('Images', { defaultValue: 'Images' })}:</Text>
+            <View style={styles.contentContainer}>
+              {illness.mediaList.length > 0 ? (
+                <ScrollView horizontal style={styles.imageContainer}>
+                  {illness.mediaList.map((illnessImg, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => handleImagePress(getIllnessImage(illnessImg.url))}
+                    >
+                      <Image
+                        source={{ uri: getIllnessImage(illnessImg.url) }}
+                        style={styles.imagePreview}
+                      />
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              ) : (
+                <Text style={styles.noContentText}>{t('No images')}</Text>
+              )}
+            </View>
+
             {roleName.toLowerCase() !== 'worker' && (
               <Button
-                mode="contained"
-                style={[
-                  styles.editButton,
-                  { backgroundColor: `${getColorByrole()}` },
-                ]}
+                mode='contained'
+                style={[styles.editButton, { backgroundColor: `${getColorByrole()}` }]}
                 onPress={() => setIsEditing(true)}
               >
-                Edit
+                {t('illness.Edit_the_illness_details', {
+                  defaultValue: 'Edit the illness details',
+                })}
               </Button>
             )}
           </View>
         ) : (
-          // Editable form
           <>
             <FormItem
               control={control}
               label={t('Severity', { defaultValue: 'Severity' })}
-              name="severity"
+              name='severity'
               render={({ field: { onChange, onBlur, value } }) => (
                 <CustomPicker
                   onValueChange={onChange}
@@ -189,16 +214,14 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
 
               <View style={{ width: '48%' }}>
                 <Text style={styles.label}>{t('Start Date')}</Text>
-                <Text style={styles.value}>
-                  {endDate ? formattedEndDate : 'N/A'}
-                </Text>
+                <Text style={styles.value}>{endDate ? formattedEndDate : 'N/A'}</Text>
               </View>
             </View>
 
             <FormItem
               control={control}
               label={t('Prognosis')}
-              name="prognosis"
+              name='prognosis'
               rules={{ required: 'Must not be empty' }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextEditorComponent
@@ -212,22 +235,16 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
             <FormItem
               control={control}
               label={t('Symptoms')}
-              name="symptoms"
-              render={({ field: { value } }) => (
-                <Text style={styles.textView}>{symptoms}</Text>
-              )}
+              name='symptoms'
+              render={({ field: { value } }) => <Text style={styles.textView}>{symptoms}</Text>}
             />
 
             <View style={styles.buttonContainer}>
-              <Button
-                mode="contained"
-                style={styles.submitButton}
-                onPress={handleSubmit(onSubmit)}
-              >
+              <Button mode='contained' style={styles.submitButton} onPress={handleSubmit(onSubmit)}>
                 {t('Save')}
               </Button>
               <Button
-                mode="outlined"
+                mode='outlined'
                 style={styles.cancelButton}
                 onPress={() => setIsEditing(false)}
               >
@@ -236,6 +253,37 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
             </View>
           </>
         )}
+
+        {/* Modal for viewing full-size image */}
+        <Modal
+          visible={isImageModalVisible}
+          transparent={true}
+          animationType='fade'
+          onRequestClose={() => setIsImageModalVisible(false)}
+        >
+          <TouchableWithoutFeedback onPress={() => setIsImageModalVisible(false)}>
+            <View style={styles.modalContainer}>
+              <TouchableWithoutFeedback>
+                <View style={styles.modalContent}>
+                  {selectedImage && (
+                    <Image
+                      source={{ uri: selectedImage }}
+                      style={styles.fullImage}
+                      resizeMode='contain'
+                    />
+                  )}
+                  <Button
+                    mode='contained'
+                    style={styles.closeButton}
+                    onPress={() => setIsImageModalVisible(false)}
+                  >
+                    {t('Close')}
+                  </Button>
+                </View>
+              </TouchableWithoutFeedback>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
       </CardComponent.Content>
     </CardComponent>
   );
@@ -245,6 +293,11 @@ const styles = StyleSheet.create({
   container: {
     padding: 10,
     marginTop: 20,
+  },
+  noContentText: {
+    color: '#1a1a1a',
+    fontSize: 14,
+    fontWeight: '500',
   },
   label: {
     fontSize: 16,
@@ -280,6 +333,47 @@ const styles = StyleSheet.create({
     marginTop: 10,
     padding: 10,
     color: '#333',
+  },
+  imageContainer: {
+    flexDirection: 'row',
+  },
+  contentContainer: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 5,
+    backgroundColor: '#f5f5f5',
+    marginBottom: 8,
+    marginTop: 10,
+  },
+  imagePreview: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  // Modal styles
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    width: '90%',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+  },
+  fullImage: {
+    width: '100%',
+    height: 400, // Adjust as needed
+  },
+  closeButton: {
+    marginTop: 20,
+    backgroundColor: '#6200ee',
   },
 });
 

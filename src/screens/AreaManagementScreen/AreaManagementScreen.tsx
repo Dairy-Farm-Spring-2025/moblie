@@ -91,7 +91,7 @@ const AreaManagementScreen = () => {
                       size={20}
                     />
                     <Tooltip enterTouchDelay={200} title={t('Cow Type')}>
-                      <Text style={styles.areaType}>{formatType(item.areaType)}</Text>
+                      <Text style={styles.areaType}>{formatType(t(`data.${item.areaType}`))}</Text>
                     </Tooltip>
                   </View>
                 </View>

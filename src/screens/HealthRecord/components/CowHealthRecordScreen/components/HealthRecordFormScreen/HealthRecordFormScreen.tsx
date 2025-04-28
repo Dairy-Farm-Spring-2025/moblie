@@ -176,11 +176,11 @@ const HealthRecordFormScreen = () => {
                     rules={{
                       required: 'Size is required',
                       pattern: {
-                        value: /^[0-9]*$/,
-                        message: 'Only numbers are allowed',
+                        value: /^\d*\.?\d*$/,
+                        message: 'Only decimal numbers are allowed (e.g., 1.23)',
                       },
                       min: {
-                        value: 1,
+                        value: 0.1,
                         message: 'Size must be greater than 0',
                       },
                     }}
@@ -189,16 +189,19 @@ const HealthRecordFormScreen = () => {
                       <TextInputComponent.Number
                         error={errors.size ? errors.size.message : ''}
                         placeholder={t('Enter...')}
-                        maxLength={3}
+                        maxLength={6} // Increased to allow for decimal places (e.g., 12.345)
                         onBlur={onBlur}
                         onChangeText={(text) => {
-                          const numericValue = text.replace(/[^0-9]/g, '');
-                          onChange(numericValue);
+                          // Allow only valid decimal numbers
+                          if (text === '' || /^\d*\.?\d*$/.test(text)) {
+                            onChange(text);
+                          }
                         }}
                         value={value?.toString() ?? ''}
                         returnKeyType='done'
                         onSubmitEditing={Keyboard.dismiss}
                         readOnly={!isEditing}
+                        keyboardType='decimal-pad' // Use decimal-pad for better UX
                       />
                     )}
                   />
@@ -214,29 +217,31 @@ const HealthRecordFormScreen = () => {
                       rules={{
                         required: { message: 'Required' },
                         pattern: {
-                          value: /^[0-9]*$/,
-                          message: 'Only numbers are allowed',
+                          value: /^\d*\.?\d*$/,
+                          message: 'Only decimal numbers are allowed (e.g., 1.23)',
                         },
                         min: {
-                          value: 1,
+                          value: 0.1,
                           message: 'Chest Circumference must be greater than 0',
                         },
                       }}
                       error={errors?.chestCircumference?.message}
                       render={({ field: { onChange, onBlur, value } }) => (
                         <TextInputComponent.Number
-                          error={errors.size ? errors.size.message : ''}
+                          error={errors.chestCircumference ? errors.chestCircumference.message : ''}
                           placeholder={t('Enter...')}
-                          maxLength={3}
+                          maxLength={6} // Increased to allow for decimal places
                           onBlur={onBlur}
                           onChangeText={(text) => {
-                            const numericValue = text.replace(/[^0-9]/g, '');
-                            onChange(numericValue);
+                            if (text === '' || /^\d*\.?\d*$/.test(text)) {
+                              onChange(text);
+                            }
                           }}
                           value={value?.toString() ?? ''}
                           returnKeyType='done'
                           onSubmitEditing={Keyboard.dismiss}
                           readOnly={!isEditing}
+                          keyboardType='decimal-pad'
                         />
                       )}
                     />
@@ -251,12 +256,12 @@ const HealthRecordFormScreen = () => {
                       rules={{
                         required: { message: 'Required' },
                         pattern: {
-                          value: /^[0-9]*$/,
-                          message: 'Only numbers are allowed',
+                          value: /^\d*\.?\d*$/,
+                          message: 'Only decimal numbers are allowed (e.g., 1.23)',
                         },
                         min: {
-                          value: 1,
-                          message: 'Chest Circumference must be greater than 0',
+                          value: 0.1,
+                          message: 'Body Length must be greater than 0',
                         },
                       }}
                       error={errors?.bodyLength?.message}
@@ -264,16 +269,18 @@ const HealthRecordFormScreen = () => {
                         <TextInputComponent.Number
                           error={errors.bodyLength ? errors.bodyLength.message : ''}
                           placeholder={t('Enter...')}
-                          maxLength={3}
+                          maxLength={6} // Increased to allow for decimal places
                           onBlur={onBlur}
                           onChangeText={(text) => {
-                            const numericValue = text.replace(/[^0-9]/g, '');
-                            onChange(numericValue);
+                            if (text === '' || /^\d*\.?\d*$/.test(text)) {
+                              onChange(text);
+                            }
                           }}
                           value={value?.toString() ?? ''}
                           returnKeyType='done'
                           onSubmitEditing={Keyboard.dismiss}
                           readOnly={!isEditing}
+                          keyboardType='decimal-pad'
                         />
                       )}
                     />

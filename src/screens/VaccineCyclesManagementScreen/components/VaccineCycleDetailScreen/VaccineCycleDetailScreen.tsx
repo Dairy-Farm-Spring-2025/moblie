@@ -5,6 +5,7 @@ import { t } from 'i18next';
 import Timeline from 'react-native-timeline-flatlist';
 import RenderHTML from 'react-native-render-html';
 import { RouteProp, useRoute } from '@react-navigation/native';
+import { formatCamelCase } from '@utils/format';
 
 type RootStackParamList = {
   VaccineCycleDetail: { cycle: VaccineCycle };
@@ -38,11 +39,13 @@ const VaccineCycleDetailScreen = () => {
       detail.dosageUnit || 'N/A'
     }</p>
         <p>${t('injections.injectionSite', { defaultValue: 'Injection Site' })}: ${
-      detail.injectionSite || 'N/A'
+      formatCamelCase(
+        t(`data.injectionSite.${detail.injectionSite}`, { defaultValue: detail.injectionSite })
+      ) || 'N/A'
     }</p>
         <p>${t('injections.numberPeriodic', { defaultValue: 'Number Periodic' })}: ${
       detail.numberPeriodic || 0
-    } ${detail.unitPeriodic || 'N/A'}</p>
+    } ${t(`data.${detail.unitPeriodic}`, { defaultValue: detail.unitPeriodic }) || 'N/A'}</p>
         <p>${t('injections.vaccineItem', { defaultValue: 'Vaccine Item' })}: ${
       detail.itemEntity?.name || 'N/A'
     }</p>

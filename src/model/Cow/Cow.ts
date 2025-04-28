@@ -94,11 +94,7 @@ export type HealthResponse = {
   type: 'HEALTH_RECORD' | 'ILLNESS' | 'INJECTIONS';
 };
 
-export type InjectionStatus =
-  | 'pending'
-  | 'inProgress'
-  | 'completed'
-  | 'canceled';
+export type InjectionStatus = 'pending' | 'inProgress' | 'completed' | 'canceled';
 
 export type InjectionCow = {
   administeredBy: string | null;
@@ -156,7 +152,14 @@ export type IllnessCow = {
   cowEntity: Cow;
   userEntity: UserProfileData;
   veterinarian: UserProfileData;
+  mediaList: MediaList[];
   illnessDetails: IllnessDetail[];
+};
+
+export type MediaList = {
+  illnessImageId: number;
+  type: string;
+  url: string;
 };
 
 export type UserProfileData = {
@@ -193,11 +196,6 @@ export type IllnessDetail = {
     | 'other';
 };
 
-export type StatusIllnessDetail =
-  | 'observed'
-  | 'treated'
-  | 'cured'
-  | 'ongoing'
-  | 'deceased';
+export type StatusIllnessDetail = 'observed' | 'treated' | 'cured' | 'ongoing' | 'deceased';
 
 export type Severity = 'mild' | 'moderate' | 'severe' | 'critical';

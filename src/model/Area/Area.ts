@@ -13,4 +13,4 @@ export type Area = {
   updatedAt: string; // ISO 8601 format
 };
 
-export type AreaType = 'cowHousing' | 'milkingParlor' | 'warehouse';
+export type AreaType = 'cowHousing' | 'milkingParlor' | 'warehouse' | 'quarantine';
