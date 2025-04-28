@@ -2,6 +2,7 @@ import FloatingButton from '@components/FloatingButton/FloatingButton';
 import SearchInput from '@components/Input/Search/SearchInput';
 import LoadingScreen from '@components/LoadingScreen/LoadingScreen';
 import DividerUI from '@components/UI/DividerUI';
+import EmptyUI from '@components/UI/EmptyUI';
 import TagUI from '@components/UI/TagUI';
 import apiClient from '@config/axios/axios';
 import { RootState } from '@core/store/store';
@@ -20,7 +21,9 @@ const fetchHealthRecord = async (): Promise<HealthRecord[]> => {
     const response = await apiClient.get('/health-record');
     return response.data;
   } catch (error: any) {
-    throw new Error(error?.message || 'An error occurred while fetching the data');
+    throw new Error(
+      error?.message || 'An error occurred while fetching the data'
+    );
   }
 };
 const HealthRecordScreen = () => {
@@ -38,15 +41,20 @@ const HealthRecordScreen = () => {
 
   const filteredHealthRecord = healthRecordData?.filter((healthRecord) => {
     if (selectedFilter === 'name') {
-      return healthRecord?.cowEntity?.name?.toLowerCase().includes(searchText.toLowerCase());
+      return healthRecord?.cowEntity?.name
+        ?.toLowerCase()
+        .includes(searchText.toLowerCase());
     }
   });
 
   const sortedHealthRecord = filteredHealthRecord?.sort(
-    (a, b) => new Date(b.reportTime).getTime() - new Date(a.reportTime).getTime()
+    (a, b) =>
+      new Date(b.reportTime).getTime() - new Date(a.reportTime).getTime()
   );
 
-  const getStatusIcon = (status: 'good' | 'fair' | 'poor' | 'critical' | 'recovering') => {
+  const getStatusIcon = (
+    status: 'good' | 'fair' | 'poor' | 'critical' | 'recovering'
+  ) => {
     switch (status) {
       case 'good':
         return 'check-circle-outline';
@@ -64,7 +72,9 @@ const HealthRecordScreen = () => {
   };
 
   // Function to return status color based on status
-  const getStatusColor = (status: 'good' | 'fair' | 'poor' | 'critical' | 'recovering') => {
+  const getStatusColor = (
+    status: 'good' | 'fair' | 'poor' | 'critical' | 'recovering'
+  ) => {
     switch (status) {
       case 'good':
         return 'green';
@@ -113,14 +123,14 @@ const HealthRecordScreen = () => {
           {/* Cow Name and Period */}
           <View style={styles.containerItemContent}>
             <View style={styles.infoContainer}>
-              <Text variant='titleLarge' style={styles.cowName}>
+              <Text variant="titleLarge" style={styles.cowName}>
                 {item.cowEntity?.name}
               </Text>
               <TagUI>
                 {formatType(t(`data.cowStatus.${item.period}`, { defaultValue: item.period }))}
               </TagUI>
             </View>
-            <Text variant='bodySmall' style={styles.reportTime}>
+            <Text variant="bodySmall" style={styles.reportTime}>
               {new Date(item.reportTime).toLocaleString()}
             </Text>
           </View>
@@ -154,31 +164,39 @@ const HealthRecordScreen = () => {
 
   return (
     <View style={styles.container}>
-      <SearchInput
-        filteredData={filteredHealthRecord as HealthRecord[]}
-        onChangeText={setSearchText}
-        value={searchText}
-        typeFiltered={{
-          filteredType: ['name'],
-          setSelectedFiltered: setSelectedFilter,
-        }}
-      />
-      <FlatList
-        data={sortedHealthRecord}
-        keyExtractor={(item: HealthRecord) => item.healthRecordId.toString()}
-        renderItem={renderHealthRecordItem}
-        onEndReached={() => refetch()}
-        onEndReachedThreshold={0.5}
-      />
-      {roleName.toLocaleLowerCase() !== 'worker' && (
-        <FloatingButton
-          onPress={() =>
-            (navigation.navigate as any)('QrScanCow', {
-              screens: 'CowHealthRecord',
-            })
-          }
+      <>
+        <SearchInput
+          filteredData={filteredHealthRecord as HealthRecord[]}
+          onChangeText={setSearchText}
+          value={searchText}
+          typeFiltered={{
+            filteredType: ['name'],
+            setSelectedFiltered: setSelectedFilter,
+          }}
         />
-      )}
+        {sortedHealthRecord && sortedHealthRecord.length > 0 ? (
+          <FlatList
+            data={sortedHealthRecord}
+            keyExtractor={(item: HealthRecord) =>
+              item.healthRecordId.toString()
+            }
+            renderItem={renderHealthRecordItem}
+            onEndReached={() => refetch()}
+            onEndReachedThreshold={0.5}
+          />
+        ) : (
+          <EmptyUI />
+        )}
+        {roleName.toLocaleLowerCase() !== 'worker' && (
+          <FloatingButton
+            onPress={() =>
+              (navigation.navigate as any)('QrScanCow', {
+                screens: 'CowHealthRecord',
+              })
+            }
+          />
+        )}
+      </>
     </View>
   );
 };

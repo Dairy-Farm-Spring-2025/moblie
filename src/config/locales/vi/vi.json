@@ -221,7 +221,7 @@
     "health_record": "Hồ sơ sức khỏe",
     "farm_layout": "Bố trí trang trại",
     "dairy_management": "Quản lý chăn nuôi bò sữa",
-    "vet": "Bác sĩ thú y",
+    "vet": "Bác sĩ Thú Y",
     "worker": "Công nhân"
   },
   "cow_management": {
@@ -447,12 +447,22 @@
     "loading": "Đang tải vật liệu...",
     "noMaterials": "Không có vật liệu nào",
     "title": "Vật liệu cho {{areaName}}",
+    "exportSelected": "Đã chọn",
+    "exportAll": "Xuất các vật liệu",
+    "confirm": "Xác nhận",
+    "confirmExport": "Bạn chắc chắn muốn xuất các vật liệu này!",
+    "confirmExportMessage": "Số lượng vật liệu: {{count}}",
+    "batchExportSuccess": "Xuất Thành Công",
+    "cancel": "Hủy",
     "areaType": "Loại khu vực:",
     "totalCows": "Tổng số bò:",
     "cowTypes": "Loại bò:",
     "export": "Xuất",
     "success": "Thành công",
-    "failedToLoad": "Không thể tải vật liệu"
+    "failedToLoad": "Không thể tải vật liệu",
+    "failedToExport": "Không thể xuất vật liệu",
+    "warning": "Cảnh báo",
+    "noItemsAvailable": "Không có vật liệu nào!"
   },
   "injections": {
     "title": "Tiêm phòng",
@@ -593,6 +603,7 @@
   "Reviewer": "Người đánh giá",
   "No images": "Không có hình ảnh",
   "Loading Report": "Đang tải báo cáo",
+  "EditIllnessDetail": "Chỉnh sửa chi tiết chữa bệnh",
   "Date": "Ngày",
   "Comment": "Bình luận",
   "Permission Denied', 'Sorry, we need camera permissions to take pictures!": "Từ chối quyền, xin lỗi, chúng tôi cần quyền truy cập camera để chụp ảnh!",
@@ -629,7 +640,8 @@
     "viewMore": "Xem thêm",
     "viewLess": "Thu nhỏ",
     "closeComment": "Đóng bình luận",
-    "noComment": "Không có bình luận"
+    "noComment": "Không có bình luận",
+    "licenseTitle": "Chính sách tạo đơn"
   },
   "validateForm": {
     "required": "Yêu cầu nhập đầy đủ"
@@ -641,6 +653,7 @@
   "Complete": "Hoàn thành",
   "Success": "Thành công",
   "Error": "Lỗi",
+  "Failed to load cow details": "Lỗi khi tải thông tin bò",
   "task_detail": {
     "title": "Chi tiết công việc",
     "priority": "Độ Ưu tiên",
@@ -717,12 +730,16 @@
   "Illness": "Bệnh",
   "Injections": "Tiêm Phòng",
   "viewCowDetail": "Xem chi tiết bò",
+  "scanQRCode": "Quét Mã QR",
   "scanQR": {
     "title": "Quét QR",
     "reportIllness": "Báo cáo bệnh",
     "createHealthRecord": "Khám định kỳ",
     "viewCowDetail": "Xem chi tiết bò",
-    "vaccineInjection": "Tiêm vaccine"
+    "vaccineInjection": "Tiêm vaccine",
+    "scan_text": "Quét QR trong ô này",
+    "flip_camera": "Lật Ngược Camera",
+    "cancel": "Hủy"
   },
   "weather": {
     "title": "Thời Tiết",
@@ -808,5 +825,9 @@
   "Ongoing": "Đang theo dõi",
   "Deceased": "Đã chết",
   "Veterinarians": "Thú y",
-  "No health records": "Không có ghi nhận sức khỏe"
+  "No health records": "Không có ghi nhận sức khỏe",
+  "Only numbers are allowed": "Chỉ được nhập số",
+  "Required": "Yêu cầu",
+  "Value must be greater than 0": "Giá trị cần lớn hơn 0",
+  "Submit": "Gửi"
 }

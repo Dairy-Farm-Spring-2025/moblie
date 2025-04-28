@@ -24,7 +24,10 @@ const QrScanRoute: React.FC = () => {
 
   return (
     <Stack.Navigator initialRouteName='QrCodeScan'>
-      <Stack.Screen name='QrCodeScan' options={{ title: 'Qr Scan' }}>
+      <Stack.Screen
+        name='QrCodeScan'
+        options={{ title: t('scanQRCode', { defaultValue: 'Scan QR Code' }) }}
+      >
         {(props) => <QrCodeScan {...props} selectedField={selectedField} roleName={roleName} />}
       </Stack.Screen>
       <Stack.Screen name='CowDetails' component={DetailCow} options={{ title: 'Cow Details' }} />
