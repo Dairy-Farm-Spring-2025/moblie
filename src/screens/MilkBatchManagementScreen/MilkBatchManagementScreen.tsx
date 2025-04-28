@@ -13,7 +13,7 @@ import {
 import { useQuery } from 'react-query';
 import { Ionicons } from '@expo/vector-icons';
 import { format } from 'date-fns';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { LineChart } from 'react-native-gifted-charts';
 import { t } from 'i18next';
 import apiClient from '@config/axios/axios';
@@ -21,13 +21,16 @@ import { DailyMilk } from '@model/Milk/DailyMilk/DailyMilk';
 import { MilkBatch } from '@model/Milk/MilkBatch/MilkBatch';
 import FloatingButton from '@components/FloatingButton/FloatingButton';
 import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
+import { formatCamelCase } from '@utils/format';
 
 const fetchMilkBatch = async (): Promise<MilkBatch[]> => {
   try {
     const response = await apiClient.get('/MilkBatch');
     return response.data;
-  } catch (error) {
-    throw new Error(error?.message || 'An error occurred while fetching the data');
+  } catch (error: any) {
+    throw new Error(
+      error?.message || 'An error occurred while fetching the data'
+    );
   }
 };
 
@@ -39,11 +42,23 @@ const MilkBatchManagementScreen: React.FC = () => {
     isError,
     error,
     refetch,
-  } = useQuery<MilkBatch[]>('milkBatch', fetchMilkBatch);
+  } = useQuery<MilkBatch[]>('milkBatch', fetchMilkBatch, {
+    refetchOnMount: true,
+    refetchOnWindowFocus: true, // 👈 Thêm dòng này
+  });
 
-  const [selectedMilkBatch, setSelectedMilkBatch] = useState<MilkBatch | null>(null);
+  const [selectedMilkBatch, setSelectedMilkBatch] = useState<MilkBatch | null>(
+    null
+  );
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedBatchDetails, setSelectedBatchDetails] = useState<MilkBatch | null>(null);
+  const [selectedBatchDetails, setSelectedBatchDetails] =
+    useState<MilkBatch | null>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   const handleMilkBatchPress = (milkBatchId: number) => {
     (navigation.navigate as any)('MilkBatchDetail', { milkBatchId });
@@ -55,7 +70,9 @@ const MilkBatchManagementScreen: React.FC = () => {
 
   const toggleMilkBatchDetails = (milkBatch: MilkBatch) => {
     setSelectedMilkBatch(
-      selectedMilkBatch?.milkBatchId === milkBatch.milkBatchId ? null : milkBatch
+      selectedMilkBatch?.milkBatchId === milkBatch.milkBatchId
+        ? null
+        : milkBatch
     );
   };
 
@@ -63,31 +80,31 @@ const MilkBatchManagementScreen: React.FC = () => {
     ({ item }: { item: DailyMilk }) => (
       <View style={styles.dailyMilkCard}>
         <View style={styles.dailyMilkRow}>
-          <Ionicons name='time-outline' size={16} color='#4CAF50' />
+          <Ionicons name="time-outline" size={16} color="#4CAF50" />
           <Text style={styles.dailyMilkText}>
-            {t('shift')}: {item.shift}
+            {t('shift')}: {t(formatCamelCase(item.shift))}
           </Text>
         </View>
         <View style={styles.dailyMilkRow}>
-          <Ionicons name='calendar-outline' size={16} color='#4CAF50' />
+          <Ionicons name="calendar-outline" size={16} color="#4CAF50" />
           <Text style={styles.dailyMilkText}>
             {t('milk_date')}: {format(new Date(item.milkDate), 'dd/MM/yyyy')}
           </Text>
         </View>
         <View style={styles.dailyMilkRow}>
-          <Ionicons name='water-outline' size={16} color='#4CAF50' />
+          <Ionicons name="water-outline" size={16} color="#4CAF50" />
           <Text style={styles.dailyMilkText}>
             {t('volume')}: {item.volume} {t('liters')}
           </Text>
         </View>
         <View style={styles.dailyMilkRow}>
-          <Ionicons name='person-outline' size={16} color='#4CAF50' />
+          <Ionicons name="person-outline" size={16} color="#4CAF50" />
           <Text style={styles.dailyMilkText}>
             {t('worker')}: {item.worker.name}
           </Text>
         </View>
         <View style={styles.dailyMilkRow}>
-          <Ionicons name='paw-outline' size={16} color='#4CAF50' />
+          <Ionicons name="paw-outline" size={16} color="#4CAF50" />
           <Text style={styles.dailyMilkText}>
             {t('cow')}: {item.cow.name}
           </Text>
@@ -106,32 +123,37 @@ const MilkBatchManagementScreen: React.FC = () => {
         >
           <View style={styles.milkBatchHeaderContent}>
             <Text style={styles.milkBatchTitle}>
-              {t('milk_batch_id')}: {item.milkBatchId}
+              {t('milk_batch_id')}: {format(new Date(item.date), 'dd/MM/yyyy')}
             </Text>
             <Text style={styles.milkBatchSubtitle}>
               {t('total_volume')}: {item.totalVolume} {t('liters')}
             </Text>
             <Text style={styles.milkBatchSubtitle}>
-              {t('date')}: {format(new Date(item.date), 'dd/MM/yyyy')}
-            </Text>
-            <Text style={styles.milkBatchSubtitle}>
-              {t('expiry_date')}: {format(new Date(item.expiryDate), 'dd/MM/yyyy')}
+              {t('expiry_date')}:{' '}
+              {format(new Date(item.expiryDate), 'dd/MM/yyyy')}
             </Text>
             <View
               style={[
                 styles.statusBadge,
-                { backgroundColor: item.status === 'inventory' ? '#4CAF50' : '#E53935' },
+                {
+                  backgroundColor:
+                    item.status === 'inventory' ? '#4CAF50' : '#E53935',
+                },
               ]}
             >
-              <Text style={styles.statusText}>{item.status}</Text>
+              <Text style={styles.statusText}>
+                {t(formatCamelCase(item.status))}
+              </Text>
             </View>
           </View>
           <Ionicons
             name={
-              selectedMilkBatch?.milkBatchId === item.milkBatchId ? 'chevron-up' : 'chevron-down'
+              selectedMilkBatch?.milkBatchId === item.milkBatchId
+                ? 'chevron-up'
+                : 'chevron-down'
             }
             size={24}
-            color='#4CAF50'
+            color="#4CAF50"
           />
         </TouchableOpacity>
         {selectedMilkBatch?.milkBatchId === item.milkBatchId && (
@@ -157,14 +179,17 @@ const MilkBatchManagementScreen: React.FC = () => {
   );
 
   // Calculate metrics for the cards
-  const totalLiters = milkBatchData?.reduce((sum, batch) => sum + batch.totalVolume, 0) || 0;
+  const totalLiters =
+    milkBatchData?.reduce((sum, batch) => sum + batch.totalVolume, 0) || 0;
   const numberOfBatches = milkBatchData?.length || 0;
   const averageVolumePerBatch =
     numberOfBatches > 0 ? (totalLiters / numberOfBatches).toFixed(2) : 0;
 
   // Prepare data for the line chart
   const sortedMilkBatches = milkBatchData
-    ? [...milkBatchData].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    ? [...milkBatchData].sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+      )
     : [];
   const chartData = sortedMilkBatches.map((batch) => ({
     value: batch.totalVolume,
@@ -185,18 +210,23 @@ const MilkBatchManagementScreen: React.FC = () => {
   ) : (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>{t('milk_batch_management.title')}</Text>
+        <Text style={styles.headerTitle}>
+          {t('milk_batch_management.title')}
+        </Text>
         <TouchableOpacity onPress={handleRefresh}>
-          <Ionicons name='refresh' size={24} color='#4CAF50' />
+          <Ionicons name="refresh" size={24} color="#4CAF50" />
         </TouchableOpacity>
       </View>
       {isError ? (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>
-            {t('error_loading_data')}: {error?.message}
+            {t('error_loading_data')}: {(error as any)?.message}
           </Text>
-          <TouchableOpacity style={styles.refreshButton} onPress={handleRefresh}>
-            <Ionicons name='refresh' size={20} color='#fff' />
+          <TouchableOpacity
+            style={styles.refreshButton}
+            onPress={handleRefresh}
+          >
+            <Ionicons name="refresh" size={20} color="#fff" />
             <Text style={styles.refreshButtonText}>{t('refresh')}</Text>
           </TouchableOpacity>
         </View>
@@ -205,17 +235,17 @@ const MilkBatchManagementScreen: React.FC = () => {
           {/* Metric Cards */}
           <View style={styles.cardsContainer}>
             <View style={styles.metricCard}>
-              <Ionicons name='water-outline' size={28} color='#4CAF50' />
+              <Ionicons name="water-outline" size={28} color="#4CAF50" />
               <Text style={styles.cardTitle}>{t('total_liters')}</Text>
               <Text style={styles.cardValue}>{totalLiters} L</Text>
             </View>
             <View style={styles.metricCard}>
-              <Ionicons name='stats-chart-outline' size={28} color='#4CAF50' />
+              <Ionicons name="stats-chart-outline" size={28} color="#4CAF50" />
               <Text style={styles.cardTitle}>{t('avg_volume_batch')}</Text>
               <Text style={styles.cardValue}>{averageVolumePerBatch} L</Text>
             </View>
             <View style={styles.metricCard}>
-              <Ionicons name='cube-outline' size={28} color='#4CAF50' />
+              <Ionicons name="cube-outline" size={28} color="#4CAF50" />
               <Text style={styles.cardTitle}>{t('total_batches')}</Text>
               <Text style={styles.cardValue}>{numberOfBatches}</Text>
             </View>
@@ -229,14 +259,14 @@ const MilkBatchManagementScreen: React.FC = () => {
               width={Dimensions.get('window').width - 40}
               height={200}
               isAnimated={true}
-              color='#4CAF50'
+              color="#4CAF50"
               thickness={3}
               yAxisTextStyle={styles.chartText}
               xAxisLabelTextStyle={styles.chartText}
               showDataPoints
-              dataPointsColor='#4CAF50'
+              dataPointsColor="#4CAF50"
               dataPointsRadius={6}
-              textColor='#333'
+              textColor="#333"
               textFontSize={12}
               onDataPointClick={handleDataPointClick}
             />
@@ -245,7 +275,10 @@ const MilkBatchManagementScreen: React.FC = () => {
           {/* Milk Batch List */}
           <ScrollView>
             <FlatList
-              data={milkBatchData}
+              data={milkBatchData.sort(
+                (a, b) =>
+                  new Date(b.date).getTime() - new Date(a.date).getTime()
+              )}
               renderItem={renderMilkBatchItem}
               keyExtractor={(milkBatch) => milkBatch.milkBatchId.toString()}
               scrollEnabled={false}
@@ -261,7 +294,7 @@ const MilkBatchManagementScreen: React.FC = () => {
 
       {/* Modal for Batch Details */}
       <Modal
-        animationType='slide'
+        animationType="slide"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
@@ -273,7 +306,9 @@ const MilkBatchManagementScreen: React.FC = () => {
               <>
                 <View style={styles.modalRow}>
                   <Text style={styles.modalLabel}>{t('Milk Batch ID')}:</Text>
-                  <Text style={styles.modalValue}>{selectedBatchDetails.milkBatchId}</Text>
+                  <Text style={styles.modalValue}>
+                    {selectedBatchDetails.milkBatchId}
+                  </Text>
                 </View>
                 <View style={styles.modalRow}>
                   <Text style={styles.modalLabel}>{t('Total Volume')}:</Text>
@@ -290,12 +325,17 @@ const MilkBatchManagementScreen: React.FC = () => {
                 <View style={styles.modalRow}>
                   <Text style={styles.modalLabel}>{t('Expiry Date')}:</Text>
                   <Text style={styles.modalValue}>
-                    {format(new Date(selectedBatchDetails.expiryDate), 'dd/MM/yyyy')}
+                    {format(
+                      new Date(selectedBatchDetails.expiryDate),
+                      'dd/MM/yyyy'
+                    )}
                   </Text>
                 </View>
                 <View style={styles.modalRow}>
                   <Text style={styles.modalLabel}>{t('status')}:</Text>
-                  <Text style={styles.modalValue}>{selectedBatchDetails.status}</Text>
+                  <Text style={styles.modalValue}>
+                    {selectedBatchDetails.status}
+                  </Text>
                 </View>
               </>
             )}
@@ -310,7 +350,11 @@ const MilkBatchManagementScreen: React.FC = () => {
       </Modal>
 
       <FloatingButton
-        onPress={() => (navigation.navigate as any)('QrCodeScanCow', { screens: 'DetailFormMilk' })}
+        onPress={() =>
+          (navigation.navigate as any)('QrCodeScanCow', {
+            screens: 'DetailFormMilk',
+          })
+        }
         style={styles.floatingButton}
       />
     </View>

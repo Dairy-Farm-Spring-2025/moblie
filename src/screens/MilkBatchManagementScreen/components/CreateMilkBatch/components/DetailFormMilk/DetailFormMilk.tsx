@@ -11,7 +11,12 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
+import {
+  RouteProp,
+  useRoute,
+  useNavigation,
+  CommonActions,
+} from '@react-navigation/native';
 import { useQuery } from 'react-query';
 import apiClient from '@config/axios/axios';
 import { Cow } from '@model/Cow/Cow';
@@ -60,7 +65,7 @@ const DetailFormMilk: React.FC = () => {
           {
             text: 'OK',
             onPress: () => {
-              (navigation.navigate as any)('MilkBatchManagementScreen'); // Navigate to Home screen
+              (navigation.navigate as any)('CreateMilkBatch'); // Navigate to Home screen
             },
           },
         ],
@@ -76,7 +81,6 @@ const DetailFormMilk: React.FC = () => {
       dailyMilk: { cowId, volume: parseFloat(milkVolume) },
       cow,
     });
-
     (navigation.navigate as any)('CreateMilkBatch');
   };
 
@@ -94,33 +98,41 @@ const DetailFormMilk: React.FC = () => {
         <View style={styles.card}>
           <Text style={styles.title}>{cow.name}</Text>
           <Text style={styles.text}>
-            🐄 <Text style={styles.bold}>Status:</Text> {formatCamelCase(cow.cowStatus)}
+            🐄 <Text style={styles.bold}>{t('Status')}:</Text>{' '}
+            {t(formatCamelCase(cow.cowStatus))}
           </Text>
           <Text style={styles.text}>
-            📅 <Text style={styles.bold}>Date of Birth:</Text> {cow.dateOfBirth}
+            📅 <Text style={styles.bold}>{t('Date of Birth')}:</Text>{' '}
+            {cow.dateOfBirth}
           </Text>
           <Text style={styles.text}>
-            📅 <Text style={styles.bold}>Date Entered:</Text> {cow.dateOfEnter}
+            📅 <Text style={styles.bold}>{t('Date Entered')}:</Text>{' '}
+            {cow.dateOfEnter}
           </Text>
           {cow.dateOfOut && (
             <Text style={styles.text}>
-              📅 <Text style={styles.bold}>Date Out:</Text> {cow.dateOfOut}
+              📅 <Text style={styles.bold}>{t('Date Out')}:</Text>{' '}
+              {cow.dateOfOut}
             </Text>
           )}
           <Text style={styles.text}>
-            📍 <Text style={styles.bold}>Origin:</Text> {formatCamelCase(cow.cowOrigin)}
+            📍 <Text style={styles.bold}>{t('Origin')}:</Text>{' '}
+            {t(formatCamelCase(cow.cowOrigin))}
           </Text>
           <Text style={styles.text}>
-            ⚧ <Text style={styles.bold}>Gender:</Text> {formatCamelCase(cow.gender)}
+            ⚧ <Text style={styles.bold}>{t('Gender')}:</Text>{' '}
+            {t(formatCamelCase(cow.gender))}
           </Text>
           <Text style={styles.text}>
-            🏡 <Text style={styles.bold}>In Pen:</Text> {cow.inPen ? 'Yes' : 'No'}
+            🏡 <Text style={styles.bold}>{t('In Pen')}:</Text>{' '}
+            {cow.inPen ? t('Yes') : t('No')}
           </Text>
           <Text style={styles.text}>
-            🛠 <Text style={styles.bold}>Type:</Text> {cow.cowType.name}
+            🛠 <Text style={styles.bold}>{t('Type')}:</Text> {cow.cowType.name}
           </Text>
           <Text style={styles.text}>
-            📖 <Text style={styles.bold}>Description:</Text> {cow.description}
+            📖 <Text style={styles.bold}>{t('Description')}:</Text>{' '}
+            {cow.description}
           </Text>
         </View>
       </ScrollView>
@@ -132,13 +144,13 @@ const DetailFormMilk: React.FC = () => {
       >
         <TextInput
           style={styles.input}
-          placeholder='Enter milk volume (L)'
-          keyboardType='numeric'
+          placeholder={t('Enter milk volume (L)')}
+          keyboardType="numeric"
           value={milkVolume}
           onChangeText={setMilkVolume}
         />
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Ionicons name='send' size={24} color='white' />
+          <Ionicons name="send" size={24} color="white" />
         </TouchableOpacity>
       </KeyboardAvoidingView>
     </>

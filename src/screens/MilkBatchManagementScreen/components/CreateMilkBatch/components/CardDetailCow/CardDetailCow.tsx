@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Tooltip, Button } from 'react-native-paper';
 import { Cow } from '@model/Cow/Cow';
 import { formatCamelCase } from '@utils/format';
+import { t } from 'i18next';
 
 interface CardDetailCowProps {
   cow: Cow | undefined;
@@ -27,17 +28,23 @@ const CardDetailCow: React.FC<CardDetailCowProps> = ({
       <View style={styles.cardWrapper}>
         <View style={styles.cardHeader}>
           <Text style={styles.cardTitle}>{cow?.name}</Text>
-          <Tooltip title='Cow Type'>
+          <Tooltip title="Cow Type">
             <Text style={styles.cardType}>{cow?.cowType.name}</Text>
           </Tooltip>
         </View>
         <View style={styles.cardContent}>
-          <Text style={styles.cardTitle}>Daily Milk Volume: {dailyMilk?.volume}</Text>
-          <Text style={styles.cardDetails}>Origin: {formatCamelCase(cow?.cowOrigin || '')}</Text>
-          <Text style={styles.cardDetails}>Born: {cow?.dateOfBirth}</Text>
+          <Text style={styles.cardTitle}>
+            {t('Daily Milk Volume')}: {dailyMilk?.volume}
+          </Text>
+          <Text style={styles.cardDetails}>
+            {t('Origin')}: {t(formatCamelCase(cow?.cowOrigin || ''))}
+          </Text>
+          <Text style={styles.cardDetails}>
+            {t('Date of Birth')}: {cow?.dateOfBirth}
+          </Text>
           {/* Delete Button */}
           <Button
-            mode='text'
+            mode="text"
             onPress={(e) => {
               e.stopPropagation(); // Prevent onPress from triggering when deleting
               onDelete();
@@ -45,7 +52,7 @@ const CardDetailCow: React.FC<CardDetailCowProps> = ({
             style={styles.deleteButton}
             labelStyle={styles.deleteButtonLabel}
           >
-            Delete
+            {t('Delete')}
           </Button>
         </View>
       </View>
