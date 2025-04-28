@@ -1,28 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import FloatingButton from '@components/FloatingButton/FloatingButton';
+import EmptyUI from '@components/UI/EmptyUI';
+import apiClient from '@config/axios/axios';
+import { useListCowMilkStore } from '@core/store/ListCowDailyMilk/useListCowMilkStore';
+import { Picker } from '@react-native-picker/picker';
+import { CommonActions, useNavigation } from '@react-navigation/native';
+import { t } from 'i18next';
+import React, { useState } from 'react';
 import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Keyboard,
-  TouchableWithoutFeedback,
   Alert,
-  ScrollView,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  View,
 } from 'react-native';
-import { Text, TextInput, Card, Button } from 'react-native-paper';
-import { Picker } from '@react-native-picker/picker';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import apiClient from '@config/axios/axios';
-import { Cow } from '@model/Cow/Cow';
-import { useMutation, useQuery } from 'react-query';
+import { Button, Text } from 'react-native-paper';
+import { useMutation } from 'react-query';
 import CardDetailCow from './components/CardDetailCow/CardDetailCow';
-import FloatingButton from '@components/FloatingButton/FloatingButton';
-import { useListCowMilkStore } from '@core/store/ListCowDailyMilk/useListCowMilkStore';
+import { ListCowMilk } from '@model/Milk/ListCowMilk/ListCowMilk';
 
 const CreateMilkBatch = () => {
-  const [volume, setVolume] = useState('');
-  const [shift, setShift] = useState('morning');
+  const [shift, setShift] = useState('shiftOne');
   const { listCowMilk, setListCowMilk, removeCowMilk } = useListCowMilkStore();
 
   const navigation = useNavigation();
@@ -31,11 +31,26 @@ const CreateMilkBatch = () => {
     async (data: any) => await apiClient.post('/MilkBatch/create', data),
     {
       onSuccess: () => {
-        Alert.alert('Success', 'Milk batch created successfully');
-        navigation.goBack();
+        Alert.alert('Success', t('Milk batch created successfully'));
+        setListCowMilk([] as any);
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 1, // Chỉ số 1, tức là màn hình thứ 2 (MilkBatchManagementScreen) được active
+            routes: [
+              { name: 'Home', params: { defaultIndex: 0 } }, // index 0
+              {
+                name: 'MilkBatchManagementScreen',
+                params: { defaultIndex: 1 },
+              }, // index 1 (current screen)
+            ],
+          })
+        );
       },
-      onError: (err) => {
-        Alert.alert('Error', err?.response?.data?.message || 'Failed to create milk batch');
+      onError: (err: any) => {
+        Alert.alert(
+          'Error',
+          err?.response?.data?.message || 'Failed to create milk batch'
+        );
       },
     }
   );
@@ -52,17 +67,22 @@ const CreateMilkBatch = () => {
       dailyMilks: dailyMilkList,
       shift,
     };
-
-    console.log(data);
     mutation.mutate(data);
-    (navigation.navigate as any)('MilkBatchManagementScreen');
   };
 
   const handleDelete = (cowId: number) => {
-    Alert.alert('Confirm Delete', 'Are you sure you want to remove this cow from the list?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', onPress: () => removeCowMilk(cowId), style: 'destructive' },
-    ]);
+    Alert.alert(
+      t('Confirm Delete'),
+      t('Are you sure you want to remove this cow from the list?'),
+      [
+        { text: t('Cancel'), style: 'cancel' },
+        {
+          text: t('Delete'),
+          onPress: () => removeCowMilk(cowId),
+          style: 'destructive',
+        },
+      ]
+    );
   };
 
   return (
@@ -75,49 +95,65 @@ const CreateMilkBatch = () => {
           <View style={styles.container}>
             {/* Cow Information Card */}
             <View style={styles.detailCow}>
-              {listCowMilk.map((c, index) => (
-                <CardDetailCow
-                  key={index}
-                  dailyMilk={{ volume: c.dailyMilk?.volume || 0, cowId: c.cow?.cowId || 0 }}
-                  cow={c.cow}
-                  width={200}
-                  onPress={() =>
-                    (navigation.navigate as any)('DetailFormMilk', {
-                      cowId: c.cow?.cowId,
+              {listCowMilk.length > 0 ? (
+                listCowMilk.map((c, index) => (
+                  <CardDetailCow
+                    key={index}
+                    dailyMilk={{
                       volume: c.dailyMilk?.volume || 0,
-                      screens: 'CreateMilkBatch',
-                    })
-                  }
-                  onDelete={() => handleDelete(c.cow?.cowId || 0)} // Pass delete handler
-                />
-              ))}
+                      cowId: c.cow?.cowId || 0,
+                    }}
+                    cow={c.cow}
+                    width={200}
+                    onPress={() =>
+                      (navigation.navigate as any)('DetailFormMilk', {
+                        cowId: c.cow?.cowId,
+                        volume: c.dailyMilk?.volume || 0,
+                        screens: 'CreateMilkBatch',
+                      })
+                    }
+                    onDelete={() => handleDelete(c.cow?.cowId || 0)} // Pass delete handler
+                  />
+                ))
+              ) : (
+                <EmptyUI />
+              )}
             </View>
 
             {/* Milk Batch Form */}
             <View style={styles.formContainer}>
-              <Text style={styles.cardTitle}>Shift:</Text>
-              <Picker numberOfLines={2} selectedValue={shift} onValueChange={setShift}>
-                <Picker.Item label='Shift 1 (0h-6h)' value='shiftOne' />
-                <Picker.Item label='Shift 2 (6h-12h)' value='shiftTwo' />
-                <Picker.Item label='Shift 3 (12h-18h)' value='shiftThree' />
+              <Text style={styles.cardTitle}>{t('Shift')}:</Text>
+              <Picker
+                numberOfLines={2}
+                selectedValue={shift}
+                onValueChange={setShift}
+              >
+                <Picker.Item label={t('Shift 1 (0h-6h)')} value="shiftOne" />
+                <Picker.Item label={t('Shift 2 (6h-12h)')} value="shiftTwo" />
+                <Picker.Item
+                  label={t('Shift 3 (12h-18h)')}
+                  value="shiftThree"
+                />
               </Picker>
             </View>
 
             <FloatingButton
               onPress={() =>
-                (navigation.navigate as any)('QrCodeScanCow', { screens: 'DetailFormMilk' })
+                (navigation.navigate as any)('QrCodeScanCow', {
+                  screens: 'DetailFormMilk',
+                })
               }
             />
 
             {/* Submit Button at Bottom */}
             <View style={styles.buttonContainer}>
               <Button
-                mode='contained'
+                mode="contained"
                 onPress={handleSubmit}
                 loading={mutation.isLoading}
-                disabled={mutation.isLoading}
+                disabled={mutation.isLoading || listCowMilk?.length === 0}
               >
-                Submit
+                {t('Submit')}
               </Button>
             </View>
           </View>

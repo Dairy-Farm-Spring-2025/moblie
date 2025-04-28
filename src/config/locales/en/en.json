@@ -169,7 +169,7 @@
   "liters": "liters",
   "worker": "Worker",
   "cow": "Cow",
-  "milk_batch_id": "Milk Batch ID",
+  "milk_batch_id": "Milk Batch Day",
   "total_volume": "Total Volume",
   "date": "Date",
   "expiry_date": "Expiry Date",
