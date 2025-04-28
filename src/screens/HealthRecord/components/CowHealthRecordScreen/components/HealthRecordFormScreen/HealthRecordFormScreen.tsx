@@ -9,6 +9,7 @@ import { HealthRecord, HealthRecordForm } from '@model/HealthRecord/HealthRecord
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { COW_STATUS } from '@services/data/cowStatus';
 import { OPTIONS_HEALTH_STATUS } from '@services/data/healthStatus';
+import { formatCamelCase } from '@utils/format';
 import { t } from 'i18next';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -47,7 +48,21 @@ const HealthRecordFormScreen = () => {
     formState: { errors },
     reset,
     watch,
-  } = useForm<HealthRecordForm>();
+  } = useForm<HealthRecordForm>({
+    defaultValues: {
+      status: healthRecord?.status || 'good',
+      size: healthRecord?.size || 0,
+      period: healthRecord?.period || 'milkingCow',
+      cowId: healthRecord?.cowEntity?.cowId,
+      bodyLength: healthRecord?.bodyLength || 0,
+      bodyTemperature: healthRecord?.bodyTemperature || 0,
+      chestCircumference: healthRecord?.chestCircumference || 0,
+      description: healthRecord?.description || '',
+      heartRate: healthRecord?.heartRate || 0,
+      respiratoryRate: healthRecord?.respiratoryRate || 0,
+      ruminateActivity: healthRecord?.ruminateActivity || 0,
+    },
+  });
 
   useEffect(() => {
     if (healthRecord) {
@@ -65,7 +80,7 @@ const HealthRecordFormScreen = () => {
         ruminateActivity: healthRecord.ruminateActivity,
       });
     }
-  }, [healthRecord]);
+  }, [healthRecord, reset]);
 
   const handleCancelEdit = () => {
     setIsEditing(false);
@@ -90,7 +105,7 @@ const HealthRecordFormScreen = () => {
     {
       onSuccess: () => {
         Alert.alert('Success', t('Update health record success'));
-        setIsEditing(false); // Switch back to View Mode after success
+        setIsEditing(false);
         if (fromScreen === 'cow') {
           (navigation.navigate as any)('CowDetails', {
             cowId: healthRecord?.cowEntity?.cowId,
@@ -106,10 +121,21 @@ const HealthRecordFormScreen = () => {
   );
 
   const onSubmit = async (data: HealthRecordForm) => {
-    mutate(data);
+    const formattedData = {
+      ...data,
+      size: data.size ? parseFloat(data.size.toString().replace(',', '.')) : 0,
+      chestCircumference: data.chestCircumference
+        ? parseFloat(data.chestCircumference.toString().replace(',', '.'))
+        : 0,
+      bodyLength: data.bodyLength ? parseFloat(data.bodyLength.toString().replace(',', '.')) : 0,
+      bodyTemperature: data.bodyTemperature ? parseInt(data.bodyTemperature.toString(), 10) : 0,
+      heartRate: data.heartRate ? parseInt(data.heartRate.toString(), 10) : 0,
+      respiratoryRate: data.respiratoryRate ? parseInt(data.respiratoryRate.toString(), 10) : 0,
+      ruminateActivity: data.ruminateActivity ? parseInt(data.ruminateActivity.toString(), 10) : 0,
+    };
+    mutate(formattedData);
   };
 
-  // Watch form values for View Mode display
   const formValues = watch();
 
   return (
@@ -132,14 +158,13 @@ const HealthRecordFormScreen = () => {
           />
           <CardComponent.Content>
             {isEditing ? (
-              // Edit Mode (Original Code)
               <View style={styles.formContainer}>
                 <View>
                   <FormItem
                     label={`🕰️ ${t('Period')}`}
                     name='period'
                     control={control}
-                    rules={{ required: 'Period is required' }}
+                    rules={{ required: t('Period is required') }}
                     error={errors?.period?.message}
                     render={({ field: { onChange, value } }) => (
                       <CustomPicker
@@ -155,7 +180,7 @@ const HealthRecordFormScreen = () => {
                   <FormItem
                     name='status'
                     control={control}
-                    rules={{ required: 'Status is required' }}
+                    rules={{ required: t('Status is required') }}
                     label={`🐄 ${t('healthRecord.status', { defaultValue: 'Status' })}`}
                     error={errors?.status?.message}
                     render={({ field: { onChange, value } }) => (
@@ -174,14 +199,14 @@ const HealthRecordFormScreen = () => {
                     control={control}
                     label={`📐 ${t('Size (meter)')}`}
                     rules={{
-                      required: 'Size is required',
+                      required: { message: t('Required') },
                       pattern: {
-                        value: /^\d*\.?\d*$/,
-                        message: 'Only decimal numbers are allowed (e.g., 1.23)',
+                        value: /^[0-9]+([.,][0-9]{1,4})?$/,
+                        message: t('Only numbers are allowed'),
                       },
                       min: {
-                        value: 0.1,
-                        message: 'Size must be greater than 0',
+                        value: 1,
+                        message: t('Value must be greater than 0'),
                       },
                     }}
                     error={errors?.size?.message}
@@ -189,19 +214,16 @@ const HealthRecordFormScreen = () => {
                       <TextInputComponent.Number
                         error={errors.size ? errors.size.message : ''}
                         placeholder={t('Enter...')}
-                        maxLength={6} // Increased to allow for decimal places (e.g., 12.345)
+                        maxLength={5}
                         onBlur={onBlur}
                         onChangeText={(text) => {
-                          // Allow only valid decimal numbers
-                          if (text === '' || /^\d*\.?\d*$/.test(text)) {
-                            onChange(text);
-                          }
+                          const numericValue = text.replace(/[^0-9.,]/g, '');
+                          onChange(numericValue);
                         }}
-                        value={value?.toString() ?? ''}
+                        value={value ? value.toString() : ''}
                         returnKeyType='done'
                         onSubmitEditing={Keyboard.dismiss}
-                        readOnly={!isEditing}
-                        keyboardType='decimal-pad' // Use decimal-pad for better UX
+                        keyboardType='decimal-pad'
                       />
                     )}
                   />
@@ -212,17 +234,17 @@ const HealthRecordFormScreen = () => {
                       name='chestCircumference'
                       control={control}
                       label={`🎯 ${t('healthRecord.chestCircumference', {
-                        defaultValue: 'Chest Circumference (meter)',
+                        defaultValue: 'Chest Circumference',
                       })}`}
                       rules={{
-                        required: { message: 'Required' },
+                        required: { message: t('Required') },
                         pattern: {
-                          value: /^\d*\.?\d*$/,
-                          message: 'Only decimal numbers are allowed (e.g., 1.23)',
+                          value: /^[0-9]+([.,][0-9]{1,4})?$/,
+                          message: t('Only numbers are allowed'),
                         },
                         min: {
-                          value: 0.1,
-                          message: 'Chest Circumference must be greater than 0',
+                          value: 1,
+                          message: t('Value must be greater than 0'),
                         },
                       }}
                       error={errors?.chestCircumference?.message}
@@ -230,17 +252,15 @@ const HealthRecordFormScreen = () => {
                         <TextInputComponent.Number
                           error={errors.chestCircumference ? errors.chestCircumference.message : ''}
                           placeholder={t('Enter...')}
-                          maxLength={6} // Increased to allow for decimal places
+                          maxLength={5}
                           onBlur={onBlur}
                           onChangeText={(text) => {
-                            if (text === '' || /^\d*\.?\d*$/.test(text)) {
-                              onChange(text);
-                            }
+                            const numericValue = text.replace(/[^0-9.,]/g, '');
+                            onChange(numericValue);
                           }}
-                          value={value?.toString() ?? ''}
+                          value={value ? value.toString() : ''}
                           returnKeyType='done'
                           onSubmitEditing={Keyboard.dismiss}
-                          readOnly={!isEditing}
                           keyboardType='decimal-pad'
                         />
                       )}
@@ -251,17 +271,17 @@ const HealthRecordFormScreen = () => {
                       name='bodyLength'
                       control={control}
                       label={`📐 ${t('healthRecord.bodyLength', {
-                        defaultValue: 'Body Length (meter)',
+                        defaultValue: 'Body Length',
                       })}`}
                       rules={{
-                        required: { message: 'Required' },
+                        required: { message: t('Required') },
                         pattern: {
-                          value: /^\d*\.?\d*$/,
-                          message: 'Only decimal numbers are allowed (e.g., 1.23)',
+                          value: /^[0-9]+([.,][0-9]{1,4})?$/,
+                          message: t('Only numbers are allowed'),
                         },
                         min: {
-                          value: 0.1,
-                          message: 'Body Length must be greater than 0',
+                          value: 1,
+                          message: t('Value must be greater than 0'),
                         },
                       }}
                       error={errors?.bodyLength?.message}
@@ -269,17 +289,15 @@ const HealthRecordFormScreen = () => {
                         <TextInputComponent.Number
                           error={errors.bodyLength ? errors.bodyLength.message : ''}
                           placeholder={t('Enter...')}
-                          maxLength={6} // Increased to allow for decimal places
+                          maxLength={5}
                           onBlur={onBlur}
                           onChangeText={(text) => {
-                            if (text === '' || /^\d*\.?\d*$/.test(text)) {
-                              onChange(text);
-                            }
+                            const numericValue = text.replace(/[^0-9.,]/g, '');
+                            onChange(numericValue);
                           }}
-                          value={value?.toString() ?? ''}
+                          value={value ? value.toString() : ''}
                           returnKeyType='done'
                           onSubmitEditing={Keyboard.dismiss}
-                          readOnly={!isEditing}
                           keyboardType='decimal-pad'
                         />
                       )}
@@ -290,17 +308,17 @@ const HealthRecordFormScreen = () => {
                       name='bodyTemperature'
                       control={control}
                       label={`🌡️ ${t('healthRecord.bodyTemperature', {
-                        defaultValue: 'Body Temperature (°C)',
+                        defaultValue: 'Body Temperature',
                       })}`}
                       rules={{
-                        required: { message: 'Required' },
+                        required: { message: t('Required') },
                         pattern: {
-                          value: /^[0-9]*$/,
-                          message: 'Only numbers are allowed',
+                          value: /^[0-9]+([.,][0-9]{1,4})?$/,
+                          message: t('Only numbers are allowed'),
                         },
                         min: {
                           value: 1,
-                          message: 'Chest Circumference must be greater than 0',
+                          message: t('Value must be greater than 0'),
                         },
                       }}
                       error={errors?.bodyTemperature?.message}
@@ -308,16 +326,16 @@ const HealthRecordFormScreen = () => {
                         <TextInputComponent.Number
                           error={errors.bodyTemperature ? errors.bodyTemperature.message : ''}
                           placeholder={t('Enter...')}
-                          maxLength={3}
+                          maxLength={5}
                           onBlur={onBlur}
                           onChangeText={(text) => {
-                            const numericValue = text.replace(/[^0-9]/g, '');
+                            const numericValue = text.replace(/[^0-9.,]/g, '');
                             onChange(numericValue);
                           }}
-                          value={value?.toString() ?? ''}
+                          value={value ? value.toString() : ''}
                           returnKeyType='done'
                           onSubmitEditing={Keyboard.dismiss}
-                          readOnly={!isEditing}
+                          keyboardType='decimal-pad'
                         />
                       )}
                     />
@@ -327,17 +345,17 @@ const HealthRecordFormScreen = () => {
                       name='heartRate'
                       control={control}
                       label={`❤️ ${t('healthRecord.heartRate', {
-                        defaultValue: 'Heart Rate (BPM)',
+                        defaultValue: 'Heart Rate',
                       })}`}
                       rules={{
-                        required: { message: 'Required' },
+                        required: { message: t('Required') },
                         pattern: {
-                          value: /^[0-9]*$/,
-                          message: 'Only numbers are allowed',
+                          value: /^[0-9]+$/,
+                          message: t('Only numbers are allowed'),
                         },
                         min: {
                           value: 1,
-                          message: 'Heart Rate must be greater than 0',
+                          message: t('Value must be greater than 0'),
                         },
                       }}
                       error={errors?.heartRate?.message}
@@ -351,10 +369,9 @@ const HealthRecordFormScreen = () => {
                             const numericValue = text.replace(/[^0-9]/g, '');
                             onChange(numericValue);
                           }}
-                          value={value?.toString() ?? ''}
+                          value={value ? value.toString() : ''}
                           returnKeyType='done'
                           onSubmitEditing={Keyboard.dismiss}
-                          readOnly={!isEditing}
                         />
                       )}
                     />
@@ -364,17 +381,17 @@ const HealthRecordFormScreen = () => {
                       name='respiratoryRate'
                       control={control}
                       label={`🫁 ${t('healthRecord.respiratoryRate', {
-                        defaultValue: 'Respiratory Rate (times/minutes)',
+                        defaultValue: 'Respiratory Rate',
                       })}`}
                       rules={{
-                        required: { message: 'Required' },
+                        required: { message: t('Required') },
                         pattern: {
-                          value: /^[0-9]*$/,
-                          message: 'Only numbers are allowed',
+                          value: /^[0-9]+$/,
+                          message: t('Only numbers are allowed'),
                         },
                         min: {
                           value: 1,
-                          message: 'Respiratory Rate must be greater than 0',
+                          message: t('Value must be greater than 0'),
                         },
                       }}
                       error={errors?.respiratoryRate?.message}
@@ -388,10 +405,9 @@ const HealthRecordFormScreen = () => {
                             const numericValue = text.replace(/[^0-9]/g, '');
                             onChange(numericValue);
                           }}
-                          value={value?.toString() ?? ''}
+                          value={value ? value.toString() : ''}
                           returnKeyType='done'
                           onSubmitEditing={Keyboard.dismiss}
-                          readOnly={!isEditing}
                         />
                       )}
                     />
@@ -401,17 +417,17 @@ const HealthRecordFormScreen = () => {
                       name='ruminateActivity'
                       control={control}
                       label={`🐮 ${t('healthRecord.ruminateActivity', {
-                        defaultValue: 'Ruminate Activity (minutes/days)',
+                        defaultValue: 'Ruminate Activity',
                       })}`}
                       rules={{
-                        required: { message: 'Required' },
+                        required: { message: t('Required') },
                         pattern: {
-                          value: /^[0-9]*$/,
-                          message: 'Only numbers are allowed',
+                          value: /^[0-9]+$/,
+                          message: t('Only numbers are allowed'),
                         },
                         min: {
                           value: 1,
-                          message: 'Ruminate Activity must be greater than 0',
+                          message: t('Value must be greater than 0'),
                         },
                       }}
                       error={errors?.ruminateActivity?.message}
@@ -425,10 +441,9 @@ const HealthRecordFormScreen = () => {
                             const numericValue = text.replace(/[^0-9]/g, '');
                             onChange(numericValue);
                           }}
-                          value={value?.toString() ?? ''}
+                          value={value ? value.toString() : ''}
                           returnKeyType='done'
                           onSubmitEditing={Keyboard.dismiss}
-                          readOnly={!isEditing}
                         />
                       )}
                     />
@@ -439,7 +454,7 @@ const HealthRecordFormScreen = () => {
                     name='description'
                     control={control}
                     label={t('healthRecord.description', { defaultValue: 'Description' })}
-                    rules={{ required: { message: 'Required' } }}
+                    rules={{ required: { message: t('Required') } }}
                     error={errors?.description?.message}
                     render={({ field: { onChange, onBlur, value } }) => (
                       <TextInputComponent
@@ -449,41 +464,45 @@ const HealthRecordFormScreen = () => {
                         numberOfLines={4}
                         placeholder={t('Enter...')}
                         onBlur={onBlur}
-                        onChangeText={(text) => {
-                          onChange(text);
-                        }}
+                        onChangeText={onChange}
                         value={value as any}
                         onSubmitEditing={Keyboard.dismiss}
-                        readOnly={!isEditing}
                       />
                     )}
                   />
                 </View>
                 <View style={styles.buttonContainer}>
-                  {isEditing && (
-                    <View style={styles.editButtons}>
-                      <ButtonComponent width='50%' type='volcano' onPress={handleCancelEdit}>
-                        {t('Cancel')}
-                      </ButtonComponent>
-                      <ButtonComponent width='50%' onPress={handleSubmit(onSubmit)}>
-                        {t('Confirm')}
-                      </ButtonComponent>
-                    </View>
-                  )}
+                  <View style={styles.editButtons}>
+                    <ButtonComponent width='50%' type='volcano' onPress={handleCancelEdit}>
+                      {t('Cancel')}
+                    </ButtonComponent>
+                    <ButtonComponent width='50%' onPress={handleSubmit(onSubmit)}>
+                      {t('Confirm')}
+                    </ButtonComponent>
+                  </View>
                 </View>
               </View>
             ) : (
-              // View Mode
               <View style={styles.formContainer}>
                 <View style={styles.viewItem}>
                   <Text style={styles.viewLabel}>🕰️ {t('Period')}:</Text>
-                  <Text style={styles.viewText}>{formValues.period || 'N/A'}</Text>
+                  <Text style={styles.viewText}>
+                    {formatCamelCase(
+                      t(`data.cowStatus.${formValues.period}`, { defaultValue: formValues.period })
+                    ) || 'N/A'}
+                  </Text>
                 </View>
                 <View style={styles.viewItem}>
                   <Text style={styles.viewLabel}>
                     🐄 {t('healthRecord.status', { defaultValue: 'Status' })}:
                   </Text>
-                  <Text style={styles.viewText}>{formValues.status || 'N/A'}</Text>
+                  <Text style={styles.viewText}>
+                    {formatCamelCase(
+                      t(`data.healthStatus.${formValues.status}`, {
+                        defaultValue: formValues.status,
+                      })
+                    ) || 'N/A'}
+                  </Text>
                 </View>
                 <View style={styles.viewItem}>
                   <Text style={styles.viewLabel}>📐 {t('Size (meter)')}:</Text>
@@ -540,7 +559,9 @@ const HealthRecordFormScreen = () => {
                     </Text>
                     <Text style={styles.viewText}>
                       {formValues.respiratoryRate
-                        ? `${formValues.respiratoryRate} times/min`
+                        ? `${formValues.respiratoryRate} ${t('times/min', {
+                            defaultValue: 'times/min',
+                          })}`
                         : 'N/A'}
                     </Text>
                   </View>
@@ -554,7 +575,9 @@ const HealthRecordFormScreen = () => {
                     </Text>
                     <Text style={styles.viewText}>
                       {formValues.ruminateActivity
-                        ? `${formValues.ruminateActivity} min/day`
+                        ? `${formValues.ruminateActivity} ${t('min/day', {
+                            defaultValue: 'min/day',
+                          })}`
                         : 'N/A'}
                     </Text>
                   </View>
@@ -591,10 +614,6 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     flexDirection: 'column',
-    gap: 20,
-  },
-  formContainerView: {
-    flexDirection: 'row',
     gap: 20,
   },
   containerForm: {

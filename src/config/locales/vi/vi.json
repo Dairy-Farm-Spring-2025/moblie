@@ -68,6 +68,8 @@
   },
   "Weight": "Cân nặng",
   "Size": "Kích thước",
+  "times/min": "lần/phút",
+  "min/day": "phút/ngày",
   "profile": {
     "title": "Hồ sơ",
     "employee_id": "Mã số nhân viên",
@@ -616,7 +618,7 @@
   "Existing Reports": "Các báo cáo hiện có",
   "No Report Data": "Không có dữ liệu báo cáo",
   "Area Details": "Chi tiết khu vực",
-  "Illness Treatment Plan": "Kế hoạc chữa bệnh",
+  "Illness Treatment Plan": "Kế hoạch chữa bệnh",
   "No tasks": "không có công việc",
   "application": {
     "titleView": "Xem đơn của bạn",
@@ -779,7 +781,11 @@
     "submit": "Gửi Kế Hoạch",
     "submit_error": "Lỗi khi gửi kế hoạch. Vui lòng thử lại.",
     "loading": "Đang tải vắc-xin...",
-    "error": "Lỗi tải vắc-xin"
+    "error": "Lỗi tải vắc-xin",
+    "injection_site_error": "Vui lòng chọn vị trí tiêm",
+    "dosage_required": "Liều lượng không được để trống!",
+    "dosage_format_error": "Liều lượng phải là số!",
+    "date_error": "Ngày điều trị không hợp lệ"
   },
   "area": {
     "title": "Các Khu Vực",
