@@ -96,7 +96,7 @@ const PenManagementScreen = () => {
                       </Tooltip>
                     </View>
                     <TextTitle
-                      title='Dimension'
+                      title={t('Dimension')}
                       content={`${item.area.penWidth}m x ${item.area.penLength}m`}
                     />
                   </View>
