@@ -18,38 +18,50 @@ import DetailMilkBatch from '@screens/MilkBatchManagementScreen/components/Detai
 import QrCodeScanCow from '@screens/MilkBatchManagementScreen/components/CreateMilkBatch/components/QrCodeScanCow/QrCodeScanCow';
 import DetailFormMilk from '@screens/MilkBatchManagementScreen/components/CreateMilkBatch/components/DetailFormMilk/DetailFormMilk';
 import CreateMilkBatch from '@screens/MilkBatchManagementScreen/components/CreateMilkBatch/CreateMilkBatch';
+import HomeScreen from '@screens/HomeScreen/HomeScreen';
 
 const Stack = createNativeStackNavigator();
 
 const TaskManagementRoute: React.FC = () => {
   return (
-    <Stack.Navigator initialRouteName='TaskScreen'>
+    <Stack.Navigator initialRouteName="TaskScreen">
       <Stack.Screen
-        name='TaskScreen'
+        name="Home"
         component={TaskScreen}
         options={{ title: t('task_management.title'), headerShown: false }}
       />
       <Stack.Screen
-        name='TaskDetail'
-        component={TaskDetail}
-        options={{ title: t('task_management.detail', { defaultValue: 'Task Detail' }) }}
+        name="TaskScreen"
+        component={TaskScreen}
+        options={{ title: t('task_management.title'), headerShown: false }}
       />
       <Stack.Screen
-        name='ReportTaskForm'
+        name="TaskDetail"
+        component={TaskDetail}
+        options={{
+          title: t('task_management.detail', { defaultValue: 'Task Detail' }),
+        }}
+      />
+      <Stack.Screen
+        name="ReportTaskForm"
         component={ReportTaskForm}
         options={{
-          title: t('task_management.Report_Task_Form', { defaultValue: 'Report Task Form' }),
+          title: t('task_management.Report_Task_Form', {
+            defaultValue: 'Report Task Form',
+          }),
         }}
       />
       <Stack.Screen
-        name='ReportTaskDetail'
+        name="ReportTaskDetail"
         component={ReportTaskDetail}
         options={{
-          title: t('task_management.Report_Task_Detail', { defaultValue: 'Report Task Detail' }),
+          title: t('task_management.Report_Task_Detail', {
+            defaultValue: 'Report Task Detail',
+          }),
         }}
       />
       <Stack.Screen
-        name='IllnessReportForm'
+        name="IllnessReportForm"
         component={IllnessReportForm}
         options={{
           title: t('illness.title', {
@@ -58,7 +70,7 @@ const TaskManagementRoute: React.FC = () => {
         }}
       />
       <Stack.Screen
-        name='InjectionScreen'
+        name="InjectionScreen"
         component={InjectionScreen}
         options={{
           title: t('injections.title', {
@@ -67,55 +79,67 @@ const TaskManagementRoute: React.FC = () => {
         }}
       />
       <Stack.Screen
-        name='IllnessDetailForm'
+        name="IllnessDetailForm"
         component={IllnessDetailForm}
         options={{
-          title: t('illness_detail.edit_subtitle', { defaultValue: 'Edit Illness Detail' }),
+          title: t('illness_detail.edit_subtitle', {
+            defaultValue: 'Edit Illness Detail',
+          }),
         }}
       />
       <Stack.Screen
-        name='IllnessCowRecordScreen'
+        name="IllnessCowRecordScreen"
         component={IllnessCowRecordScreen}
-        options={{ title: t('illness.Illness Cow Record', { defaultValue: 'Illness Cow Record' }) }}
+        options={{
+          title: t('illness.Illness Cow Record', {
+            defaultValue: 'Illness Cow Record',
+          }),
+        }}
       />
       <Stack.Screen
-        name='Materials'
+        name="Materials"
         component={Materials}
-        options={{ title: t('materials.titleName', { defaultValue: 'Materials' }) }}
+        options={{
+          title: t('materials.titleName', { defaultValue: 'Materials' }),
+        }}
       />
       <Stack.Screen
-        name='AreaDetail'
+        name="AreaDetail"
         component={AreaDetailScreen}
         options={{ title: t('Area Details') }}
       />
-      <Stack.Screen name='CowDetails' component={DetailCow} options={{ title: 'Detail Cow' }} />
       <Stack.Screen
-        name='IllnessPlanScreen'
+        name="CowDetails"
+        component={DetailCow}
+        options={{ title: 'Detail Cow' }}
+      />
+      <Stack.Screen
+        name="IllnessPlanScreen"
         component={IllnessPlanScreen}
         options={{ title: t('Illness Treatment Plan') }}
       />
       <Stack.Screen
-        name='MilkBatchManagementScreen'
+        name="MilkBatchManagementScreen"
         component={MilkBatchManagementScreen}
         options={{ title: 'Milk Batch Management' }}
       />
       <Stack.Screen
-        name='MilkBatchDetail'
+        name="MilkBatchDetail"
         component={DetailMilkBatch}
         options={{ title: 'Milk Batch Details' }}
       />
       <Stack.Screen
-        name='DetailFormMilk'
+        name="DetailFormMilk"
         component={DetailFormMilk}
         options={{ title: 'Daily Milk Form' }}
       />
       <Stack.Screen
-        name='CreateMilkBatch'
+        name="CreateMilkBatch"
         component={CreateMilkBatch}
         options={{ title: 'Create Milk Batch' }}
       />
       <Stack.Screen
-        name='QrCodeScanCow'
+        name="QrCodeScanCow"
         component={QrCodeScanCow}
         options={{ title: 'Scan Cow for Milk Batch' }}
       />
