@@ -856,13 +856,6 @@
   "Shift Two": "Ca 2",
   "Shift Three": "Ca 3",
   "Inventory": "Tồn kho",
-  "Change Your Password": "Thay đổi mật khẩu",
-  "Password must be at least 6 characters": "Mật khẩu phải có ít nhất 6 ký tự",
-  "Passwords do not match": "Mật khẩu không khớp",
-  "Update Password": "Cập nhật mật khẩu",
-  "Success": "Thành công",
-  "Password changed successfully": "Đổi mật khẩu thành công",
-  "Error": "Lỗi",
   "Please fill all fields": "Vui lòng điền đầy đủ thông tin",
   "New password must be at least 6 characters": "Mật khẩu mới phải có ít nhất 6 ký tự",
   "Passwords do not match again": "Mật khẩu nhập lại không khớp",
@@ -871,5 +864,6 @@
   "New Password": "Mật khẩu mới",
   "Confirm New Password": "Xác nhận mật khẩu mới",
   "No Role": "Không có vai trò",
-  "N/A": "Không xác định"
+  "N/A": "Không xác định",
+  "Confirm Password": "Xác nhận mật khẩu"
 }
