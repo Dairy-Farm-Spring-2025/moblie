@@ -9,6 +9,7 @@ import {
   Platform,
   ScrollView,
   FlatList,
+  Keyboard,
 } from 'react-native';
 import { useQuery } from 'react-query';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -19,17 +20,22 @@ import { Item } from '@model/Item/Item';
 import { IllnessPlan, IllnessPlanRequest } from '@model/IllnessPlan/IllnessPlan';
 import CustomPicker, { Option } from '@components/CustomPicker/CustomPicker';
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
-import { AntDesign, Ionicons } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 import TextEditorComponent from '@components/Input/TextEditor/TextEditorComponent';
 import { IllnessCow } from '@model/Cow/Cow';
 import TitleNameCows from '@components/TitleNameCows/TitleNameCows';
-import { getVietnamISOString } from '@utils/format';
+import { formatCamelCase, getVietnamISOString } from '@utils/format';
 
 type RootStackParamList = {
   IllnessPlanScreen: { illness: IllnessCow };
 };
 
 type IllnessPlanScreenRouteProp = RouteProp<RootStackParamList, 'IllnessPlanScreen'>;
+
+// Extend IllnessPlan to allow dosage as string for input handling
+interface ExtendedIllnessPlan extends Omit<IllnessPlan, 'dosage'> {
+  dosage: string; // Store as string for input handling
+}
 
 // Fetch vaccine data
 const fetchVaccines = async (): Promise<Item[]> => {
@@ -42,19 +48,19 @@ const IllnessPlanScreen = () => {
   const navigation = useNavigation();
   const { illness } = route.params;
 
-  const [plans, setPlans] = useState<IllnessPlan[]>([
+  const [plans, setPlans] = useState<ExtendedIllnessPlan[]>([
     {
-      dosage: 0,
-      injectionSite: InjectionSite.leftArm,
-      date: getVietnamISOString().split('T')[0],
+      dosage: '',
+      injectionSite: '' as InjectionSite,
+      date: '',
       itemId: 0,
       description: '',
       illnessId: illness.illnessId,
     },
   ]);
   const [showDatePicker, setShowDatePicker] = useState<number | null>(null);
-  const [expandedPlans, setExpandedPlans] = useState<boolean[]>([true]); // Track which plans are expanded
-  const [errors, setErrors] = useState<{ [key: string]: { message: string } }[]>([]); // Track errors for each plan
+  const [expandedPlans, setExpandedPlans] = useState<boolean[]>([true]);
+  const [errors, setErrors] = useState<{ [key: string]: { message: string } }[]>([{}]);
 
   // Fetch vaccines
   const {
@@ -77,14 +83,11 @@ const IllnessPlanScreen = () => {
 
   // Options for InjectionSite picker
   const injectionSiteOptions: Option[] = Object.values(InjectionSite).map((site) => ({
-    label: site
-      .split(/(?=[A-Z])/)
-      .join(' ')
-      .replace(/\b\w/g, (char) => char.toUpperCase()),
+    label: formatCamelCase(t(`data.injectionSite.${site}`)),
     value: site,
   }));
 
-  const handlePlanChange = (index: number, field: keyof IllnessPlan, value: any) => {
+  const handlePlanChange = (index: number, field: keyof ExtendedIllnessPlan, value: any) => {
     setPlans((prev) => prev.map((plan, i) => (i === index ? { ...plan, [field]: value } : plan)));
   };
 
@@ -92,16 +95,16 @@ const IllnessPlanScreen = () => {
     setPlans((prev) => [
       ...prev,
       {
-        dosage: 0,
-        injectionSite: InjectionSite.leftArm,
-        date: getVietnamISOString().split('T')[0],
+        dosage: '',
+        injectionSite: '' as InjectionSite,
+        date: '',
         itemId: 0,
         description: '',
         illnessId: illness.illnessId,
       },
     ]);
-    setExpandedPlans((prev) => [...prev, true]); // Expand new plan by default
-    setErrors((prev) => [...prev, {}]); // Add empty error object for new plan
+    setExpandedPlans((prev) => [...prev, true]);
+    setErrors((prev) => [...prev, {}]);
   };
 
   const removePlan = (index: number) => {
@@ -123,26 +126,67 @@ const IllnessPlanScreen = () => {
   };
 
   const handleSubmit = async () => {
-    // Basic validation
+    // Validation for each plan
     const newErrors = plans.map((plan) => {
       const error: { [key: string]: { message: string } } = {};
-      if (plan.dosage <= 0) {
-        error.dosage = {
-          message: t('illness_plan.dosage_error', {
-            defaultValue: 'Dosage must be greater than 0',
-          }),
-        };
-      }
+      const dosageStr = plan.dosage.replace(',', '.'); // Normalize to period
+      const dosageNum = parseFloat(dosageStr);
+
+      // Validate itemId (Vaccine/Medication)
       if (plan.itemId === 0) {
         error.itemId = {
           message: t('illness_plan.vaccine_error', { defaultValue: 'Please select a vaccine' }),
         };
       }
-      if (!plan.description.trim()) {
-        error.description = {
-          message: t('illness_plan.description_error', { defaultValue: 'Description is required' }),
+
+      // Validate injectionSite
+      if (!plan.injectionSite || !Object.values(InjectionSite).includes(plan.injectionSite)) {
+        error.injectionSite = {
+          message: t('illness_plan.injection_site_error', {
+            defaultValue: 'Please select an injection site',
+          }),
         };
       }
+
+      // Validate dosage
+      if (!dosageStr) {
+        error.dosage = {
+          message: t('illness_plan.dosage_required', {
+            defaultValue: 'Dosage is required',
+          }),
+        };
+      } else if (dosageNum <= 0 || isNaN(dosageNum)) {
+        error.dosage = {
+          message: t('illness_plan.dosage_error', {
+            defaultValue: 'Dosage must be a valid number greater than 0',
+          }),
+        };
+      } else if (!/^[0-9]+([.][0-9]{1,4})?$/.test(dosageStr)) {
+        error.dosage = {
+          message: t('illness_plan.dosage_format_error', {
+            defaultValue: 'Dosage must be a valid decimal number (e.g., 1.23)',
+          }),
+        };
+      }
+
+      // Validate date
+      if (!plan.date || isNaN(new Date(plan.date).getTime())) {
+        error.date = {
+          message: t('illness_plan.date_error', {
+            defaultValue: 'Please select a valid date',
+          }),
+        };
+      }
+
+      // Validate description
+      if (!plan.description.trim()) {
+        error.description = {
+          message: t('illness_plan.description_error', {
+            defaultValue: 'Description is required',
+          }),
+        };
+      }
+
       return error;
     });
 
@@ -153,10 +197,15 @@ const IllnessPlanScreen = () => {
       return;
     }
 
-    const requestBody: IllnessPlanRequest = { plans };
+    // Convert dosage to number for submission
+    const formattedPlans: IllnessPlan[] = plans.map((plan) => ({
+      ...plan,
+      dosage: parseFloat(plan.dosage.replace(',', '.')),
+    }));
+
+    const requestBody: IllnessPlanRequest = { plans: formattedPlans };
     try {
       await apiClient.post('/illness-detail/create-plan', requestBody.plans);
-      console.log('Illness Plans Submitted:', requestBody.plans);
       navigation.goBack();
     } catch (error) {
       console.error('Error submitting illness plans:', error);
@@ -169,13 +218,10 @@ const IllnessPlanScreen = () => {
   };
 
   const isExpendedIcons = (index: number) => {
-    if (expandedPlans[index]) {
-      return 'up';
-    }
-    return 'down';
+    return expandedPlans[index] ? 'up' : 'down';
   };
 
-  const renderPlan = ({ item, index }: { item: IllnessPlan; index: number }) => (
+  const renderPlan = ({ item, index }: { item: ExtendedIllnessPlan; index: number }) => (
     <View style={styles.planCard}>
       <TouchableOpacity style={styles.planHeader} onPress={() => togglePlan(index)}>
         <Text style={styles.planTitle}>
@@ -188,54 +234,7 @@ const IllnessPlanScreen = () => {
         <>
           <View style={styles.formGroup}>
             <Text style={styles.label}>
-              {t('illness_plan.dosage', { defaultValue: 'Dosage (mL or mg)' })}
-            </Text>
-            <TextInput
-              style={[styles.input, errors[index]?.dosage && styles.inputError]}
-              value={item.dosage.toString()}
-              onChangeText={(text) => handlePlanChange(index, 'dosage', Number(text))}
-              placeholder={t('illness_plan.dosage_placeholder', { defaultValue: 'Enter dosage' })}
-              keyboardType='numeric'
-            />
-            {errors[index]?.dosage && (
-              <Text style={styles.errorText}>{errors[index].dosage.message}</Text>
-            )}
-          </View>
-
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>
-              {t('illness_plan.injection_site', { defaultValue: 'Injection Site' })}
-            </Text>
-            <CustomPicker
-              options={injectionSiteOptions}
-              selectedValue={item.injectionSite}
-              onValueChange={(value) =>
-                handlePlanChange(index, 'injectionSite', value as InjectionSite)
-              }
-              title={t('illness_plan.select_injection_site', {
-                defaultValue: 'Select injection site...',
-              })}
-            />
-          </View>
-
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>{t('illness_plan.date', { defaultValue: 'Date' })}</Text>
-            <TouchableOpacity style={styles.input} onPress={() => setShowDatePicker(index)}>
-              <Text style={styles.dateText}>{item.date}</Text>
-            </TouchableOpacity>
-            {showDatePicker === index && (
-              <DateTimePicker
-                value={new Date(item.date)}
-                mode='date'
-                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                onChange={(event, date) => handleDateChange(index, event, date)}
-              />
-            )}
-          </View>
-
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>
-              {t('illness_plan.vaccine', { defaultValue: 'Vaccine/Medication' })}
+              {t('illness_plan.vaccine', { defaultValue: 'Vaccine/Medication' })} *
             </Text>
             {isLoading ? (
               <Text style={styles.loadingText}>
@@ -262,7 +261,69 @@ const IllnessPlanScreen = () => {
 
           <View style={styles.formGroup}>
             <Text style={styles.label}>
-              {t('illness_plan.description', { defaultValue: 'Description' })}
+              {t('illness_plan.injection_site', { defaultValue: 'Injection Site' })} *
+            </Text>
+            <CustomPicker
+              options={injectionSiteOptions}
+              selectedValue={item.injectionSite}
+              onValueChange={(value) =>
+                handlePlanChange(index, 'injectionSite', value as InjectionSite)
+              }
+              title={t('illness_plan.select_injection_site', {
+                defaultValue: 'Select injection site...',
+              })}
+            />
+            {errors[index]?.injectionSite && (
+              <Text style={styles.errorText}>{errors[index].injectionSite.message}</Text>
+            )}
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>
+              {t('illness_plan.dosage', { defaultValue: 'Dosage (mL or mg)' })} *
+            </Text>
+            <TextInput
+              style={[styles.input, errors[index]?.dosage && styles.inputError]}
+              value={item.dosage}
+              onChangeText={(text) => {
+                const numericValue = text.replace(/[^0-9.,]/g, '');
+                handlePlanChange(index, 'dosage', numericValue);
+              }}
+              placeholder={t('illness_plan.dosage_placeholder', { defaultValue: 'Enter dosage' })}
+              keyboardType='decimal-pad'
+              maxLength={6} // Allows for up to 4 decimal places (e.g., 12.34)
+              returnKeyType='done'
+              onSubmitEditing={Keyboard.dismiss}
+            />
+            {errors[index]?.dosage && (
+              <Text style={styles.errorText}>{errors[index].dosage.message}</Text>
+            )}
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>{t('illness_plan.date', { defaultValue: 'Date' })} *</Text>
+            <TouchableOpacity
+              style={[styles.input, errors[index]?.date && styles.inputError]}
+              onPress={() => setShowDatePicker(index)}
+            >
+              <Text style={styles.dateText}>{item.date || 'Select date...'}</Text>
+            </TouchableOpacity>
+            {showDatePicker === index && (
+              <DateTimePicker
+                value={item.date ? new Date(item.date) : new Date()}
+                mode='date'
+                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                onChange={(event, date) => handleDateChange(index, event, date)}
+              />
+            )}
+            {errors[index]?.date && (
+              <Text style={styles.errorErrorText}>{errors[index].date.message}</Text>
+            )}
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>
+              {t('illness_plan.description', { defaultValue: 'Description' })} *
             </Text>
             <TextEditorComponent
               onChange={(text: string) => handlePlanChange(index, 'description', text)}
@@ -325,13 +386,6 @@ const styles = StyleSheet.create({
   scrollContainer: {
     padding: 20,
     paddingBottom: 40,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#1A1A1A',
-    marginBottom: 20,
-    textAlign: 'center',
   },
   planCard: {
     backgroundColor: '#FFFFFF',
@@ -426,6 +480,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   errorText: {
+    fontSize: 14,
+    color: '#FF3B30',
+    marginTop: 5,
+  },
+  errorErrorText: {
     fontSize: 14,
     color: '#FF3B30',
     marginTop: 5,

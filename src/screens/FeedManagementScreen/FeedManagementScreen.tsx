@@ -15,7 +15,6 @@ import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
 
 const fetchFeed = async (): Promise<FeedMeals[]> => {
   const response = await apiClient.get('/feedmeals');
-  console.log(response.data[0].feedMealDetails);
   return response.data;
 };
 

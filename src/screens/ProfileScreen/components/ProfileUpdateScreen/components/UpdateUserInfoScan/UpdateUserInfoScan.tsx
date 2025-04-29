@@ -86,7 +86,6 @@ const UpdateUserInfoScan = () => {
       const response = await apiClient.post('/ocr/cccd', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      console.log('scan', response.data);
       return response.data;
     },
     {
@@ -126,7 +125,6 @@ const UpdateUserInfoScan = () => {
       const response = await apiClient.put('/users/update', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      console.log('formDataUpdateUser', formData);
       return response.data;
     },
     {

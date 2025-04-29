@@ -112,14 +112,6 @@ const ProfileUpdateScreen: React.FC = () => {
         ? normalizedGender
         : ''; // Default to empty string if invalid
       setGender(validGender);
-      console.log(
-        'Initial user.gender:',
-        user.gender,
-        'Normalized gender:',
-        normalizedGender,
-        'Set gender:',
-        validGender
-      );
 
       if (user.dob) setDob(parseDobToDisplayFormat(user.dob));
 
@@ -148,7 +140,6 @@ const ProfileUpdateScreen: React.FC = () => {
 
         if (user.address) {
           const provinceName = user.address.split(', ')[3];
-          console.log('provinceName', provinceName);
           const matchedProvince = provinces.find(
             (p: any) => p.label.toLowerCase() === provinceName.toLowerCase()
           );

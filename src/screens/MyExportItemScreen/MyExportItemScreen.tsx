@@ -23,7 +23,6 @@ const MyExportItemScreen = () => {
     'export_items/my',
     fetchMyExportItem
   );
-  console.log('myNotificationData', myNotificationData);
 
   return isLoading ? (
     <LoadingSplashScreen />

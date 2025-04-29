@@ -42,7 +42,6 @@ const authSlice = createSlice({
       // state.token = action.payload.token;
     },
     updateNewAccessToken: (state, action) => {
-      console.log(action.payload);
       state.accessToken = action.payload;
     },
   },
