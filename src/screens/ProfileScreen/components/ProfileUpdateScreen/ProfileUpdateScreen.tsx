@@ -21,11 +21,6 @@ interface FormDataType {
   gender: string;
 }
 
-const genderOptions: Option[] = [
-  { label: t('male', { defaultValue: 'Male' }), value: 'male' },
-  { label: t('female', { defaultValue: 'Female' }), value: 'female' },
-];
-
 type RootStackParamList = {
   ProfileUpdateScreen: { profile: User };
 };
@@ -45,11 +40,16 @@ const ProfileUpdateScreen: React.FC = () => {
   const [district, setDistrict] = useState<string>('');
   const [province, setProvince] = useState<string>('');
   const [dob, setDob] = useState<string>(''); // Stored as DD-MM-YYYY
-  const [gender, setGender] = useState<string>(user.gender || ''); // Initialize as empty
+  const [gender, setGender] = useState<string>(user.gender?.toLowerCase() || '');
   const [provinceOptions, setProvinceOptions] = useState<Option[]>([]);
   const [districtOptions, setDistrictOptions] = useState<Option[]>([]);
   const [wardOptions, setWardOptions] = useState<Option[]>([]);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+
+  const genderOptions: Option[] = [
+    { label: t('male', { defaultValue: 'Male' }), value: 'male' },
+    { label: t('female', { defaultValue: 'Female' }), value: 'female' },
+  ];
 
   // Validate phone number (exactly 10 digits)
   const validatePhoneNumber = (value: string): boolean => {
