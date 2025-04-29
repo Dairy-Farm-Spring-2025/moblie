@@ -19,11 +19,11 @@ import {
 import { Button, Text } from 'react-native-paper';
 import { useMutation } from 'react-query';
 import CardDetailCow from './components/CardDetailCow/CardDetailCow';
-import { ListCowMilk } from '@model/Milk/ListCowMilk/ListCowMilk';
 
 const CreateMilkBatch = () => {
   const [shift, setShift] = useState('shiftOne');
-  const { listCowMilk, setListCowMilk, removeCowMilk } = useListCowMilkStore();
+  const { listCowMilk, setListCowMilk, removeCowMilk, clearListCowMilk } =
+    useListCowMilkStore();
 
   const navigation = useNavigation();
 
@@ -32,7 +32,7 @@ const CreateMilkBatch = () => {
     {
       onSuccess: () => {
         Alert.alert('Success', t('Milk batch created successfully'));
-        setListCowMilk([] as any);
+        clearListCowMilk();
         navigation.dispatch(
           CommonActions.reset({
             index: 1, // Chỉ số 1, tức là màn hình thứ 2 (MilkBatchManagementScreen) được active

@@ -4,7 +4,8 @@ import { ListCowMilk } from '@model/Milk/ListCowMilk/ListCowMilk';
 type ListCowMilkStore = {
   listCowMilk: ListCowMilk[];
   setListCowMilk: (newItem: ListCowMilk) => void;
-  removeCowMilk: (cowId: number) => void; // New function to remove item
+  removeCowMilk: (cowId: number) => void;
+  clearListCowMilk: () => void; // New function to clear the list
 };
 
 export const useListCowMilkStore = create<ListCowMilkStore>((set) => ({
@@ -13,7 +14,13 @@ export const useListCowMilkStore = create<ListCowMilkStore>((set) => ({
     set((state) => {
       const updatedList = state.listCowMilk.map((item) =>
         item.dailyMilk.cowId === newItem.dailyMilk.cowId
-          ? { ...item, dailyMilk: { ...item.dailyMilk, volume: newItem.dailyMilk.volume } }
+          ? {
+              ...item,
+              dailyMilk: {
+                ...item.dailyMilk,
+                volume: newItem.dailyMilk.volume,
+              },
+            }
           : item
       );
 
@@ -27,6 +34,12 @@ export const useListCowMilkStore = create<ListCowMilkStore>((set) => ({
     }),
   removeCowMilk: (cowId) =>
     set((state) => ({
-      listCowMilk: state.listCowMilk.filter((item) => item.dailyMilk.cowId !== cowId),
+      listCowMilk: state.listCowMilk.filter(
+        (item) => item.dailyMilk.cowId !== cowId
+      ),
+    })),
+  clearListCowMilk: () =>
+    set(() => ({
+      listCowMilk: [],
     })),
 }));
