@@ -128,12 +128,8 @@ const CreateMilkBatch = () => {
                 selectedValue={shift}
                 onValueChange={setShift}
               >
-                <Picker.Item label={t('Shift 1 (0h-6h)')} value="shiftOne" />
-                <Picker.Item label={t('Shift 2 (6h-12h)')} value="shiftTwo" />
-                <Picker.Item
-                  label={t('Shift 3 (12h-18h)')}
-                  value="shiftThree"
-                />
+                <Picker.Item label={t('Shift 1 (8h-12h)')} value="shiftOne" />
+                <Picker.Item label={t('Shift 2 (13h-17h)')} value="shiftTwo" />
               </Picker>
             </View>
 
