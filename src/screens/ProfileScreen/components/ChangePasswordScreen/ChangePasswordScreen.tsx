@@ -108,14 +108,14 @@ const ChangePasswordScreen = () => {
                 {profileData?.name || 'N/A'}
               </Text>
               <Text variant='bodyMedium' style={styles.role}>
-                {profileData?.roleId?.name || 'No Role'}
+                {t(`home.${profileData?.roleId.name.toLowerCase()}`) || 'No Role'}
               </Text>
             </View>
             <Divider style={styles.divider} />
             <Text style={styles.title}>{t('Change Your Password')}</Text>
 
             <TextInput
-              label='Old Password'
+              label={t('Old Password', { defaultValue: 'Old Password' })}
               value={oldPassword}
               onChangeText={setOldPassword}
               secureTextEntry={secureTextOld}
@@ -132,7 +132,7 @@ const ChangePasswordScreen = () => {
             />
 
             <TextInput
-              label='New Password'
+              label={t('New Password', { defaultValue: 'New Password' })}
               value={newPassword}
               onChangeText={setNewPassword}
               secureTextEntry={secureTextNew}
@@ -152,7 +152,7 @@ const ChangePasswordScreen = () => {
             </HelperText>
 
             <TextInput
-              label='Confirm New Password'
+              label={t('Confirm Password', { defaultValue: 'Confirm Password' })}
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               secureTextEntry={secureTextConfirm}
