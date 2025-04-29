@@ -30,11 +30,17 @@ const QrScanRoute: React.FC = () => {
       >
         {(props) => <QrCodeScan {...props} selectedField={selectedField} roleName={roleName} />}
       </Stack.Screen>
-      <Stack.Screen name='CowDetails' component={DetailCow} options={{ title: 'Cow Details' }} />
+      <Stack.Screen
+        name='CowDetails'
+        component={DetailCow}
+        options={{ title: t('cow_details.title', { defaultValue: 'Cow Details' }) }}
+      />
       <Stack.Screen
         name='CowHealthInforScreen'
         component={CowHealthInforScreen}
-        options={{ title: 'Timeline Health Record' }}
+        options={{
+          title: t('timeline_health_record.title', { defaultValue: 'Timeline Health Record' }),
+        }}
       />
       <Stack.Screen
         name='CowHealthRecord'

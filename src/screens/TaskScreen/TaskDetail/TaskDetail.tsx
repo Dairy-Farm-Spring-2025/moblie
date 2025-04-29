@@ -414,7 +414,9 @@ const TaskDetailContent: React.FC<{
           >
             <Ionicons name='checkmark-done' size={24} color='#fff' />
             <Text style={styles.checkInButtonText}>
-              {isCheckingIn ? 'Checking in...' : 'Check-in'}
+              {isCheckingIn
+                ? t('message.checking_in', { defaultValue: 'Checking in...' })
+                : 'Check-in'}
             </Text>
           </TouchableOpacity>
         )}
@@ -435,14 +437,20 @@ const TaskDetail: React.FC = () => {
     (taskId: string | number) => apiClient.post(`/reportTask/joinTask/${taskId}`),
     {
       onSuccess: (response: any) => {
-        Alert.alert('Success', response.data?.message || 'Task checked in successfully!');
+        Alert.alert(
+          'Success',
+          response.data?.message ||
+            t('message.checkin_success', { defaultValue: 'Check-in successfully!' })
+        );
         setIsChecked(true);
         queryClient.invalidateQueries('tasks');
       },
       onError: (err) => {
         Alert.alert(
           'Error',
-          err.response?.data.message || err.message || 'Failed to check in task. Please try again.'
+          err.response?.data.message ||
+            err.message ||
+            t('message.checkin_failed', { defaultValue: 'Check-in failed!' })
         );
       },
     }

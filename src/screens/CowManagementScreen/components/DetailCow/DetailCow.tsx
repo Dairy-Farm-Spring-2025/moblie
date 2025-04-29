@@ -6,7 +6,7 @@ import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { formatCamelCase } from '@utils/format';
 import React, { useState } from 'react';
 import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query'; // Add useQueryClient
 import { LogBox } from 'react-native';
 import TitleNameCows from '@components/TitleNameCows/TitleNameCows';
 import RenderHTML from 'react-native-render-html';
@@ -14,6 +14,7 @@ import { t } from 'i18next';
 import { SegmentedButtons } from 'react-native-paper';
 import CowDetailsWithMilkChart from './components/CowDetailsWithMilkChart';
 import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
+import MoveCow from '../MoveCow/MoveCow';
 
 LogBox.ignoreLogs([
   'TRenderEngineProvider: Support for defaultProps will be removed',
@@ -36,6 +37,7 @@ const DetailCow: React.FC = () => {
   const [selectedSegment, setSelectedSegment] = useState('list');
   const route = useRoute<DetailCowRouteProp>();
   const navigator = useNavigation();
+  const queryClient = useQueryClient(); // Add queryClient
   const { cowId } = route.params;
 
   const { data: cow, isLoading, isError } = useQuery(['cow', cowId], () => fetchCowDetails(cowId));
@@ -45,6 +47,11 @@ const DetailCow: React.FC = () => {
       healthResponses: cow?.healthInfoResponses,
       cowName: cow?.name,
     });
+  };
+
+  // Function to refetch cow data
+  const refetchCow = () => {
+    queryClient.invalidateQueries(['cow', cowId]);
   };
 
   if (isLoading) {
@@ -216,11 +223,29 @@ const DetailCow: React.FC = () => {
             label: t('cow_management.report'),
             icon: 'chart-bar',
           },
+          {
+            value: 'movecow',
+            label: t('cow_management.move_cow'),
+            icon: 'recycle',
+          },
         ]}
       />
       <ScrollView style={styles.container}>
         {selectedSegment === 'milkReport' ? (
           <CowDetailsWithMilkChart cowId={cowId} />
+        ) : selectedSegment === 'movecow' ? (
+          <MoveCow
+            cowId={cowId}
+            cowName={cow.name}
+            cowStatus={cow.cowStatus}
+            cowTypeId={cow.cowType.cowTypeId}
+            cowTypeName={cow.cowType.name}
+            currentPen={cow.penResponse}
+            onCancel={() => {
+              setSelectedSegment('list');
+              refetchCow(); // Refetch cow data on cancel
+            }}
+          />
         ) : (
           renderCowDetails()
         )}

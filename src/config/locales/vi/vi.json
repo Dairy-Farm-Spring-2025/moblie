@@ -231,7 +231,29 @@
     "create": "Tạo",
     "health": "Sức khỏe",
     "report": "Báo cáo",
-    "loading": "Đang tải dữ liệu..."
+    "loading": "Đang tải dữ liệu...",
+    "move_cow": "Di chuyển bò",
+    "select_destination_pen": "Chọn chuồng đích",
+    "select_pen": "Vui lòng chọn một chuồng",
+    "reason_for_move": "Lý do di chuyển (Tùy chọn)",
+    "reason_placeholder": "Nhập lý do di chuyển bò",
+    "move_success": "Thành công",
+    "move_success_message": "Bò đã được di chuyển thành công",
+    "move_error": "Lỗi",
+    "move_error_message": "Không thể di chuyển bò. Vui lòng thử lại.",
+    "pens_error": "Không thể tải danh sách chuồng",
+    "loading_pens": "Đang tải danh sách chuồng...",
+    "no_current_pen": "Con bò này không ở trong chuồng nào",
+    "cancel": "Hủy",
+    "moving": "Đang di chuyển...",
+    "pen_selection_note": "Ghi chú: Khu vực và chuồng sẽ dựa vào Loại bò và Trạng thái bò",
+    "cow_type": "Loại bò",
+    "cow_status": "Trạng thái bò",
+    "select_area_type": "Chọn khu vực",
+    "area_type": {
+      "quarantine": "Khu vực cách ly",
+      "cowHousing": "Khu vực nuôi bò"
+    }
   },
   "card_cow": {
     "no_cow_data": "Không có dữ liệu bò",
@@ -865,5 +887,10 @@
   "Confirm New Password": "Xác nhận mật khẩu mới",
   "No Role": "Không có vai trò",
   "N/A": "Không xác định",
-  "Confirm Password": "Xác nhận mật khẩu"
+  "Confirm Password": "Xác nhận mật khẩu",
+  "message": {
+    "checkin_success": "Check-in công việc thành công!",
+    "checkin_failed": "Check-in công việc thất bại. Vui lòng thử lại.",
+    "checking_in": "Đang check-in..."
+  }
 }
