@@ -184,5 +184,21 @@
   "close": "Close",
   "no_milk_batches_found": "No milk batches found",
   "error_loading_data": "Error loading data",
-  "refresh": "Refresh"
+  "refresh": "Refresh",
+    "Change Your Password": "Change Your Password",
+  "Password must be at least 6 characters": "Password must be at least 6 characters",
+  "Passwords do not match": "Passwords do not match",
+  "Update Password": "Update Password",
+  "Success": "Success",
+  "Password changed successfully": "Password changed successfully",
+  "Error": "Error",
+  "Please fill all fields": "Please fill all fields",
+  "New password must be at least 6 characters": "New password must be at least 6 characters",
+  "Passwords do not match again": "Passwords do not match again",
+  "Failed to change password": "Failed to change password",
+  "Old Password": "Old Password",
+  "New Password": "New Password",
+  "Confirm New Password": "Confirm New Password",
+  "No Role": "No Role",
+  "N/A": "N/A"
 }
