@@ -276,7 +276,9 @@ const Materials: React.FC = () => {
     }
   };
 
-  return (
+  return isLoading ? (
+    <LoadingSplashScreen />
+  ) : (
     <View style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -290,9 +292,7 @@ const Materials: React.FC = () => {
           />
         }
       >
-        {isLoading ? (
-          <LoadingSplashScreen />
-        ) : isError ? (
+        {isError ? (
           <View style={styles.card}>
             <Text style={styles.title}>
               {(error as any)?.response?.data?.message || t('materials.failedToLoad')}
