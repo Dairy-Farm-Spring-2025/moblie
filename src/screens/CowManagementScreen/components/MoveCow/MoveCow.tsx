@@ -33,7 +33,6 @@ const fetchPens = async ({
     url = `/pens/available/cow?areaType=${areaType}`;
   }
   const response = await apiClient.get(url);
-  console.log(response.data);
   return response.data;
 };
 
