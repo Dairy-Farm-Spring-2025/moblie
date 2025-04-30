@@ -243,7 +243,7 @@ const DetailCow: React.FC = () => {
             currentPen={cow.penResponse}
             onCancel={() => {
               setSelectedSegment('list');
-              refetchCow(); // Refetch cow data on cancel
+              refetchCow();
             }}
           />
         ) : (
