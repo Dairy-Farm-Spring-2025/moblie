@@ -7,7 +7,7 @@ import { Alert } from 'react-native';
 const baseURL = 'https://api.dairyfarmfpt.website/api/v1';
 // Create an Axios instance
 const apiClient = axios.create({
-  baseURL: baseURL, // Replace with your API's base URL
+  baseURL: baseURL,
 });
 
 const refreshToken = async (refreshToken: string) => {
@@ -23,7 +23,6 @@ const refreshToken = async (refreshToken: string) => {
   return accessToken;
 };
 
-// Add a request interceptor
 apiClient.interceptors.request.use(
   async (config) => {
     try {
@@ -38,25 +37,17 @@ apiClient.interceptors.request.use(
     return config;
   },
   (error) => {
-    // Handle request errors
     return Promise.reject(error);
   }
 );
 
-// Add a response interceptor
 apiClient.interceptors.response.use(
   (response) => {
-    // Process the response data
-    return response.data; // Optionally, return only the data payload
+    return response.data;
   },
   async (error) => {
-    // Handle response errors
     const originalRequest = error.config;
-    if (
-      error.response &&
-      error.response.status === 401 &&
-      !originalRequest._retry
-    ) {
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
         const state: RootState = store.getState();

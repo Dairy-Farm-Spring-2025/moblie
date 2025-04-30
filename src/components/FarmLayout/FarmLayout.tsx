@@ -4,7 +4,7 @@ import { Text, Badge } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { useQuery } from 'react-query';
 import { COLORS } from '@common/GlobalStyle';
-import { Ionicons } from '@expo/vector-icons'; // Already imported
+import { Ionicons } from '@expo/vector-icons';
 import apiClient from '@config/axios/axios';
 import { useSelector } from 'react-redux';
 import { RootState } from '@core/store/store';
@@ -70,7 +70,6 @@ const FarmLayoutScreen = () => {
   const navigation = useNavigation();
   const [expandedArea, setExpandedArea] = useState<string | null>(null);
   const { roleName } = useSelector((state: RootState) => state.auth);
-  // Determine roleColors based on roleName, defaulting to worker if roleName is undefined
   const roleColors =
     roleName?.toLowerCase() === 'veterinarians' ? COLORS.veterinarian : COLORS.worker;
 
@@ -96,7 +95,6 @@ const FarmLayoutScreen = () => {
     const isExpanded = expandedArea === area.areaId.toString();
     const pensToRender = isExpanded ? pens : [];
 
-    // Parse pen names and organize by row
     const pensByRow: { [row: string]: Pen[] } = {};
     pensToRender.forEach((pen) => {
       const [row, col] = pen.name.split('-');
@@ -115,19 +113,16 @@ const FarmLayoutScreen = () => {
     const rowLabels = Object.keys(pensByRow);
     const totalPens = area.occupiedPens + area.emptyPens + area.damagedPens;
 
-    // Determine the maximum row letter (e.g., "C" if pens go up to "C-1")
     const maxRowLetter =
       rowLabels.length > 0
         ? rowLabels.reduce((max, current) => (current > max ? current : max), 'A')
         : 'A';
     const maxRowIndex = maxRowLetter.charCodeAt(0) - 'A'.charCodeAt(0);
 
-    // Generate all rows from 'A' to the max row letter
     const displayRowLabels = Array.from({ length: maxRowIndex + 1 }, (_, i) =>
       String.fromCharCode('A'.charCodeAt(0) + i)
     );
 
-    // Render a blank pen box (no content)
     const renderBlankPen = (index: number) => (
       <View key={`blank-${index}`} style={[styles.penBox, { borderColor: '#757575' }]} />
     );
@@ -171,7 +166,6 @@ const FarmLayoutScreen = () => {
                   const leftPens = rowPens.filter((_, i) => i < PENS_PER_ROW);
                   const rightPens = rowPens.filter((_, i) => i >= PENS_PER_ROW);
 
-                  // Create blank pens if no actual pens exist for this row
                   const leftBlanks =
                     rowPens.length === 0
                       ? Array.from({ length: PENS_PER_ROW }, (_, i) => renderBlankPen(i))

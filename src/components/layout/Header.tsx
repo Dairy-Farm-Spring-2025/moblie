@@ -15,11 +15,10 @@ import logo from '@assets/logo.png';
 
 const Header: React.FC = () => {
   const { isSiderVisible, toggleSider, closeSider } = useSiderStore();
-  const [siderAnimation] = useState(new Animated.Value(isSiderVisible ? 0 : -200)); // Animation
+  const [siderAnimation] = useState(new Animated.Value(isSiderVisible ? 0 : -200));
 
   const navigation = useNavigation();
 
-  // Animate the sidebar when its state changes
   React.useEffect(() => {
     Animated.timing(siderAnimation, {
       toValue: isSiderVisible ? 0 : -200,
@@ -29,38 +28,16 @@ const Header: React.FC = () => {
   }, [isSiderVisible]);
 
   const handleNavigation = (route: string) => {
-    closeSider(); // Close before navigating
+    closeSider();
     (navigation.navigate as any)(route);
   };
 
   return (
     <>
       <View style={styles.header}>
-        {/* <TouchableOpacity style={styles.siderTrigger} onPress={toggleSider}>
-          <Ionicons name='menu' size={24} color='#000' />
-        </TouchableOpacity> */}
         <Image source={logo} style={styles.logo} />
         <Text style={styles.headerTitle}>Dairy Farm Management</Text>
-        {/* <TouchableOpacity style={styles.notificationIcon}>
-          <Ionicons name='notifications' size={24} color='#000' />
-        </TouchableOpacity> */}
       </View>
-
-      {/* {isSiderVisible && (
-        <TouchableWithoutFeedback onPress={toggleSider}>
-          <Animated.View style={[styles.sider, { transform: [{ translateX: siderAnimation }] }]}>
-            <TouchableOpacity onPress={() => handleNavigation('Home')}>
-              <Text style={styles.siderText}>Home</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleNavigation('About')}>
-              <Text style={styles.siderText}>About</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleNavigation('Profile')}>
-              <Text style={styles.siderText}>Profile</Text>
-            </TouchableOpacity>
-          </Animated.View>
-        </TouchableWithoutFeedback>
-      )} */}
     </>
   );
 };

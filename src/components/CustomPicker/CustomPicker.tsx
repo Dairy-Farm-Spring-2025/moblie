@@ -37,10 +37,8 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
   const [modalVisible, setModalVisible] = useState(false);
   const [tempValue, setTempValue] = useState<string>('');
 
-  // Find the selected option or null if no match
   const selectedOption = options.find((opt) => opt.value === selectedValue) || null;
 
-  // Initialize and sync tempValue with selectedValue
   useEffect(() => {
     const initialValue =
       selectedValue && options.some((opt) => opt.value === selectedValue) ? selectedValue : '';

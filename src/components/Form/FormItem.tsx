@@ -17,7 +17,7 @@ interface FormItemProps extends ControllerProps {
       onBlur: () => void;
       value: any;
     };
-  }) => React.ReactNode | any; // Custom render prop
+  }) => React.ReactNode | any;
 }
 
 const FormItem = ({ name, control, label, rules, error, render, ...props }: FormItemProps) => {

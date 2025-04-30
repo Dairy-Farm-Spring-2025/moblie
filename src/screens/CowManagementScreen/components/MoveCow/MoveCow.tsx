@@ -48,24 +48,19 @@ const MoveCow: React.FC<MoveCowProps> = ({
   cowStatus,
   cowTypeId,
   cowTypeName,
-  areaType: propAreaType, // Renamed to distinguish from state
+  areaType: propAreaType,
   onCancel,
 }) => {
   const [selectedPen, setSelectedPen] = useState<string | null>(null);
-  const [selectedAreaType, setSelectedAreaType] = useState<string | null>(
-    propAreaType || null // Use prop if provided, otherwise null
-  );
+  const [selectedAreaType, setSelectedAreaType] = useState<string | null>(propAreaType || null);
 
-  // Define areaType options
   const areaTypeOptions: Option[] = [
     { label: t('cow_management.area_type.quarantine'), value: 'quarantine' },
     { label: t('cow_management.area_type.cowHousing'), value: 'cowHousing' },
   ];
 
-  // Use propAreaType if provided, otherwise use selectedAreaType
   const effectiveAreaType = propAreaType || selectedAreaType;
 
-  // Fetch available pens, only if areaType is selected or provided
   const {
     data: pens,
     isLoading: pensLoading,

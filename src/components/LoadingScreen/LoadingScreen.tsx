@@ -2,11 +2,11 @@ import React from 'react';
 import { StyleSheet, View, ActivityIndicator, Text } from 'react-native';
 
 interface LoadingScreenProps {
-  message?: string; // Optional loading message
-  size?: 'small' | 'large'; // Spinner size
-  color?: string; // Spinner color
-  backgroundColor?: string; // Background color of the screen
-  fullScreen?: boolean; // Whether to take up the full screen
+  message?: string;
+  size?: 'small' | 'large';
+  color?: string;
+  backgroundColor?: string;
+  fullScreen?: boolean;
 }
 
 const LoadingScreen: React.FC<LoadingScreenProps> = ({
