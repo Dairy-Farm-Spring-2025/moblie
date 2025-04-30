@@ -27,7 +27,7 @@ type RootStackParamList = {
   Login: undefined;
   Task: undefined;
   QRScan: undefined;
-  Welcome?: undefined; // Optional if not used in the Tab.Navigator
+  Welcome?: undefined;
 };
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -73,7 +73,6 @@ const CustomTabBarButton = ({ children, onPress, roleColors }: any) => {
   );
 };
 
-// Wrapper component to handle notifications
 const NavigationWrapper = () => {
   const { data: myNotificationData } = useQuery<Notification[]>(
     'notifications/myNotification',
@@ -98,12 +97,6 @@ const NavigationWrapper = () => {
         }),
         value: 'report-illness',
       },
-      // {
-      //   label: t('scanQR.vaccineInjection', {
-      //     defaultValue: 'Create vaccine injection',
-      //   }),
-      //   value: 'create-vaccine-injection',
-      // },
     ],
     []
   );
@@ -126,12 +119,6 @@ const NavigationWrapper = () => {
         }),
         value: 'report-illness',
       },
-      // {
-      //   label: t('scanQR.vaccineInjection', {
-      //     defaultValue: 'Create vaccine injection',
-      //   }),
-      //   value: 'create-vaccine-injection',
-      // },
     ],
     []
   );
@@ -145,7 +132,6 @@ const NavigationWrapper = () => {
   const handleFieldSelect = (field: string) => {
     setSelectedField(field);
     setIsDrawerVisible(false);
-    // Reset the QRScan stack to QrCodeScan with the new selectedField
     navigation.reset({
       index: 0,
       routes: [
@@ -315,7 +301,11 @@ const NavigationWrapper = () => {
     </>
   ) : (
     <Stack.Navigator>
-      <Stack.Screen name='Login' component={SignInScreen} />
+      <Stack.Screen
+        name='Login'
+        component={SignInScreen}
+        options={{ headerTitle: t('tab.login', { defaultValue: 'Login' }) }}
+      />
     </Stack.Navigator>
   );
 };

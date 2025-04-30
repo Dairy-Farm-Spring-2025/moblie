@@ -32,11 +32,11 @@ const QrCodeScan = ({ selectedField, roleName }: QrCodeScanProps) => {
   useEffect(() => {
     if (isFocused) {
       setIsCameraActive(true);
-      setHasScanned(false); // Reset hasScanned when screen gains focus
+      setHasScanned(false);
     } else {
       setIsCameraActive(false);
       setIsCameraReady(false);
-      setHasScanned(false); // Ensure reset when screen loses focus
+      setHasScanned(false);
     }
   }, [isFocused]);
 

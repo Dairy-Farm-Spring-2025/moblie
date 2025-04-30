@@ -12,12 +12,7 @@ import {
   Keyboard,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import {
-  actions,
-  RichEditor,
-  RichEditorProps,
-  RichToolbar,
-} from 'react-native-pell-rich-editor';
+import { actions, RichEditor, RichEditorProps, RichToolbar } from 'react-native-pell-rich-editor';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
@@ -35,44 +30,32 @@ const TextEditorComponent: React.FC<TextEditorComponentProps> = ({
 }) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const richTextRef = useRef<RichEditor>(null);
-  const handleHead2 = ({ tintColor }: any) => (
-    <Text style={{ color: tintColor }}>H2</Text>
-  );
+  const handleHead2 = ({ tintColor }: any) => <Text style={{ color: tintColor }}>H2</Text>;
 
-  const handleHead3 = ({ tintColor }: any) => (
-    <Text style={{ color: tintColor }}>H3</Text>
-  );
+  const handleHead3 = ({ tintColor }: any) => <Text style={{ color: tintColor }}>H3</Text>;
 
   const handleSave = () => {
     richTextRef.current?.blurContentEditor(); // Dismiss keyboard
-    setModalVisible(false); // Close modal
+    setModalVisible(false);
   };
 
   return (
     <View style={styles.container}>
-      {/* Open Editor Button */}
-      <TouchableOpacity
-        style={styles.openEditorButton}
-        onPress={() => setModalVisible(true)}
-      >
+      <TouchableOpacity style={styles.openEditorButton} onPress={() => setModalVisible(true)}>
         <Text numberOfLines={1} style={styles.valuePreview}>
-          {value
-            ? value.replace(/(<([^>]+)>)/gi, '').slice(0, 50) || 'Edit'
-            : 'Open Editor'}
+          {value ? value.replace(/(<([^>]+)>)/gi, '').slice(0, 50) || 'Edit' : 'Open Editor'}
         </Text>
       </TouchableOpacity>
 
-      {/* Validation Error */}
       {error && <Text style={styles.error}>{error}</Text>}
 
-      {/* Modal */}
       <Modal
         visible={isModalVisible}
         transparent={true}
-        animationType="slide"
+        animationType='slide'
         onRequestClose={() => setModalVisible(false)}
       >
-        <KeyboardAvoidingView style={styles.modalContainer} behavior="padding">
+        <KeyboardAvoidingView style={styles.modalContainer} behavior='padding'>
           <View style={styles.editorWrapper}>
             <View
               style={{
@@ -88,16 +71,15 @@ const TextEditorComponent: React.FC<TextEditorComponentProps> = ({
                 }}
                 onPress={() => setModalVisible(false)}
               >
-                <Ionicons name="close" size={20} />
+                <Ionicons name='close' size={20} />
               </TouchableOpacity>
             </View>
-            {/* Rich Text Editor */}
             <RichEditor
               {...props}
               ref={richTextRef}
               initialContentHTML={value}
               onChange={onChange}
-              placeholder="Start typing here..."
+              placeholder='Start typing here...'
               style={styles.richEditor}
               editorStyle={{
                 backgroundColor: '#f9f9f9',
@@ -105,7 +87,6 @@ const TextEditorComponent: React.FC<TextEditorComponentProps> = ({
                 placeholderColor: '#888',
               }}
             />
-            {/* Rich Text Toolbar */}
             <RichToolbar
               editor={richTextRef}
               actions={[
@@ -130,7 +111,6 @@ const TextEditorComponent: React.FC<TextEditorComponentProps> = ({
                 [actions.heading3]: handleHead3,
               }}
             />
-            {/* Save Button */}
             <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
               <Text style={styles.saveButtonText}>Save</Text>
             </TouchableOpacity>

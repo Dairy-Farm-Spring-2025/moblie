@@ -9,11 +9,12 @@ import {
   ScrollView,
   Dimensions,
   Modal,
+  Animated,
 } from 'react-native';
 import { useQuery } from 'react-query';
 import { Ionicons } from '@expo/vector-icons';
 import { format } from 'date-fns';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { CommonActions, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { LineChart } from 'react-native-gifted-charts';
 import { t } from 'i18next';
 import apiClient from '@config/axios/axios';
@@ -22,15 +23,16 @@ import { MilkBatch } from '@model/Milk/MilkBatch/MilkBatch';
 import FloatingButton from '@components/FloatingButton/FloatingButton';
 import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
 import { formatCamelCase } from '@utils/format';
+import useRoleColor from '@utils/hooks/hooks';
+import { Button } from 'react-native-paper';
+import { useListCowMilkStore } from '@core/store/ListCowDailyMilk/useListCowMilkStore';
 
 const fetchMilkBatch = async (): Promise<MilkBatch[]> => {
   try {
-    const response = await apiClient.get('/MilkBatch');
+    const response = await apiClient.get('/MilkBatch/my');
     return response.data;
   } catch (error: any) {
-    throw new Error(
-      error?.message || 'An error occurred while fetching the data'
-    );
+    throw new Error(error?.message || 'An error occurred while fetching the data');
   }
 };
 
@@ -44,21 +46,29 @@ const MilkBatchManagementScreen: React.FC = () => {
     refetch,
   } = useQuery<MilkBatch[]>('milkBatch', fetchMilkBatch, {
     refetchOnMount: true,
-    refetchOnWindowFocus: true, // 👈 Thêm dòng này
+    refetchOnWindowFocus: true,
   });
+  const roleColor = useRoleColor();
+  const { clearListCowMilk } = useListCowMilkStore();
 
-  const [selectedMilkBatch, setSelectedMilkBatch] = useState<MilkBatch | null>(
-    null
-  );
+  const [selectedMilkBatch, setSelectedMilkBatch] = useState<MilkBatch | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedBatchDetails, setSelectedBatchDetails] =
-    useState<MilkBatch | null>(null);
+  const [selectedBatchDetails, setSelectedBatchDetails] = useState<MilkBatch | null>(null);
 
   useFocusEffect(
     useCallback(() => {
       refetch();
+      clearListCowMilk();
     }, [refetch])
   );
+
+  // Animation setup
+  const scrollY = new Animated.Value(0);
+  const chartHeight = scrollY.interpolate({
+    inputRange: [0, 150], // Scroll distance to shrink the chart
+    outputRange: [300, 0], // Chart height from 250 to 100
+    extrapolate: 'clamp',
+  });
 
   const handleMilkBatchPress = (milkBatchId: number) => {
     (navigation.navigate as any)('MilkBatchDetail', { milkBatchId });
@@ -70,9 +80,7 @@ const MilkBatchManagementScreen: React.FC = () => {
 
   const toggleMilkBatchDetails = (milkBatch: MilkBatch) => {
     setSelectedMilkBatch(
-      selectedMilkBatch?.milkBatchId === milkBatch.milkBatchId
-        ? null
-        : milkBatch
+      selectedMilkBatch?.milkBatchId === milkBatch.milkBatchId ? null : milkBatch
     );
   };
 
@@ -80,31 +88,31 @@ const MilkBatchManagementScreen: React.FC = () => {
     ({ item }: { item: DailyMilk }) => (
       <View style={styles.dailyMilkCard}>
         <View style={styles.dailyMilkRow}>
-          <Ionicons name="time-outline" size={16} color="#4CAF50" />
+          <Ionicons name='time-outline' size={16} color={roleColor} />
           <Text style={styles.dailyMilkText}>
             {t('shift')}: {t(formatCamelCase(item.shift))}
           </Text>
         </View>
         <View style={styles.dailyMilkRow}>
-          <Ionicons name="calendar-outline" size={16} color="#4CAF50" />
+          <Ionicons name='calendar-outline' size={16} color={roleColor} />
           <Text style={styles.dailyMilkText}>
             {t('milk_date')}: {format(new Date(item.milkDate), 'dd/MM/yyyy')}
           </Text>
         </View>
         <View style={styles.dailyMilkRow}>
-          <Ionicons name="water-outline" size={16} color="#4CAF50" />
+          <Ionicons name='water-outline' size={16} color={roleColor} />
           <Text style={styles.dailyMilkText}>
             {t('volume')}: {item.volume} {t('liters')}
           </Text>
         </View>
         <View style={styles.dailyMilkRow}>
-          <Ionicons name="person-outline" size={16} color="#4CAF50" />
+          <Ionicons name='person-outline' size={16} color={roleColor} />
           <Text style={styles.dailyMilkText}>
             {t('worker')}: {item.worker.name}
           </Text>
         </View>
         <View style={styles.dailyMilkRow}>
-          <Ionicons name="paw-outline" size={16} color="#4CAF50" />
+          <Ionicons name='paw-outline' size={16} color={roleColor} />
           <Text style={styles.dailyMilkText}>
             {t('cow')}: {item.cow.name}
           </Text>
@@ -125,35 +133,29 @@ const MilkBatchManagementScreen: React.FC = () => {
             <Text style={styles.milkBatchTitle}>
               {t('milk_batch_id')}: {format(new Date(item.date), 'dd/MM/yyyy')}
             </Text>
-            <Text style={styles.milkBatchSubtitle}>
-              {t('total_volume')}: {item.totalVolume} {t('liters')}
-            </Text>
-            <Text style={styles.milkBatchSubtitle}>
-              {t('expiry_date')}:{' '}
-              {format(new Date(item.expiryDate), 'dd/MM/yyyy')}
-            </Text>
             <View
               style={[
                 styles.statusBadge,
                 {
-                  backgroundColor:
-                    item.status === 'inventory' ? '#4CAF50' : '#E53935',
+                  backgroundColor: item.status === 'inventory' ? roleColor : '#E53935',
                 },
               ]}
             >
-              <Text style={styles.statusText}>
-                {t(formatCamelCase(item.status))}
-              </Text>
+              <Text style={styles.statusText}>{t(formatCamelCase(item.status))}</Text>
             </View>
+            <Text style={styles.milkBatchSubtitle}>
+              {t('total_volume')}: {item.totalVolume} {t('liters')}
+            </Text>
+            <Text style={styles.milkBatchSubtitle}>
+              {t('expiry_date')}: {format(new Date(item.expiryDate), 'dd/MM/yyyy')}
+            </Text>
           </View>
           <Ionicons
             name={
-              selectedMilkBatch?.milkBatchId === item.milkBatchId
-                ? 'chevron-up'
-                : 'chevron-down'
+              selectedMilkBatch?.milkBatchId === item.milkBatchId ? 'chevron-up' : 'chevron-down'
             }
             size={24}
-            color="#4CAF50"
+            color={roleColor}
           />
         </TouchableOpacity>
         {selectedMilkBatch?.milkBatchId === item.milkBatchId && (
@@ -168,7 +170,7 @@ const MilkBatchManagementScreen: React.FC = () => {
           </View>
         )}
         <TouchableOpacity
-          style={styles.detailsButton}
+          style={[styles.detailsButton, { backgroundColor: roleColor }]}
           onPress={() => handleMilkBatchPress(item.milkBatchId)}
         >
           <Text style={styles.detailsButtonText}>{t('view_details')}</Text>
@@ -179,17 +181,14 @@ const MilkBatchManagementScreen: React.FC = () => {
   );
 
   // Calculate metrics for the cards
-  const totalLiters =
-    milkBatchData?.reduce((sum, batch) => sum + batch.totalVolume, 0) || 0;
+  const totalLiters = milkBatchData?.reduce((sum, batch) => sum + batch.totalVolume, 0) || 0;
   const numberOfBatches = milkBatchData?.length || 0;
   const averageVolumePerBatch =
     numberOfBatches > 0 ? (totalLiters / numberOfBatches).toFixed(2) : 0;
 
   // Prepare data for the line chart
   const sortedMilkBatches = milkBatchData
-    ? [...milkBatchData].sort(
-        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-      )
+    ? [...milkBatchData].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     : [];
   const chartData = sortedMilkBatches.map((batch) => ({
     value: batch.totalVolume,
@@ -208,76 +207,76 @@ const MilkBatchManagementScreen: React.FC = () => {
   return isLoading ? (
     <LoadingSplashScreen />
   ) : (
-    <View style={styles.container}>
+    <View style={[styles.container]}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>
-          {t('milk_batch_management.title')}
-        </Text>
-        <TouchableOpacity onPress={handleRefresh}>
-          <Ionicons name="refresh" size={24} color="#4CAF50" />
-        </TouchableOpacity>
+        <Text style={styles.headerTitle}>{t('milk_batch_management.title')}</Text>
       </View>
       {isError ? (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>
             {t('error_loading_data')}: {(error as any)?.message}
           </Text>
-          <TouchableOpacity
-            style={styles.refreshButton}
-            onPress={handleRefresh}
-          >
-            <Ionicons name="refresh" size={20} color="#fff" />
+          <TouchableOpacity style={styles.refreshButton} onPress={handleRefresh}>
+            <Ionicons name='refresh' size={20} color='#fff' />
             <Text style={styles.refreshButtonText}>{t('refresh')}</Text>
           </TouchableOpacity>
         </View>
       ) : Array.isArray(milkBatchData) && milkBatchData.length > 0 ? (
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <View>
           {/* Metric Cards */}
           <View style={styles.cardsContainer}>
             <View style={styles.metricCard}>
-              <Ionicons name="water-outline" size={28} color="#4CAF50" />
+              <Ionicons name='water-outline' size={28} color={roleColor} />
               <Text style={styles.cardTitle}>{t('total_liters')}</Text>
-              <Text style={styles.cardValue}>{totalLiters} L</Text>
+              <Text style={[styles.cardValue, { color: roleColor }]}>{totalLiters} L</Text>
             </View>
             <View style={styles.metricCard}>
-              <Ionicons name="stats-chart-outline" size={28} color="#4CAF50" />
+              <Ionicons name='stats-chart-outline' size={28} color={roleColor} />
               <Text style={styles.cardTitle}>{t('avg_volume_batch')}</Text>
-              <Text style={styles.cardValue}>{averageVolumePerBatch} L</Text>
+              <Text style={[styles.cardValue, { color: roleColor }]}>
+                {averageVolumePerBatch} L
+              </Text>
             </View>
             <View style={styles.metricCard}>
-              <Ionicons name="cube-outline" size={28} color="#4CAF50" />
+              <Ionicons name='cube-outline' size={28} color={roleColor} />
               <Text style={styles.cardTitle}>{t('total_batches')}</Text>
-              <Text style={styles.cardValue}>{numberOfBatches}</Text>
+              <Text style={[styles.cardValue, { color: roleColor }]}>{numberOfBatches}</Text>
             </View>
           </View>
 
-          {/* Line Chart */}
-          <View style={styles.chartCard}>
+          {/* Animated Line Chart */}
+          <Animated.View style={[styles.chartCard, { height: chartHeight }]}>
             <Text style={styles.chartTitle}>{t('milk_volume_trend')}</Text>
             <LineChart
               data={chartData}
-              width={Dimensions.get('window').width - 40}
+              width={Dimensions.get('window').width - 120}
               height={200}
               isAnimated={true}
-              color="#4CAF50"
+              color={roleColor}
               thickness={3}
               yAxisTextStyle={styles.chartText}
               xAxisLabelTextStyle={styles.chartText}
               showDataPoints
-              dataPointsColor="#4CAF50"
+              dataPointsColor={roleColor}
               dataPointsRadius={6}
-              textColor="#333"
+              textColor='#333'
               textFontSize={12}
               onDataPointClick={handleDataPointClick}
             />
-          </View>
+          </Animated.View>
 
           {/* Milk Batch List */}
-          <ScrollView>
+          <ScrollView
+            contentContainerStyle={styles.batchListContainer}
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+              { useNativeDriver: false } // useNativeDriver is false because we're animating height
+            )}
+            scrollEventThrottle={16} // Ensures smooth animation
+          >
             <FlatList
               data={milkBatchData.sort(
-                (a, b) =>
-                  new Date(b.date).getTime() - new Date(a.date).getTime()
+                (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
               )}
               renderItem={renderMilkBatchItem}
               keyExtractor={(milkBatch) => milkBatch.milkBatchId.toString()}
@@ -285,7 +284,7 @@ const MilkBatchManagementScreen: React.FC = () => {
               contentContainerStyle={styles.batchList}
             />
           </ScrollView>
-        </ScrollView>
+        </View>
       ) : (
         <View style={styles.noDataContainer}>
           <Text style={styles.noDataText}>{t('no_milk_batches_found')}</Text>
@@ -294,7 +293,7 @@ const MilkBatchManagementScreen: React.FC = () => {
 
       {/* Modal for Batch Details */}
       <Modal
-        animationType="slide"
+        animationType='slide'
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
@@ -306,9 +305,7 @@ const MilkBatchManagementScreen: React.FC = () => {
               <>
                 <View style={styles.modalRow}>
                   <Text style={styles.modalLabel}>{t('Milk Batch ID')}:</Text>
-                  <Text style={styles.modalValue}>
-                    {selectedBatchDetails.milkBatchId}
-                  </Text>
+                  <Text style={styles.modalValue}>{selectedBatchDetails.milkBatchId}</Text>
                 </View>
                 <View style={styles.modalRow}>
                   <Text style={styles.modalLabel}>{t('Total Volume')}:</Text>
@@ -325,17 +322,12 @@ const MilkBatchManagementScreen: React.FC = () => {
                 <View style={styles.modalRow}>
                   <Text style={styles.modalLabel}>{t('Expiry Date')}:</Text>
                   <Text style={styles.modalValue}>
-                    {format(
-                      new Date(selectedBatchDetails.expiryDate),
-                      'dd/MM/yyyy'
-                    )}
+                    {format(new Date(selectedBatchDetails.expiryDate), 'dd/MM/yyyy')}
                   </Text>
                 </View>
                 <View style={styles.modalRow}>
                   <Text style={styles.modalLabel}>{t('status')}:</Text>
-                  <Text style={styles.modalValue}>
-                    {selectedBatchDetails.status}
-                  </Text>
+                  <Text style={styles.modalValue}>{selectedBatchDetails.status}</Text>
                 </View>
               </>
             )}
@@ -390,6 +382,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     textAlign: 'center',
   },
+  batchListContainer: {
+    backgroundColor: '#F7F9FC',
+  },
   refreshButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -412,7 +407,7 @@ const styles = StyleSheet.create({
   metricCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
-    padding: 12,
+    padding: 10,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOpacity: 0.1,
@@ -422,7 +417,7 @@ const styles = StyleSheet.create({
     width: (Dimensions.get('window').width - 48) / 3,
   },
   cardTitle: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '600',
     color: '#4A5568',
     marginTop: 8,
@@ -437,7 +432,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
-    marginBottom: 20,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
@@ -493,6 +487,8 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 12,
     borderRadius: 12,
+    marginVertical: 4,
+    marginBottom: 8,
   },
   statusText: {
     fontSize: 12,

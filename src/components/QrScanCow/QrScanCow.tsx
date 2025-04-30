@@ -35,7 +35,6 @@ const QrScanCow = () => {
     const cowIdMatch = scannedData.match(/\/cow-management\/(\d+)/);
     if (cowIdMatch) {
       const extractedCowId = Number(cowIdMatch[1]);
-      // Send the scanned cow ID back to the form screen
       (navigation.navigate as any)(route.params.screens, {
         cowId: extractedCowId,
       });
@@ -92,9 +91,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: 'absolute',
-    bottom: 100, // Align at the bottom of the screen
+    bottom: 100,
     left: '45%',
-    transform: [{ translateX: -75 }], // Center the button horizontally
+    transform: [{ translateX: -75 }],
   },
   button: {
     backgroundColor: '#007BFF',
@@ -124,7 +123,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     borderRadius: 5,
   },
-  // Styling the scanning window
   scanWindow: {
     position: 'absolute',
     top: '35%',
@@ -135,7 +133,7 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.5)', // Semi-transparent background
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
     borderRadius: 10,
   },
   scanText: {

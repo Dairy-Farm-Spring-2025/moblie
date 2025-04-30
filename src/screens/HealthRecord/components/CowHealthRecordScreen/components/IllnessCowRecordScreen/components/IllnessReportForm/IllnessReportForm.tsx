@@ -119,7 +119,7 @@ const IllnessReportForm = () => {
       ]);
       setModalVisible(false);
     } else {
-      Alert.alert('Image picking canceled');
+      Alert.alert(t('Image picking canceled', { defaultValue: 'Image picking canceled' }));
     }
   };
 
@@ -148,7 +148,7 @@ const IllnessReportForm = () => {
       ]);
       setModalVisible(false);
     } else {
-      Alert.alert('Picture taking canceled');
+      Alert.alert(t('Picture taking canceled', { defaultValue: 'Picture taking canceled' }));
     }
   };
 
@@ -268,7 +268,7 @@ const IllnessReportForm = () => {
             <TouchableOpacity style={styles.modalButton} onPress={pickImage}>
               <Ionicons name='image-outline' size={30} color='#007bff' />
               <Text style={styles.modalButtonText}>
-                {t('profile.pick_from_gallery', {
+                {t('illness_report.pick_from_gallery', {
                   defaultValue: 'Pick from Gallery',
                 })}
               </Text>
@@ -276,7 +276,7 @@ const IllnessReportForm = () => {
             <TouchableOpacity style={styles.modalButton} onPress={takePicture}>
               <Ionicons name='camera' size={30} color='#007bff' />
               <Text style={styles.modalButtonText}>
-                {t('profile.take_a_photo', { defaultValue: 'Take a Photo' })}
+                {t('illness_report.take_a_photo', { defaultValue: 'Take a Photo' })}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity

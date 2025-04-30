@@ -328,7 +328,8 @@
     "home": "Trang chủ",
     "task": "Công việc",
     "notification": "Thông báo",
-    "profile": "Tôi"
+    "profile": "Tôi",
+    "login": "Đăng Nhập"
   },
   "Task": "Công việc",
   "Milking": "Vắt sữa",
@@ -828,7 +829,7 @@
   "status": "Trạng thái",
   "daily_milks": "Sữa hàng ngày",
   "total_liters": "Tổng số lít",
-  "avg_volume_batch": "Thể tích trung bình/Lô",
+  "avg_volume_batch": "Thể tích TB/Lô",
   "total_batches": "Tổng số lô",
   "milk_volume_trend": "Xu hướng thể tích sữa",
   "view_details": "Xem chi tiết",
@@ -878,6 +879,7 @@
   "Shift Two": "Ca 2",
   "Shift Three": "Ca 3",
   "Inventory": "Tồn kho",
+  "Out_of_stock": "Hết hàng",
   "Please fill all fields": "Vui lòng điền đầy đủ thông tin",
   "New password must be at least 6 characters": "Mật khẩu mới phải có ít nhất 6 ký tự",
   "Passwords do not match again": "Mật khẩu nhập lại không khớp",
@@ -892,5 +894,84 @@
     "checkin_success": "Check-in công việc thành công!",
     "checkin_failed": "Check-in công việc thất bại. Vui lòng thử lại.",
     "checking_in": "Đang check-in..."
-  }
+  },
+  "detailMilkBatch": {
+    "loading": "Đang tải chi tiết lô sữa...",
+    "error": "Không thể tải chi tiết lô sữa",
+    "title": "Lô Sữa #{{milkBatchId}}",
+    "totalVolume": "Tổng Thể Tích:",
+    "date": "Ngày:",
+    "expiryDate": "Ngày Hết Hạn:",
+    "status": "Trạng Thái:",
+    "chartTitle": "Thể Tích Sữa Theo Bò (lít)",
+    "dailyMilk": {
+      "title": "Sữa Hàng Ngày #{{dailyMilkId}}",
+      "shift": "Ca:",
+      "milkDate": "Ngày Vắt Sữa:",
+      "volume": "Thể Tích:",
+      "status": "Trạng Thái:"
+    },
+    "worker": {
+      "title": "Thông Tin Nhân Viên",
+      "name": "Tên:",
+      "phone": "Số Điện Thoại:",
+      "email": "Email:",
+      "employeeNumber": "Mã Nhân Viên:",
+      "gender": "Giới Tính:"
+    },
+    "cow": {
+      "title": "Thông Tin Bò",
+      "name": "Tên:",
+      "status": "Trạng Thái:",
+      "dateOfBirth": "Ngày Sinh:",
+      "dateOfEnter": "Ngày Nhập:",
+      "origin": "Nguồn Gốc:"
+    }
+  },
+  "statuses": {
+    "inventory": "Trong Kho",
+    "out_of_stock": "Đã Hết Hàng",
+    "expired": "Hết Hạn"
+  },
+  "shifts": {
+    "shiftOne": "Ca 1 (8h-13h)",
+    "shiftTwo": "Ca 2 (13h-17h)"
+  },
+  "cowStatuses": {
+    "milkingCow": "Bò Đang Vắt Sữa",
+    "dryCow": "Bò Khô"
+  },
+  "cowOrigins": {
+    "local": "Nội Địa",
+    "imported": "Nhập Khẩu"
+  },
+  "genders": {
+    "male": "Nam",
+    "female": "Nữ"
+  },
+  "Image picking canceled": "Đã hủy chọn ảnh",
+  "Picture taking canceled": "Đã hủy chụp ảnh",
+  "Illness report created successfully": "Báo cáo bệnh thành công!",
+  "Failed to create illness report": "Lỗi khi báo cáo bệnh!",
+  "Failed to export material": "Lỗi khi xuất vật liệu",
+  "Please enter a valid quantity": "Vui lòng nhập số lượng hợp lớn hơn 0",
+  "export_item_success": "Xuất vật liệu thành công",
+  "Failed to create milk batch": "Lỗi khi tạo lô sữa",
+  "Please fill in all fields.": "Vui lòng nhập hết tất cả thông tin cần thiết!.",
+  "Password changed successfully": "Đổi mật khẩu thành công",
+  "Please enter both email and password.": "Vui lòng nhập đủ thông tin email và mật khẩu!",
+  "Invalid email format.": "Định dạng email không đúng!",
+  "Password must be at least 6 characters long": "Mật khẩu phải có ít nhất 6 ký tự",
+  "You are not authorized to access this page.": "Bạn không có quyền truy cập!",
+  "Invalid email or password.": "Email hoặc mật khẩu không đúng!",
+  "welcome_message": "Chào mừng, {{name}}!",
+  "error_failed_auth_tokens": "Không thể lấy được mã thông báo xác thực",
+  "Google Sign-In was cancelled": "Đã hủy đăng nhập bằng Google",
+  "Failed to complete Google Sign-In": "Lỗi khi hoàn thành đăng nhập bằng Google",
+  "Failed to initiate Google Sign-In": "Lỗi khi đăng nhập bằng Google",
+  "Failed to refresh report data.": "Lỗi khi khởi tạo dữ liệu báo cáo!",
+  "Report updated successfully!": "Cập nhật báo cáo thành công!",
+  "Password": "Mật khẩu",
+  "Password is required": "Bạn cần điền mật khẩu!",
+  "Email is required": "Vui lòng điền email!"
 }

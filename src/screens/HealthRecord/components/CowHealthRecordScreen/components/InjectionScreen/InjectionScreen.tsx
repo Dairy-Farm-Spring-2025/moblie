@@ -77,7 +77,7 @@ const InjectionScreen = () => {
 
   const exportMutation = useMutation(exportMaterial, {
     onSuccess: (data, variables) => {
-      Alert.alert('Success', `export item with ID ${variables.itemId} exported successfully!`);
+      Alert.alert('Success', t('export_item_success', { defaultValue: 'Export item success' }));
       setModalVisible(false);
       setQuantity('');
       setExportTaskId(taskId?.toString());
@@ -86,13 +86,20 @@ const InjectionScreen = () => {
       }, 500);
     },
     onError: (error: any) => {
-      Alert.alert('Error', error?.response?.data?.message || 'Failed to export material');
+      Alert.alert(
+        'Error',
+        error?.response?.data?.message ||
+          t('Failed to export material', { defaultValue: 'Failed to export material' })
+      );
     },
   });
 
   const handleExport = () => {
     if (!quantity || isNaN(Number(quantity))) {
-      Alert.alert('Error', 'Please enter a valid quantity');
+      Alert.alert(
+        'Error',
+        t('Please enter a valid quantity', { defaultValue: 'Please enter a valid quantity' })
+      );
       return;
     }
 

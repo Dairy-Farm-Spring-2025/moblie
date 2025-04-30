@@ -34,13 +34,7 @@ const authSlice = createSlice({
         fullName: string | null;
         token: string | null;
       }>
-    ) {
-      // state.isAuthenticated = action.payload.isAuthenticated;
-      // state.role = action.payload.role;
-      // state.userId = action.payload.userId;
-      // state.fullName = action.payload.fullName;
-      // state.token = action.payload.token;
-    },
+    ) {},
     updateNewAccessToken: (state, action) => {
       state.accessToken = action.payload;
     },

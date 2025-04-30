@@ -41,7 +41,7 @@ const SignInScreen: React.FC = () => {
     if (!text) {
       setEmailError('Email is required');
     } else if (!validateEmail(text)) {
-      setEmailError('Invalid email format');
+      setEmailError('Invalid email format.');
     } else {
       setEmailError('');
     }
@@ -60,30 +60,54 @@ const SignInScreen: React.FC = () => {
 
   const handleSignIn = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Please enter both email and password.');
+      Alert.alert(
+        'Error',
+        t('Please enter both email and password.', {
+          defaultValue: 'Please enter both email and password.',
+        })
+      );
       return;
     }
     if (!validateEmail(email)) {
-      Alert.alert('Error', 'Invalid email format.');
+      Alert.alert('Error', t('Invalid email format.', { defaultValue: 'Invalid email format.' }));
       return;
     }
     if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters long');
+      Alert.alert(
+        'Error',
+        t('Password must be at least 6 characters long', {
+          defaultValue: 'Password must be at least 6 characters long',
+        })
+      );
       return;
     }
     setLoading(true);
     try {
       const response = await AccountServices.login(email, password);
       if (response && response.data) {
-        Alert.alert('Success', `Welcome, ${response.data?.fullName}`);
+        Alert.alert(
+          'Success',
+          t('welcome_message', {
+            name: response.data?.fullName,
+            defaultValue: `Welcome, ${response.data?.fullName || 'User'}`,
+          })
+        );
         const { accessToken, roleName } = response.data;
         if (roleName.toLowerCase() !== 'manager') {
           dispatch(login({ ...response.data, isAuthenticated: true }));
         } else {
-          Alert.alert('Error', 'You are not authorized to access this page.');
+          Alert.alert(
+            'Error',
+            t('You are not authorized to access this page.', {
+              defaultValue: 'You are not authorized to access this page.',
+            })
+          );
         }
       } else {
-        Alert.alert('Error', 'Invalid email or password.');
+        Alert.alert(
+          'Error',
+          t('Invalid email or password.', { defaultValue: 'Invalid email or password.' })
+        );
       }
     } catch (error: any) {
       Alert.alert('Error', error.message);
@@ -124,17 +148,41 @@ const SignInScreen: React.FC = () => {
               isAuthenticated: true,
             })
           );
-          Alert.alert('Success', `Welcome, ${userName || 'User'}`);
+          Alert.alert(
+            'Success',
+            t('welcome_message', {
+              name: userName || 'User',
+              defaultValue: `Welcome, ${userName || 'User'}`,
+            })
+          );
         } else {
-          Alert.alert('Error', 'Failed to retrieve authentication tokens');
+          Alert.alert(
+            'Error',
+            t('error_failed_auth_tokens', {
+              defaultValue: 'Failed to retrieve authentication tokens',
+            })
+          );
         }
       } else if (result.type === 'cancel' || result.type === 'dismiss') {
-        Alert.alert('Cancelled', 'Google Sign-In was cancelled');
+        Alert.alert(
+          'Cancelled',
+          t('Google Sign-In was cancelled', { defaultValue: 'Google Sign-In was cancelled' })
+        );
       } else {
-        Alert.alert('Error', 'Failed to complete Google Sign-In');
+        Alert.alert(
+          'Error',
+          t('Failed to complete Google Sign-In', {
+            defaultValue: 'Failed to complete Google Sign-In',
+          })
+        );
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to initiate Google Sign-In');
+      Alert.alert(
+        'Error',
+        t('Failed to initiate Google Sign-In', {
+          defaultValue: 'Failed to initiate Google Sign-In',
+        })
+      );
     }
   };
 
@@ -161,14 +209,14 @@ const SignInScreen: React.FC = () => {
               value={email}
               onChangeText={handleEmailChange}
             />
-            {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
+            {emailError ? <Text style={styles.errorText}>{t(emailError)}</Text> : null}
           </View>
 
           <View style={styles.inputContainer}>
             <View style={[styles.passwordContainer, passwordError ? styles.inputError : null]}>
               <TextInput
                 style={styles.passwordInput}
-                placeholder='Password'
+                placeholder={t('Password', { defaultValue: 'Password' })}
                 placeholderTextColor='#777'
                 secureTextEntry={!showPassword}
                 value={password}
@@ -181,7 +229,7 @@ const SignInScreen: React.FC = () => {
                 <FontAwesome name={showPassword ? 'eye-slash' : 'eye'} size={24} color='#777' />
               </TouchableOpacity>
             </View>
-            {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
+            {passwordError ? <Text style={styles.errorText}>{t(passwordError)}</Text> : null}
           </View>
 
           <TouchableOpacity style={styles.signInButton} onPress={handleSignIn} disabled={loading}>
@@ -197,7 +245,7 @@ const SignInScreen: React.FC = () => {
           <TouchableOpacity onPress={handleNavigateGoogle} style={styles.googleButton}>
             <Image
               source={{
-                uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png',
+                uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png',
               }}
               style={styles.googleIcon}
             />

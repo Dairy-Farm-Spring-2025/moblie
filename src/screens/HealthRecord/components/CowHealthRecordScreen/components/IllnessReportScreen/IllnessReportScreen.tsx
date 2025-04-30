@@ -102,11 +102,23 @@ const IllnessReportScreen = () => {
     },
     {
       onSuccess: (response: any) => {
-        Alert.alert(t('Success'), response.message || 'Illness report created successfully');
+        Alert.alert(
+          t('Success'),
+          response.message ||
+            t('Illness report created successfully', {
+              defaultValue: 'Illness report created successfully',
+            })
+        );
         navigation.navigate('Home' as never);
       },
       onError: (error: any) => {
-        Alert.alert(t('Error'), error.response?.data?.message || 'Failed to create illness report');
+        Alert.alert(
+          t('Error'),
+          error.response?.data?.message ||
+            t('Failed to create illness report', {
+              defaultValue: 'Failed to create illness report',
+            })
+        );
       },
     }
   );

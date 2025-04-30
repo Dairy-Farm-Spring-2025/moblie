@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 interface LayoutProps {
   children?: ReactNode;
   isScrollable?: boolean;
-  onRefresh?: () => Promise<void>; // Added optional callback for refresh
+  onRefresh?: () => Promise<void>;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, isScrollable = true, onRefresh }) => {
@@ -37,7 +37,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isScrollable = true, onRefres
             <RefreshControl
               refreshing={refreshing}
               onRefresh={handleRefresh}
-              tintColor='#000' // Customize the refresh indicator color
+              tintColor='#000'
               titleColor='#000' // Optional: Text color (iOS)
             />
           }
