@@ -68,7 +68,10 @@ const ReportTask: React.FC<ReportTaskProps> = ({ reportTask: initialReportTask, 
     try {
       await refetch();
     } catch (err) {
-      Alert.alert('Error', 'Failed to refresh report data.');
+      Alert.alert(
+        'Error',
+        t('Failed to refresh report data.', { defaultValue: 'Failed to refresh report data.' })
+      );
     } finally {
       setRefreshing(false);
     }

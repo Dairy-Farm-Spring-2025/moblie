@@ -315,7 +315,11 @@ const NavigationWrapper = () => {
     </>
   ) : (
     <Stack.Navigator>
-      <Stack.Screen name='Login' component={SignInScreen} />
+      <Stack.Screen
+        name='Login'
+        component={SignInScreen}
+        options={{ headerTitle: t('tab.login', { defaultValue: 'Login' }) }}
+      />
     </Stack.Navigator>
   );
 };

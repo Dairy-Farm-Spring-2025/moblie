@@ -47,24 +47,42 @@ const ChangePasswordScreen = () => {
     async (data: any) => await apiClient.put('/users/changepassword', data),
     {
       onSuccess: (response) => {
-        Alert.alert('Success', 'Password changed successfully');
+        Alert.alert(
+          'Success',
+          t('Password changed successfully', { defaultValue: 'Password changed successfully' })
+        );
         navigation.goBack();
       },
       onError: (error) => {
-        Alert.alert('Error', error.response?.data?.message || 'Failed to change password');
+        Alert.alert(
+          'Error',
+          error.response?.data?.message ||
+            t('Failed to change password', { defaultValue: 'Failed to change password' })
+        );
       },
     }
   );
 
   const handleChangePassword = () => {
     if (!oldPassword || !newPassword || !confirmPassword) {
-      return Alert.alert('Error', 'Please fill all fields');
+      return Alert.alert(
+        'Error',
+        t('Please fill in all fields.', { defaultValue: 'Please fill in all fields.' })
+      );
     }
     if (newPassword.length < 6) {
-      return Alert.alert('Error', 'New password must be at least 6 characters');
+      return Alert.alert(
+        'Error',
+        t('New password must be at least 6 characters', {
+          defaultValue: 'New password must be at least 6 characters',
+        })
+      );
     }
     if (newPassword !== confirmPassword) {
-      return Alert.alert('Error', 'Passwords do not match');
+      return Alert.alert(
+        'Error',
+        t('Passwords do not match', { defaultValue: 'Passwords do not match' })
+      );
     }
 
     setLoading(true);

@@ -102,11 +102,23 @@ const IllnessReportScreen = () => {
     },
     {
       onSuccess: (response: any) => {
-        Alert.alert(t('Success'), response.message || 'Illness report created successfully');
+        Alert.alert(
+          t('Success'),
+          response.message ||
+            t('Illness report created successfully', {
+              defaultValue: 'Illness report created successfully',
+            })
+        );
         navigation.navigate('Home' as never);
       },
       onError: (error: any) => {
-        Alert.alert(t('Error'), error.response?.data?.message || 'Failed to create illness report');
+        Alert.alert(
+          t('Error'),
+          error.response?.data?.message ||
+            t('Failed to create illness report', {
+              defaultValue: 'Failed to create illness report',
+            })
+        );
       },
     }
   );
@@ -465,14 +477,14 @@ const IllnessReportScreen = () => {
 
             <View style={styles.imageContainer}>
               <Text style={styles.label}>
-                {t('uploaded_images', {
+                {t('illness_report.uploaded_images', {
                   defaultValue: 'Uploaded/Captured Images',
                 })}
               </Text>
               <TouchableOpacity style={styles.uploadButton} onPress={() => setModalVisible(true)}>
                 <Ionicons name='camera-outline' size={24} color='#fff' />
                 <Text style={styles.uploadButtonText}>
-                  {t('add_image', { defaultValue: 'Add Image' })}
+                  {t('illness_report.add_image', { defaultValue: 'Add Image' })}
                 </Text>
               </TouchableOpacity>
               <ScrollView horizontal style={styles.imagePreviewContainer}>

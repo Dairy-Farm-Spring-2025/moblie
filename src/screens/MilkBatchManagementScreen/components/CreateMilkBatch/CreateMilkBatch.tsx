@@ -22,8 +22,7 @@ import CardDetailCow from './components/CardDetailCow/CardDetailCow';
 
 const CreateMilkBatch = () => {
   const [shift, setShift] = useState('shiftOne');
-  const { listCowMilk, setListCowMilk, removeCowMilk, clearListCowMilk } =
-    useListCowMilkStore();
+  const { listCowMilk, setListCowMilk, removeCowMilk, clearListCowMilk } = useListCowMilkStore();
 
   const navigation = useNavigation();
 
@@ -49,7 +48,8 @@ const CreateMilkBatch = () => {
       onError: (err: any) => {
         Alert.alert(
           'Error',
-          err?.response?.data?.message || 'Failed to create milk batch'
+          err?.response?.data?.message ||
+            t('Failed to create milk batch', { defaultValue: 'Failed to create milk batch' })
         );
       },
     }
@@ -57,7 +57,10 @@ const CreateMilkBatch = () => {
 
   const handleSubmit = () => {
     if (!shift || listCowMilk === null) {
-      Alert.alert('Error', 'Please fill in all fields.');
+      Alert.alert(
+        'Error',
+        t('Please fill in all fields.', { defaultValue: 'Please fill in all fields.' })
+      );
       return;
     }
 
@@ -71,18 +74,14 @@ const CreateMilkBatch = () => {
   };
 
   const handleDelete = (cowId: number) => {
-    Alert.alert(
-      t('Confirm Delete'),
-      t('Are you sure you want to remove this cow from the list?'),
-      [
-        { text: t('Cancel'), style: 'cancel' },
-        {
-          text: t('Delete'),
-          onPress: () => removeCowMilk(cowId),
-          style: 'destructive',
-        },
-      ]
-    );
+    Alert.alert(t('Confirm Delete'), t('Are you sure you want to remove this cow from the list?'), [
+      { text: t('Cancel'), style: 'cancel' },
+      {
+        text: t('Delete'),
+        onPress: () => removeCowMilk(cowId),
+        style: 'destructive',
+      },
+    ]);
   };
 
   return (
@@ -123,13 +122,15 @@ const CreateMilkBatch = () => {
             {/* Milk Batch Form */}
             <View style={styles.formContainer}>
               <Text style={styles.cardTitle}>{t('Shift')}:</Text>
-              <Picker
-                numberOfLines={2}
-                selectedValue={shift}
-                onValueChange={setShift}
-              >
-                <Picker.Item label={t('Shift 1', { defaultValue: 'Shift 1 (8h-13h)' })} value="shiftOne" />
-                <Picker.Item label={t('Shift 2', { defaultValue: 'Shift 2 (13h-17h)' })} value="shiftTwo" />
+              <Picker numberOfLines={2} selectedValue={shift} onValueChange={setShift}>
+                <Picker.Item
+                  label={t('Shift 1', { defaultValue: 'Shift 1 (8h-13h)' })}
+                  value='shiftOne'
+                />
+                <Picker.Item
+                  label={t('Shift 2', { defaultValue: 'Shift 2 (13h-17h)' })}
+                  value='shiftTwo'
+                />
               </Picker>
             </View>
 
@@ -144,7 +145,7 @@ const CreateMilkBatch = () => {
             {/* Submit Button at Bottom */}
             <View style={styles.buttonContainer}>
               <Button
-                mode="contained"
+                mode='contained'
                 onPress={handleSubmit}
                 loading={mutation.isLoading}
                 disabled={mutation.isLoading || listCowMilk?.length === 0}
