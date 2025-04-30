@@ -465,14 +465,14 @@ const IllnessReportScreen = () => {
 
             <View style={styles.imageContainer}>
               <Text style={styles.label}>
-                {t('illness_report.uploaded_images', {
+                {t('uploaded_images', {
                   defaultValue: 'Uploaded/Captured Images',
                 })}
               </Text>
               <TouchableOpacity style={styles.uploadButton} onPress={() => setModalVisible(true)}>
                 <Ionicons name='camera-outline' size={24} color='#fff' />
                 <Text style={styles.uploadButtonText}>
-                  {t('illness_report.add_image', { defaultValue: 'Add Image' })}
+                  {t('add_image', { defaultValue: 'Add Image' })}
                 </Text>
               </TouchableOpacity>
               <ScrollView horizontal style={styles.imagePreviewContainer}>
