@@ -29,7 +29,7 @@ import { useListCowMilkStore } from '@core/store/ListCowDailyMilk/useListCowMilk
 
 const fetchMilkBatch = async (): Promise<MilkBatch[]> => {
   try {
-    const response = await apiClient.get('/MilkBatch');
+    const response = await apiClient.get('/MilkBatch/my');
     return response.data;
   } catch (error: any) {
     throw new Error(error?.message || 'An error occurred while fetching the data');
@@ -66,7 +66,7 @@ const MilkBatchManagementScreen: React.FC = () => {
   const scrollY = new Animated.Value(0);
   const chartHeight = scrollY.interpolate({
     inputRange: [0, 150], // Scroll distance to shrink the chart
-    outputRange: [300, 0],
+    outputRange: [300, 0], // Chart height from 250 to 100
     extrapolate: 'clamp',
   });
 
