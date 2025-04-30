@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   ScrollView,
   TextInput,
@@ -33,10 +32,10 @@ const fetchCowDetails = async (cowId: number): Promise<Cow> => {
 
 const DetailFormMilk: React.FC = () => {
   const route = useRoute<DetailFormMilkRouteProp>();
-  const navigation = useNavigation();
   const { cowId, volume } = route.params;
   const [milkVolume, setMilkVolume] = useState('');
-  const { listCowMilk, setListCowMilk } = useListCowMilkStore();
+  const { setListCowMilk } = useListCowMilkStore();
+  const navigation = useNavigation();
 
   const {
     data: cow,
@@ -59,14 +58,22 @@ const DetailFormMilk: React.FC = () => {
           {
             text: 'OK',
             onPress: () => {
-              (navigation.navigate as any)('CreateMilkBatch'); // Navigate to Home screen
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 1, // QrCodeScanCow is active
+                  routes: [
+                    { name: 'CreateMilkBatch' }, // Base screen
+                    { name: 'QrCodeScanCow', params: { screens: 'DetailFormMilk' } }, // Active screen
+                  ],
+                })
+              );
             },
           },
         ],
         { cancelable: false }
       );
     }
-  }, [cow]);
+  }, [cow, navigation]);
 
   const handleSubmit = () => {
     if (!milkVolume.trim() || !cow) return;
@@ -75,7 +82,7 @@ const DetailFormMilk: React.FC = () => {
       dailyMilk: { cowId, volume: parseFloat(milkVolume) },
       cow,
     });
-    (navigation.navigate as any)('CreateMilkBatch');
+    navigation.goBack(); // Return to CreateMilkBatch
   };
 
   if (isLoading) {
@@ -122,7 +129,6 @@ const DetailFormMilk: React.FC = () => {
           </Text>
         </View>
       </ScrollView>
-
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
@@ -145,7 +151,6 @@ const DetailFormMilk: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f9f9f9', padding: 10 },
-  image: { width: '100%', height: 200, borderRadius: 10, marginBottom: 15 },
   card: {
     backgroundColor: 'white',
     padding: 20,
@@ -157,18 +162,11 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginBottom: 15,
   },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#2c3e50',
-  },
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 10, color: '#333' },
   text: { fontSize: 16, color: '#555', marginBottom: 8 },
   bold: { fontWeight: 'bold', color: '#222' },
   loadingText: { textAlign: 'center', fontSize: 18, marginTop: 50 },
   errorText: { textAlign: 'center', fontSize: 18, color: 'red', marginTop: 50 },
-
   bottomContainer: {
     flexDirection: 'row',
     alignItems: 'center',

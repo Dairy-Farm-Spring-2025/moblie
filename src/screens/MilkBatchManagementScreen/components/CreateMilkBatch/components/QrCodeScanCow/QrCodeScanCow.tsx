@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { CameraType, CameraView, useCameraPermissions } from 'expo-camera';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { CommonActions, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { t } from 'i18next';
+import { RootState } from '@core/store/store';
 
 type QrCodeScanCowProps = {
   params: {
@@ -13,9 +15,17 @@ type QrCodeScanCowProps = {
 const QrCodeScanCow = () => {
   const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
-  const [hasScanned, setHasScanned] = useState(false); // New state to track scanning
+  const [hasScanned, setHasScanned] = useState(false);
   const navigation = useNavigation();
   const route = useRoute<RouteProp<QrCodeScanCowProps>>();
+
+  // Reset hasScanned when the screen is focused to allow re-scanning
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setHasScanned(false);
+    });
+    return unsubscribe;
+  }, [[navigation]]);
 
   if (!permission) {
     return <View />;
@@ -24,9 +34,7 @@ const QrCodeScanCow = () => {
   if (!permission.granted) {
     return (
       <View style={styles.container}>
-        <Text style={styles.message}>
-          We need your permission to show the camera
-        </Text>
+        <Text style={styles.message}>We need your permission to show the camera</Text>
         <TouchableOpacity onPress={requestPermission}>
           <Text style={styles.buttonText}>Grant Permission</Text>
         </TouchableOpacity>
@@ -35,14 +43,23 @@ const QrCodeScanCow = () => {
   }
 
   const handleScanQRCode = (scannedData: string) => {
-    if (hasScanned) return; // Ignore if already scanned
+    if (hasScanned) return;
     const cowIdMatch = scannedData.match(/\/cow-management\/(\d+)/);
     if (cowIdMatch) {
       const extractedCowId = Number(cowIdMatch[1]);
-      setHasScanned(true); // Mark as scanned
-      (navigation.navigate as any)(route.params.screens, {
-        cowId: extractedCowId,
-      });
+      setHasScanned(true);
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 1,
+          routes: [
+            { name: 'CreateMilkBatch' },
+            {
+              name: 'DetailFormMilk',
+              params: { cowId: extractedCowId, screens: route.params.screens },
+            },
+          ],
+        })
+      );
     }
   };
 
@@ -60,26 +77,17 @@ const QrCodeScanCow = () => {
         }}
         onBarcodeScanned={({ data }) => handleScanQRCode(data)}
       >
-        {/* Black overlay for the rest of the camera area */}
         <View style={styles.overlay} />
-
-        {/* Scanning area window */}
         <View style={styles.scanWindow}>
           <Text style={styles.scanText}>{t('scanQR.scan_text')}</Text>
         </View>
-
-        {/* The camera view will have the "Flip Camera" button at the bottom */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
             <Text style={styles.text}>{t('scanQR.flip_camera')}</Text>
           </TouchableOpacity>
         </View>
       </CameraView>
-
-      <TouchableOpacity
-        style={styles.cancelButton}
-        onPress={() => navigation.goBack()}
-      >
+      <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
         <Text style={styles.buttonText}>{t('scanQR.cancel')}</Text>
       </TouchableOpacity>
     </View>
@@ -87,21 +95,13 @@ const QrCodeScanCow = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
-  },
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  text: { fontSize: 24, fontWeight: 'bold', color: 'white' },
   buttonContainer: {
     position: 'absolute',
-    bottom: 100, // Align at the bottom of the screen
-    left: '45%',
-    transform: [{ translateX: -75 }], // Center the button horizontally
+    bottom: 100,
+    left: '35%',
+    transform: [{ translateX: -75 }],
   },
   button: {
     backgroundColor: '#007BFF',
@@ -110,19 +110,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
   },
-  message: {
-    color: 'white',
-    marginBottom: 20,
-    fontSize: 18,
-  },
-  camera: {
-    width: '100%',
-    height: '100%',
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 18,
-  },
+  message: { color: 'white', marginBottom: 20, fontSize: 18 },
+  camera: { width: '100%', height: '100%' },
+  buttonText: { color: 'white', fontSize: 18 },
   cancelButton: {
     position: 'absolute',
     top: 40,
@@ -131,7 +121,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     borderRadius: 5,
   },
-  // Styling the scanning window
   scanWindow: {
     position: 'absolute',
     top: '35%',
@@ -142,22 +131,17 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.5)', // Semi-transparent background
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
     borderRadius: 10,
   },
-  scanText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  // Black overlay for the rest of the camera area
+  scanText: { fontSize: 18, fontWeight: 'bold', color: 'white' },
   overlay: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)', // Semi-transparent black overlay
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
 });
 

@@ -829,7 +829,7 @@
   "status": "Trạng thái",
   "daily_milks": "Sữa hàng ngày",
   "total_liters": "Tổng số lít",
-  "avg_volume_batch": "Thể tích trung bình/Lô",
+  "avg_volume_batch": "Thể tích TB/Lô",
   "total_batches": "Tổng số lô",
   "milk_volume_trend": "Xu hướng thể tích sữa",
   "view_details": "Xem chi tiết",
@@ -879,6 +879,7 @@
   "Shift Two": "Ca 2",
   "Shift Three": "Ca 3",
   "Inventory": "Tồn kho",
+  "Out_of_stock": "Hết hàng",
   "Please fill all fields": "Vui lòng điền đầy đủ thông tin",
   "New password must be at least 6 characters": "Mật khẩu mới phải có ít nhất 6 ký tự",
   "Passwords do not match again": "Mật khẩu nhập lại không khớp",
@@ -893,6 +894,60 @@
     "checkin_success": "Check-in công việc thành công!",
     "checkin_failed": "Check-in công việc thất bại. Vui lòng thử lại.",
     "checking_in": "Đang check-in..."
+  },
+  "detailMilkBatch": {
+    "loading": "Đang tải chi tiết lô sữa...",
+    "error": "Không thể tải chi tiết lô sữa",
+    "title": "Lô Sữa #{{milkBatchId}}",
+    "totalVolume": "Tổng Thể Tích:",
+    "date": "Ngày:",
+    "expiryDate": "Ngày Hết Hạn:",
+    "status": "Trạng Thái:",
+    "chartTitle": "Thể Tích Sữa Theo Bò (lít)",
+    "dailyMilk": {
+      "title": "Sữa Hàng Ngày #{{dailyMilkId}}",
+      "shift": "Ca:",
+      "milkDate": "Ngày Vắt Sữa:",
+      "volume": "Thể Tích:",
+      "status": "Trạng Thái:"
+    },
+    "worker": {
+      "title": "Thông Tin Nhân Viên",
+      "name": "Tên:",
+      "phone": "Số Điện Thoại:",
+      "email": "Email:",
+      "employeeNumber": "Mã Nhân Viên:",
+      "gender": "Giới Tính:"
+    },
+    "cow": {
+      "title": "Thông Tin Bò",
+      "name": "Tên:",
+      "status": "Trạng Thái:",
+      "dateOfBirth": "Ngày Sinh:",
+      "dateOfEnter": "Ngày Nhập:",
+      "origin": "Nguồn Gốc:"
+    }
+  },
+  "statuses": {
+    "inventory": "Trong Kho",
+    "out_of_stock": "Đã Hết Hàng",
+    "expired": "Hết Hạn"
+  },
+  "shifts": {
+    "shiftOne": "Ca 1 (8h-13h)",
+    "shiftTwo": "Ca 2 (13h-17h)"
+  },
+  "cowStatuses": {
+    "milkingCow": "Bò Đang Vắt Sữa",
+    "dryCow": "Bò Khô"
+  },
+  "cowOrigins": {
+    "local": "Nội Địa",
+    "imported": "Nhập Khẩu"
+  },
+  "genders": {
+    "male": "Nam",
+    "female": "Nữ"
   },
   "Image picking canceled": "Đã hủy chọn ảnh",
   "Picture taking canceled": "Đã hủy chụp ảnh",
