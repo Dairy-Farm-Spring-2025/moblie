@@ -1,13 +1,14 @@
 import ContainerComponent from '@components/Container/ContainerComponent';
 import apiClient from '@config/axios/axios';
 import { ExportItem } from '@model/ExportItem/ExportItem';
-import React from 'react';
+import React, { useState } from 'react';
 import { FlatList, Text, View } from 'react-native'; // Added Text import
 import { useQuery } from 'react-query';
 import CardMyExportItem from './components/CardMyExportItem';
 import { ActivityIndicator } from 'react-native-paper';
 import { t } from 'i18next'; // Import t from i18next
 import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
+import { RefreshControl } from 'react-native-gesture-handler';
 
 const fetchMyExportItem = async (): Promise<ExportItem[]> => {
   try {
@@ -19,10 +20,20 @@ const fetchMyExportItem = async (): Promise<ExportItem[]> => {
 };
 
 const MyExportItemScreen = () => {
-  const { data: myNotificationData, isLoading } = useQuery<ExportItem[]>(
-    'export_items/my',
-    fetchMyExportItem
-  );
+  const [refreshing, setRefreshing] = useState(false);
+  const {
+    data: myNotificationData,
+    isLoading,
+    refetch,
+  } = useQuery<ExportItem[]>('export_items/my', fetchMyExportItem, {
+    onSettled: () => setRefreshing(false), // Stop refreshing when fetch completes
+  });
+
+  // Handle pull-to-refresh
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+  };
 
   return isLoading ? (
     <LoadingSplashScreen />
@@ -35,6 +46,14 @@ const MyExportItemScreen = () => {
             padding: 10,
           }}
           renderItem={({ item }) => <CardMyExportItem item={item} />}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={['#007AFF']}
+              tintColor='#007AFF'
+            />
+          }
         />
       ) : (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

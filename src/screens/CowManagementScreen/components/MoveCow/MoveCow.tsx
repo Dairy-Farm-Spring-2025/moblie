@@ -149,7 +149,7 @@ const MoveCow: React.FC<MoveCowProps> = ({
       </Text>
       {currentPen ? (
         <Text style={styles.text}>
-          <Text style={styles.bold}>{t('cowDetails.penName')}: </Text>
+          <Text style={styles.bold}>{t('cowDetails.penCurrent')}: </Text>
           {formatCamelCase(currentPen.name)}
         </Text>
       ) : (

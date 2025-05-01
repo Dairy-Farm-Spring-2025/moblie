@@ -7,7 +7,6 @@ import { Area } from '@model/Area/Area';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { formatCamelCase, formatType } from '@utils/format';
 import { t } from 'i18next';
-import LoadingScreen from '@components/LoadingScreen/LoadingScreen';
 import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
 
 type RootStackParamList = {

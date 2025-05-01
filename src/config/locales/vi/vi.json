@@ -286,6 +286,7 @@
     "penInfo": "Thông tin chuồng",
     "penId": "ID",
     "penName": "Tên",
+    "penCurrent": "Chuồng hiện tại",
     "penStatus": "Tình trạng",
     "penDescription": "Mô tả",
     "createdAt": "Ngày tạo",
@@ -976,5 +977,7 @@
   "Password": "Mật khẩu",
   "Password is required": "Bạn cần điền mật khẩu!",
   "Email is required": "Vui lòng điền email!",
-  "Milk batch created successfully": "Tạo lô sữa thành công"
+  "Milk batch created successfully": "Tạo lô sữa thành công",
+  "Created At": "Ngày Tạo",
+  "Updated At": "Ngày Cập Nhật"
 }

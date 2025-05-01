@@ -7,8 +7,9 @@ import { IllnessCow, IllnessDetail } from '@model/Cow/Cow';
 import { useNavigation } from '@react-navigation/native';
 import { formatType } from '@utils/format';
 import { t } from 'i18next';
-import React from 'react';
+import React, { useState } from 'react';
 import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { RefreshControl } from 'react-native-gesture-handler';
 import { IconButton, Text } from 'react-native-paper';
 import Timeline from 'react-native-timeline-flatlist';
 import { useMutation } from 'react-query';
@@ -20,6 +21,7 @@ interface IllnessDetailProps {
 }
 
 const IllnessDetailRecord = ({ illness, refetch }: IllnessDetailProps) => {
+  const [refreshing, setRefreshing] = useState(false);
   const { userId, roleName } = useSelector((state: RootState) => state.auth);
 
   const navigator = useNavigation();
@@ -151,6 +153,14 @@ const IllnessDetailRecord = ({ illness, refetch }: IllnessDetailProps) => {
             style: {
               padding: 20,
             },
+            refreshControl: (
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={refetch}
+                colors={['#007AFF']}
+                tintColor='#007AFF'
+              />
+            ),
           } as any
         }
       />

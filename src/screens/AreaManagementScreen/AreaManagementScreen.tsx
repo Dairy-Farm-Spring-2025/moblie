@@ -15,15 +15,25 @@ import { getIconByAreaType } from '@utils/icon/areaIcon';
 import { t } from 'i18next';
 import LoadingScreen from '@components/LoadingScreen/LoadingScreen';
 import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
+import { RefreshControl } from 'react-native-gesture-handler';
 const fetchAreas = async (): Promise<Area[]> => {
   const response = await apiClient.get('/areas'); // Replace with your endpoint
   return response.data;
 };
 const AreaManagementScreen = () => {
+  const [refreshing, setRefreshing] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('name');
   const navigation = useNavigation();
-  const { data: area, isLoading, isError, error } = useQuery<Area[]>('areas', fetchAreas);
+  const {
+    data: area,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery<Area[]>('areas', fetchAreas, {
+    onSettled: () => setRefreshing(false),
+  });
 
   const navigateToAreaDetail = (areaId: number) => {
     (navigation.navigate as any)('AreaDetail', { areaId });
@@ -36,6 +46,12 @@ const AreaManagementScreen = () => {
       return humanReadable?.toLowerCase().includes(searchText.toLowerCase());
     }
   });
+
+  // Handle pull-to-refresh
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+  };
 
   return isLoading ? (
     <LoadingSplashScreen />
@@ -59,6 +75,14 @@ const AreaManagementScreen = () => {
           }}
           data={filteredArea}
           keyExtractor={(item: Area) => item.areaId.toString()}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={['#007AFF']}
+              tintColor='#007AFF'
+            />
+          }
           renderItem={({ item }) => (
             <TouchableOpacity style={styles.card} onPress={() => navigateToAreaDetail(item.areaId)}>
               <View style={styles.cardWrapper}>

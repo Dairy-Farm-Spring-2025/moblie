@@ -13,6 +13,7 @@ import IllnessReportForm from './components/IllnessReportForm/IllnessReportForm'
 import { t } from 'i18next';
 import { useSelector } from 'react-redux';
 import { RootState } from '@core/store/store';
+import { RefreshControl } from 'react-native-gesture-handler';
 type RootStackParamList = {
   IllnessCowRecordScreen: { illnessId: number };
 };
@@ -24,6 +25,7 @@ const fetchIllness = async (illnessId: number): Promise<IllnessCow> => {
 };
 const IllnessCowRecordScreen = () => {
   const [selectedSegment, setSelectedSegment] = useState('illness-record');
+  const [refreshing, setRefreshing] = useState(false);
   const { roleName } = useSelector((state: RootState) => state.auth);
   const route = useRoute<IllnessCowRecordScreenRouteProp>();
   const { illnessId } = route.params;
@@ -33,7 +35,9 @@ const IllnessCowRecordScreen = () => {
     isLoading,
     isError,
     refetch,
-  } = useQuery(['illness', illnessId], () => fetchIllness(illnessId));
+  } = useQuery(['illness', illnessId], () => fetchIllness(illnessId), {
+    onSettled: () => setRefreshing(false), // Stop refreshing when fetch completes
+  });
 
   const navigation = useNavigation();
 
@@ -56,6 +60,10 @@ const IllnessCowRecordScreen = () => {
       </Text>
     );
   }
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+  };
 
   return (
     <View
@@ -85,11 +93,19 @@ const IllnessCowRecordScreen = () => {
           style={{
             padding: 10,
           }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={['#007AFF']}
+              tintColor='#007AFF'
+            />
+          }
         >
           <IllnessCowRecordForm illness={illness as IllnessCow} />
         </ScrollView>
       ) : (
-        <IllnessDetailRecord illness={illness as IllnessCow} refetch={refetch} />
+        <IllnessDetailRecord illness={illness as IllnessCow} refetch={onRefresh} />
       )}
       {roleName.toLowerCase() !== 'worker' && (
         <FloatingButton
