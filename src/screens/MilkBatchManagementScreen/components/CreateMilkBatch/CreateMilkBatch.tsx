@@ -54,7 +54,7 @@ const CreateMilkBatch = () => {
     async (data: any) => await apiClient.post('/MilkBatch/create', data),
     {
       onSuccess: () => {
-        Alert.alert('Success', t('Milk batch created successfully'));
+        Alert.alert(t('Success'), t('Milk batch created successfully'));
         clearListCowMilk();
         navigation.dispatch(
           CommonActions.reset({
@@ -68,7 +68,7 @@ const CreateMilkBatch = () => {
       },
       onError: (err: any) => {
         Alert.alert(
-          'Error',
+          t('Error'),
           err?.response?.data?.message ||
             t('Failed to create milk batch', { defaultValue: 'Failed to create milk batch' })
         );
@@ -79,7 +79,7 @@ const CreateMilkBatch = () => {
   const handleSubmit = () => {
     if (!shift || listCowMilk === null) {
       Alert.alert(
-        'Error',
+        t('Error'),
         t('Please fill in all fields.', { defaultValue: 'Please fill in all fields.' })
       );
       return;

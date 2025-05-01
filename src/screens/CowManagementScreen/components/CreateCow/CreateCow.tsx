@@ -48,7 +48,7 @@ const CreateCow: React.FC = () => {
       navigation.goBack();
     },
     onError: () => {
-      Alert.alert('Error', 'Failed to create cow');
+      Alert.alert(t('Error'), 'Failed to create cow');
     },
   });
 

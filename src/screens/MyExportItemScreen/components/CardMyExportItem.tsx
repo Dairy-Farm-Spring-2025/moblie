@@ -32,27 +32,25 @@ const CardMyExportItem = ({ item }: CardMyExportItemProps) => {
   const queryClient = useQueryClient();
 
   const { mutate: mutateExportItem } = useMutation(
-    async ({ id }: { id: number }) =>
-      await apiClient.put(`export_items/export/${id}`),
+    async ({ id }: { id: number }) => await apiClient.put(`export_items/export/${id}`),
     {
       onSuccess: () => {
         queryClient.invalidateQueries('export_items/my');
       },
       onError: (error: any) => {
-        Alert.alert('Error', error.response.data.message);
+        Alert.alert(t('Error'), error.response.data.message);
       },
     }
   );
 
   const { mutate: mutateCancelItem } = useMutation(
-    async ({ id }: { id: number }) =>
-      await apiClient.put(`export_items/cancel/${id}`),
+    async ({ id }: { id: number }) => await apiClient.put(`export_items/cancel/${id}`),
     {
       onSuccess: () => {
         queryClient.invalidateQueries('export_items/my');
       },
       onError: (error: any) => {
-        Alert.alert('Error', error.response.data.message);
+        Alert.alert(t('Error'), error.response.data.message);
       },
     }
   );
@@ -77,9 +75,7 @@ const CardMyExportItem = ({ item }: CardMyExportItemProps) => {
       <TextRenderHorizontal
         title={t('export_item.item', { defaultValue: 'Item' })}
         content={
-          item?.itemBatchEntity?.itemEntity
-            ? item?.itemBatchEntity?.itemEntity?.name
-            : 'N/A'
+          item?.itemBatchEntity?.itemEntity ? item?.itemBatchEntity?.itemEntity?.name : 'N/A'
         }
       />
       <TextRenderHorizontal
@@ -112,13 +108,13 @@ const CardMyExportItem = ({ item }: CardMyExportItemProps) => {
           <ButtonComponent
             onPress={() => mutateCancelItem({ id: item.exportItemId })}
             width={'30%'}
-            type="danger"
+            type='danger'
           >
             {t('export_item.cancel', { defaultValue: 'Cancel' })}
           </ButtonComponent>
           <ButtonComponent
             onPress={() => mutateExportItem({ id: item.exportItemId })}
-            type="primary"
+            type='primary'
             width={'30%'}
           >
             {t('export_item.export', { defaultValue: 'Export' })}

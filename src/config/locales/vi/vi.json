@@ -286,6 +286,7 @@
     "penInfo": "Thông tin chuồng",
     "penId": "ID",
     "penName": "Tên",
+    "penCurrent": "Chuồng hiện tại",
     "penStatus": "Tình trạng",
     "penDescription": "Mô tả",
     "createdAt": "Ngày tạo",
@@ -567,7 +568,8 @@
     "Not_Checkin": "Chưa check-in",
     "IsCheckin_But_Not_Report": "Đã Check-in, chưa báo cáo!",
     "report_processing": "Báo cáo đang được xử lý!",
-    "timeline_health_record": "Tiền sử bệnh"
+    "timeline_health_record": "Tiền sử bệnh",
+    "report_task_success": "Báo cáo công việc thành công!"
   },
   "Select_a_Field": "Chọn công việc",
   "Close": "Đóng",
@@ -678,6 +680,7 @@
   "Complete": "Hoàn thành",
   "Success": "Thành công",
   "Error": "Lỗi",
+
   "Failed to load cow details": "Lỗi khi tải thông tin bò",
   "task_detail": {
     "title": "Chi tiết công việc",
@@ -973,5 +976,8 @@
   "Report updated successfully!": "Cập nhật báo cáo thành công!",
   "Password": "Mật khẩu",
   "Password is required": "Bạn cần điền mật khẩu!",
-  "Email is required": "Vui lòng điền email!"
+  "Email is required": "Vui lòng điền email!",
+  "Milk batch created successfully": "Tạo lô sữa thành công",
+  "Created At": "Ngày Tạo",
+  "Updated At": "Ngày Cập Nhật"
 }

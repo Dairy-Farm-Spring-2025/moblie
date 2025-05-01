@@ -104,22 +104,25 @@ const ReportTaskForm: React.FC = () => {
     },
     {
       onSuccess: (response) => {
-        Alert.alert('Success', 'Task reported successfully!');
+        Alert.alert(
+          t('Success'),
+          t('task_management.report_task_success', { defaultValue: 'Task reported successfully!' })
+        );
         navigation.goBack();
       },
       onError: (error: any) => {
-        Alert.alert('Error', `Failed to report task: ${error}`);
+        Alert.alert(t('Error'), `Failed to report task: ${error.response?.data?.message}`);
       },
     }
   );
 
   const handleSubmit = () => {
     if (!formData.description.trim()) {
-      Alert.alert('Error', 'Please enter a description.');
+      Alert.alert(t('Error'), 'Please enter a description.');
       return;
     }
     if (formData.imagesFile.length === 0) {
-      Alert.alert('Error', 'Please upload or capture at least one image.');
+      Alert.alert(t('Error'), 'Please upload or capture at least one image.');
       return;
     }
 

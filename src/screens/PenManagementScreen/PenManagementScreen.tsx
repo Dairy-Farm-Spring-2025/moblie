@@ -5,10 +5,12 @@ import TextTitle from '@components/UI/TextTitle';
 import apiClient from '@config/axios/axios';
 import { Pen } from '@model/Pen/Pen';
 import { useNavigation } from '@react-navigation/native';
+import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
 import { formatFilteredType, formatType } from '@utils/format';
 import { t } from 'i18next';
 import React, { useState } from 'react';
 import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { RefreshControl } from 'react-native-gesture-handler';
 import { Text, Tooltip } from 'react-native-paper';
 import { useQuery } from 'react-query';
 const fetchPens = async (): Promise<Pen[]> => {
@@ -17,10 +19,19 @@ const fetchPens = async (): Promise<Pen[]> => {
 };
 
 const PenManagementScreen = () => {
+  const [refreshing, setRefreshing] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('name');
   const navigation = useNavigation();
-  const { data: pens, isLoading, isError, error } = useQuery<Pen[]>('pens', fetchPens);
+  const {
+    data: pens,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery<Pen[]>('pens', fetchPens, {
+    onSettled: () => setRefreshing(false),
+  });
 
   const filteredPen = pens?.filter((pen) => {
     if (selectedFilter === 'name') {
@@ -41,7 +52,15 @@ const PenManagementScreen = () => {
     (navigation.navigate as any)('PenDetailScreen', { penId });
   };
 
-  return (
+  // Handle pull-to-refresh
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+  };
+
+  return isLoading ? (
+    <LoadingSplashScreen />
+  ) : (
     <View style={styles.container}>
       <SearchInput
         filteredData={filteredPen as Pen[]}
@@ -52,11 +71,7 @@ const PenManagementScreen = () => {
           setSelectedFiltered: setSelectedFilter,
         }}
       />
-      {isLoading ? (
-        <View>
-          <Text>{t('Loading')}...</Text>
-        </View>
-      ) : isError ? (
+      {isError ? (
         <View>
           <Text>{error as any}</Text>
         </View>
@@ -67,6 +82,14 @@ const PenManagementScreen = () => {
           contentContainerStyle={{
             paddingHorizontal: 10,
           }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={['#007AFF']}
+              tintColor='#007AFF'
+            />
+          }
           renderItem={({ item, index }) => {
             return (
               <TouchableOpacity

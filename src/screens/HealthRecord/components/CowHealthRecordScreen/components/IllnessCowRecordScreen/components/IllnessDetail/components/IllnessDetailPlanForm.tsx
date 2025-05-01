@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-  StyleSheet,
-  Alert,
-} from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View, StyleSheet, Alert } from 'react-native';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useMutation, useQuery } from 'react-query';
 import CustomPicker from '@components/CustomPicker/CustomPicker';
@@ -18,10 +11,8 @@ import FormItem from '@components/Form/FormItem';
 import TextEditorComponent from '@components/Input/TextEditor/TextEditorComponent';
 import CardComponent from '@components/Card/CardComponent';
 import FloatingButton from '@components/FloatingButton/FloatingButton';
-import {
-  IllnessDetailPlan,
-  IllnessDetailPlanPayload,
-} from '@model/HealthRecord/HealthRecord';
+import { IllnessDetailPlan, IllnessDetailPlanPayload } from '@model/HealthRecord/HealthRecord';
+import { t } from 'i18next';
 
 type RootStackParamList = {
   IllnessDetailPlanForm: {
@@ -30,10 +21,7 @@ type RootStackParamList = {
   };
 };
 
-type IllnessDetailPlanFormRouteProp = RouteProp<
-  RootStackParamList,
-  'IllnessDetailPlanForm'
->;
+type IllnessDetailPlanFormRouteProp = RouteProp<RootStackParamList, 'IllnessDetailPlanForm'>;
 
 const fetchItem = async (): Promise<Item[]> => {
   const response = await apiClient.get(`/items`);
@@ -50,9 +38,7 @@ const IllnessDetailPlanForm = () => {
   const { illnessId, refetch } = route.params;
   const [optionsItemVaccine, setOptionsItemVaccine] = useState<any[]>([]);
   const [date, setDate] = useState<string[]>([new Date().toISOString()]);
-  const [selectedItemDetails, setSelectedItemDetails] = useState<
-    (Item | null)[]
-  >([]);
+  const [selectedItemDetails, setSelectedItemDetails] = useState<(Item | null)[]>([]);
   const {
     control,
     handleSubmit,
@@ -96,8 +82,8 @@ const IllnessDetailPlanForm = () => {
         updatedDetails[index] = details;
         return updatedDetails;
       });
-    } catch (error) {
-      Alert.alert('Error fetching item details:', 'error');
+    } catch (error: any) {
+      Alert.alert(t('Error'), error.response.data.message || 'Failed to fetch item details');
     }
   };
 
@@ -121,11 +107,11 @@ const IllnessDetailPlanForm = () => {
       await apiClient.post(`illness-detail/create-plan`, data),
     {
       onSuccess: (response: any) => {
-        Alert.alert('Success', response.message);
+        Alert.alert(t('Success'), response.message);
         refetch();
       },
       onError: (error: any) => {
-        Alert.alert('Error', error.response.data.message);
+        Alert.alert(t('Error'), error.response.data.message);
       },
     }
   );
@@ -163,25 +149,23 @@ const IllnessDetailPlanForm = () => {
                 <FormItem
                   name={`fields.${index}.date`}
                   control={control}
-                  label="Date"
+                  label='Date'
                   rules={{ required: 'Date is required' }}
                   error={errors.fields?.[index]?.date?.message}
                   render={({}) => (
                     <DateTimePicker
                       value={new Date(date[index] || new Date().toISOString())}
-                      mode="date"
+                      mode='date'
                       is24Hour={true}
-                      display="default"
-                      onChange={(_, selectedDate) =>
-                        handleDateChange(selectedDate, index)
-                      }
+                      display='default'
+                      onChange={(_, selectedDate) => handleDateChange(selectedDate, index)}
                     />
                   )}
                 />
                 <FormItem
                   name={`fields.${index}.description`}
                   control={control}
-                  label="Description"
+                  label='Description'
                   rules={{
                     required: 'Must not be empty',
                   }}
@@ -194,7 +178,7 @@ const IllnessDetailPlanForm = () => {
                 <FormItem
                   name={`fields.${index}.itemId`}
                   control={control}
-                  label="Item"
+                  label='Item'
                   rules={{
                     required: 'Must not be empty',
                   }}
@@ -218,15 +202,9 @@ const IllnessDetailPlanForm = () => {
                     />
                     <CardComponent.Content>
                       <View style={styles.cardItem}>
+                        <Text>Status: {selectedItemDetails[index]?.status}</Text>
                         <Text>
-                          Status: {selectedItemDetails[index]?.status}
-                        </Text>
-                        <Text>
-                          Warehouse:{' '}
-                          {
-                            selectedItemDetails[index]?.warehouseLocationEntity
-                              ?.name
-                          }
+                          Warehouse: {selectedItemDetails[index]?.warehouseLocationEntity?.name}
                         </Text>
                       </View>
                     </CardComponent.Content>
@@ -234,10 +212,7 @@ const IllnessDetailPlanForm = () => {
                 )}
                 {/* Remove Field Button */}
                 {index > 0 && (
-                  <TouchableOpacity
-                    style={styles.removeButton}
-                    onPress={() => remove(index)}
-                  >
+                  <TouchableOpacity style={styles.removeButton} onPress={() => remove(index)}>
                     <Text style={styles.removeButtonText}>Remove Field</Text>
                   </TouchableOpacity>
                 )}

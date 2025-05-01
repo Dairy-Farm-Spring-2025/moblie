@@ -15,6 +15,7 @@ import apiClient from '@config/axios/axios';
 import { Area } from '@model/Area/Area';
 import { useTranslation } from 'react-i18next';
 import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
+import { formatCamelCase } from '@utils/format';
 
 // Define interfaces
 interface MaterialItem {
@@ -162,7 +163,9 @@ const MaterialsContent: React.FC<{ data?: ApiResponse['data']; taskId: number; a
         </View>
         <View style={styles.dataContainer}>
           <View style={styles.tag}>
-            <Text style={styles.tagText}>{area.areaType}</Text>
+            <Text style={styles.tagText}>
+              {t(`data.${area.areaType}`, { defaultValue: formatCamelCase(area.areaType) })}
+            </Text>
           </View>
         </View>
       </View>

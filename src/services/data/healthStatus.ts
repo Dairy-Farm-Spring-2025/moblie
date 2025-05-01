@@ -9,11 +9,11 @@ export const OPTIONS_HEALTH_STATUS = () => [
 ];
 
 export const OPTIONS_ILLNESS_DETAIL_STATUS = [
-  { label: 'Observed', value: 'observed' },
-  { label: 'Treated', value: 'treated' },
-  { label: 'Cured', value: 'cured' },
-  { label: 'Ongoing', value: 'ongoing' },
-  { label: 'Deceased', value: 'deceased' },
+  { label: t('Observed'), value: 'observed' },
+  { label: t('Treated'), value: 'treated' },
+  { label: t('Cured'), value: 'cured' },
+  { label: t('Ongoing'), value: 'ongoing' },
+  { label: t('Deceased'), value: 'deceased' },
 ];
 
 export const OPTION_INJECTION_SITES = () => [
