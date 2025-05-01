@@ -72,14 +72,14 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
       await apiClient.put(`illness/prognosis/${illness.illnessId}`, data),
     {
       onSuccess: (response: any) => {
-        Alert.alert('Success', response.message);
+        Alert.alert(t('Success'), response.message);
         setIsEditing(false);
         (navigation.navigate as any)('CowDetails', {
           cowId: illness?.cowEntity?.cowId,
         });
       },
       onError: (error: any) => {
-        Alert.alert('Error', error.response.data.message);
+        Alert.alert(t('Error'), error.response.data.message);
       },
     }
   );

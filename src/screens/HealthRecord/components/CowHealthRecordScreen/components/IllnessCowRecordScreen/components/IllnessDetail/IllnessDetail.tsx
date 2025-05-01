@@ -33,11 +33,11 @@ const IllnessDetailRecord = ({ illness, refetch }: IllnessDetailProps) => {
     async (id: number) => await apiClient.delete(`illness-detail/${id}`),
     {
       onSuccess: (response: any) => {
-        Alert.alert('Success', response.message);
+        Alert.alert(t('Success'), response.message);
         refetch();
       },
       onError: (error: any) => {
-        Alert.alert('Error', error.response.data.message);
+        Alert.alert(t('Error'), error.response.data.message);
       },
     }
   );

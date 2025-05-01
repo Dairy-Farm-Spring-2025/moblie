@@ -251,14 +251,14 @@ const ReportTaskDetail: React.FC = () => {
     {
       onSuccess: () => {
         Alert.alert(
-          'Success',
+          t('Success'),
           t('Report updated successfully!', { defaultValue: 'Report updated successfully!' })
         );
       },
       onError: (error: any) => {
         console.error('Failed to update report:', error.response?.data || error.message);
         Alert.alert(
-          'Error',
+          t('Error'),
           `Failed to update report: ${error.response?.data?.message || error.message}`
         );
       },
@@ -274,7 +274,7 @@ const ReportTaskDetail: React.FC = () => {
       await refetch();
     } catch (err) {
       Alert.alert(
-        'Error',
+        t('Error'),
         t('Failed to refresh report data.', { defaultValue: 'Failed to refresh report data.' })
       );
     } finally {

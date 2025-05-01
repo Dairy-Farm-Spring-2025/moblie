@@ -21,7 +21,7 @@ const fetchProfile = async (): Promise<User> => {
   try {
     const response = await apiClient.get('/users/profile');
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     throw new Error(error?.message || 'An error occurred while fetching the data');
   }
 };
@@ -48,14 +48,14 @@ const ChangePasswordScreen = () => {
     {
       onSuccess: (response) => {
         Alert.alert(
-          'Success',
+          t('Success'),
           t('Password changed successfully', { defaultValue: 'Password changed successfully' })
         );
         navigation.goBack();
       },
-      onError: (error) => {
+      onError: (error: any) => {
         Alert.alert(
-          'Error',
+          t('Error'),
           error.response?.data?.message ||
             t('Failed to change password', { defaultValue: 'Failed to change password' })
         );
@@ -66,13 +66,13 @@ const ChangePasswordScreen = () => {
   const handleChangePassword = () => {
     if (!oldPassword || !newPassword || !confirmPassword) {
       return Alert.alert(
-        'Error',
+        t('Error'),
         t('Please fill in all fields.', { defaultValue: 'Please fill in all fields.' })
       );
     }
     if (newPassword.length < 6) {
       return Alert.alert(
-        'Error',
+        t('Error'),
         t('New password must be at least 6 characters', {
           defaultValue: 'New password must be at least 6 characters',
         })

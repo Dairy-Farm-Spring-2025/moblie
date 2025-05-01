@@ -50,7 +50,7 @@ const QrScanRoute: React.FC = () => {
       <Stack.Screen
         name='HealthRecordFormScreen'
         component={HealthRecordFormScreen}
-        options={{ title: 'Health Record Form' }}
+        options={{ title: t('health_record_form.title', { defaultValue: 'Health Record Form' }) }}
       />
       <Stack.Screen
         name='IllnessReportForm'

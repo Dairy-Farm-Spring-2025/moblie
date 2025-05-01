@@ -58,7 +58,7 @@ const FeedDetailScreen = () => {
 
   useEffect(() => {
     if (isError) {
-      Alert.alert('Error', (error as Error)?.message);
+      Alert.alert(t('Error'), (error as Error)?.message);
     }
   }, []);
 

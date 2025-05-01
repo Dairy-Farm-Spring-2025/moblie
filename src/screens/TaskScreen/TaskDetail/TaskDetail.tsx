@@ -123,7 +123,7 @@ const TaskDetailContent: React.FC<{
         });
         break;
       default:
-        Alert.alert('Error', 'Invalid screen type');
+        Alert.alert(t('Error'), 'Invalid screen type');
     }
   };
 
@@ -303,7 +303,9 @@ const TaskDetailContent: React.FC<{
         {task.description.length > 40 && (
           <TouchableOpacity style={styles.expandButton} onPress={handleToggleExpand}>
             <Text style={[styles.expandText, { color: textColor }]}>
-              {isExpanded ? 'Show less' : 'Show more'}
+              {isExpanded
+                ? t('task_detail.show_less', { defaultValue: 'Show less' })
+                : t('task_detail.show_more', { defaultValue: 'Show more' })}
             </Text>
           </TouchableOpacity>
         )}
@@ -438,7 +440,7 @@ const TaskDetail: React.FC = () => {
     {
       onSuccess: (response: any) => {
         Alert.alert(
-          'Success',
+          t('Success'),
           response.data?.message ||
             t('message.checkin_success', { defaultValue: 'Check-in successfully!' })
         );
@@ -447,7 +449,7 @@ const TaskDetail: React.FC = () => {
       },
       onError: (err) => {
         Alert.alert(
-          'Error',
+          t('Error'),
           err.response?.data.message ||
             err.message ||
             t('message.checkin_failed', { defaultValue: 'Check-in failed!' })

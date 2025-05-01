@@ -166,6 +166,11 @@ const IllnessDetailForm = () => {
     const payload: IllnessDetailPayload = {
       ...values,
       date: dayjs(date).format('YYYY-MM-DD'),
+      // Ensure read-only fields are included in the payload with their original values
+      description: illnessDetail.description,
+      itemId: idItem,
+      dosage: illnessDetail.dosage?.toString(),
+      injectionSite: illnessDetail.injectionSite,
     };
     mutate(payload);
   };
@@ -200,7 +205,7 @@ const IllnessDetailForm = () => {
         />
         <CardComponent.Content>
           {isEditMode ? (
-            // Edit Mode
+            // Edit Mode (Updated to make Injection Site, Dosage, Item, and Description read-only)
             <View style={styles.editContainer}>
               <View style={styles.formRow}>
                 <View style={{ width: '48%' }}>
@@ -209,13 +214,9 @@ const IllnessDetailForm = () => {
                     label={t('illness_detail.date', { defaultValue: 'Date' })}
                     name='date'
                     render={() => (
-                      <DateTimePicker
-                        value={new Date(date)}
-                        mode='date'
-                        is24Hour={true}
-                        display='default'
-                        onChange={handleStartDateChange}
-                      />
+                      <Text style={{ fontSize: 18, paddingHorizontal: 12, marginTop: 4 }}>
+                        {new Date(date).toLocaleDateString('vi-VN')}
+                      </Text>
                     )}
                   />
                 </View>
@@ -237,6 +238,8 @@ const IllnessDetailForm = () => {
                   />
                 </View>
               </View>
+
+              {/* Injection Site (Read-Only in Edit Mode) */}
               <View style={styles.formRow}>
                 <View style={{ width: '48%' }}>
                   <FormItem
@@ -245,16 +248,19 @@ const IllnessDetailForm = () => {
                       defaultValue: 'Injection Site',
                     })}
                     name='injectionSite'
-                    render={({ field: { onChange, value } }) => (
-                      <CustomPicker
-                        onValueChange={onChange}
-                        selectedValue={value}
-                        options={OPTION_INJECTION_SITES()}
-                        title={formatCamelCase(value)}
-                      />
+                    render={() => (
+                      <View style={[styles.tag, { backgroundColor: '#e8e8e8', marginTop: 4 }]}>
+                        <Text style={[styles.tagText, { color: textColor }]}>
+                          {illnessDetail.injectionSite
+                            ? t(formatCamelCase(illnessDetail.injectionSite))
+                            : t('illness_detail.na', { defaultValue: 'N/A' })}
+                        </Text>
+                      </View>
                     )}
                   />
                 </View>
+
+                {/* Dosage (Read-Only in Edit Mode) */}
                 <View style={{ width: '48%' }}>
                   <FormItem
                     control={control}
@@ -262,21 +268,20 @@ const IllnessDetailForm = () => {
                       defaultValue: 'Dosage',
                     })}
                     name='dosage'
-                    render={({ field: { onChange, onBlur, value } }) => (
-                      <TextInputComponent.Number
-                        error={errors.dosage ? errors.dosage.message : ''}
-                        onBlur={onBlur}
-                        onChangeText={(text) => {
-                          const numericValue = text.replace(/[^0-9]/g, '');
-                          onChange(numericValue);
-                        }}
-                        value={value as any}
-                        returnKeyType='done'
-                      />
+                    render={() => (
+                      <View style={[styles.tag, { backgroundColor: '#e8e8e8', marginTop: 4 }]}>
+                        <Text style={[styles.tagText, { color: textColor }]}>
+                          {illnessDetail.dosage && illnessDetail.vaccine?.unit
+                            ? `${illnessDetail.dosage} ${illnessDetail.vaccine.unit}`
+                            : t('illness_detail.na', { defaultValue: 'N/A' })}
+                        </Text>
+                      </View>
                     )}
                   />
                 </View>
               </View>
+
+              {/* Veterinarian Info (Unchanged) */}
               {veterinarianProfile && (
                 <CardComponent style={styles.card}>
                   <CardComponent.Title
@@ -293,65 +298,67 @@ const IllnessDetailForm = () => {
                   />
                 </CardComponent>
               )}
+
+              {/* Item (Read-Only in Edit Mode) */}
               <FormItem
                 control={control}
                 label={t('illness_detail.item', { defaultValue: 'Item' })}
                 name='itemId'
-                rules={{
-                  required: t('illness_detail.required', {
-                    defaultValue: 'Must not be empty',
-                  }),
-                }}
-                render={({ field: { onChange, value } }) => (
-                  <CustomPicker
-                    onValueChange={(value) => {
-                      onChange(value);
-                      setIdItem(value);
-                    }}
-                    selectedValue={value}
-                    options={optionsItemVaccine}
-                    title={itemDetail?.name || t('illness_detail.na', { defaultValue: 'N/A' })}
-                  />
+                render={() => (
+                  <View style={[styles.tag, { backgroundColor: '#e8e8e8', marginTop: 4 }]}>
+                    <Text style={[styles.tagText, { color: textColor }]}>
+                      {illnessDetail.vaccine?.name ||
+                        t('illness_detail.na', { defaultValue: 'N/A' })}
+                    </Text>
+                  </View>
                 )}
               />
-              {itemDetail && (
+
+              {/* Additional Item Details in Card (Read-Only, Unchanged Structure) */}
+              {illnessDetail.vaccine && (
                 <CardComponent style={styles.card}>
                   <CardComponent.Title
-                    title={itemDetail.name}
+                    title={illnessDetail.vaccine.name}
                     subTitle={`${t('illness_detail.quantity', {
                       defaultValue: 'Quantity',
-                    })}: ${illnessDetail.dosage} (${itemDetail.unit})`}
+                    })}: ${illnessDetail.dosage} (${illnessDetail.vaccine.unit})`}
                   />
                   <CardComponent.Content>
                     <View style={styles.cardItem}>
                       <Text>
                         {t('illness_detail.status', { defaultValue: 'Status' })}:{' '}
-                        {itemDetail.status}
+                        {illnessDetail.vaccine.status}
                       </Text>
                       <Text>
                         {t('illness_detail.warehouse', {
                           defaultValue: 'Warehouse',
                         })}
-                        : {itemDetail.warehouseLocationEntity?.name}
+                        : {illnessDetail.vaccine.warehouseLocationEntity?.name}
                       </Text>
                     </View>
                   </CardComponent.Content>
                 </CardComponent>
               )}
+
+              {/* Description (Read-Only in Edit Mode) */}
               <FormItem
                 control={control}
                 label={t('illness_detail.description', {
                   defaultValue: 'Description',
                 })}
                 name='description'
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextEditorComponent
-                    onChange={onChange}
-                    value={value}
-                    error={errors?.description?.message}
-                  />
+                render={() => (
+                  <View style={styles.descriptionContainer}>
+                    <RenderHtmlComponent
+                      htmlContent={
+                        illnessDetail.description || t('illness_detail.na', { defaultValue: 'N/A' })
+                      }
+                    />
+                  </View>
                 )}
               />
+
+              {/* Buttons (Unchanged) */}
               <View style={styles.buttonRow}>
                 <Button
                   mode='contained'
@@ -366,7 +373,7 @@ const IllnessDetailForm = () => {
               </View>
             </View>
           ) : (
-            // View Mode
+            // View Mode (Same as Previous Update)
             <View style={styles.viewContainer}>
               <View style={styles.infoRow}>
                 <View style={styles.labelContainer}>
@@ -408,6 +415,7 @@ const IllnessDetailForm = () => {
                 </View>
               </View>
 
+              {/* Injection Site (Read-Only) */}
               <View style={styles.infoRow}>
                 <View style={styles.labelContainer}>
                   <Ionicons
@@ -425,11 +433,14 @@ const IllnessDetailForm = () => {
                 </View>
                 <View style={[styles.tag, { backgroundColor: '#e8e8e8' }]}>
                   <Text style={[styles.tagText, { color: textColor }]}>
-                    {t(formatCamelCase(illnessDetail.injectionSite))}
+                    {illnessDetail.injectionSite
+                      ? t(formatCamelCase(illnessDetail.injectionSite))
+                      : t('illness_detail.na', { defaultValue: 'N/A' })}
                   </Text>
                 </View>
               </View>
 
+              {/* Dosage (Read-Only) */}
               <View style={styles.infoRow}>
                 <View style={styles.labelContainer}>
                   <Ionicons name='medkit-outline' size={20} color={textColor} style={styles.icon} />
@@ -439,11 +450,14 @@ const IllnessDetailForm = () => {
                 </View>
                 <View style={[styles.tag, { backgroundColor: '#e8e8e8' }]}>
                   <Text style={[styles.tagText, { color: textColor }]}>
-                    {illnessDetail.dosage + ' ' + illnessDetail.vaccine.unit}
+                    {illnessDetail.dosage && illnessDetail.vaccine?.unit
+                      ? `${illnessDetail.dosage} ${illnessDetail.vaccine.unit}`
+                      : t('illness_detail.na', { defaultValue: 'N/A' })}
                   </Text>
                 </View>
               </View>
 
+              {/* Veterinarian Info (Unchanged) */}
               {veterinarianProfile ? (
                 <CardComponent style={styles.card}>
                   <CardComponent.Title
@@ -485,6 +499,49 @@ const IllnessDetailForm = () => {
                 </View>
               )}
 
+              {/* Item (Read-Only) */}
+              {illnessDetail.vaccine ? (
+                <View style={styles.infoRow}>
+                  <View style={styles.labelContainer}>
+                    <Ionicons
+                      name='medkit-outline'
+                      size={20}
+                      color={textColor}
+                      style={styles.icon}
+                    />
+                    <Text style={[styles.textLabel, { color: textColor }]}>
+                      {t('illness_detail.item', { defaultValue: 'Item' })}:
+                    </Text>
+                  </View>
+                  <View style={[styles.tag, { backgroundColor: '#e8e8e8' }]}>
+                    <Text style={[styles.tagText, { color: textColor }]}>
+                      {illnessDetail.vaccine.name ||
+                        t('illness_detail.na', { defaultValue: 'N/A' })}
+                    </Text>
+                  </View>
+                </View>
+              ) : (
+                <View style={styles.infoRow}>
+                  <View style={styles.labelContainer}>
+                    <Ionicons
+                      name='medkit-outline'
+                      size={20}
+                      color={textColor}
+                      style={styles.icon}
+                    />
+                    <Text style={[styles.textLabel, { color: textColor }]}>
+                      {t('illness_detail.item', { defaultValue: 'Item' })}:
+                    </Text>
+                  </View>
+                  <View style={[styles.tag, { backgroundColor: '#e8e8e8' }]}>
+                    <Text style={[styles.tagText, { color: textColor }]}>
+                      {t('illness_detail.na', { defaultValue: 'N/A' })}
+                    </Text>
+                  </View>
+                </View>
+              )}
+
+              {/* Additional Item Details in Card (Read-Only, Unchanged Structure) */}
               {illnessDetail.vaccine && (
                 <CardComponent style={styles.card}>
                   <CardComponent.Title
@@ -503,13 +560,16 @@ const IllnessDetailForm = () => {
                         {t('illness_detail.warehouse', {
                           defaultValue: 'Warehouse',
                         })}
-                        : {illnessDetail.vaccine.warehouseLocationEntity?.name}
+                        :{' '}
+                        {illnessDetail.vaccine.warehouseLocationEntity?.name ||
+                          t('illness_detail.na', { defaultValue: 'N/A' })}
                       </Text>
                     </View>
                   </CardComponent.Content>
                 </CardComponent>
               )}
 
+              {/* Description (Read-Only) */}
               <View style={styles.infoRow}>
                 <View style={styles.labelContainer}>
                   <Ionicons
@@ -527,7 +587,11 @@ const IllnessDetailForm = () => {
                 </View>
               </View>
               <View style={styles.descriptionContainer}>
-                <RenderHtmlComponent htmlContent={illnessDetail.description} />
+                <RenderHtmlComponent
+                  htmlContent={
+                    illnessDetail.description || t('illness_detail.na', { defaultValue: 'N/A' })
+                  }
+                />
               </View>
 
               {roleName.toLowerCase() !== 'worker' && (

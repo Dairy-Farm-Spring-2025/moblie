@@ -16,11 +16,7 @@ type FileData = {
 
 const ReportTaskUpdateContent: React.FC<{
   report: ReportTaskData;
-  onUpdate: (
-    description: string,
-    deleteUrls: string[],
-    newImage: FileData
-  ) => void;
+  onUpdate: (description: string, deleteUrls: string[], newImage: FileData) => void;
   isUpdating: boolean;
 }> = ({ report, onUpdate, isUpdating }) => {
   const initialImages = report.reportImages?.map((img) => img.url) || [];
@@ -44,12 +40,7 @@ const ReportTaskUpdateContent: React.FC<{
     if (Platform.OS !== 'web') {
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert(
-          t(
-            'Permission Denied',
-            'Sorry, we need camera permissions to take pictures!'
-          )
-        );
+        Alert.alert(t('Permission Denied', 'Sorry, we need camera permissions to take pictures!'));
         return false;
       }
     }
@@ -95,7 +86,7 @@ const ReportTaskUpdateContent: React.FC<{
 
   const handleUpdateSubmit = () => {
     if (!formData.description.trim()) {
-      Alert.alert('Error', 'Please enter a description.');
+      Alert.alert(t('Error'), 'Please enter a description.');
       return;
     }
 
@@ -149,20 +140,13 @@ const ReportTaskUpdateContent: React.FC<{
 
       <View style={styles.inputSection}>
         <View style={styles.inputLabelRow}>
-          <Ionicons
-            name="document-text-outline"
-            size={20}
-            color="#595959"
-            style={styles.icon}
-          />
+          <Ionicons name='document-text-outline' size={20} color='#595959' style={styles.icon} />
           <Text style={styles.textLabel}>{t('Description')}:</Text>
         </View>
         <TextInput
           style={styles.input}
           value={formData.description}
-          onChangeText={(text) =>
-            setFormData((prev) => ({ ...prev, description: text }))
-          }
+          onChangeText={(text) => setFormData((prev) => ({ ...prev, description: text }))}
           placeholder={t('Enter task description')}
           multiline
         />
@@ -170,26 +154,17 @@ const ReportTaskUpdateContent: React.FC<{
 
       <View style={styles.inputSection}>
         <View style={styles.inputLabelRow}>
-          <Ionicons
-            name="image-outline"
-            size={20}
-            color="#595959"
-            style={styles.icon}
-          />
+          <Ionicons name='image-outline' size={20} color='#595959' style={styles.icon} />
           <Text style={styles.textLabel}>{t('Images')}:</Text>
         </View>
         <View style={styles.imageUpdateContainer}>
-          {formData.existingImages.length === 0 &&
-          formData.newImages.length === 0 ? (
+          {formData.existingImages.length === 0 && formData.newImages.length === 0 ? (
             <Text style={styles.noImageText}>{t('No images available')}</Text>
           ) : (
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {/* Display existing images */}
               {formData.existingImages.map((imageUri, index) => (
-                <View
-                  key={`existing-${index}`}
-                  style={styles.imagePreviewWrapper}
-                >
+                <View key={`existing-${index}`} style={styles.imagePreviewWrapper}>
                   <TouchableOpacity onPress={() => openImageReview(imageUri)}>
                     <Image
                       source={{ uri: getReportImage(imageUri) }}
@@ -200,7 +175,7 @@ const ReportTaskUpdateContent: React.FC<{
                     style={styles.removeButton}
                     onPress={() => removeImage(imageUri, true)}
                   >
-                    <Ionicons name="close-circle" size={24} color="#ff4d4f" />
+                    <Ionicons name='close-circle' size={24} color='#ff4d4f' />
                   </TouchableOpacity>
                 </View>
               ))}
@@ -208,27 +183,21 @@ const ReportTaskUpdateContent: React.FC<{
               {formData.newImages.map((imageUri, index) => (
                 <View key={`new-${index}`} style={styles.imagePreviewWrapper}>
                   <TouchableOpacity onPress={() => openImageReview(imageUri)}>
-                    <Image
-                      source={{ uri: imageUri }}
-                      style={styles.imagePreviewItem}
-                    />
+                    <Image source={{ uri: imageUri }} style={styles.imagePreviewItem} />
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.removeButton}
                     onPress={() => removeImage(imageUri, false)}
                   >
-                    <Ionicons name="close-circle" size={24} color="#ff4d4f" />
+                    <Ionicons name='close-circle' size={24} color='#ff4d4f' />
                   </TouchableOpacity>
                 </View>
               ))}
             </ScrollView>
           )}
           <Divider style={{ margin: 10 }} />
-          <TouchableOpacity
-            style={styles.uploadButton}
-            onPress={() => setImageModalVisible(true)}
-          >
-            <Ionicons name="camera-outline" size={24} color="#fff" />
+          <TouchableOpacity style={styles.uploadButton} onPress={() => setImageModalVisible(true)}>
+            <Ionicons name='camera-outline' size={24} color='#fff' />
             <Text style={styles.uploadButtonText}>{t('Add Image')}</Text>
           </TouchableOpacity>
         </View>
@@ -236,14 +205,11 @@ const ReportTaskUpdateContent: React.FC<{
 
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
-          style={[
-            styles.updateButton,
-            isUpdating && styles.updateButtonDisabled,
-          ]}
+          style={[styles.updateButton, isUpdating && styles.updateButtonDisabled]}
           onPress={handleUpdateSubmit}
           disabled={isUpdating}
         >
-          <Ionicons name="checkmark-done" size={24} color="#fff" />
+          <Ionicons name='checkmark-done' size={24} color='#fff' />
           <Text style={styles.updateButtonText}>
             {isUpdating ? 'Updating...' : t('Update Report')}
           </Text>
@@ -252,7 +218,7 @@ const ReportTaskUpdateContent: React.FC<{
 
       {/* Image Selection Modal */}
       <Modal
-        animationType="slide"
+        animationType='slide'
         transparent={true}
         visible={imageModalVisible}
         onRequestClose={() => setImageModalVisible(false)}
@@ -260,13 +226,11 @@ const ReportTaskUpdateContent: React.FC<{
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <TouchableOpacity style={styles.modalButton} onPress={pickImage}>
-              <Ionicons name="image-outline" size={30} color="#007bff" />
-              <Text style={styles.modalButtonText}>
-                {t('Pick from Gallery')}
-              </Text>
+              <Ionicons name='image-outline' size={30} color='#007bff' />
+              <Text style={styles.modalButtonText}>{t('Pick from Gallery')}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.modalButton} onPress={takePicture}>
-              <Ionicons name="camera" size={30} color="#007bff" />
+              <Ionicons name='camera' size={30} color='#007bff' />
               <Text style={styles.modalButtonText}>{t('Take a Photo')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -281,7 +245,7 @@ const ReportTaskUpdateContent: React.FC<{
 
       {/* Image Review Modal */}
       <Modal
-        animationType="fade"
+        animationType='fade'
         transparent={true}
         visible={reviewModalVisible}
         onRequestClose={() => setReviewModalVisible(false)}
@@ -296,14 +260,14 @@ const ReportTaskUpdateContent: React.FC<{
                     : getReportImage(selectedImage),
                 }}
                 style={styles.reviewImage}
-                resizeMode="contain"
+                resizeMode='contain'
               />
             )}
             <TouchableOpacity
               style={styles.closeReviewButton}
               onPress={() => setReviewModalVisible(false)}
             >
-              <Ionicons name="close" size={30} color="#fff" />
+              <Ionicons name='close' size={30} color='#fff' />
             </TouchableOpacity>
           </View>
         </View>

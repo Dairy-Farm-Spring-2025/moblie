@@ -61,7 +61,7 @@ const SignInScreen: React.FC = () => {
   const handleSignIn = async () => {
     if (!email || !password) {
       Alert.alert(
-        'Error',
+        t('Error'),
         t('Please enter both email and password.', {
           defaultValue: 'Please enter both email and password.',
         })
@@ -69,12 +69,15 @@ const SignInScreen: React.FC = () => {
       return;
     }
     if (!validateEmail(email)) {
-      Alert.alert('Error', t('Invalid email format.', { defaultValue: 'Invalid email format.' }));
+      Alert.alert(
+        t('Error'),
+        t('Invalid email format.', { defaultValue: 'Invalid email format.' })
+      );
       return;
     }
     if (password.length < 6) {
       Alert.alert(
-        'Error',
+        t('Error'),
         t('Password must be at least 6 characters long', {
           defaultValue: 'Password must be at least 6 characters long',
         })
@@ -86,7 +89,7 @@ const SignInScreen: React.FC = () => {
       const response = await AccountServices.login(email, password);
       if (response && response.data) {
         Alert.alert(
-          'Success',
+          t('Success'),
           t('welcome_message', {
             name: response.data?.fullName,
             defaultValue: `Welcome, ${response.data?.fullName || 'User'}`,
@@ -97,7 +100,7 @@ const SignInScreen: React.FC = () => {
           dispatch(login({ ...response.data, isAuthenticated: true }));
         } else {
           Alert.alert(
-            'Error',
+            t('Error'),
             t('You are not authorized to access this page.', {
               defaultValue: 'You are not authorized to access this page.',
             })
@@ -105,12 +108,12 @@ const SignInScreen: React.FC = () => {
         }
       } else {
         Alert.alert(
-          'Error',
+          t('Error'),
           t('Invalid email or password.', { defaultValue: 'Invalid email or password.' })
         );
       }
     } catch (error: any) {
-      Alert.alert('Error', error.message);
+      Alert.alert(t('Error'), error.message);
     } finally {
       setLoading(false);
     }
@@ -149,7 +152,7 @@ const SignInScreen: React.FC = () => {
             })
           );
           Alert.alert(
-            'Success',
+            t('Success'),
             t('welcome_message', {
               name: userName || 'User',
               defaultValue: `Welcome, ${userName || 'User'}`,
@@ -157,7 +160,7 @@ const SignInScreen: React.FC = () => {
           );
         } else {
           Alert.alert(
-            'Error',
+            t('Error'),
             t('error_failed_auth_tokens', {
               defaultValue: 'Failed to retrieve authentication tokens',
             })
@@ -170,7 +173,7 @@ const SignInScreen: React.FC = () => {
         );
       } else {
         Alert.alert(
-          'Error',
+          t('Error'),
           t('Failed to complete Google Sign-In', {
             defaultValue: 'Failed to complete Google Sign-In',
           })
@@ -178,7 +181,7 @@ const SignInScreen: React.FC = () => {
       }
     } catch (error) {
       Alert.alert(
-        'Error',
+        t('Error'),
         t('Failed to initiate Google Sign-In', {
           defaultValue: 'Failed to initiate Google Sign-In',
         })

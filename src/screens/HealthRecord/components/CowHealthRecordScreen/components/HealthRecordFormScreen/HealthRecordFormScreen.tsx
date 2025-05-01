@@ -104,7 +104,7 @@ const HealthRecordFormScreen = () => {
       await apiClient.put(`health-record/${healthRecord?.healthRecordId}`, data),
     {
       onSuccess: () => {
-        Alert.alert('Success', t('Update health record success'));
+        Alert.alert(t('Success'), t('Update health record success'));
         setIsEditing(false);
         if (fromScreen === 'cow') {
           (navigation.navigate as any)('CowDetails', {
@@ -115,7 +115,7 @@ const HealthRecordFormScreen = () => {
         }
       },
       onError: (error: any) => {
-        Alert.alert('Error', error.response.data.message);
+        Alert.alert(t('Error'), error.response.data.message);
       },
     }
   );

@@ -41,7 +41,7 @@ const CardNotification = ({ item }: CardNotificationProps) => {
         queryClient.invalidateQueries('notifications/myNotification');
       },
       onError: (error: any) => {
-        Alert.alert('Error', error.response.data.message);
+        Alert.alert(t('Error'), error.response.data.message);
       },
     }
   );

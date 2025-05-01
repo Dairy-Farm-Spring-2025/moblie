@@ -144,7 +144,12 @@ const NavigationWrapper = () => {
   };
 
   if (!isAuthenticated && roleName === 'Manager') {
-    Alert.alert('Error', 'You are not authorized to access this page.');
+    Alert.alert(
+      t('Error'),
+      t('You are not authorized to access this page.', {
+        defaultValue: 'You are not authorized to access this page.',
+      })
+    );
     return null;
   }
 
