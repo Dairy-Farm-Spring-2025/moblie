@@ -52,7 +52,7 @@ const IllnessPlanScreen = () => {
     {
       dosage: '',
       injectionSite: '' as InjectionSite,
-      date: '',
+      date: new Date(getVietnamISOString().split('T')[0]), // Store as Date object
       itemId: 0,
       description: '',
       illnessId: illness.illnessId,
@@ -97,7 +97,7 @@ const IllnessPlanScreen = () => {
       {
         dosage: '',
         injectionSite: '' as InjectionSite,
-        date: '',
+        date: new Date(getVietnamISOString().split('T')[0]), // Default to today
         itemId: 0,
         description: '',
         illnessId: illness.illnessId,
@@ -120,9 +120,16 @@ const IllnessPlanScreen = () => {
   const handleDateChange = (index: number, event: any, selectedDate?: Date) => {
     setShowDatePicker(null);
     if (selectedDate) {
-      const formattedDate = selectedDate.toISOString().split('T')[0];
-      handlePlanChange(index, 'date', formattedDate);
+      handlePlanChange(index, 'date', selectedDate); // Store as Date object
     }
+  };
+
+  const formatDateDisplay = (date: Date | string) => {
+    if (!date) return t('illness_plan.select_date', { defaultValue: 'Select date...' });
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    if (isNaN(dateObj.getTime()))
+      return t('illness_plan.select_date', { defaultValue: 'Select date...' });
+    return dateObj.toLocaleDateString('vi-VN'); // Format as DD/MM/YYYY in Vietnamese locale
   };
 
   const handleSubmit = async () => {
@@ -170,7 +177,8 @@ const IllnessPlanScreen = () => {
       }
 
       // Validate date
-      if (!plan.date || isNaN(new Date(plan.date).getTime())) {
+      const dateObj = plan.date instanceof Date ? plan.date : new Date(plan.date);
+      if (!plan.date || isNaN(dateObj.getTime())) {
         error.date = {
           message: t('illness_plan.date_error', {
             defaultValue: 'Please select a valid date',
@@ -197,11 +205,15 @@ const IllnessPlanScreen = () => {
       return;
     }
 
-    // Convert dosage to number for submission
-    const formattedPlans: IllnessPlan[] = plans.map((plan) => ({
-      ...plan,
-      dosage: parseFloat(plan.dosage.replace(',', '.')),
-    }));
+    // Convert dosage to number and date to ISO string for submission
+    const formattedPlans: IllnessPlan[] = plans.map((plan) => {
+      const dateObj = plan.date instanceof Date ? plan.date : new Date(plan.date);
+      return {
+        ...plan,
+        dosage: parseFloat(plan.dosage.replace(',', '.')),
+        date: dateObj.toISOString().split('T')[0], // Convert to YYYY-MM-DD
+      };
+    });
 
     const requestBody: IllnessPlanRequest = { plans: formattedPlans };
     try {
@@ -305,19 +317,21 @@ const IllnessPlanScreen = () => {
             <TouchableOpacity
               style={[styles.input, errors[index]?.date && styles.inputError]}
               onPress={() => setShowDatePicker(index)}
+              activeOpacity={0.7} // Provide feedback on press
             >
-              <Text style={styles.dateText}>{item.date || 'Select date...'}</Text>
+              <Text style={styles.dateText}>{formatDateDisplay(item.date)}</Text>
             </TouchableOpacity>
             {showDatePicker === index && (
               <DateTimePicker
-                value={item.date ? new Date(item.date) : new Date()}
+                value={item.date instanceof Date ? item.date : new Date()}
                 mode='date'
-                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                display={Platform.OS === 'ios' ? 'inline' : 'default'} // Use inline for iOS to avoid double tap
+                minimumDate={new Date()}
                 onChange={(event, date) => handleDateChange(index, event, date)}
               />
             )}
             {errors[index]?.date && (
-              <Text style={styles.errorErrorText}>{errors[index].date.message}</Text>
+              <Text style={styles.errorText}>{errors[index].date.message}</Text>
             )}
           </View>
 
@@ -430,6 +444,7 @@ const styles = StyleSheet.create({
     color: '#333',
     backgroundColor: '#FFFFFF',
     minHeight: 50,
+    justifyContent: 'center', // Ensure text is centered vertically
   },
   inputError: {
     borderColor: '#FF3B30',
@@ -480,11 +495,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   errorText: {
-    fontSize: 14,
-    color: '#FF3B30',
-    marginTop: 5,
-  },
-  errorErrorText: {
     fontSize: 14,
     color: '#FF3B30',
     marginTop: 5,

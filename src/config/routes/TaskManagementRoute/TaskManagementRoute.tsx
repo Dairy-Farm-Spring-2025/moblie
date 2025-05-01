@@ -19,6 +19,7 @@ import QrCodeScanCow from '@screens/MilkBatchManagementScreen/components/CreateM
 import DetailFormMilk from '@screens/MilkBatchManagementScreen/components/CreateMilkBatch/components/DetailFormMilk/DetailFormMilk';
 import CreateMilkBatch from '@screens/MilkBatchManagementScreen/components/CreateMilkBatch/CreateMilkBatch';
 import HomeScreen from '@screens/HomeScreen/HomeScreen';
+import MyExportItemScreen from '@screens/MyExportItemScreen/MyExportItemScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -86,6 +87,11 @@ const TaskManagementRoute: React.FC = () => {
             defaultValue: 'Edit Illness Detail',
           }),
         }}
+      />
+      <Stack.Screen
+        name='MyExportItemScreen'
+        component={MyExportItemScreen}
+        options={{ title: t('export_item.title', { defaultValue: 'Export Item' }) }}
       />
       <Stack.Screen
         name='IllnessCowRecordScreen'

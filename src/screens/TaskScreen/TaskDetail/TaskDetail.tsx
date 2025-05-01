@@ -114,6 +114,7 @@ const TaskDetailContent: React.FC<{
       case 'illnessDetail':
         (navigation.navigate as any)('IllnessDetailForm', {
           illnessDetail: task.material?.illnessDetail,
+          taskId: task.taskId,
         });
         break;
       case 'vaccineInjection':
