@@ -16,7 +16,6 @@ import { useMutation, useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { RootState } from '@core/store/store';
 import { COLORS } from '@common/GlobalStyle';
-import { OPTIONS_ILLNESS_DETAIL_STATUS } from '@services/data/healthStatus';
 import { formatCamelCase } from '@utils/format';
 import { getAvatar } from '@utils/getImage';
 import { Alert } from 'react-native';
@@ -74,6 +73,14 @@ const IllnessDetailForm = () => {
   const [optionsItemVaccine, setOptionsItemVaccine] = useState<any[]>([]);
   const [modalVisible, setModalVisible] = useState(false); // State for export modal
   const [quantity, setQuantity] = useState(''); // State for export quantity
+
+  const OPTIONS_ILLNESS_DETAIL_STATUS = [
+    { label: t('Observed'), value: 'observed' },
+    { label: t('Treated'), value: 'treated' },
+    { label: t('Cured'), value: 'cured' },
+    { label: t('Ongoing'), value: 'ongoing' },
+    { label: t('Deceased'), value: 'deceased' },
+  ];
 
   const { roleName, userId } = useSelector((state: RootState) => state.auth);
   const textColor = '#333';
@@ -283,7 +290,7 @@ const IllnessDetailForm = () => {
                         onValueChange={onChange}
                         selectedValue={value}
                         options={OPTIONS_ILLNESS_DETAIL_STATUS}
-                        title={t(formatCamelCase(value))}
+                        title={t(formatCamelCase(value), { defaultValue: 'Select status' })}
                       />
                     )}
                   />
