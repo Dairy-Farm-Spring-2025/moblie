@@ -362,8 +362,8 @@ const TaskDetailContent: React.FC<{
         task.material?.illnessDetail ||
         task.material?.vaccineInjection) &&
         hasReportForDate &&
-        !isReported &&
-        isWithinCurrentDateRange && (
+        !isReported && (
+          // isWithinCurrentDateRange &&
           <View style={styles.infoRow}>
             <View style={styles.labelContainer}>
               <Ionicons
