@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { actions, RichEditor, RichEditorProps, RichToolbar } from 'react-native-pell-rich-editor';
+import { t } from 'i18next';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
@@ -43,7 +44,9 @@ const TextEditorComponent: React.FC<TextEditorComponentProps> = ({
     <View style={styles.container}>
       <TouchableOpacity style={styles.openEditorButton} onPress={() => setModalVisible(true)}>
         <Text numberOfLines={1} style={styles.valuePreview}>
-          {value ? value.replace(/(<([^>]+)>)/gi, '').slice(0, 50) || 'Edit' : 'Open Editor'}
+          {value
+            ? value.replace(/(<([^>]+)>)/gi, '').slice(0, 50) || t('Edit', { defaultValue: 'Edit' })
+            : t('Open Editor')}
         </Text>
       </TouchableOpacity>
 
@@ -64,7 +67,9 @@ const TextEditorComponent: React.FC<TextEditorComponentProps> = ({
                 alignContent: 'center',
               }}
             >
-              <Text style={styles.modalTitle}>Edit Your Text</Text>
+              <Text style={styles.modalTitle}>
+                {t('text_editor_component.title', { defaultValue: 'Edit Your Text' })}
+              </Text>
               <TouchableOpacity
                 style={{
                   height: 20,
@@ -79,7 +84,9 @@ const TextEditorComponent: React.FC<TextEditorComponentProps> = ({
               ref={richTextRef}
               initialContentHTML={value}
               onChange={onChange}
-              placeholder='Start typing here...'
+              placeholder={t('text_editor_component.start_typing', {
+                defaultValue: 'Start typing here...',
+              })}
               style={styles.richEditor}
               editorStyle={{
                 backgroundColor: '#f9f9f9',
@@ -112,7 +119,7 @@ const TextEditorComponent: React.FC<TextEditorComponentProps> = ({
               }}
             />
             <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-              <Text style={styles.saveButtonText}>Save</Text>
+              <Text style={styles.saveButtonText}>{t('text_editor_component.save')}</Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
