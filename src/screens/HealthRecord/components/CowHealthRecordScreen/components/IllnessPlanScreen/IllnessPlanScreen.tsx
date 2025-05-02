@@ -335,7 +335,7 @@ const IllnessPlanScreen = () => {
 
           <View style={styles.formGroup}>
             <Text style={styles.label}>
-              {t('illness_plan.dosage', { defaultValue: 'Dosage (mL or mg)' })} *
+              {t('illness_plan.dosage', { defaultValue: 'Dosage (L or g)' })} *
             </Text>
             <TextInput
               style={[styles.input, errors[index]?.dosage && styles.inputError]}

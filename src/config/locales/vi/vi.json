@@ -643,6 +643,7 @@
   "Pick from Gallery": "Chọn từ thư viện",
   "Take a Photo": "Chụp ảnh",
   "Image": "Hình ảnh",
+  "Misssing": "Quên báo cáo!",
   "Existing Reports": "Các báo cáo hiện có",
   "No Report Data": "Không có dữ liệu báo cáo",
   "Area Details": "Chi tiết khu vực",
@@ -814,7 +815,10 @@
     "injection_site_error": "Vui lòng chọn vị trí tiêm",
     "dosage_required": "Liều lượng không được để trống!",
     "dosage_format_error": "Liều lượng phải là số!",
-    "date_error": "Ngày điều trị không hợp lệ"
+    "date_error": "Ngày điều trị không hợp lệ",
+    "date_from": "Ngày bắt đầu",
+    "date_to": "Ngày kết thúc",
+    "select_item": "Vui lòng chọn vaccine/thuốc..."
   },
   "area": {
     "title": "Các Khu Vực",
@@ -982,5 +986,11 @@
   "Email is required": "Vui lòng điền email!",
   "Milk batch created successfully": "Tạo lô sữa thành công",
   "Created At": "Ngày Tạo",
-  "Updated At": "Ngày Cập Nhật"
+  "Updated At": "Ngày Cập Nhật",
+  "Open Editor": "Mở trình chỉnh sửa",
+  "text_editor_component": {
+    "title": "Chỉnh sửa chi tiết",
+    "start_typing": "nhập ở đây!",
+    "save": "Lưu"
+  }
 }
