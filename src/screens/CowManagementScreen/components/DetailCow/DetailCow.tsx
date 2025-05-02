@@ -178,6 +178,18 @@ const DetailCow: React.FC = () => {
           🔹 <Text style={styles.bold}>{t('cowDetails.typeStatus')}: </Text>
           {t(formatCamelCase(cow.cowType.status))}
         </Text>
+        <Text style={styles.text}>
+          🐄 <Text style={styles.bold}>{t('cowDetails.maxWeight')}: </Text>
+          {cow.cowType.maxWeight} kg
+        </Text>
+        <Text style={styles.text}>
+          🐄 <Text style={styles.bold}>{t('cowDetails.maxHeight')}: </Text>
+          {cow.cowType.maxHeight} m
+        </Text>
+        <Text style={styles.text}>
+          🐄 <Text style={styles.bold}>{t('cowDetails.maxLength')}: </Text>
+          {cow.cowType.maxLength} m
+        </Text>
         <View style={styles.text}>
           <Text style={styles.text}>
             🔹

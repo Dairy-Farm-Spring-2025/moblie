@@ -8,7 +8,6 @@ import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import NotificationScreen from '@screens/NotificationScreen/NotificationScreen';
 import SignInScreen from '@screens/SignInScreen/SignInScreen';
-import { useNotifications } from '@services/Notification/Notification';
 import React, { useMemo, useState } from 'react';
 import { Alert, Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Text } from 'react-native-paper';
@@ -82,8 +81,6 @@ const NavigationWrapper = () => {
   const { isAuthenticated, roleName } = useSelector((state: RootState) => state.auth);
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [selectedField, setSelectedField] = useState<string | null>(null);
-
-  useNotifications({ navigation });
 
   const optionsScan = useMemo(
     () => [

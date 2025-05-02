@@ -1,6 +1,6 @@
+import React from 'react';
 import { COLORS } from '@common/GlobalStyle';
 import { RootState } from '@core/store/store';
-import React from 'react';
 import { ImageProps, StyleProp, StyleSheet, ViewStyle } from 'react-native';
 import { Avatar, Card, CardContentProps, CardProps, Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';

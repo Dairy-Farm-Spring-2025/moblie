@@ -20,17 +20,15 @@ import DetailFormMilk from '@screens/MilkBatchManagementScreen/components/Create
 import CreateMilkBatch from '@screens/MilkBatchManagementScreen/components/CreateMilkBatch/CreateMilkBatch';
 import HomeScreen from '@screens/HomeScreen/HomeScreen';
 import MyExportItemScreen from '@screens/MyExportItemScreen/MyExportItemScreen';
+import CowHealthRecord from '@screens/HealthRecord/components/CowHealthRecord/CowHealthRecord';
+import CowHealthInforScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/CowHealthInforScreen';
+import HealthRecordFormScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/HealthRecordFormScreen/HealthRecordFormScreen';
 
 const Stack = createNativeStackNavigator();
 
 const TaskManagementRoute: React.FC = () => {
   return (
     <Stack.Navigator initialRouteName='TaskScreen'>
-      <Stack.Screen
-        name='Home'
-        component={TaskScreen}
-        options={{ title: t('task_management.title'), headerShown: false }}
-      />
       <Stack.Screen
         name='TaskScreen'
         component={TaskScreen}
@@ -152,6 +150,25 @@ const TaskManagementRoute: React.FC = () => {
         options={{
           title: t('qr_scan_cow_milk.title', { defaultValue: 'Scan Cow for Milk Batch' }),
         }}
+      />
+      <Stack.Screen
+        name='CowHealthRecord'
+        component={CowHealthRecord}
+        options={{ title: t('cow_health_record.title', { defaultValue: 'Cow Health Record' }) }}
+      />
+      <Stack.Screen
+        name='CowHealthInforScreen'
+        component={CowHealthInforScreen}
+        options={{
+          title: t('task_management.timeline_health_record', {
+            defaultValue: 'Timeline Health Record',
+          }),
+        }}
+      />
+      <Stack.Screen
+        name='HealthRecordFormScreen'
+        component={HealthRecordFormScreen}
+        options={{ title: t('health_record_form.title', { defaultValue: 'Health Record Form' }) }}
       />
     </Stack.Navigator>
   );
