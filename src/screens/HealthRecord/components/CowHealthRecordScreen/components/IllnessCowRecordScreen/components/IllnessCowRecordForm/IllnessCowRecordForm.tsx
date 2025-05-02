@@ -8,8 +8,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { Controller, useForm } from 'react-hook-form';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { useForm } from 'react-hook-form';
 import FormItem from '@components/Form/FormItem';
 import CustomPicker from '@components/CustomPicker/CustomPicker';
 import TextEditorComponent from '@components/Input/TextEditor/TextEditorComponent';
@@ -40,9 +39,9 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
   const [startDate, setStartDate] = useState(new Date(illness.startDate)?.toISOString());
   const [symptoms, setSymptoms] = useState(illness.symptoms);
   const [endDate, setEndDate] = useState();
-  // State for modal and selected image
   const [isImageModalVisible, setIsImageModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  console.log(illness);
 
   const { roleName } = useSelector((state: RootState) => state.auth);
   const getColorByrole = () => {
@@ -126,6 +125,23 @@ const IllnessCowRecordForm = ({ illness }: IllnessCowRecordFormProps) => {
       <CardComponent.Content>
         {!isEditing ? (
           <View>
+            <TouchableOpacity
+              onPress={() =>
+                (navigation.navigate as any)('CowDetails', { cowId: illness.cowEntity.cowId })
+              }
+              style={styles.cowContainer}
+            >
+              <Text style={styles.label}>{t('cow')}:</Text>
+              <Text
+                style={{
+                  textDecorationStyle: 'solid',
+                  textDecorationLine: 'underline',
+                  marginTop: 10,
+                }}
+              >
+                {illness.cowEntity.name}
+              </Text>
+            </TouchableOpacity>
             <Text style={styles.label}>{t('Severity', { defaultValue: 'Severity' })}:</Text>
             <Text style={styles.value}>{t(formatCamelCase(illness.severity)) || 'N/A'}</Text>
 
@@ -293,6 +309,12 @@ const styles = StyleSheet.create({
   container: {
     padding: 10,
     marginTop: 20,
+  },
+  cowContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10,
   },
   noContentText: {
     color: '#1a1a1a',

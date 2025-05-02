@@ -306,7 +306,10 @@
     "no": "Không",
     "monthlyMilkChart": "Sản lượng sữa hàng tháng trong năm {{year}}",
     "noMilkData": "Không có dữ liệu sữa",
-    "selectYear": "Chọn năm..."
+    "selectYear": "Chọn năm...",
+    "maxWeight": "Cân nặng tối đa",
+    "maxHeight": "Chiều cao tối đa",
+    "maxLength": "Chiều dài tối đa"
   },
   "feed": {
     "title": "Bữa ăn",
