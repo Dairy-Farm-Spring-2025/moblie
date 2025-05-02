@@ -1,6 +1,7 @@
 import { Area } from '@model/Area/Area';
 import { HealthRecord } from '@model/HealthRecord/HealthRecord';
 import { Item } from '@model/Item/Item';
+import { Role } from '@model/User/User';
 
 // Enum for Cow Status
 export enum CowStatus {

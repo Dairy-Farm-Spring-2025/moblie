@@ -30,11 +30,6 @@ const TaskManagementRoute: React.FC = () => {
   return (
     <Stack.Navigator initialRouteName='TaskScreen'>
       <Stack.Screen
-        name='Home'
-        component={TaskScreen}
-        options={{ title: t('task_management.title'), headerShown: false }}
-      />
-      <Stack.Screen
         name='TaskScreen'
         component={TaskScreen}
         options={{ title: t('task_management.title'), headerShown: false }}
