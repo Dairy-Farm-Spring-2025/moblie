@@ -11,7 +11,7 @@ import {
   FlatList,
   Keyboard,
 } from 'react-native';
-import { useQuery } from 'react-query';
+import { useQueries } from 'react-query';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { t } from 'i18next';
 import apiClient from '@config/axios/axios';
@@ -32,14 +32,16 @@ type RootStackParamList = {
 
 type IllnessPlanScreenRouteProp = RouteProp<RootStackParamList, 'IllnessPlanScreen'>;
 
-// Extend IllnessPlan to allow dosage as string for input handling
-interface ExtendedIllnessPlan extends Omit<IllnessPlan, 'dosage'> {
+// Extend IllnessPlan for input handling
+interface ExtendedIllnessPlan extends Omit<IllnessPlan, 'dosage' | 'dateFrom' | 'dateTo'> {
   dosage: string; // Store as string for input handling
+  dateFrom: Date; // Store as Date object
+  dateTo: Date; // Store as Date object
 }
 
-// Fetch vaccine data
-const fetchVaccines = async (): Promise<Item[]> => {
-  const response = await apiClient.get('/items/vaccine');
+// Fetch items based on categoryId
+const fetchItems = async (categoryId: number): Promise<Item[]> => {
+  const response = await apiClient.get(`/items/category/${categoryId}`);
   return response.data;
 };
 
@@ -52,34 +54,49 @@ const IllnessPlanScreen = () => {
     {
       dosage: '',
       injectionSite: '' as InjectionSite,
-      date: new Date(getVietnamISOString().split('T')[0]), // Store as Date object
+      dateFrom: new Date(getVietnamISOString().split('T')[0]),
+      dateTo: new Date(getVietnamISOString().split('T')[0]),
       itemId: 0,
       description: '',
       illnessId: illness.illnessId,
     },
   ]);
-  const [showDatePicker, setShowDatePicker] = useState<number | null>(null);
+  const [showDatePicker, setShowDatePicker] = useState<{
+    index: number | null;
+    field: 'dateFrom' | 'dateTo' | null;
+  }>({ index: null, field: null });
   const [expandedPlans, setExpandedPlans] = useState<boolean[]>([true]);
   const [errors, setErrors] = useState<{ [key: string]: { message: string } }[]>([{}]);
 
-  // Fetch vaccines
-  const {
-    data: vaccines,
-    isLoading,
-    isError,
-  } = useQuery('vaccines', fetchVaccines, {
-    onError: (error) => {
-      console.error('Error fetching vaccines:', error);
+  // Fetch items for both Vaccine (categoryId: 5) and Medicine (categoryId: 6)
+  const itemQueries = useQueries([
+    {
+      queryKey: ['items', 5],
+      queryFn: () => fetchItems(5),
+      onError: (error: any) => {
+        console.error('Error fetching vaccines:', error);
+      },
     },
-  });
+    {
+      queryKey: ['items', 6],
+      queryFn: () => fetchItems(6),
+      onError: (error: any) => {
+        console.error('Error fetching medicines:', error);
+      },
+    },
+  ]);
 
-  // Map vaccines to CustomPicker options
-  const vaccineOptions: Option[] = vaccines
-    ? vaccines.map((vaccine) => ({
-        label: vaccine.name,
-        value: vaccine.itemId.toString(),
-      }))
-    : [];
+  // Combine items from both categories
+  const items = [...(itemQueries[0].data || []), ...(itemQueries[1].data || [])];
+
+  const isLoading = itemQueries.some((query) => query.isLoading);
+  const isError = itemQueries.some((query) => query.isError);
+
+  // Map items to CustomPicker options
+  const itemOptions: Option[] = items.map((item) => ({
+    label: item.name,
+    value: item.itemId.toString(),
+  }));
 
   // Options for InjectionSite picker
   const injectionSiteOptions: Option[] = Object.values(InjectionSite).map((site) => ({
@@ -97,7 +114,8 @@ const IllnessPlanScreen = () => {
       {
         dosage: '',
         injectionSite: '' as InjectionSite,
-        date: new Date(getVietnamISOString().split('T')[0]), // Default to today
+        dateFrom: new Date(getVietnamISOString().split('T')[0]),
+        dateTo: new Date(getVietnamISOString().split('T')[0]),
         itemId: 0,
         description: '',
         illnessId: illness.illnessId,
@@ -117,10 +135,15 @@ const IllnessPlanScreen = () => {
     setExpandedPlans((prev) => prev.map((expanded, i) => (i === index ? !expanded : expanded)));
   };
 
-  const handleDateChange = (index: number, event: any, selectedDate?: Date) => {
-    setShowDatePicker(null);
+  const handleDateChange = (
+    index: number,
+    field: 'dateFrom' | 'dateTo',
+    event: any,
+    selectedDate?: Date
+  ) => {
+    setShowDatePicker({ index: null, field: null });
     if (selectedDate) {
-      handlePlanChange(index, 'date', selectedDate); // Store as Date object
+      handlePlanChange(index, field, selectedDate);
     }
   };
 
@@ -129,20 +152,21 @@ const IllnessPlanScreen = () => {
     const dateObj = typeof date === 'string' ? new Date(date) : date;
     if (isNaN(dateObj.getTime()))
       return t('illness_plan.select_date', { defaultValue: 'Select date...' });
-    return dateObj.toLocaleDateString('vi-VN'); // Format as DD/MM/YYYY in Vietnamese locale
+    return dateObj.toLocaleDateString('vi-VN');
   };
 
   const handleSubmit = async () => {
-    // Validation for each plan
     const newErrors = plans.map((plan) => {
       const error: { [key: string]: { message: string } } = {};
-      const dosageStr = plan.dosage.replace(',', '.'); // Normalize to period
+      const dosageStr = plan.dosage.replace(',', '.');
       const dosageNum = parseFloat(dosageStr);
 
-      // Validate itemId (Vaccine/Medication)
+      // Validate itemId
       if (plan.itemId === 0) {
         error.itemId = {
-          message: t('illness_plan.vaccine_error', { defaultValue: 'Please select a vaccine' }),
+          message: t('illness_plan.item_error', {
+            defaultValue: 'Please select an item',
+          }),
         };
       }
 
@@ -176,12 +200,28 @@ const IllnessPlanScreen = () => {
         };
       }
 
-      // Validate date
-      const dateObj = plan.date instanceof Date ? plan.date : new Date(plan.date);
-      if (!plan.date || isNaN(dateObj.getTime())) {
-        error.date = {
+      // Validate dateFrom
+      const dateFromObj = plan.dateFrom instanceof Date ? plan.dateFrom : new Date(plan.dateFrom);
+      if (!plan.dateFrom || isNaN(dateFromObj.getTime())) {
+        error.dateFrom = {
           message: t('illness_plan.date_error', {
-            defaultValue: 'Please select a valid date',
+            defaultValue: 'Please select a valid start date',
+          }),
+        };
+      }
+
+      // Validate dateTo
+      const dateToObj = plan.dateTo instanceof Date ? plan.dateTo : new Date(plan.dateTo);
+      if (!plan.dateTo || isNaN(dateToObj.getTime())) {
+        error.dateTo = {
+          message: t('illness_plan.date_error', {
+            defaultValue: 'Please select a valid end date',
+          }),
+        };
+      } else if (dateToObj < dateFromObj) {
+        error.dateTo = {
+          message: t('illness_plan.date_to_error', {
+            defaultValue: 'End date must be on or after start date',
           }),
         };
       }
@@ -200,18 +240,19 @@ const IllnessPlanScreen = () => {
 
     setErrors(newErrors);
 
-    // Check if there are any errors
     if (newErrors.some((error) => Object.keys(error).length > 0)) {
       return;
     }
 
-    // Convert dosage to number and date to ISO string for submission
+    // Format plans for submission
     const formattedPlans: IllnessPlan[] = plans.map((plan) => {
-      const dateObj = plan.date instanceof Date ? plan.date : new Date(plan.date);
+      const dateFromObj = plan.dateFrom instanceof Date ? plan.dateFrom : new Date(plan.dateFrom);
+      const dateToObj = plan.dateTo instanceof Date ? plan.dateTo : new Date(plan.dateTo);
       return {
         ...plan,
         dosage: parseFloat(plan.dosage.replace(',', '.')),
-        date: dateObj.toISOString().split('T')[0], // Convert to YYYY-MM-DD
+        dateFrom: dateFromObj.toISOString().split('T')[0],
+        dateTo: dateToObj.toISOString().split('T')[0],
       };
     });
 
@@ -250,19 +291,20 @@ const IllnessPlanScreen = () => {
             </Text>
             {isLoading ? (
               <Text style={styles.loadingText}>
-                {t('illness_plan.loading', { defaultValue: 'Loading vaccines...' })}
+                {t('illness_plan.loading', { defaultValue: 'Loading items...' })}
               </Text>
             ) : isError ? (
               <Text style={styles.errorText}>
-                {t('illness_plan.error', { defaultValue: 'Error loading vaccines' })}
+                {t('illness_plan.error', { defaultValue: 'Error loading items' })}
               </Text>
             ) : (
               <>
                 <CustomPicker
-                  options={vaccineOptions}
+                  options={itemOptions}
                   selectedValue={item.itemId.toString()}
                   onValueChange={(value) => handlePlanChange(index, 'itemId', Number(value))}
-                  title={t('illness_plan.select_vaccine', { defaultValue: 'Select vaccine...' })}
+                  title={t('illness_plan.select_item', { defaultValue: 'Select item...' })}
+                  readOnly={false}
                 />
                 {errors[index]?.itemId && (
                   <Text style={styles.errorText}>{errors[index].itemId.message}</Text>
@@ -284,6 +326,7 @@ const IllnessPlanScreen = () => {
               title={t('illness_plan.select_injection_site', {
                 defaultValue: 'Select injection site...',
               })}
+              readOnly={false}
             />
             {errors[index]?.injectionSite && (
               <Text style={styles.errorText}>{errors[index].injectionSite.message}</Text>
@@ -303,7 +346,7 @@ const IllnessPlanScreen = () => {
               }}
               placeholder={t('illness_plan.dosage_placeholder', { defaultValue: 'Enter dosage' })}
               keyboardType='decimal-pad'
-              maxLength={6} // Allows for up to 4 decimal places (e.g., 12.34)
+              maxLength={6}
               returnKeyType='done'
               onSubmitEditing={Keyboard.dismiss}
             />
@@ -313,25 +356,52 @@ const IllnessPlanScreen = () => {
           </View>
 
           <View style={styles.formGroup}>
-            <Text style={styles.label}>{t('illness_plan.date', { defaultValue: 'Date' })} *</Text>
+            <Text style={styles.label}>
+              {t('illness_plan.date_from', { defaultValue: 'Start Date' })} *
+            </Text>
             <TouchableOpacity
-              style={[styles.input, errors[index]?.date && styles.inputError]}
-              onPress={() => setShowDatePicker(index)}
-              activeOpacity={0.7} // Provide feedback on press
+              style={[styles.input, errors[index]?.dateFrom && styles.inputError]}
+              onPress={() => setShowDatePicker({ index, field: 'dateFrom' })}
+              activeOpacity={0.7}
             >
-              <Text style={styles.dateText}>{formatDateDisplay(item.date)}</Text>
+              <Text style={styles.dateText}>{formatDateDisplay(item.dateFrom)}</Text>
             </TouchableOpacity>
-            {showDatePicker === index && (
+            {showDatePicker.index === index && showDatePicker.field === 'dateFrom' && (
               <DateTimePicker
-                value={item.date instanceof Date ? item.date : new Date()}
+                value={item.dateFrom instanceof Date ? item.dateFrom : new Date()}
                 mode='date'
-                display={Platform.OS === 'ios' ? 'inline' : 'default'} // Use inline for iOS to avoid double tap
+                display={Platform.OS === 'ios' ? 'inline' : 'default'}
                 minimumDate={new Date()}
-                onChange={(event, date) => handleDateChange(index, event, date)}
+                onChange={(event, date) => handleDateChange(index, 'dateFrom', event, date)}
               />
             )}
-            {errors[index]?.date && (
-              <Text style={styles.errorText}>{errors[index].date.message}</Text>
+            {errors[index]?.dateFrom && (
+              <Text style={styles.errorText}>{errors[index].dateFrom.message}</Text>
+            )}
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>
+              {t('illness_plan.date_to', { defaultValue: 'End Date' })} *
+            </Text>
+            <TouchableOpacity
+              style={[styles.input, errors[index]?.dateTo && styles.inputError]}
+              onPress={() => setShowDatePicker({ index, field: 'dateTo' })}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.dateText}>{formatDateDisplay(item.dateTo)}</Text>
+            </TouchableOpacity>
+            {showDatePicker.index === index && showDatePicker.field === 'dateTo' && (
+              <DateTimePicker
+                value={item.dateTo instanceof Date ? item.dateTo : new Date()}
+                mode='date'
+                display={Platform.OS === 'ios' ? 'inline' : 'default'}
+                minimumDate={item.dateFrom instanceof Date ? item.dateFrom : new Date()}
+                onChange={(event, date) => handleDateChange(index, 'dateTo', event, date)}
+              />
+            )}
+            {errors[index]?.dateTo && (
+              <Text style={styles.errorText}>{errors[index].dateTo.message}</Text>
             )}
           </View>
 
@@ -444,7 +514,7 @@ const styles = StyleSheet.create({
     color: '#333',
     backgroundColor: '#FFFFFF',
     minHeight: 50,
-    justifyContent: 'center', // Ensure text is centered vertically
+    justifyContent: 'center',
   },
   inputError: {
     borderColor: '#FF3B30',

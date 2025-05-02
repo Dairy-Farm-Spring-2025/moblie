@@ -27,7 +27,8 @@ export interface Vaccine {
 export interface IllnessPlan {
   dosage: number;
   injectionSite: InjectionSite;
-  date: string; // Format: YYYY-MM-DD
+  dateFrom: string; // Format: YYYY-MM-DD
+  dateTo: string;
   itemId: number; // Vaccine/Medication ID
   description: string;
   illnessId: number;

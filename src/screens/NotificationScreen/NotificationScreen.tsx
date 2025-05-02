@@ -9,6 +9,7 @@ import { useQuery } from 'react-query';
 import CardNotification from './components/CardNotification';
 import { t } from 'i18next';
 import { RefreshControl } from 'react-native-gesture-handler';
+import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
 
 const fetchNotification = async (): Promise<Notification[]> => {
   try {
@@ -39,11 +40,11 @@ const NotificationScreen = () => {
     }
   }, [refetch]);
 
-  return (
+  return isLoading ? (
+    <LoadingSplashScreen />
+  ) : (
     <Layout isScrollable={false}>
-      {isLoading ? (
-        <ActivityIndicator />
-      ) : (
+      {
         <ContainerComponent>
           {myNotificationData!.length > 0 ? (
             <FlatList
@@ -78,7 +79,7 @@ const NotificationScreen = () => {
             </View>
           )}
         </ContainerComponent>
-      )}
+      }
     </Layout>
   );
 };
