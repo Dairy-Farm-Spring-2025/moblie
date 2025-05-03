@@ -227,7 +227,7 @@ const InjectionScreen = () => {
                   defaultValue: 'Vaccine Item',
                 })}
               </Text>
-              {roleName.toLowerCase() !== 'worker' && (
+              {roleName.toLowerCase() !== 'worker' && taskId && (
                 <Text
                   style={{
                     fontSize: 16,
