@@ -792,7 +792,7 @@
     "title": "Tạo Kế Hoạch Điều Trị",
     "plan": "Kế hoạch",
     "treatment_plan": "Kế hoạch điều trị",
-    "dosage": "Liều lượng (mL hoặc mg)",
+    "dosage": "Liều lượng (L hoặc g)",
     "dosage_placeholder": "Nhập liều lượng",
     "dosage_error": "Liều lượng phải lớn hơn 0",
     "injection_site": "Vị trí tiêm",
