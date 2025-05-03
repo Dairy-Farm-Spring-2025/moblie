@@ -18,7 +18,6 @@ import DetailMilkBatch from '@screens/MilkBatchManagementScreen/components/Detai
 import QrCodeScanCow from '@screens/MilkBatchManagementScreen/components/CreateMilkBatch/components/QrCodeScanCow/QrCodeScanCow';
 import DetailFormMilk from '@screens/MilkBatchManagementScreen/components/CreateMilkBatch/components/DetailFormMilk/DetailFormMilk';
 import CreateMilkBatch from '@screens/MilkBatchManagementScreen/components/CreateMilkBatch/CreateMilkBatch';
-import HomeScreen from '@screens/HomeScreen/HomeScreen';
 import MyExportItemScreen from '@screens/MyExportItemScreen/MyExportItemScreen';
 import CowHealthRecord from '@screens/HealthRecord/components/CowHealthRecord/CowHealthRecord';
 import CowHealthInforScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/CowHealthInforScreen';
