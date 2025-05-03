@@ -12,6 +12,10 @@ import { t } from 'i18next';
 import IllnessReportScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessReportScreen/IllnessReportScreen';
 import { useSelector } from 'react-redux';
 import { RootState } from '@core/store/store';
+import IllnessCowRecordScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/IllnessCowRecordScreen';
+import IllnessDetailForm from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/components/IllnessDetail/components/IllnessDetailForm';
+import IllnessDetailPlanForm from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessCowRecordScreen/components/IllnessDetail/components/IllnessDetailPlanForm';
+import IllnessPlanScreen from '@screens/HealthRecord/components/CowHealthRecordScreen/components/IllnessPlanScreen/IllnessPlanScreen';
 
 const Stack = createNativeStackNavigator();
 type RootStackParamList = {
@@ -69,6 +73,27 @@ const QrScanRoute: React.FC = () => {
             defaultValue: 'Illness',
           }),
         }}
+      />
+      <Stack.Screen
+        name='IllnessCowRecordScreen'
+        component={IllnessCowRecordScreen}
+        options={{ title: t('illness.Illness Cow Record', { defaultValue: 'Illness Cow Record' }) }}
+      />
+      <Stack.Screen
+        name='IllnessDetailForm'
+        component={IllnessDetailForm}
+        options={{ title: t('illness_detail.title', { defaultValue: 'Illness Detail Form' }) }}
+      />
+      <Stack.Screen
+        name='IllnessDetailPlanForm'
+        component={IllnessDetailPlanForm}
+        options={{ title: t('illness_detail_plan.title', { defaultValue: 'Illness Detail Plan' }) }}
+      />
+
+      <Stack.Screen
+        name='IllnessPlanScreen'
+        component={IllnessPlanScreen}
+        options={{ title: t('illness_plan.title', { defaultValue: 'Illness Plan' }) }}
       />
     </Stack.Navigator>
   );

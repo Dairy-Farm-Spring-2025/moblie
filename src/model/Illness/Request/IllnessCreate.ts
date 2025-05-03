@@ -35,28 +35,8 @@ export interface TreatmentDetail {
  * Interface representing an illness report for a cow.
  */
 export interface IllnessReportRequest {
-  /**
-   * A description of the symptoms observed in the cow.
-   */
   symptoms: string;
-
-  /**
-   * The severity level of the illness.
-   */
   severity: IllnessSeverity;
-
-  /**
-   * The prognosis or expected outcome for the cow's condition.
-   */
   prognosis: string;
-
-  /**
-   * The identifier of the cow associated with this report.
-   */
   cowId: number;
-
-  /**
-   * An array of treatment details associated with this illness report.
-   */
-  detail: TreatmentDetail[];
 }

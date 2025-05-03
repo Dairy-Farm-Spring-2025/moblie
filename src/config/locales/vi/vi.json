@@ -444,7 +444,7 @@
     "select_severity": "Chọn mức độ nghiêm trọng...",
     "severity_required": "Mức độ nghiêm trọng là bắt buộc",
     "prognosis": "Chẩn đoán",
-    "prognosis_placeholder": "Nhập tiên lượng (ví dụ: Dự kiến phục hồi trong 7-10 ngày)",
+    "prognosis_placeholder": "Nhập chẩn đoán (ví dụ: Bệnh viêm móng)",
     "prognosis_required": "Tiên lượng là bắt buộc",
     "dosage": "Liều lượng (mL hoặc mg)",
     "dosage_placeholder": "Nhập liều lượng",
@@ -468,7 +468,9 @@
     "take_a_photo": "Chụp ảnh",
     "images_required": "Cần ít nhất một hình ảnh",
     "cancel": "Hủy",
-    "submit_report": "Gửi báo cáo"
+    "submit_report": "Gửi báo cáo",
+    "date_from": "Ngày bắt đầu",
+    "date_to": "Ngày kết thúc"
   },
   "materials": {
     "titleName": "Vật liệu",
@@ -988,9 +990,11 @@
   "Created At": "Ngày Tạo",
   "Updated At": "Ngày Cập Nhật",
   "Open Editor": "Mở trình chỉnh sửa",
+  "None": "Không có",
   "text_editor_component": {
     "title": "Chỉnh sửa chi tiết",
     "start_typing": "nhập ở đây!",
     "save": "Lưu"
-  }
+  },
+  "Select status": "Chọn trạng thái..."
 }
