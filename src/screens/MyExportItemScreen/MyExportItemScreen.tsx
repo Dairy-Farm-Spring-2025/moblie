@@ -2,11 +2,11 @@ import ContainerComponent from '@components/Container/ContainerComponent';
 import apiClient from '@config/axios/axios';
 import { ExportItem } from '@model/ExportItem/ExportItem';
 import React, { useState } from 'react';
-import { FlatList, Text, View } from 'react-native'; // Added Text import
+import { FlatList, Text, View } from 'react-native';
 import { useQuery } from 'react-query';
 import CardMyExportItem from './components/CardMyExportItem';
 import { ActivityIndicator } from 'react-native-paper';
-import { t } from 'i18next'; // Import t from i18next
+import { t } from 'i18next';
 import LoadingSplashScreen from '@screens/SplashScreen/LoadingSplashScreen';
 import { RefreshControl } from 'react-native-gesture-handler';
 
@@ -26,7 +26,7 @@ const MyExportItemScreen = () => {
     isLoading,
     refetch,
   } = useQuery<ExportItem[]>('export_items/my', fetchMyExportItem, {
-    onSettled: () => setRefreshing(false), // Stop refreshing when fetch completes
+    onSettled: () => setRefreshing(false),
   });
 
   // Handle pull-to-refresh
@@ -35,13 +35,20 @@ const MyExportItemScreen = () => {
     await refetch();
   };
 
+  // Sort data by createdAt (newest first)
+  const sortedData = myNotificationData
+    ? [...myNotificationData].sort(
+        (a, b) => new Date(b.exportDate).getTime() - new Date(a.exportDate).getTime()
+      )
+    : [];
+
   return isLoading ? (
     <LoadingSplashScreen />
   ) : (
     <ContainerComponent>
-      {myNotificationData!.length > 0 ? (
+      {sortedData.length > 0 ? (
         <FlatList
-          data={myNotificationData}
+          data={sortedData}
           style={{
             padding: 10,
           }}
