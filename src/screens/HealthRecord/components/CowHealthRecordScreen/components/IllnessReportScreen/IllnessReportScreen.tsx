@@ -15,19 +15,16 @@ import {
 } from 'react-native';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { t } from 'i18next';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation } from 'react-query';
 import apiClient from '@config/axios/axios';
 import CardCow from '@components/CardCow/CardCow';
 import { Cow } from '@model/Cow/Cow';
 import { IllnessSeverity } from '@model/Illness/enums/IllnessSeverity';
-import { InjectionSite } from '@model/Illness/enums/InjectionSite';
-import { IllnessReportRequest, TreatmentDetail } from '@model/Illness/Request/IllnessCreate';
+import { IllnessReportRequest } from '@model/Illness/Request/IllnessCreate';
 import CustomPicker, { Option } from '@components/CustomPicker/CustomPicker';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { TextInput } from 'react-native-paper';
-import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
-import { getVietnamISOString } from '@utils/format';
 
 type RootStackParamList = {
   IllnessReportScreen: { cow: Cow };
@@ -35,38 +32,11 @@ type RootStackParamList = {
 
 type IllnessReportScreenRouteProp = RouteProp<RootStackParamList, 'IllnessReportScreen'>;
 
-interface CategoryEntity {
-  categoryId: number;
-  name: string;
-}
-
-interface WarehouseLocationEntity {
-  warehouseLocationId: number;
-  name: string;
-  description: string;
-  type: string;
-}
-
-interface Item {
-  itemId: number;
-  name: string;
-  description: string;
-  status: string;
-  unit: string;
-  categoryEntity: CategoryEntity;
-  warehouseLocationEntity: WarehouseLocationEntity;
-}
-
 interface ImageFile {
   uri: string;
   name: string;
   type: string;
 }
-
-const fetchVaccines = async (): Promise<Item[]> => {
-  const response = await apiClient.get('/items/vaccine');
-  return response.data;
-};
 
 const IllnessReportScreen = () => {
   const route = useRoute<IllnessReportScreenRouteProp>();
@@ -78,15 +48,6 @@ const IllnessReportScreen = () => {
     severity: IllnessSeverity.none,
     prognosis: '',
     cowId: cow.cowId,
-    detail: [
-      {
-        dosage: 0,
-        injectionSite: InjectionSite.leftArm,
-        date: getVietnamISOString().split('T')[0],
-        description: '',
-        vaccineId: 0,
-      },
-    ],
   });
 
   const [images, setImages] = useState<ImageFile[]>([]);
@@ -95,6 +56,7 @@ const IllnessReportScreen = () => {
 
   const { mutate } = useMutation(
     async (formDataToSend: FormData) => {
+      console.log('formDataToSend', formDataToSend);
       const res = await apiClient.post('/illness/create', formDataToSend, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
@@ -109,7 +71,7 @@ const IllnessReportScreen = () => {
               defaultValue: 'Illness report created successfully',
             })
         );
-        navigation.navigate('Home' as never);
+        navigation.navigate('IllnessPlanScreen' as never);
       },
       onError: (error: any) => {
         Alert.alert(
@@ -123,52 +85,15 @@ const IllnessReportScreen = () => {
     }
   );
 
-  const {
-    data: vaccines,
-    isLoading,
-    isError,
-  } = useQuery('vaccines', fetchVaccines, {
-    onError: (error) => {
-      console.error('Error fetching vaccines:', error);
-    },
-  });
-
-  const vaccineOptions: Option[] = vaccines
-    ? vaccines.map((vaccine) => ({
-        label: vaccine.name,
-        value: vaccine.itemId.toString(),
-      }))
-    : [];
-
   const severityOptions: Option[] = Object.values(IllnessSeverity).map((severity) => ({
-    label: severity.charAt(0).toUpperCase() + severity.slice(1),
+    label: t(severity.charAt(0).toUpperCase() + severity.slice(1)),
     value: severity,
-  }));
-
-  const injectionSiteOptions: Option[] = Object.values(InjectionSite).map((site) => ({
-    label: site
-      .split(/(?=[A-Z])/)
-      .join(' ')
-      .replace(/\b\w/g, (char) => char.toUpperCase()),
-    value: site,
   }));
 
   const handleInputChange = (field: keyof IllnessReportRequest, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear error for this field when user starts typing
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: '' }));
-    }
-  };
-
-  const handleDetailChange = (field: keyof TreatmentDetail, value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      detail: [{ ...prev.detail[0], [field]: value }],
-    }));
-    // Clear error for this field
-    if (errors[`detail_${field}`]) {
-      setErrors((prev) => ({ ...prev, [`detail_${field}`]: '' }));
     }
   };
 
@@ -188,26 +113,6 @@ const IllnessReportScreen = () => {
     if (!formData.prognosis.trim()) {
       newErrors.prognosis = t('illness_report.prognosis_required', {
         defaultValue: 'Prognosis is required',
-      });
-    }
-    if (formData.detail[0].dosage <= 0) {
-      newErrors.detail_dosage = t('illness_report.dosage_required', {
-        defaultValue: 'Dosage must be greater than 0',
-      });
-    }
-    if (!formData.detail[0].date.trim()) {
-      newErrors.detail_date = t('illness_report.date_required', {
-        defaultValue: 'Treatment date is required',
-      });
-    }
-    if (!formData.detail[0].description.trim()) {
-      newErrors.detail_description = t('illness_report.description_required', {
-        defaultValue: 'Treatment description is required',
-      });
-    }
-    if (formData.detail[0].vaccineId === 0) {
-      newErrors.detail_vaccineId = t('illness_report.vaccine_required', {
-        defaultValue: 'Vaccine/Medication is required',
       });
     }
     if (images.length === 0) {
@@ -255,7 +160,6 @@ const IllnessReportScreen = () => {
         },
       ]);
       setModalVisible(false);
-      // Clear images error if present
       if (errors.images) {
         setErrors((prev) => ({ ...prev, images: '' }));
       }
@@ -305,12 +209,7 @@ const IllnessReportScreen = () => {
     formDataToSend.append('symptoms', formData.symptoms as any);
     formDataToSend.append('severity', formData.severity as any);
     formDataToSend.append('prognosis', formData.prognosis as any);
-    formDataToSend.append('cowId', formData.cowId.toString());
-    formDataToSend.append('detail[0].dosage', formData.detail[0].dosage as any);
-    formDataToSend.append('detail[0].injectionSite', formData.detail[0].injectionSite);
-    formDataToSend.append('detail[0].date', formData.detail[0].date);
-    formDataToSend.append('detail[0].description', formData.detail[0].description);
-    formDataToSend.append('detail[0].vaccineId', formData.detail[0].vaccineId as any);
+    formDataToSend.append('cowId', formData.cowId as any);
 
     images.forEach((image, index) => {
       formDataToSend.append('newImages', {
@@ -378,98 +277,6 @@ const IllnessReportScreen = () => {
                 onChangeText={(text) => handleInputChange('prognosis', text)}
                 placeholder={t('illness_report.prognosis_placeholder', {
                   defaultValue: 'Enter prognosis (e.g., Expected recovery in 7-10 days)',
-                })}
-                multiline
-              />
-            </View>
-
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>
-                {t('illness_report.dosage', { defaultValue: 'Dosage (mL or mg)' })}
-              </Text>
-              <TextInput
-                style={styles.input}
-                value={formData.detail[0].dosage.toString()}
-                onChangeText={(text) => handleDetailChange('dosage', Number(text))}
-                placeholder={t('illness_report.dosage_placeholder', {
-                  defaultValue: 'Enter dosage',
-                })}
-                keyboardType='numeric'
-              />
-              {errors.detail_dosage && <Text style={styles.errorText}>{errors.detail_dosage}</Text>}
-            </View>
-
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>
-                {t('illness_report.injection_site', { defaultValue: 'Injection Site' })}
-              </Text>
-              <CustomPicker
-                options={injectionSiteOptions}
-                selectedValue={formData.detail[0].injectionSite}
-                onValueChange={(value) =>
-                  handleDetailChange('injectionSite', value as InjectionSite)
-                }
-                title={t('illness_report.select_injection_site', {
-                  defaultValue: 'Select injection site...',
-                })}
-              />
-            </View>
-
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>
-                {t('illness_report.treatment_date', { defaultValue: 'Treatment Date' })}
-              </Text>
-              <TextInput
-                style={styles.input}
-                value={formData.detail[0].date}
-                onChangeText={(text) => handleDetailChange('date', text)}
-                placeholder={t('illness_report.date_placeholder', {
-                  defaultValue: 'Enter date (YYYY-MM-DD)',
-                })}
-                editable={false}
-              />
-              {errors.detail_date && <Text style={styles.errorText}>{errors.detail_date}</Text>}
-            </View>
-
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>
-                {t('illness_report.vaccine', { defaultValue: 'Vaccine/Medication' })}
-              </Text>
-              {isLoading ? (
-                <Text style={styles.loadingText}>
-                  {t('illness_report.loading', { defaultValue: 'Loading vaccines...' })}
-                </Text>
-              ) : isError ? (
-                <Text style={styles.errorText}>
-                  {t('illness_report.error', { defaultValue: 'Error loading vaccines' })}
-                </Text>
-              ) : (
-                <CustomPicker
-                  options={vaccineOptions}
-                  selectedValue={formData.detail[0].vaccineId.toString()}
-                  onValueChange={(value) => handleDetailChange('vaccineId', Number(value))}
-                  title={t('illness_report.select_vaccine', {
-                    defaultValue: 'Select vaccine...',
-                  })}
-                />
-              )}
-              {errors.detail_vaccineId && (
-                <Text style={styles.errorText}>{errors.detail_vaccineId}</Text>
-              )}
-            </View>
-
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>
-                {t('illness_report.treatment_description', {
-                  defaultValue: 'Treatment Description',
-                })}
-              </Text>
-              <TextInput
-                style={styles.input}
-                value={formData.detail[0].description}
-                onChangeText={(text) => handleDetailChange('description', text)}
-                placeholder={t('illness_report.description_placeholder', {
-                  defaultValue: 'Enter treatment description',
                 })}
                 multiline
               />
@@ -574,7 +381,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   formGroup: {
-    marginBottom: 20,
+    marginBottom: 15,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
   },
   label: {
     fontSize: 16,
@@ -590,6 +399,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlignVertical: 'top',
     backgroundColor: '#fff',
+    minHeight: 50,
+    justifyContent: 'center',
+  },
+  inputError: {
+    borderColor: '#FF3B30',
+  },
+  dateText: {
+    fontSize: 16,
+    color: '#333',
   },
   submitButton: {
     backgroundColor: '#52c41a',

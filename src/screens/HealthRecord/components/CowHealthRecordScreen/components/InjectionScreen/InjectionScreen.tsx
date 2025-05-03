@@ -128,7 +128,12 @@ const InjectionScreen = () => {
             {t('injections.cow', { defaultValue: 'Cow' })}
           </Text>
           <View style={{ padding: 14 }}>
-            <CardCow cow={injections?.cowEntity || ({} as Cow)} />
+            <CardCow
+              cow={injections?.cowEntity || ({} as Cow)}
+              onPress={() =>
+                (navigation.navigate as any)('CowDetails', { cowId: injections?.cowEntity?.cowId })
+              }
+            />
           </View>
         </View>
         <DividerUI />

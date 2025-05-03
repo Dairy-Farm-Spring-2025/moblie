@@ -75,10 +75,8 @@ const IllnessDetailForm = () => {
   const [quantity, setQuantity] = useState(''); // State for export quantity
 
   const OPTIONS_ILLNESS_DETAIL_STATUS = [
-    { label: t('Observed'), value: 'observed' },
     { label: t('Treated'), value: 'treated' },
     { label: t('Cured'), value: 'cured' },
-    { label: t('Ongoing'), value: 'ongoing' },
     { label: t('Deceased'), value: 'deceased' },
   ];
 
@@ -290,7 +288,7 @@ const IllnessDetailForm = () => {
                         onValueChange={onChange}
                         selectedValue={value}
                         options={OPTIONS_ILLNESS_DETAIL_STATUS}
-                        title={t(formatCamelCase(value), { defaultValue: 'Select status' })}
+                        title={t(formatCamelCase(value), { defaultValue: t('Select status') })}
                       />
                     )}
                   />
