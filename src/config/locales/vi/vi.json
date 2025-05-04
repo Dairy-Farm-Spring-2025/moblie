@@ -392,7 +392,13 @@
     "importDate": "Ngày nhập",
     "task": "Công việc",
     "cancel": "Hủy hàng",
-    "export": "Xuất hàng"
+    "export": "Xuất hàng",
+    "select_all": "Chọn tất cả",
+    "bulk_export": "Xuất tất cả",
+    "Please select at least one item to export": "Vui lòng chọn ít nhất một hàng hóa",
+    "Items exported successfully": "Xuất hàng thành công",
+    "Failed to bulk export items": "Lỗi khi xuất tất cả hàng hóa",
+    "An error occurred while fetching the data": "Lỗi khi tải dữ liệu! Vui lòng thử lại."
   },
   "illness_detail": {
     "veterinarians": "Thú y",
@@ -996,5 +1002,6 @@
     "start_typing": "nhập ở đây!",
     "save": "Lưu"
   },
-  "Select status": "Chọn trạng thái..."
+  "Select status": "Chọn trạng thái...",
+  "Warning": "Cảnh báo"
 }

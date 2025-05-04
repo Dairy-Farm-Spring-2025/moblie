@@ -62,11 +62,10 @@ const MilkBatchManagementScreen: React.FC = () => {
     }, [refetch])
   );
 
-  // Animation setup
   const scrollY = new Animated.Value(0);
   const chartHeight = scrollY.interpolate({
-    inputRange: [0, 150], // Scroll distance to shrink the chart
-    outputRange: [300, 0], // Chart height from 250 to 100
+    inputRange: [0, 100], // Reduced input range for shorter scrolls
+    outputRange: [300, 100], // Adjusted output range to shrink to 100 instead of 0
     extrapolate: 'clamp',
   });
 
@@ -267,12 +266,15 @@ const MilkBatchManagementScreen: React.FC = () => {
 
           {/* Milk Batch List */}
           <ScrollView
-            contentContainerStyle={styles.batchListContainer}
-            onScroll={Animated.event(
-              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-              { useNativeDriver: false } // useNativeDriver is false because we're animating height
-            )}
-            scrollEventThrottle={16} // Ensures smooth animation
+            contentContainerStyle={[
+              styles.batchListContainer,
+              { minHeight: Dimensions.get('window').height },
+            ]} // Ensure minimum height
+            onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+              useNativeDriver: false,
+            })}
+            scrollEventThrottle={16}
+            alwaysBounceVertical={true} // Enable bouncing for short content
           >
             <FlatList
               data={milkBatchData.sort(
@@ -384,6 +386,10 @@ const styles = StyleSheet.create({
   },
   batchListContainer: {
     backgroundColor: '#F7F9FC',
+    paddingBottom: 100, // Increased padding for scroll space
+  },
+  batchList: {
+    paddingBottom: 80,
   },
   refreshButton: {
     flexDirection: 'row',
@@ -447,9 +453,6 @@ const styles = StyleSheet.create({
   chartText: {
     fontSize: 12,
     color: '#4A5568',
-  },
-  batchList: {
-    paddingBottom: 80, // Space for floating button
   },
   milkBatchCard: {
     backgroundColor: '#FFFFFF',
