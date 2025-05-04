@@ -82,7 +82,7 @@ const InjectionScreen = () => {
       setQuantity('');
       setExportTaskId(taskId?.toString());
       setTimeout(() => {
-        (navigation.goBack as any)();
+        (navigation.navigate as any)('MyExportItemScreen');
       }, 500);
     },
     onError: (error: any) => {
