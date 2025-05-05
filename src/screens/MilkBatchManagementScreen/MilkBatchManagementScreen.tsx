@@ -2,19 +2,16 @@ import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
-  FlatList,
   StyleSheet,
-  ActivityIndicator,
   TouchableOpacity,
   ScrollView,
   Dimensions,
   Modal,
-  Animated,
 } from 'react-native';
 import { useQuery } from 'react-query';
 import { Ionicons } from '@expo/vector-icons';
 import { format } from 'date-fns';
-import { CommonActions, useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { LineChart } from 'react-native-gifted-charts';
 import { t } from 'i18next';
 import apiClient from '@config/axios/axios';
@@ -28,6 +25,7 @@ import { Button } from 'react-native-paper';
 import { useListCowMilkStore } from '@core/store/ListCowDailyMilk/useListCowMilkStore';
 import { useSelector } from 'react-redux';
 import { RootState } from '@core/store/store';
+import { FlatList } from 'react-native-gesture-handler';
 
 const fetchMilkBatch = async (): Promise<MilkBatch[]> => {
   try {
@@ -65,13 +63,6 @@ const MilkBatchManagementScreen: React.FC = () => {
     }, [refetch])
   );
 
-  const scrollY = new Animated.Value(0);
-  const chartHeight = scrollY.interpolate({
-    inputRange: [0, 100], // Reduced input range for shorter scrolls
-    outputRange: [300, 100], // Adjusted output range to shrink to 100 instead of 0
-    extrapolate: 'clamp',
-  });
-
   const handleMilkBatchPress = (milkBatchId: number) => {
     (navigation.navigate as any)('MilkBatchDetail', { milkBatchId });
   };
@@ -105,12 +96,6 @@ const MilkBatchManagementScreen: React.FC = () => {
           <Ionicons name='water-outline' size={16} color={roleColor} />
           <Text style={styles.dailyMilkText}>
             {t('volume')}: {item.volume} {t('liters')}
-          </Text>
-        </View>
-        <View style={styles.dailyMilkRow}>
-          <Ionicons name='person-outline' size={16} color={roleColor} />
-          <Text style={styles.dailyMilkText}>
-            {t('worker')}: {item.worker.name}
           </Text>
         </View>
         <View style={styles.dailyMilkRow}>
@@ -224,72 +209,68 @@ const MilkBatchManagementScreen: React.FC = () => {
           </TouchableOpacity>
         </View>
       ) : Array.isArray(milkBatchData) && milkBatchData.length > 0 ? (
-        <View>
-          {/* Metric Cards */}
-          <View style={styles.cardsContainer}>
-            <View style={styles.metricCard}>
-              <Ionicons name='water-outline' size={28} color={roleColor} />
-              <Text style={styles.cardTitle}>{t('total_liters')}</Text>
-              <Text style={[styles.cardValue, { color: roleColor }]}>{totalLiters} L</Text>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={[
+            styles.batchListContainer,
+            { minHeight: Dimensions.get('window').height },
+          ]}
+          scrollEventThrottle={16}
+          alwaysBounceVertical={true}
+        >
+          <View style={styles.batchList}>
+            {/* Metric Cards */}
+            <View style={styles.cardsContainer}>
+              <View style={styles.metricCard}>
+                <Ionicons name='water-outline' size={28} color={roleColor} />
+                <Text style={styles.cardTitle}>{t('total_liters')}</Text>
+                <Text style={[styles.cardValue, { color: roleColor }]}>{totalLiters} L</Text>
+              </View>
+              <View style={styles.metricCard}>
+                <Ionicons name='stats-chart-outline' size={28} color={roleColor} />
+                <Text style={styles.cardTitle}>{t('avg_volume_batch')}</Text>
+                <Text style={[styles.cardValue, { color: roleColor }]}>
+                  {averageVolumePerBatch} L
+                </Text>
+              </View>
+              <View style={styles.metricCard}>
+                <Ionicons name='cube-outline' size={28} color={roleColor} />
+                <Text style={styles.cardTitle}>{t('total_batches')}</Text>
+                <Text style={[styles.cardValue, { color: roleColor }]}>{numberOfBatches}</Text>
+              </View>
             </View>
-            <View style={styles.metricCard}>
-              <Ionicons name='stats-chart-outline' size={28} color={roleColor} />
-              <Text style={styles.cardTitle}>{t('avg_volume_batch')}</Text>
-              <Text style={[styles.cardValue, { color: roleColor }]}>
-                {averageVolumePerBatch} L
-              </Text>
+
+            {/* Line Chart */}
+            <View style={styles.chartCard}>
+              <Text style={styles.chartTitle}>{t('milk_volume_trend')}</Text>
+              <LineChart
+                data={chartData}
+                width={Dimensions.get('window').width - 120}
+                height={200}
+                isAnimated={true}
+                color={roleColor}
+                thickness={3}
+                yAxisTextStyle={styles.chartText}
+                xAxisLabelTextStyle={styles.chartText}
+                showDataPoints
+                dataPointsColor={roleColor}
+                dataPointsRadius={6}
+                textColor='#333'
+                textFontSize={12}
+                onDataPointClick={handleDataPointClick}
+              />
             </View>
-            <View style={styles.metricCard}>
-              <Ionicons name='cube-outline' size={28} color={roleColor} />
-              <Text style={styles.cardTitle}>{t('total_batches')}</Text>
-              <Text style={[styles.cardValue, { color: roleColor }]}>{numberOfBatches}</Text>
-            </View>
+
+            {/* Milk Batch List */}
+            {milkBatchData
+              ?.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+              .map((milkBatch) => (
+                <View key={milkBatch.milkBatchId.toString()}>
+                  {renderMilkBatchItem({ item: milkBatch })}
+                </View>
+              ))}
           </View>
-
-          {/* Animated Line Chart */}
-          <Animated.View style={[styles.chartCard, { height: chartHeight }]}>
-            <Text style={styles.chartTitle}>{t('milk_volume_trend')}</Text>
-            <LineChart
-              data={chartData}
-              width={Dimensions.get('window').width - 120}
-              height={200}
-              isAnimated={true}
-              color={roleColor}
-              thickness={3}
-              yAxisTextStyle={styles.chartText}
-              xAxisLabelTextStyle={styles.chartText}
-              showDataPoints
-              dataPointsColor={roleColor}
-              dataPointsRadius={6}
-              textColor='#333'
-              textFontSize={12}
-              onDataPointClick={handleDataPointClick}
-            />
-          </Animated.View>
-
-          {/* Milk Batch List */}
-          <ScrollView
-            contentContainerStyle={[
-              styles.batchListContainer,
-              { minHeight: Dimensions.get('window').height },
-            ]} // Ensure minimum height
-            onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-              useNativeDriver: false,
-            })}
-            scrollEventThrottle={16}
-            alwaysBounceVertical={true} // Enable bouncing for short content
-          >
-            <FlatList
-              data={milkBatchData.sort(
-                (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-              )}
-              renderItem={renderMilkBatchItem}
-              keyExtractor={(milkBatch) => milkBatch.milkBatchId.toString()}
-              scrollEnabled={false}
-              contentContainerStyle={styles.batchList}
-            />
-          </ScrollView>
-        </View>
+        </ScrollView>
       ) : (
         <View style={styles.noDataContainer}>
           <Text style={styles.noDataText}>{t('no_milk_batches_found')}</Text>
@@ -391,7 +372,7 @@ const styles = StyleSheet.create({
   },
   batchListContainer: {
     backgroundColor: '#F7F9FC',
-    paddingBottom: 100, // Increased padding for scroll space
+    paddingBottom: 100,
   },
   batchList: {
     paddingBottom: 80,
@@ -448,6 +429,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 3,
+    marginBottom: 20,
   },
   chartTitle: {
     fontSize: 18,
