@@ -26,6 +26,8 @@ import { formatCamelCase } from '@utils/format';
 import useRoleColor from '@utils/hooks/hooks';
 import { Button } from 'react-native-paper';
 import { useListCowMilkStore } from '@core/store/ListCowDailyMilk/useListCowMilkStore';
+import { useSelector } from 'react-redux';
+import { RootState } from '@core/store/store';
 
 const fetchMilkBatch = async (): Promise<MilkBatch[]> => {
   try {
@@ -48,6 +50,7 @@ const MilkBatchManagementScreen: React.FC = () => {
     refetchOnMount: true,
     refetchOnWindowFocus: true,
   });
+  const roleName = useSelector((state: RootState) => state.auth.roleName);
   const roleColor = useRoleColor();
   const { clearListCowMilk } = useListCowMilkStore();
 
@@ -343,14 +346,16 @@ const MilkBatchManagementScreen: React.FC = () => {
         </View>
       </Modal>
 
-      <FloatingButton
-        onPress={() =>
-          (navigation.navigate as any)('QrCodeScanCow', {
-            screens: 'DetailFormMilk',
-          })
-        }
-        style={styles.floatingButton}
-      />
+      {roleName.toLowerCase() === 'worker' && (
+        <FloatingButton
+          onPress={() =>
+            (navigation.navigate as any)('QrCodeScanCow', {
+              screens: 'DetailFormMilk',
+            })
+          }
+          style={styles.floatingButton}
+        />
+      )}
     </View>
   );
 };
