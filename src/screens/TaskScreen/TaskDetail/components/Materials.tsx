@@ -26,8 +26,7 @@ interface MaterialItem {
 }
 
 interface CowTypeCount {
-  Guernsey: number;
-  'Holstein Friesian': number;
+  [key: string]: number; // Dynamic keys with number
 }
 
 interface ApiResponse {
@@ -182,7 +181,8 @@ const MaterialsContent: React.FC<{ data?: ApiResponse['data']; taskId: number; a
           </View>
         </View>
       </View>
-      <View style={styles.infoCol}>
+      {/* Display Cow Types */}
+      <View style={styles.infoRow}>
         <View style={styles.labelContainer}>
           <Ionicons name='list-outline' size={20} color='#595959' style={styles.icon} />
           <Text style={styles.textLabel}>{t('materials.cowTypes')}</Text>
@@ -196,14 +196,11 @@ const MaterialsContent: React.FC<{ data?: ApiResponse['data']; taskId: number; a
             justifyContent: 'center',
           }}
         >
-          <View style={styles.tag}>
-            <Text style={styles.tagText}>Guernsey: {data.cowTypeCount.Guernsey}</Text>
-          </View>
-          <View style={styles.tag}>
-            <Text style={styles.tagText}>
-              Holstein Friesian: {data.cowTypeCount['Holstein Friesian']}
-            </Text>
-          </View>
+          {Object.entries(data.cowTypeCount).map(([type, count]) => (
+            <View style={styles.tag} key={type}>
+              <Text style={styles.tagText}>{`${type}: ${count}`}</Text>
+            </View>
+          ))}
         </View>
       </View>
       <View style={styles.separator} />
